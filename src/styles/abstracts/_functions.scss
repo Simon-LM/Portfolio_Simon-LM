@@ -1,0 +1,16 @@
+/** @format */
+
+@function rem($value_px, $font-size_ref: 16) {
+	$result_rem: calc(($value_px * 1) / $font-size_ref) + rem;
+	@return $result_rem;
+}
+
+// @function height_mm-to-vw($measured-height, $widht-screen-ref: 220) {
+// 	$result_height-vw: calc(($measured-height * 100) / $widht-screen-ref) + vw;
+// 	@return $result_height-vw;
+// }
+
+// @function height_mm-to-vmin($measured-height, $widht-screen-ref: 220) {
+// 	$result_height-vmin: calc(($measured-height * 100) / $widht-screen-ref) + vmin;
+// 	@return $result_height-vmin;
+// }

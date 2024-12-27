@@ -1,0 +1,32 @@
+/** @format */
+
+// MOTION //
+
+// $color-icons_explanation-drab: black;
+
+@media (prefers-reduced-motion: no-preference) {
+	a:nth-of-type(2) .logo {
+		animation: logo-spin infinite 20s linear;
+	}
+}
+
+// @media (prefers-reduced-motion: reduce) {
+// 	.if-prefers-reduced-motion,
+// 	a:hover {
+// 		animation: none !important;
+// 		transition: all 0s 0s ease !important;
+// 		transform: initial !important;
+// 		opacity: 1 !important;
+// 		box-shadow: initial !important;
+// 		text-shadow: initial !important;
+// 		i {
+// 			transform: initial !important;
+// 		}
+// 	}
+// 	.explanation__card:hover i {
+// 		color: $color-icons_explanation-drab !important;
+// 	}
+// 	[class$="underline"] {
+// 		animation: none !important;
+// 	}
+// }

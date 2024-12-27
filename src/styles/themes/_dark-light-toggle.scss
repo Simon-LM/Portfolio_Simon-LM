@@ -1,0 +1,50 @@
+/** @format */
+
+// Styles par défaut (light)
+
+// Préférences du système (dark mode)
+@media (prefers-color-scheme: dark) {
+}
+
+:root {
+	color: $light-text;
+	background: $light-bg;
+	@media (prefers-color-scheme: dark) {
+		color: $dark-text;
+		background: $dark-bg;
+	}
+}
+
+a:hover,
+a:focus-visible {
+	color: $light-text-link-hover !important;
+	@media (prefers-color-scheme: dark) {
+		color: $dark-text-link-hover !important;
+	}
+}
+.main-nav-item {
+	color: $light-text !important;
+	@media (prefers-color-scheme: dark) {
+		color: $dark-text !important;
+	}
+}
+
+button {
+	background: $light-button-bg;
+	@media (prefers-color-scheme: dark) {
+		background: $dark-button-bg;
+	}
+}
+
+.feature-item-title {
+	color: $light-title-footer;
+	@media (prefers-color-scheme: dark) {
+		color: $dark-title-footer;
+	}
+}
+.hero-content {
+	background: $light-bg;
+	@media (prefers-color-scheme: dark) {
+		background: $dark-bg;
+	}
+}

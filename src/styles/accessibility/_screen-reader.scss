@@ -1,0 +1,15 @@
+/** @format */
+
+.sr-only {
+	border: 0 !important;
+	clip: rect(rem(1), rem(1), rem(1), rem(1)) !important; /* 1 */
+	-webkit-clip-path: inset(50%) !important;
+	clip-path: inset(50%) !important; /* 2 */
+	height: rem(1) !important;
+	margin: rem(-1) !important;
+	overflow: hidden !important;
+	padding: 0 !important;
+	position: absolute !important;
+	width: rem(1) !important;
+	white-space: nowrap !important; /* 3 */
+}

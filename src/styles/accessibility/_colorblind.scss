@@ -1,0 +1,108 @@
+/** @format */
+
+// FORCED COLORS //
+
+//none
+//La palette de couleur n'est pas restreinte.
+
+//active
+//La palette de couleur est restreinte et c'est l'agent utilisateur qui fournira la palette utilisable via un système de mots-clés de couleurs CSS systèmes. La valeur de prefers-color-scheme sera également mise à jour afin que les auteurs puissent adapter la page.
+
+//@media (forced-colors: active) {
+//
+//}
+
+// WHITE OR BLACK //
+// ONLY WINDOWS
+
+//active
+//Cette valeur indique que les règles suivantes seront appliquées lorsque le système utilise un mode de contraste élevé, quelle que soit la variation de couleurs.
+
+//black-on-white
+//Cette valeur indique que les règles suivantes seront appliquées lorsque le système utilise un mode de contraste élevé avec une dominante noir sur blanc.
+
+//white-on-black
+//Cette valeur indique que les règles suivantes seront appliquées lorsque le système utilise un mode de contraste élevé avec une dominante blanc sur noir.
+
+//@media screen and (-ms-high-contrast: active) {
+//    /* Toutes les règles appliquées en contraste élevé */
+//}
+
+//inverted-colors | SAFARI ONLY
+
+//inverted-colors est une caractéristique média CSS (cf. @media) qui indique si l'agent utilisateur ou si le système d'exploitation sous-jacent inverse les couleurs.
+
+//Syntaxe
+//Cette caractéristique est définie avec un des mots-clés parmi ceux qui suivent :
+
+//none
+//Les couleurs sont affichées normalement.
+
+//inverted
+//Les couleurs des pixels de la zone affichée ont été inversées. */
+
+// SAFARI ONLY
+//@media (inverted-colors: inverted) {
+//  /* p {
+//    background: black;
+//    color: yellow;
+//  } */
+//}
+//@media (inverted-colors: none) {
+// /*  p {
+//    background: #eee;
+//    color: red;
+//  } */
+//}
+
+// MONOCHROME //
+
+// La caractéristique monochrome est un entier (type <integer>)) dont la valeur correspond au nombre de bits par pixel utilisés pour le tampon d'affichage monochrome de l'appareil. Si l'appareil n'est pas monochrome, cela vaudra 0. Cette caractéristique est une caractéristique d'intervalle ce qui signifie qu'on peut également utiliser les variantes préfixées min-monochrome et max-monochrome afin de cibler les règles en fonction d'un minimum ou d'un maximum.
+
+// Any monochrome device
+//@media (monochrome) {
+//   /*  p.mono {
+//      display: block;
+//      color: #333;
+//    } */
+//}
+// Any non-monochrome device
+//@media (monochrome: 0) {
+// /*  p.no-mono {
+//    display: block;
+//    color: #ee3636;
+//  } */
+//}
+
+// COLOR //
+
+// Tout appareil qui gère des couleurs
+//@media (color) {
+//    /* p {
+//      color: red;
+//    } */
+//}
+// Tout appareil qui gère des couleurs avec  au moins 8 bits par composante
+//@media (min-color: 8) {
+// /*  p {
+//    color: #24ba13;
+//  } */
+//}
+
+// INDEX COLOR //
+
+//@media (color-index) {
+// /*  p {
+//    color: red;
+//  } */
+//}
+//@media (min-color-index: 15000) {
+// /*  p {
+//   color: #1475ef;
+//  } */
+//}
+//@media (max-color-index: 15000) {
+//    /*  p {
+//       color: #1475ef;
+//     } */
+//}
