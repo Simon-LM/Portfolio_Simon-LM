@@ -15,9 +15,6 @@ export default function StickyFooter() {
 	return (
 		<footer className="stickyFooter">
 			<nav>
-				<Link href="#menu" aria-label={currentLang === "fr" ? "Menu" : "Menu"}>
-					<RiMenu3Line />
-				</Link>
 				<Link href={`/${currentLang}/blog`} aria-label="Blog LostInTab">
 					<FaBlog />
 				</Link>

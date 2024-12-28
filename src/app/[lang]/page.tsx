@@ -1,6 +1,7 @@
 /** @format */
 
 import Header from "../../components/header/Header";
+import NavigationSticky from "../../components/navigationSticky/NavigationSticky";
 import StickyFooter from "../../components/stickyFooter/StickyFooter";
 import BottomFooter from "../../components/bottomFooter/BottomFooter";
 import ScrollProgressBar from "../../components/scrollProgressBar/ScrollProgressBar";
@@ -12,6 +13,7 @@ export default function Home({ params }: { params: { lang: string } }) {
 	return (
 		<>
 			<Header />
+			<NavigationSticky />
 			<ScrollProgressBar />
 			<Hero params={params} />
 			<About params={params} />

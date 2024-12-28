@@ -34,10 +34,6 @@ export default function Header() {
 					aria-label="Passer au français">
 					FR
 				</button>
-				<button aria-label={currentLang === "fr" ? "Menu" : "Menu"}>
-					Menu
-				</button>
-
 				<Link
 					href={`/${currentLang}/blog`}
 					aria-label={
