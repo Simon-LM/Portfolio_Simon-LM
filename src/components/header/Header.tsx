@@ -3,19 +3,21 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { useLanguage } from "../../hooks/useLanguage";
-import styles from "./Header.module.scss";
 
 export default function Header() {
 	// Comment in English: Hook to switch language
 	const { currentLang, switchLanguage } = useLanguage();
 
 	return (
-		<header className={styles.header}>
+		<header className="header">
 			<h1>
-				{currentLang === "fr"
-					? "Simon LM | Spécialiste en Accessibilité Web"
-					: "Simon LM | Web Accessibility Specialist"}
+				<Link href={`/${currentLang}`}>
+					{currentLang === "fr"
+						? "Simon LM | Spécialiste en Accessibilité Web"
+						: "Simon LM | Web Accessibility Specialist"}
+				</Link>
 			</h1>
 			<nav>
 				<button
@@ -35,12 +37,14 @@ export default function Header() {
 				<button aria-label={currentLang === "fr" ? "Menu" : "Menu"}>
 					Menu
 				</button>
-				<button
+
+				<Link
+					href={`/${currentLang}/blog`}
 					aria-label={
 						currentLang === "fr" ? "Blog LostInTab" : "Blog LostInTab"
 					}>
 					Blog LostInTab
-				</button>
+				</Link>
 			</nav>
 		</header>
 	);

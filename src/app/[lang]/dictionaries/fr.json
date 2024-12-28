@@ -6,5 +6,35 @@
 	},
 	"main": {
 		"welcome": "Bienvenue sur mon site"
+	},
+	"sections": {
+		"hero": {
+			"title": "Création d'Expériences Web Accessibles et Intuitives",
+			"subtitle": "Spécialiste en accessibilité web et développement frontend",
+			"cta": "Me contacter",
+			"ctaAriaLabel": "Contactez-moi pour discuter de votre projet",
+			"imageAlt": "Illustration représentant l'accessibilité web"
+		},
+		"about": {
+			"title": "L'utilité de l'accessibilité web, expliquée en 7 minutes",
+			"subtitle": "Une introduction à l'importance de l'accessibilité web",
+			"videoTitle": "Vidéo explicative sur l'accessibilité web"
+		},
+		"skills": {
+			"title": "Compétences et Technologies",
+			"subtitle": "Expertise en développement frontend et accessibilité web",
+			"skills": [
+				{
+					"name": "Accessibilité Web (WCAG)",
+					"level": 95,
+					"category": "Expertise"
+				},
+				{
+					"name": "React/Next.js",
+					"level": 90,
+					"category": "Frontend"
+				}
+			]
+		}
 	}
 }

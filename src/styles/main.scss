@@ -10,10 +10,14 @@
 @import "base/globale";
 @import "base/typography";
 
-// @import "components/header";
-// @import "components/footer";
+@import "layout/header";
+@import "layout/bottomFooter";
+@import "layout/stickyFooter";
 
-// @import "pages/home";
+@import "pages/hero";
+@import "pages/about";
+@import "pages/skills";
+
 // @import "themes/dark";
 
 @import "accessibility/accessibility";

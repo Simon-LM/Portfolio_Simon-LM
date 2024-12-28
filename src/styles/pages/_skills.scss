@@ -1,0 +1,35 @@
+/** @format */
+
+.skills {
+	// min-height: 100vh;
+	padding: 4rem 2rem;
+
+	.skills-grid {
+		display: grid;
+		gap: 2rem;
+		max-width: 800px;
+		margin: 3rem auto;
+	}
+
+	.skill-item {
+		background: var(--background-light);
+		padding: 1.5rem;
+		border-radius: 0.5rem;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	}
+
+	.skill-bar {
+		height: 8px;
+		background: var(--background-muted);
+		border-radius: 4px;
+		margin-top: 0.5rem;
+		overflow: hidden;
+	}
+
+	.skill-level {
+		height: 100%;
+		background: var(--primary-color);
+		border-radius: 4px;
+		transition: width 1s ease-out;
+	}
+}

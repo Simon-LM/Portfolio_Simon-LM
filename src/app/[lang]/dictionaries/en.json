@@ -6,5 +6,35 @@
 	},
 	"main": {
 		"welcome": "Welcome to my site"
+	},
+	"sections": {
+		"hero": {
+			"title": "Building Accessible and Intuitive Web Experiences",
+			"subtitle": "Web Accessibility Specialist & Frontend Developer",
+			"cta": "Contact Me",
+			"ctaAriaLabel": "Contact me to discuss your project",
+			"imageAlt": "Web accessibility illustration"
+		},
+		"about": {
+			"title": "The importance of web accessibility, explained in 7 minutes",
+			"subtitle": "An introduction to web accessibility",
+			"videoTitle": "Explanatory video about web accessibility"
+		},
+		"skills": {
+			"title": "Skills and Technologies",
+			"subtitle": "Expertise in frontend development and web accessibility",
+			"skills": [
+				{
+					"name": "Web Accessibility (WCAG)",
+					"level": 95,
+					"category": "Expertise"
+				},
+				{
+					"name": "React/Next.js",
+					"level": 90,
+					"category": "Frontend"
+				}
+			]
+		}
 	}
 }
