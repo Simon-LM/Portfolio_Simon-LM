@@ -1,0 +1,35 @@
+/** @format */
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 1rem;
+	background-color: #f8f9fa;
+
+	h1 {
+		font-size: 1.5rem;
+	}
+
+	nav {
+		button {
+			margin-left: 0.5rem;
+			padding: 0.5rem 1rem;
+			border: none;
+			background-color: #0070f3;
+			color: white;
+			cursor: pointer;
+			border-radius: 4px;
+			transition: background-color 0.3s;
+
+			&:disabled {
+				background-color: #6c757d;
+				cursor: not-allowed;
+			}
+
+			&:hover:not(:disabled) {
+				background-color: #005bb5;
+			}
+		}
+	}
+}
