@@ -23,6 +23,11 @@ a {
 	cursor: pointer;
 	&:hover,
 	&:focus-visible {
-		opacity: 0.85;
+		opacity: 0.8;
+	}
+	&:visited,
+	&:link {
+		color: black;
+		text-decoration: none;
 	}
 }

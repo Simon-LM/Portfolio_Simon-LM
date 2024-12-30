@@ -1,6 +1,9 @@
 {
 	"header": {
-		"title": "Simon LM | Web Accessibility Specialist",
+		"title": {
+			"name": "Simon LM",
+			"role": "Web Accessibility Specialist"
+		},
 		"menu": "Menu",
 		"blog": "Blog LostInTab"
 	},
@@ -13,7 +16,21 @@
 			"subtitle": "Web Accessibility Specialist & Frontend Developer",
 			"cta": "Contact Me",
 			"ctaAriaLabel": "Contact me to discuss your project",
-			"imageAlt": "Web accessibility illustration"
+			"imageAlt": "Web accessibility illustration",
+			"features": [
+				{
+					"title": "Accessibility-Compliant Frontend Integration",
+					"description": "I transform your designs into web interfaces while adhering to the strictest digital accessibility regulations."
+				},
+				{
+					"title": "Accessibility Audit with Optional Fixes",
+					"description": "I assess the accessibility of your websites and web applications for people with disabilities (visual, motor, or cognitive). Upon request, I can also implement the necessary fixes."
+				},
+				{
+					"title": "Creating Accessible and Intuitive Interfaces",
+					"description": "I leverage your brand guidelines to design streamlined interfaces adapted to the needs of people with disabilities. Once approved, I ensure frontend integration compliant with accessibility standards."
+				}
+			]
 		},
 		"about": {
 			"title": "The importance of web accessibility, explained in 7 minutes",
@@ -35,6 +52,9 @@
 					"category": "Frontend"
 				}
 			]
+		},
+		"footer": {
+			"accessibility": "Accessibility: compliance statement"
 		}
 	}
 }

@@ -1,7 +1,9 @@
 {
 	"header": {
-		"title": "Simon LM | Spécialiste en Accessibilité Web",
-		"menu": "Menu",
+		"title": {
+			"name": "Simon LM",
+			"role": "Spécialiste en Accessibilité Web"
+		},
 		"blog": "Blog LostInTab"
 	},
 	"main": {
@@ -9,11 +11,25 @@
 	},
 	"sections": {
 		"hero": {
-			"title": "Création d'Expériences Web Accessibles et Intuitives",
-			"subtitle": "Spécialiste en accessibilité web et développement frontend",
+			"title": "Bâtir des interfaces web accessibles et intuitives",
+			"subtitle": "Développeur frontend spécialisé en accessibilité web",
 			"cta": "Me contacter",
 			"ctaAriaLabel": "Contactez-moi pour discuter de votre projet",
-			"imageAlt": "Illustration représentant l'accessibilité web"
+			"imageAlt": "Illustration représentant l'accessibilité web",
+			"features": [
+				{
+					"title": "Intégration frontend conforme aux normes d'accessibilité",
+					"description": "Je transforme vos maquettes en interfaces web tout en respectant les réglementations les plus strictes en matière d'accessibilité numérique."
+				},
+				{
+					"title": "Audit d'accessibilité avec correctifs sur demande",
+					"description": "J'évalue l'accessibilité de vos sites et applications web pour les personnes en situation de handicap (visuel, moteur ou cognitif). Sur demande, je peux également appliquer les correctifs nécessaires."
+				},
+				{
+					"title": "Création d'interfaces accessibles et intuitives",
+					"description": "Je m'appuie sur votre charte graphique pour concevoir des interfaces épurées, adaptées aux besoins des personnes en situation de handicap. Une fois validées, j'assure une intégration frontend conforme aux normes d'accessibilité."
+				}
+			]
 		},
 		"about": {
 			"title": "L'utilité de l'accessibilité web, expliquée en 7 minutes",
@@ -35,6 +51,9 @@
 					"category": "Frontend"
 				}
 			]
+		},
+		"footer": {
+			"accessibility": "Accessibilité : déclaration de conformité"
 		}
 	}
 }

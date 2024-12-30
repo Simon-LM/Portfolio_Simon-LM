@@ -8,11 +8,14 @@ import ScrollProgressBar from "../../components/scrollProgressBar/ScrollProgress
 import Hero from "./sections/Hero";
 import About from "./sections/About";
 import Skills from "./sections/Skills";
+import { getDictionary } from "./dictionaries";
 
-export default function Home({ params }: { params: { lang: string } }) {
+export default async function Home({ params }: { params: { lang: string } }) {
+	const dictionary = await getDictionary(params.lang as "en" | "fr");
+
 	return (
 		<>
-			<Header />
+			<Header dictionary={dictionary} />
 			<NavigationSticky />
 			<ScrollProgressBar />
 			<Hero params={params} />

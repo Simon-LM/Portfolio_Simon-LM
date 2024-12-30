@@ -1,24 +1,5 @@
 /** @format */
 
-// // Layout for /[lang] pages with proper internationalization
-// export async function generateStaticParams() {
-// 	return [{ lang: "en" }, { lang: "fr" }];
-// }
-
-// export default function LangLayout({
-// 	children,
-// 	params,
-// }: {
-// 	children: React.ReactNode;
-// 	params: { lang: string };
-// }) {
-// 	return (
-// 		<html lang={params.lang}>
-// 			<body>{children}</body>
-// 		</html>
-// 	);
-// }
-
 // Comment in English: Import global styles
 import "../../styles/main.scss";
 

@@ -3,29 +3,32 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
+import Collapse from "../../../../components/collapse/Collapse";
 
+// Types and Interfaces
 interface HeroDictionary {
 	title: string;
 	subtitle: string;
-	imageAlt: string;
-	cta: string;
-	ctaAriaLabel: string;
+	features: {
+		title: string;
+		description: string;
+	}[];
 }
 
 interface HeroProps {
 	dictionary: HeroDictionary;
 }
 
+// Animation variants
 const containerVariants = {
 	hidden: { opacity: 0, y: 20 },
 	visible: {
 		opacity: 1,
 		y: 0,
 		transition: {
-			duration: 1.2, // Plus lent (était 0.6)
-			staggerChildren: 0.4, // Plus d'espace entre les animations (était 0.2)
-			ease: "easeOut", // Animation plus douce
+			duration: 1.2,
+			staggerChildren: 0.4,
+			ease: "easeOut",
 		},
 	},
 };
@@ -42,20 +45,6 @@ const itemVariants = {
 	},
 };
 
-const imageVariants = {
-	hidden: { opacity: 0, scale: 0.8 },
-	visible: {
-		opacity: 1,
-		scale: 1,
-		transition: {
-			duration: 1,
-			type: "spring",
-			stiffness: 50,
-			damping: 15,
-		},
-	},
-};
-
 export default function HeroClient({ dictionary }: HeroProps) {
 	return (
 		<motion.section
@@ -63,21 +52,19 @@ export default function HeroClient({ dictionary }: HeroProps) {
 			initial="hidden"
 			animate="visible"
 			className="hero">
-			<motion.div className="content">
-				<motion.h2 variants={itemVariants} className="title">
+			<motion.div className="hero__content">
+				<motion.h2 variants={itemVariants} className="hero__title">
 					{dictionary.title}
 				</motion.h2>
-				<motion.p variants={itemVariants} className="subtitle">
+				{/* <motion.p variants={itemVariants} className="hero__subtitle">
 					{dictionary.subtitle}
-				</motion.p>
-				<motion.div variants={imageVariants} className="imageWrapper">
-					<Image
-						src="/hero-image.webp"
-						alt={dictionary.imageAlt}
-						width={500}
-						height={300}
-						priority
-					/>
+				</motion.p> */}
+				<motion.div variants={itemVariants} className="hero__features">
+					{dictionary.features.map((feature, index) => (
+						<Collapse key={index} title={feature.title}>
+							{feature.description}
+						</Collapse>
+					))}
 				</motion.div>
 			</motion.div>
 		</motion.section>

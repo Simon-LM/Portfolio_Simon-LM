@@ -1,0 +1,35 @@
+/** @format */
+
+.collapse {
+	margin-bottom: 1rem;
+
+	&__trigger {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1rem;
+		background: rgb(106, 106, 98);
+		border: 2px solid #000;
+		border-radius: 0.5rem;
+		cursor: pointer;
+
+		&[aria-expanded="true"] {
+			border-bottom-left-radius: 0;
+			border-bottom-right-radius: 0;
+		}
+	}
+	&__title {
+		font-size: 1.25rem;
+		font-weight: 700;
+		color: white;
+		margin: 0.5rem 1rem;
+	}
+	&__content {
+		padding: 1rem;
+		border: 2px solid #000;
+		border-top: none;
+		border-bottom-left-radius: 0.5rem;
+		border-bottom-right-radius: 0.5rem;
+	}
+}

@@ -4,43 +4,100 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useLanguage } from "../../hooks/useLanguage";
+import accessibilityIconWebp from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.webp";
+import accessibilityIconAvif from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.avif";
+import accessibilityIconPng from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.png";
+// import eiffelTowerWebp from "../../../public/icons/icons_FR-EN/Icon_Eiffel-tower/Icon_Eiffel-tower.webp";
+// import eiffelTowerAvif from "../../../public/icons/icons_FR-EN/Icon_Eiffel-tower/Icon_Eiffel-tower.avif";
+// import eiffelTowerPng from "../../../public/icons/icons_FR-EN/Icon_Eiffel-tower/Icon_Eiffel-tower.png";
+// import phoneBoxWebp from "../../../public/icons/icons_FR-EN/Red_telephone_box/Icon_red-telephone-boxe.webp";
+// import phoneBoxAvif from "../../../public/icons/icons_FR-EN/Red_telephone_box/Icon_red-telephone-boxe.avif";
+// import phoneBoxPng from "../../../public/icons/icons_FR-EN/Red_telephone_box/Icon_red-telephone-boxe.png";
 
-export default function Header() {
-	// Comment in English: Hook to switch language
+interface HeaderProps {
+	dictionary: {
+		header: {
+			title: {
+				name: string;
+				role: string;
+			};
+			blog: string;
+		};
+	};
+}
+export default function Header({ dictionary }: HeaderProps) {
 	const { currentLang, switchLanguage } = useLanguage();
 
 	return (
 		<header className="header">
-			<h1>
-				<Link href={`/${currentLang}`}>
-					{currentLang === "fr"
-						? "Simon LM | Spécialiste en Accessibilité Web"
-						: "Simon LM | Web Accessibility Specialist"}
-				</Link>
-			</h1>
 			<nav>
-				<button
-					onClick={() => switchLanguage("en")}
-					aria-pressed={currentLang === "en"}
-					disabled={currentLang === "en"}
-					aria-label="Switch to English">
-					EN
-				</button>
-				<button
-					onClick={() => switchLanguage("fr")}
-					aria-pressed={currentLang === "fr"}
-					disabled={currentLang === "fr"}
-					aria-label="Passer au français">
-					FR
-				</button>
-				<Link
-					href={`/${currentLang}/blog`}
-					aria-label={
-						currentLang === "fr" ? "Blog LostInTab" : "Blog LostInTab"
-					}>
-					Blog LostInTab
-				</Link>
+				<div className="header__utils">
+					<picture className="header__accessibility-icon">
+						<source srcSet={accessibilityIconAvif.src} type="image/avif" />
+						<source srcSet={accessibilityIconWebp.src} type="image/webp" />
+						<Image
+							src={accessibilityIconPng}
+							alt=""
+							width={24}
+							height={24}
+							priority
+						/>
+					</picture>
+					<div className="header__lang">
+						{/* <picture className="header__lang-icon">
+							<source srcSet={phoneBoxAvif.src} type="image/avif" />
+							<source srcSet={phoneBoxWebp.src} type="image/webp" />
+							<Image src={phoneBoxPng} alt="" width={16} height={16} priority />
+						</picture> */}
+						<div className="header__lang-toggle">
+							<button
+								onClick={() => switchLanguage("en")}
+								className="header__lang-button"
+								aria-pressed={currentLang === "en"}
+								disabled={currentLang === "en"}
+								aria-label="Switch to English">
+								EN
+							</button>
+							<button
+								onClick={() => switchLanguage("fr")}
+								className="header__lang-button"
+								aria-pressed={currentLang === "fr"}
+								disabled={currentLang === "fr"}
+								aria-label="Passer au français">
+								FR
+							</button>
+						</div>
+						{/* <picture className="header__lang-icon">
+							<source srcSet={eiffelTowerAvif.src} type="image/avif" />
+							<source srcSet={eiffelTowerWebp.src} type="image/webp" />
+							<Image
+								src={eiffelTowerPng}
+								alt=""
+								width={16}
+								height={16}
+								priority
+							/>
+						</picture> */}
+					</div>
+				</div>
+				<div className="header__nav-main">
+					<h1 className="header__title">
+						<Link href={`/${currentLang}`}>
+							<span className="header__title-name">
+								{dictionary.header.title.name}
+							</span>
+							<span className="header__title-separator"> | </span>
+							<span className="header__title-role">
+								{dictionary.header.title.role}
+							</span>
+						</Link>
+					</h1>
+					<Link href={`/${currentLang}/blog`} aria-label="Blog LostInTab">
+						Blog LostInTab
+					</Link>
+				</div>
 			</nav>
 		</header>
 	);
