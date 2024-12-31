@@ -1,0 +1,56 @@
+/** @format */
+
+$off-white: #f8f9ff;
+$near-black: #0a0b14;
+
+$primary-color: #f4c430;
+$secondary-color: #284b63;
+$tertiary-color: #e6dbc9;
+
+// $dark-gray: #353535;
+$dark-gray: #2e2e2c;
+$medium-gray: #464643;
+$light-gray: #e8ebf2;
+
+// Usage variables in the code
+$color-main-bg: $off-white;
+$color-main-text: $near-black;
+
+$color-header-bg: $primary-color;
+$color-header-text: $near-black;
+$color-header-text-role: $dark-gray;
+
+$color_lang-toggle_bg: $off-white;
+$color_lang-toggle_border: $dark-gray;
+$color_lang-toggle_bg-activated: $dark-gray;
+$color_lang-toggle_text-activated: $off-white;
+$color_lang-toggle_text-disabled: $medium-gray;
+$color_lang-toggle_disabled-hover_bg: $secondary-color;
+$color_lang-toggle_disabled-hover_text: $off-white;
+
+$color-scroll-progress-line: $secondary-color;
+$color-scroll-progress-indicator: $medium-gray;
+$color-scroll-progress-indicator-active: $secondary-color;
+
+$color-hero-bg: $off-white;
+$color-hero-title: $near-black;
+$color-hero-collapse-title: $off-white;
+$color-hero-collapse-bg-title: $medium-gray;
+$color-hero-collapse-bg: $light-gray;
+$color-hero-collapse-border: $medium-gray;
+$color-hero-text: $near-black;
+
+$color-section-bg-even: $off-white;
+$color-section-bg-odd: $tertiary-color;
+$color-section-title: $secondary-color;
+
+$color-bottom-footer-bg: $light-gray;
+$color-bottom-footer-title: $secondary-color;
+$color-bottom-footer-text: $near-black;
+
+$color-sticky-footer-bg: $dark-gray;
+$color-sticky-footer-text: $off-white;
+
+// $color-accent: $secondary-color;
+$color-link: $secondary-color;
+$color-link-bg: $off-white;

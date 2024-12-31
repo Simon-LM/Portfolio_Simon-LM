@@ -94,7 +94,10 @@ export default function Header({ dictionary }: HeaderProps) {
 							</span>
 						</Link>
 					</h1>
-					<Link href={`/${currentLang}/blog`} aria-label="Blog LostInTab">
+					<Link
+						href={`/${currentLang}/blog`}
+						className="header__blog-link"
+						aria-label="Blog LostInTab">
 						Blog LostInTab
 					</Link>
 				</div>

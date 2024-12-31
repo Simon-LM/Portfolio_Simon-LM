@@ -2,7 +2,7 @@
 
 .bottomFooter {
 	padding: 2rem 1rem;
-	background: #f8f9fa;
+	background: $color-bottom-footer-bg;
 	margin-top: auto;
 	margin-bottom: 4rem;
 
@@ -10,21 +10,5 @@
 		display: flex;
 		justify-content: center;
 		gap: 2rem;
-
-		a {
-			color: #666;
-			text-decoration: none;
-			transition: color 0.3s;
-
-			&:hover,
-			&:focus {
-				color: #0070f3;
-			}
-
-			&:focus-visible {
-				outline: 2px solid #0070f3;
-				outline-offset: 2px;
-			}
-		}
 	}
 }

@@ -24,7 +24,7 @@ export default function StickyFooter() {
 					href="/accessibility"
 					className="sticky-footer__accessibility"
 					aria-label={accessibilityText}>
-					<FaUniversalAccess className="sticky-footer__link" />
+					<FaUniversalAccess className="sticky-footer__accessibility-icon" />
 					<span className="sticky-footer__accessibility-text">
 						{accessibilityText}
 					</span>
@@ -36,7 +36,7 @@ export default function StickyFooter() {
 						target="_blank"
 						rel="noopener noreferrer"
 						aria-label="Twitter">
-						<FaTwitter />
+						<FaTwitter className="sticky-footer__icon" />
 					</Link>
 					<Link
 						href="https://youtube.com/"
@@ -44,7 +44,7 @@ export default function StickyFooter() {
 						target="_blank"
 						rel="noopener noreferrer"
 						aria-label="YouTube">
-						<FaYoutube />
+						<FaYoutube className="sticky-footer__icon" />
 					</Link>
 					<Link
 						href="https://github.com/"
@@ -52,7 +52,7 @@ export default function StickyFooter() {
 						target="_blank"
 						rel="noopener noreferrer"
 						aria-label="GitHub">
-						<FaGithub />
+						<FaGithub className="sticky-footer__icon" />
 					</Link>
 				</div>
 				<div className="sticky-footer__fixed-links">
@@ -62,13 +62,13 @@ export default function StickyFooter() {
 						target="_blank"
 						rel="noopener noreferrer"
 						aria-label="LinkedIn">
-						<FaLinkedin />
+						<FaLinkedin className="sticky-footer__icon" />
 					</Link>
 					<Link
 						href="#contact"
 						className="sticky-footer__link"
 						aria-label={currentLang === "fr" ? "Contact" : "Contact"}>
-						<MdEmail />
+						<MdEmail className="sticky-footer__icon" />
 					</Link>
 				</div>
 			</nav>

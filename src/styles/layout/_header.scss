@@ -1,8 +1,9 @@
 /** @format */
 
 .header {
-	background: gainsboro;
-	background: rgb(219, 204, 43);
+	// background: #e2cc50;
+	background: $color-header-bg;
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.22);
 	&__utils {
 		display: flex;
 		align-items: center;
@@ -33,16 +34,16 @@
 	&__lang-toggle {
 		display: flex;
 		width: fit-content;
-		border: 1px solid #000;
+		border: 1px solid $color_lang-toggle_border;
 		border-radius: 1.25rem;
 		overflow: hidden;
 		margin: 0 auto;
-		background-color: #f5f5f5;
+		background-color: $color_lang-toggle_bg;
 		margin-inline: -0.25rem;
 		&:hover {
 			cursor: pointer;
 			transition: all 0.2s ease;
-			transform: scale(1.1);
+			// transform: scale(1.05);
 		}
 	}
 
@@ -53,44 +54,45 @@
 		padding: 0.125rem 0.5rem;
 		border: none;
 		background-color: transparent;
-		color: #666;
-		cursor: pointer;
+		color: $color_lang-toggle_text-disabled;
 		transition: all 0.5s ease;
 		text-align: center;
 		border-radius: 1.25rem;
 		font-weight: 700;
 		font-size: 0.75rem;
-		margin-inline: -0.125rem;
+		// margin-inline: -0.125rem;
 
 		&:disabled {
-			background-color: black;
-			color: white;
-			cursor: default;
-			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			background-color: $color_lang-toggle_bg-activated;
+			color: $color_lang-toggle_text-activated;
+			// box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 		}
 
 		&:not(:disabled):hover {
-			background-color: rgba(0, 112, 243, 0.1);
-			color: black;
+			background-color: $color_lang-toggle_disabled-hover_bg;
+			color: $color_lang-toggle_disabled-hover_text;
 		}
 
 		&:focus-visible {
-			outline: 2px solid black;
-			outline-offset: -2px;
+			background-color: $color_lang-toggle_disabled-hover_bg;
+			color: $color_lang-toggle_disabled-hover_text;
+			// outline: 1px solid white;
+			outline: none;
+			// outline-offset: -3px;
 		}
 	}
-	&__lang-icon {
-		width: 1.75rem;
-		height: 1.75rem;
-		position: relative;
-		display: block;
+	// &__lang-icon {
+	// 	width: 1.75rem;
+	// 	height: 1.75rem;
+	// 	position: relative;
+	// 	display: block;
 
-		img {
-			width: 100%;
-			height: 100%;
-			object-fit: contain;
-		}
-	}
+	// 	img {
+	// 		width: 100%;
+	// 		height: 100%;
+	// 		object-fit: contain;
+	// 	}
+	// }
 	&__nav-main {
 		display: flex;
 		justify-content: space-between;
@@ -101,26 +103,33 @@
 
 	&__title {
 		display: flex;
-		max-width: 75%;
+		flex-grow: 1;
+		// max-width: 75%;
 		margin-bottom: 1rem;
 		margin-top: -1.5rem;
+		// background: red;
 		&-name {
 			font-family: inherit;
 			font-size: inherit;
 			font-weight: 700;
 		}
-
-		&-role {
-			font-family: inherit;
-			font-size: inherit;
-			font-weight: 400;
-		}
-
 		&-separator {
 			font-family: inherit;
 			font-size: inherit;
+			font-weight: 400 !important;
 			margin: 0 0.5rem;
-			color: currentColor;
 		}
+		&-role {
+			font-family: inherit;
+			font-size: 1.5rem;
+			font-weight: 400;
+			color: $color-header-text-role;
+		}
+	}
+	&__blog-link {
+		flex-shrink: 0;
+		white-space: nowrap;
+		padding-left: 0.5rem;
+		// background: pink;
 	}
 }
