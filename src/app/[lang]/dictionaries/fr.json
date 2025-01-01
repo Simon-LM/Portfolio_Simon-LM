@@ -1,5 +1,9 @@
 {
 	"header": {
+		"accessibilityIcon": {
+			"alt": "",
+			"title": "Icône d'accessibilité"
+		},
 		"title": {
 			"name": "Simon LM",
 			"role": "Spécialiste en Accessibilité Web"
@@ -32,25 +36,70 @@
 			]
 		},
 		"about": {
-			"title": "L'utilité de l'accessibilité web, expliquée en 7 minutes",
-			"subtitle": "Une introduction à l'importance de l'accessibilité web",
+			"title": "Pourquoi ?",
+			"subtitle": "L'utilité de l'accessibilité web, expliquée en 7 minutes",
 			"videoTitle": "Vidéo explicative sur l'accessibilité web"
 		},
 		"skills": {
-			"title": "Compétences et Technologies",
-			"subtitle": "Expertise en développement frontend et accessibilité web",
-			"skills": [
-				{
-					"name": "Accessibilité Web (WCAG)",
-					"level": 95,
-					"category": "Expertise"
+			"title": "Compétences",
+			"subtitle": "Technologies & Expertise",
+			"presentation": "Développeur front-end spécialisé en accessibilité web, je conçois et intègre des interfaces inclusives, performantes et conformes aux normes (RGAA, WCAG). J'adopte une approche Content First, conciliant optimisation technique, responsive design et expérience utilisateur.",
+			"competences": {
+				"heading": "Compétences clés",
+				"frontend": {
+					"title": "Frontend & Accessibilité",
+					"items": [
+						"React.js, Next.js, Vite, TypeScript",
+						"SCSS (7.1, module.scss, BEM), intégration Tailwind CSS (via theme() ou @apply)",
+						"Audits d'accessibilité (Lighthouse, Wave, NVDA)",
+						"Performance web : lazy loading, images AVIF/WebP (<picture>), PWA"
+					]
 				},
-				{
-					"name": "React/Next.js",
-					"level": 90,
-					"category": "Frontend"
-				}
-			]
+				"backend": {
+					"title": "Backend & APIs",
+					"items": [
+						"APIs REST & GraphQL (Postman, Swagger)",
+						"Notions en PHP/Drupal",
+						"MongoDB, MariaDB, SQL"
+					]
+				},
+				"tools": {
+					"title": "Outils & Méthodes",
+					"items": [
+						"Git/GitHub, bases Docker",
+						"Tests automatisés (Jest, Vitest)",
+						"Agile (Scrum, Scrumban) et gestion sous Notion",
+						"Figma, Gimp, Inkscape, Kdenlive"
+					]
+				},
+				"closingText": "Grâce à ces compétences, je propose des solutions web robustes, maintenables et inclusives, répondant aux besoins concrets des utilisateurs."
+			}
+		},
+		"portfolio": {
+			"title": "Portfolio",
+			"subtitle": "Mes projets récents",
+			"projects": []
+		},
+		"contact": {
+			"title": "Contact",
+			"subtitle": "Prenons contact",
+			"form": {
+				"firstName": "Prénom",
+				"lastName": "Nom",
+				"company": "Entreprise",
+				"email": "Email",
+				"message": "Message",
+				"submit": "Envoyer",
+				"sending": "Envoi en cours...",
+				"success": "Message envoyé avec succès !",
+				"error": "Une erreur est survenue lors de l'envoi."
+			},
+			"email": "contact@example.com",
+			"social": {
+				"linkedin": "https://linkedin.com/in/...",
+				"github": "https://github.com/...",
+				"twitter": "https://twitter.com/..."
+			}
 		},
 		"footer": {
 			"accessibility": "Accessibilité : déclaration de conformité"

@@ -2,7 +2,7 @@
 
 /** @format */
 
-// Comment in English: Lazy import for translations
+//  Lazy import for translations
 import "server-only";
 
 const dictionaries = {

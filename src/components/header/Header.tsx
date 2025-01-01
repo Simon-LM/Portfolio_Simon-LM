@@ -6,6 +6,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "../../hooks/useLanguage";
+import { useEffect, useState } from "react";
 import accessibilityIconWebp from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.webp";
 import accessibilityIconAvif from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.avif";
 import accessibilityIconPng from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.png";
@@ -24,12 +25,36 @@ interface HeaderProps {
 				role: string;
 			};
 			blog: string;
+			accessibilityIcon: {
+				alt: string;
+				title: string;
+			};
 		};
 	};
 }
+
 export default function Header({ dictionary }: HeaderProps) {
 	const { currentLang, switchLanguage } = useLanguage();
+	const [mounted, setMounted] = useState(false);
 
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	// Rendu initial sans attribut lang
+	if (!mounted) {
+		return (
+			<header className="header">
+				<nav>
+					<div className="header__utils">
+						<div className="header__accessibility-icon skeleton" />
+					</div>
+				</nav>
+			</header>
+		);
+	}
+
+	// Rendu après hydratation
 	return (
 		<header className="header">
 			<nav>
@@ -39,9 +64,11 @@ export default function Header({ dictionary }: HeaderProps) {
 						<source srcSet={accessibilityIconWebp.src} type="image/webp" />
 						<Image
 							src={accessibilityIconPng}
-							alt=""
+							alt={dictionary.header.accessibilityIcon.alt || ""}
+							title={dictionary.header.accessibilityIcon.title || ""}
 							width={24}
 							height={24}
+							loading="eager"
 							priority
 						/>
 					</picture>

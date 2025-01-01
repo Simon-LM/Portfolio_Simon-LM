@@ -4,16 +4,15 @@
 
 import { motion } from "framer-motion";
 
-interface Skill {
-	name: string;
-	level: number;
-	category: string;
-}
-
 interface SkillsDictionary {
 	title: string;
-	subtitle: string;
-	skills: Skill[];
+	presentation: string;
+	competences: {
+		frontend: { title: string; items: string[] };
+		backend: { title: string; items: string[] };
+		tools: { title: string; items: string[] };
+		closingText: string;
+	};
 }
 
 interface SkillsProps {
@@ -25,76 +24,90 @@ const containerVariants = {
 	visible: {
 		opacity: 1,
 		transition: {
-			duration: 1.5,
-			staggerChildren: 0.2,
+			staggerChildren: 0.3,
 		},
 	},
 };
 
 const itemVariants = {
-	hidden: { opacity: 0, x: -20 },
+	hidden: { opacity: 0, x: -50 },
 	visible: {
 		opacity: 1,
 		x: 0,
-		transition: { duration: 0.8 },
+		transition: {
+			duration: 0.8,
+			ease: "easeOut",
+		},
 	},
 };
 
-const barVariants = {
-	hidden: { scaleX: 0 },
-	visible: {
-		scaleX: 1,
-		transition: { duration: 1, ease: "easeOut" },
-	},
-};
-
-export default function SkillsClient({ dictionary }: SkillsProps) {
+export default function Skills({ dictionary }: SkillsProps) {
 	return (
 		<motion.section
-			id="skills"
 			className="skills"
+			id="skills"
 			variants={containerVariants}
 			initial="hidden"
 			whileInView="visible"
-			viewport={{
-				once: true,
-				amount: 0.3,
-				margin: "-100px",
-			}}
-			aria-labelledby="skills-title">
-			<motion.div className="content">
-				<motion.h2 id="skills-title" className="title" variants={itemVariants}>
+			viewport={{ once: true }}>
+			<div className="skills__container">
+				<motion.h2 className="skills__title" variants={itemVariants}>
 					{dictionary.title}
 				</motion.h2>
-				<motion.p className="subtitle" variants={itemVariants}>
-					{dictionary.subtitle}
+				<motion.p className="skills__presentation" variants={itemVariants}>
+					{dictionary.presentation}
 				</motion.p>
-				<div className="skills-grid">
-					{dictionary.skills.map((skill) => (
-						<motion.div
-							key={skill.name}
-							className="skill-item"
-							variants={itemVariants}>
-							<span className="skill-name">{skill.name}</span>
-							<motion.div
-								className="skill-bar"
-								variants={barVariants}
-								style={{ transformOrigin: "left" }}
-								custom={skill.level}>
-								<div
-									className="skill-level"
-									style={{ width: `${skill.level}%` }}
-									role="progressbar"
-									aria-valuenow={skill.level}
-									aria-valuemin={0}
-									aria-valuemax={100}
-									aria-label={`${skill.name}: ${skill.level}%`}
-								/>
-							</motion.div>
+
+				<div className="skills__content">
+					<motion.div className="skills__cards" variants={containerVariants}>
+						{/* Frontend Card */}
+						<motion.div className="skills__card" variants={itemVariants}>
+							<h3 className="skills__card-title">
+								{dictionary.competences.frontend.title}
+							</h3>
+							<ul className="skills__card-list">
+								{dictionary.competences.frontend.items.map((item, index) => (
+									<li key={index} className="skills__card-item">
+										{item}
+									</li>
+								))}
+							</ul>
 						</motion.div>
-					))}
+
+						{/* Backend Card */}
+						<motion.div className="skills__card" variants={itemVariants}>
+							<h3 className="skills__card-title">
+								{dictionary.competences.backend.title}
+							</h3>
+							<ul className="skills__card-list">
+								{dictionary.competences.backend.items.map((item, index) => (
+									<li key={index} className="skills__card-item">
+										{item}
+									</li>
+								))}
+							</ul>
+						</motion.div>
+
+						{/* Tools Card */}
+						<motion.div className="skills__card" variants={itemVariants}>
+							<h3 className="skills__card-title">
+								{dictionary.competences.tools.title}
+							</h3>
+							<ul className="skills__card-list">
+								{dictionary.competences.tools.items.map((item, index) => (
+									<li key={index} className="skills__card-item">
+										{item}
+									</li>
+								))}
+							</ul>
+						</motion.div>
+					</motion.div>
+
+					<motion.p className="skills__closing" variants={itemVariants}>
+						{dictionary.competences.closingText}
+					</motion.p>
 				</div>
-			</motion.div>
+			</div>
 		</motion.section>
 	);
 }

@@ -1,0 +1,158 @@
+/** @format */
+
+.contact {
+	padding: 2rem 2rem;
+	padding-bottom: 4rem;
+	margin-bottom: 0;
+	background: $color-section-bg-even;
+
+	&__container {
+		margin: 0 auto;
+		text-align: center;
+		width: 75%;
+		@media screen and (max-width: 960px) {
+			width: 90%;
+		}
+		@media screen and (max-width: 480px) {
+			width: 100%;
+		}
+	}
+
+	&__title {
+		margin-bottom: 2rem;
+		color: $color-section-title;
+	}
+
+	&__subtitle {
+		margin-bottom: 3rem;
+		line-height: 1.6;
+	}
+
+	&__form {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		max-width: 100%;
+		padding: 2rem;
+		margin-bottom: 2rem;
+		background: $color_contact_form-bg;
+		border-radius: 0.5rem;
+		box-shadow: 0 2px 4px rgba($dark-gray, 0.1);
+
+		&-fields {
+			display: flex;
+			flex-wrap: wrap;
+			width: 100%;
+			justify-content: center;
+			align-items: center;
+			gap: 0 4rem;
+		}
+
+		&-field {
+			display: flex;
+			flex-direction: column;
+			flex: 1 1 12rem; // grow | shrink | basis
+			// min-width: 15rem;
+			max-width: 100%;
+			width: 100%;
+			align-items: center;
+			justify-content: center;
+			margin-bottom: 1rem;
+		}
+
+		&-label {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin-bottom: 0.5rem;
+			color: $color-main-text;
+			font-weight: 500;
+		}
+
+		&-input,
+		&-textarea {
+			width: 100%;
+			padding: 0.75rem;
+			border: 1px solid $medium-gray;
+			border-radius: 0.25rem;
+			font-family: inherit;
+			font-size: 1rem;
+
+			&:focus {
+				outline: 2px solid $color-link;
+				outline-offset: 2px;
+			}
+
+			&[aria-invalid="true"] {
+				border-color: #dc2626;
+			}
+		}
+
+		&-textarea {
+			width: 100%;
+			min-height: 6rem;
+			resize: vertical;
+		}
+
+		&-error {
+			margin-top: 0.5rem;
+			color: #dc2626;
+			font-size: 0.875rem;
+		}
+
+		&-submit {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-width: 75%;
+			// max-width: 60%;
+			padding: 0.75rem;
+			font-size: 1rem;
+			font-weight: 500;
+			border-radius: 0.25rem;
+			border: none;
+			background: $color-link;
+			color: $off-white;
+			transition: opacity 0.3s ease;
+
+			&:hover {
+				opacity: 0.9;
+			}
+
+			&:focus-visible {
+				outline: 2px solid $color-link;
+				outline-offset: 2px;
+			}
+		}
+		&__toast {
+			border-radius: 0.75rem;
+			padding: 1.5rem 2rem;
+			font-weight: 500;
+			font-size: 1.2rem;
+			background: $primary-color;
+			color: $off-white;
+			max-width: 20rem;
+			text-align: center;
+		}
+		&__form-recaptcha {
+			margin: 1rem 0;
+			display: flex;
+			justify-content: center;
+		}
+	}
+
+	// &__email-wrapper {
+	// 	margin-top: 2rem;
+	// }
+	// &__email {
+	// 	font-size: 1.2rem;
+	// 	color: $color-link;
+	// 	text-decoration: underline;
+	// 	transition: opacity 0.3s ease;
+
+	// 	&:hover {
+	// 		opacity: 0.8;
+	// 	}
+	// }
+}

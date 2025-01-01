@@ -8,6 +8,8 @@ import ScrollProgressBar from "../../components/scrollProgressBar/ScrollProgress
 import Hero from "./sections/Hero";
 import About from "./sections/About";
 import Skills from "./sections/Skills";
+import Portfolio from "./sections/Portfolio";
+import Contact from "./sections/Contact";
 import { getDictionary } from "./dictionaries";
 
 export default async function Home({ params }: { params: { lang: string } }) {
@@ -21,6 +23,8 @@ export default async function Home({ params }: { params: { lang: string } }) {
 			<Hero params={params} />
 			<About params={params} />
 			<Skills params={params} />
+			<Portfolio params={params} />
+			<Contact params={params} />
 			<StickyFooter />
 			<BottomFooter />
 		</>

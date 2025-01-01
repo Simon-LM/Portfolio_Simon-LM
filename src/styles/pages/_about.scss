@@ -1,21 +1,37 @@
 /** @format */
 
 .about {
-	// min-height: 100vh;
-	padding: 4rem 2rem;
+	padding: 2rem 2rem 3rem;
 	background: $color-section-bg-odd;
 
-	.video-wrapper {
+	&__container {
+		max-width: 90%;
+		margin: 0 auto;
+		@media screen and (max-width: 480px) {
+			max-width: 100%;
+		}
+	}
+
+	&__title {
+		text-align: center;
+		margin-bottom: 2rem;
+	}
+
+	&__subtitle {
+		text-align: center;
+		margin-bottom: 2rem;
+	}
+
+	&__video {
 		position: relative;
 		padding-bottom: 56.25%; /* 16:9 */
 		height: 0;
 		overflow: hidden;
-		max-width: 800px;
 		margin: 2rem auto;
 		border-radius: 1rem;
 		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
-		iframe {
+		&-frame {
 			position: absolute;
 			top: 0;
 			left: 0;

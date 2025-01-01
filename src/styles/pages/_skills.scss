@@ -1,35 +1,81 @@
 /** @format */
 
 .skills {
-	// min-height: 100vh;
-	padding: 4rem 2rem;
+	padding: 2rem;
+	padding-bottom: 6rem;
+	background-color: $color-section-bg-even;
 
-	.skills-grid {
-		display: grid;
+	&__container {
+		width: 100%;
+		margin: 0 auto;
+		@media screen and (min-width: 480px) {
+			max-width: 90%;
+		}
+	}
+
+	&__title {
+		text-align: center;
+		margin-bottom: 2rem;
+		color: $color-section-title;
+	}
+
+	&__presentation {
+		margin: 0 auto 3rem;
+		text-align: center;
+		line-height: 1.6;
+	}
+
+	&__subtitle {
+		text-align: center;
+		margin-bottom: 2rem;
+		color: $color-section-title;
+	}
+
+	&__cards {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		margin: 0 auto;
 		gap: 2rem;
-		max-width: 800px;
-		margin: 3rem auto;
+		margin-bottom: 3rem;
 	}
 
-	.skill-item {
-		background: var(--background-light);
-		padding: 1.5rem;
+	&__card {
+		flex: 1 1 15rem;
+		max-width: 100%;
+		background: $color_section_card-bg;
+		padding: 2rem;
 		border-radius: 0.5rem;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		box-shadow: 0 4px 6px rgba($dark-gray, 0.1);
+
+		&-title {
+			color: $color-section-title;
+			margin-bottom: 1.5rem;
+			font-size: 1.25rem;
+		}
+
+		&-list {
+			list-style: none;
+			padding: 0;
+		}
+
+		&-item {
+			margin-bottom: 1rem;
+			padding-left: 1.5rem;
+			position: relative;
+
+			&::before {
+				content: "•";
+				position: absolute;
+				left: 0;
+			}
+		}
 	}
 
-	.skill-bar {
-		height: 8px;
-		background: var(--background-muted);
-		border-radius: 4px;
-		margin-top: 0.5rem;
-		overflow: hidden;
-	}
-
-	.skill-level {
-		height: 100%;
-		background: var(--primary-color);
-		border-radius: 4px;
-		transition: width 1s ease-out;
+	&__closing {
+		max-width: 800px;
+		margin: 3rem auto 0;
+		text-align: center;
+		font-style: italic;
 	}
 }

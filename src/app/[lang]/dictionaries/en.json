@@ -1,5 +1,9 @@
 {
 	"header": {
+		"accessibilityIcon": {
+			"alt": "",
+			"title": "Accessibility icon"
+		},
 		"title": {
 			"name": "Simon LM",
 			"role": "Web Accessibility Specialist"
@@ -33,25 +37,70 @@
 			]
 		},
 		"about": {
-			"title": "The importance of web accessibility, explained in 7 minutes",
-			"subtitle": "An introduction to web accessibility",
+			"title": "Why ?",
+			"subtitle": "The importance of web accessibility, explained in 7 minutes",
 			"videoTitle": "Explanatory video about web accessibility"
 		},
 		"skills": {
-			"title": "Skills and Technologies",
-			"subtitle": "Expertise in frontend development and web accessibility",
-			"skills": [
-				{
-					"name": "Web Accessibility (WCAG)",
-					"level": 95,
-					"category": "Expertise"
+			"title": "Skills",
+			"subtitle": "Technologies & Expertise",
+			"presentation": "As a frontend developer specialized in web accessibility, I design and integrate inclusive, high-performance interfaces that comply with standards (RGAA, WCAG). I adopt a Content First approach, balancing technical optimization, responsive design, and user experience.",
+			"competences": {
+				"heading": "Key Skills",
+				"frontend": {
+					"title": "Frontend & Accessibility",
+					"items": [
+						"React.js, Next.js, Vite, TypeScript",
+						"SCSS (7.1, module.scss, BEM), Tailwind CSS integration (via theme() or @apply)",
+						"Accessibility audits (Lighthouse, Wave, NVDA)",
+						"Web Performance: lazy loading, AVIF/WebP images (<picture>), PWA"
+					]
 				},
-				{
-					"name": "React/Next.js",
-					"level": 90,
-					"category": "Frontend"
-				}
-			]
+				"backend": {
+					"title": "Backend & APIs",
+					"items": [
+						"REST & GraphQL APIs (Postman, Swagger)",
+						"PHP/Drupal knowledge",
+						"MongoDB, MariaDB, SQL"
+					]
+				},
+				"tools": {
+					"title": "Tools & Methods",
+					"items": [
+						"Git/GitHub, Docker basics",
+						"Automated Testing (Jest, Vitest)",
+						"Agile (Scrum, Scrumban) and Notion management",
+						"Figma, Gimp, Inkscape, Kdenlive"
+					]
+				},
+				"closingText": "With these skills, I deliver robust, maintainable, and inclusive web solutions that meet real user needs."
+			}
+		},
+		"portfolio": {
+			"title": "Portfolio",
+			"subtitle": "My recent projects",
+			"projects": []
+		},
+		"contact": {
+			"title": "Contact",
+			"subtitle": "Let's get in touch",
+			"email": "contact@example.com",
+			"form": {
+				"firstName": "First Name",
+				"lastName": "Last Name",
+				"company": "Company",
+				"email": "Email",
+				"message": "Message",
+				"submit": "Send",
+				"sending": "Sending...",
+				"success": "Message sent successfully!",
+				"error": "An error occurred while sending the message."
+			},
+			"social": {
+				"linkedin": "https://linkedin.com/in/...",
+				"github": "https://github.com/...",
+				"twitter": "https://twitter.com/..."
+			}
 		},
 		"footer": {
 			"accessibility": "Accessibility: compliance statement"

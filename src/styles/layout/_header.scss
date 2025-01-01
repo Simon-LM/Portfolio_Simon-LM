@@ -110,18 +110,18 @@
 		// background: red;
 		&-name {
 			font-family: inherit;
-			font-size: inherit;
+			font-size: clamp(1.5rem, 3vw, 3em);
 			font-weight: 700;
 		}
 		&-separator {
 			font-family: inherit;
-			font-size: inherit;
+			font-size: clamp(1.5rem, 3vw, 3em);
 			font-weight: 400 !important;
 			margin: 0 0.5rem;
 		}
 		&-role {
 			font-family: inherit;
-			font-size: 1.5rem;
+			font-size: clamp(1rem, 2vw, 1.5rem);
 			font-weight: 400;
 			color: $color-header-text-role;
 		}
