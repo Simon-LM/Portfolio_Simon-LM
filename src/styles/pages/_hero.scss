@@ -20,6 +20,7 @@
 	}
 
 	&__title {
+		font-family: "Quicksand", sans-serif;
 		margin-bottom: 3rem;
 		font-size: clamp(2.5rem, 5vw, 3rem);
 		color: $color-hero-title;

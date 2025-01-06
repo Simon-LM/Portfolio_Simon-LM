@@ -8,7 +8,7 @@
 			"name": "Simon LM",
 			"role": "Spécialiste en Accessibilité Web"
 		},
-		"blog": "Blog LostInTab"
+		"blog": "LostInTab"
 	},
 	"main": {
 		"welcome": "Bienvenue sur mon site"
@@ -49,29 +49,24 @@
 				"frontend": {
 					"title": "Frontend & Accessibilité",
 					"items": [
-						"React.js, Next.js, Vite, TypeScript",
-						"SCSS (7.1, module.scss, BEM), intégration Tailwind CSS (via theme() ou @apply)",
-						"Audits d'accessibilité (Lighthouse, Wave, NVDA)",
-						"Performance web : lazy loading, images AVIF/WebP (<picture>), PWA"
+						"`React.js, **Next.js**, Vite, **TypeScript**`",
+						"`**SCSS** (7.1, module.scss, BEM), **Tailwind CSS**`",
+						"`Audits d'accessibilité (Lighthouse, Wave, **NVDA**)`",
+						"`**Zustand**, Redux Toolkit`",
+						"`**Performance web** : lazy loading, images AVIF/WebP`",
+						"`Tests automatisés (Jest, Vitest, **Pa11y**)`"
 					]
 				},
 				"backend": {
-					"title": "Backend & APIs",
+					"title": "Backend & Outils",
 					"items": [
-						"APIs REST & GraphQL (Postman, Swagger)",
-						"Notions en PHP/Drupal",
-						"MongoDB, MariaDB, SQL"
+						"`APIs **REST** & **GraphQL** (Postman, Swagger)`",
+						"`**EmailJS**`",
+						"`Notions en PHP/Drupal`",
+						"`**Figma**, Gimp, Inkscape, Kdenlive`"
 					]
 				},
-				"tools": {
-					"title": "Outils & Méthodes",
-					"items": [
-						"Git/GitHub, bases Docker",
-						"Tests automatisés (Jest, Vitest)",
-						"Agile (Scrum, Scrumban) et gestion sous Notion",
-						"Figma, Gimp, Inkscape, Kdenlive"
-					]
-				},
+
 				"closingText": "Grâce à ces compétences, je propose des solutions web robustes, maintenables et inclusives, répondant aux besoins concrets des utilisateurs."
 			}
 		},
@@ -86,19 +81,243 @@
 			"form": {
 				"firstName": "Prénom",
 				"lastName": "Nom",
+				"optional": "optionnel",
+				"phone": "Téléphone",
 				"company": "Entreprise",
 				"email": "Email",
+				"emailFormat": "Format attendu : exemple@domaine.fr",
+				"phoneFormat": {
+					"line1": "Format attendu : 06 12 34 56 78",
+					"line2": "ou +33 6 12 34 56 78"
+				},
+				"subject": "Sujet",
 				"message": "Message",
 				"submit": "Envoyer",
 				"sending": "Envoi en cours...",
 				"success": "Message envoyé avec succès !",
-				"error": "Une erreur est survenue lors de l'envoi."
+				"error": "Une erreur est survenue lors de l'envoi.",
+				"errors": {
+					"firstName": "Le prénom doit contenir au moins 2 caractères",
+					"lastName": "Le nom doit contenir au moins 2 caractères",
+					"email": "Format d'email invalide",
+					"subject": "Le sujet doit contenir au moins 2 caractères",
+					"message": "Le message doit contenir au moins 10 caractères",
+					"gdpr": "Vous devez accepter le traitement des données"
+				},
+
+				"gdpr": {
+					"text": "Les données personnelles collectées (nom, prénom, adresse e-mail, numéro de téléphone) sont utilisées uniquement pour répondre à votre demande et sont conservées 36 mois maximum. Ces données sont notamment traitées par l'IA de ProtonMail, qui garantit leur confidentialité. Vos droits (accès, rectification, suppression) peuvent être exercés via ce formulaire.",
+					"privacyLink": "Voir notre politique de confidentialité.",
+					"checkbox": "J'accepte le traitement de mes données personnelles"
+				}
 			},
 			"email": "contact@example.com",
 			"social": {
 				"linkedin": "https://linkedin.com/in/...",
 				"github": "https://github.com/...",
 				"twitter": "https://twitter.com/..."
+			}
+		},
+		"privacy": {
+			"title": "Politique de Confidentialité",
+			"lastUpdate": "Dernière mise à jour : Janvier 2025",
+			"sections": {
+				"introduction": {
+					"title": "Introduction",
+					"content": "Cette politique de confidentialité explique comment nous collectons, utilisons et protégeons vos informations personnelles sur simon-lm-dev."
+				},
+				"cookies": {
+					"title": "Utilisation des Cookies",
+					"content": "Notre site n'utilise que des cookies techniques essentiels au fonctionnement du site. Aucun cookie publicitaire ou de traçage n'est utilisé. Aucune donnée personnelle n'est collectée via les cookies."
+				},
+				"dataCollection": {
+					"title": "Collecte de Données",
+					"content": "Nous collectons uniquement les données que vous fournissez volontairement via notre formulaire de contact :",
+					"items": [
+						"Nom et prénom",
+						"Adresse e-mail",
+						"Numéro de téléphone (facultatif)",
+						"Nom de l'entreprise (facultatif)",
+						"Contenu de votre message"
+					]
+				},
+				"dataUse": {
+					"title": "Utilisation des Données",
+					"content": "Vos données sont utilisées exclusivement pour :",
+					"items": [
+						"Répondre à votre demande de contact",
+						"Assurer le suivi de nos échanges",
+						"Améliorer la qualité de nos services"
+					]
+				},
+				"dataProcessing": {
+					"title": "Traitement des Données",
+					"content": "Les données sont traitées en interne via des systèmes d'IA sécurisés :",
+					"items": [
+						"IA de ProtonMail pour le traitement des emails",
+						"Systèmes d'IA internes garantissant l'anonymat",
+						"Aucune revente ou partage avec des tiers"
+					]
+				},
+				"dataSecurity": {
+					"title": "Sécurité des Données",
+					"content": "Nous mettons en œuvre des mesures de sécurité pour protéger vos données :",
+					"items": [
+						"Chiffrement des communications",
+						"Accès restreint aux données",
+						"Hébergement sécurisé en Suisse"
+					]
+				},
+				"dataRetention": {
+					"title": "Conservation des Données",
+					"content": "Vos données sont conservées pendant une durée maximale de 36 mois à compter de notre dernier contact. Au-delà, elles sont automatiquement supprimées."
+				},
+				"yourRights": {
+					"title": "Vos Droits RGPD",
+					"content": "Conformément au RGPD, vous disposez des droits suivants :",
+					"items": [
+						"Droit d'accès à vos données",
+						"Droit de rectification",
+						"Droit à l'effacement",
+						"Droit à la limitation du traitement",
+						"Droit à la portabilité des données",
+						"Droit d'opposition"
+					],
+					"exercise": "Pour exercer ces droits, contactez-nous via le formulaire de contact."
+				},
+				"contact": {
+					"title": "Contact DPO",
+					"content": "Pour toute question concernant vos données personnelles :"
+				}
+			}
+		},
+		"legal": {
+			"title": "Mentions Légales",
+			"lastUpdate": "Dernière mise à jour : Janvier 2025",
+			"sections": {
+				"hosting": {
+					"title": "Hébergeur du site",
+					"content": "Le site est hébergé par Vercel Inc.",
+					"items": [
+						"Adresse : 340 S Lemon Ave #4133 Walnut, CA 91789, USA",
+						"Site web : vercel.com",
+						"Email : privacy@vercel.com"
+					]
+				},
+				"ownership": {
+					"title": "Propriétaire et éditeur du site",
+					"content": "Informations légales concernant l'éditeur du site :",
+					"items": [
+						"Éditeur du site : Simon LM",
+						"Adresse : Adresse anonymisée auprès de l'hébergeur",
+						"E-mail : Formulaire de contact",
+						"Directeur de la publication : Simon LM"
+					]
+				},
+				"intellectual": {
+					"title": "Propriété intellectuelle",
+					"content": "Tous les contenus présents sur ce site (textes, images, vidéos, etc.) sont la propriété exclusive de Simon LM, sauf mention contraire. Les icônes utilisées proviennent de bibliothèques libres de droits et respectent leurs licences respectives.",
+					"items": [
+						"Reproduction interdite sans autorisation",
+						"Les marques citées appartiennent à leurs propriétaires respectifs",
+						"Le code source est protégé par le droit d'auteur"
+					]
+				},
+				"responsibility": {
+					"title": "Responsabilité",
+					"content": "L'éditeur s'efforce d'assurer l'exactitude des informations mais ne peut garantir leur exhaustivité ou leur actualité. Le site peut faire l'objet d'interruptions techniques pour maintenance."
+				},
+				"contact": {
+					"title": "Contact",
+					"content": "Pour toute question concernant le site :"
+				}
+			}
+		},
+		"terms": {
+			"title": "Conditions Générales d'Utilisation",
+			"lastUpdate": "Dernière mise à jour : Janvier 2025",
+			"sections": {
+				"purpose": {
+					"title": "Objet",
+					"content": "Les présentes Conditions Générales d'Utilisation (CGU) régissent l'accès et l'utilisation du site simon-lm.dev."
+				},
+				"access": {
+					"title": "Accès au site",
+					"content": "Le site est accessible gratuitement à tout utilisateur disposant d'un accès à Internet. L'éditeur ne saurait être tenu responsable en cas de dysfonctionnement ou d'interruption du service.",
+					"items": [
+						"Accessibilité 24h/24 et 7j/7, sauf cas de force majeure",
+						"Maintenance possible avec interruption temporaire",
+						"Optimisation pour les dernières versions des navigateurs"
+					]
+				},
+				"usage": {
+					"title": "Utilisation du site",
+					"content": "L'utilisateur s'engage à ne pas perturber le fonctionnement du site et à ne pas utiliser son contenu sans autorisation préalable.",
+					"items": [
+						"Utilisation loyale et respectueuse du site",
+						"Interdiction de toute tentative de piratage",
+						"Respect des droits d'auteur et de propriété intellectuelle"
+					]
+				},
+				"intellectual": {
+					"title": "Propriété intellectuelle",
+					"content": "Tous les contenus du site sont protégés par le droit d'auteur. Toute reproduction sans accord préalable est interdite.",
+					"items": [
+						"Protection des textes, images et code source",
+						"Utilisation limitée à un usage personnel",
+						"Demande d'autorisation nécessaire pour toute reproduction"
+					]
+				}
+			}
+		},
+		"accessibility": {
+			"title": "Déclaration de conformité à l'accessibilité",
+			"lastUpdate": "Dernière mise à jour : Janvier 2025",
+			"sections": {
+				"introduction": {
+					"title": "Introduction",
+					"content": "Ce site web, simon-lm.dev, est un portfolio personnel créé et édité par Simon LM. Publié en janvier 2025, il a pour objectif de respecter pleinement les critères du Référentiel Général d'Amélioration de l'Accessibilité (RGAA) d'ici mars 2025. L'accessibilité numérique est une priorité afin de garantir que toutes les personnes, y compris celles en situation de handicap, puissent naviguer et interagir avec ce site sans obstacle."
+				},
+				"conformity": {
+					"title": "État de conformité",
+					"content": "Actuellement, ce site est partiellement conforme aux critères du RGAA 4.1. Des ajustements sont en cours pour atteindre une conformité totale."
+				},
+				"improvements": {
+					"title": "Améliorations prévues",
+					"content": "Les axes d'amélioration identifiés incluent :",
+					"items": [
+						"La vérification et l'optimisation de la compatibilité avec les technologies d'assistance (lecteurs d'écran, par exemple)",
+						"L'amélioration de la navigation au clavier pour garantir une expérience fluide et accessible",
+						"La mise à disposition d'options supplémentaires pour ajuster les contrastes et couleurs"
+					]
+				},
+				"technologies": {
+					"title": "Technologies utilisées",
+					"content": "Ce site repose sur les technologies suivantes :",
+					"items": [
+						"Framework principal : Next.js (React)",
+						"Langages : HTML5, CSS3 et JavaScript"
+					]
+				},
+				"contact": {
+					"title": "Procédure de retour et contact",
+					"content": "Si vous constatez un problème d'accessibilité sur ce site, n'hésitez pas à m'en informer via le formulaire de contact. Merci de décrire précisément le problème rencontré (page concernée, nature de la difficulté, technologies utilisées, etc.). Je m'engage à analyser votre demande et à vous répondre dans les meilleurs délais, tout en mettant en œuvre les corrections nécessaires."
+				},
+				"recourse": {
+					"title": "Voie de recours",
+					"content": "Si vous estimez que vos droits ne sont pas respectés ou que la réponse apportée n'est pas satisfaisante, vous avez la possibilité de saisir le Défenseur des droits :",
+					"items": [
+						"En ligne : https://www.defenseurdesdroits.fr",
+						"Par courrier (sans affranchissement) :",
+						"Défenseur des droits",
+						"Libre réponse 71120",
+						"75342 Paris CEDEX 07"
+					]
+				},
+				"legal": {
+					"title": "Informations légales complémentaires",
+					"content": "L'accessibilité numérique est encadrée par l'article 47 de la loi n° 2005-102 du 11 février 2005 pour l'égalité des droits et des chances. Bien que ce site soit personnel et non soumis aux mêmes obligations que les sites publics, je m'engage volontairement à respecter ces normes pour garantir une navigation inclusive."
+				}
 			}
 		},
 		"footer": {

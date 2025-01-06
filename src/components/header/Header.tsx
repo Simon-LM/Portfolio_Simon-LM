@@ -5,17 +5,19 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useLanguage } from "../../hooks/useLanguage";
 import { useEffect, useState } from "react";
+import { useLanguageStore } from "../../store/langueStore";
+import { useRouter } from "next/navigation";
+import {
+	shouldUpdateDictionary,
+	DICTIONARY_VERSION,
+} from "../../utils/dictionaryVersion";
+
 import accessibilityIconWebp from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.webp";
 import accessibilityIconAvif from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.avif";
 import accessibilityIconPng from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.png";
-// import eiffelTowerWebp from "../../../public/icons/icons_FR-EN/Icon_Eiffel-tower/Icon_Eiffel-tower.webp";
-// import eiffelTowerAvif from "../../../public/icons/icons_FR-EN/Icon_Eiffel-tower/Icon_Eiffel-tower.avif";
-// import eiffelTowerPng from "../../../public/icons/icons_FR-EN/Icon_Eiffel-tower/Icon_Eiffel-tower.png";
-// import phoneBoxWebp from "../../../public/icons/icons_FR-EN/Red_telephone_box/Icon_red-telephone-boxe.webp";
-// import phoneBoxAvif from "../../../public/icons/icons_FR-EN/Red_telephone_box/Icon_red-telephone-boxe.avif";
-// import phoneBoxPng from "../../../public/icons/icons_FR-EN/Red_telephone_box/Icon_red-telephone-boxe.png";
+
+import LogoLostInTab from "../../../public/Logo_LostInTab/LOGO_LostInTab_circle_2024.png";
 
 interface HeaderProps {
 	dictionary: {
@@ -34,14 +36,28 @@ interface HeaderProps {
 }
 
 export default function Header({ dictionary }: HeaderProps) {
-	const { currentLang, switchLanguage } = useLanguage();
+	const { language, setLanguage, version, setVersion } = useLanguageStore();
+	const router = useRouter();
 	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
 		setMounted(true);
 	}, []);
 
-	// Rendu initial sans attribut lang
+	useEffect(() => {
+		if (shouldUpdateDictionary(version)) {
+			setVersion(DICTIONARY_VERSION);
+			router.refresh();
+		}
+	}, [version, setVersion, router]);
+
+	const switchLanguage = (newLang: "fr" | "en") => {
+		setLanguage(newLang);
+		const currentPath = window.location.pathname.split("/").slice(2).join("/");
+		router.push(`/${newLang}/${currentPath}`);
+	};
+
+	// Rendu initial avant hydratation
 	if (!mounted) {
 		return (
 			<header className="header">
@@ -53,7 +69,6 @@ export default function Header({ dictionary }: HeaderProps) {
 			</header>
 		);
 	}
-
 	// Rendu après hydratation
 	return (
 		<header className="header">
@@ -73,45 +88,30 @@ export default function Header({ dictionary }: HeaderProps) {
 						/>
 					</picture>
 					<div className="header__lang">
-						{/* <picture className="header__lang-icon">
-							<source srcSet={phoneBoxAvif.src} type="image/avif" />
-							<source srcSet={phoneBoxWebp.src} type="image/webp" />
-							<Image src={phoneBoxPng} alt="" width={16} height={16} priority />
-						</picture> */}
 						<div className="header__lang-toggle">
 							<button
 								onClick={() => switchLanguage("en")}
 								className="header__lang-button"
-								aria-pressed={currentLang === "en"}
-								disabled={currentLang === "en"}
+								aria-pressed={language === "en"}
+								disabled={language === "en"}
 								aria-label="Switch to English">
 								EN
 							</button>
 							<button
 								onClick={() => switchLanguage("fr")}
 								className="header__lang-button"
-								aria-pressed={currentLang === "fr"}
-								disabled={currentLang === "fr"}
+								aria-pressed={language === "fr"}
+								disabled={language === "fr"}
 								aria-label="Passer au français">
 								FR
 							</button>
 						</div>
-						{/* <picture className="header__lang-icon">
-							<source srcSet={eiffelTowerAvif.src} type="image/avif" />
-							<source srcSet={eiffelTowerWebp.src} type="image/webp" />
-							<Image
-								src={eiffelTowerPng}
-								alt=""
-								width={16}
-								height={16}
-								priority
-							/>
-						</picture> */}
 					</div>
 				</div>
+
 				<div className="header__nav-main">
-					<h1 className="header__title">
-						<Link href={`/${currentLang}`}>
+					<div className="header__title">
+						<Link href={`/${language}`}>
 							<span className="header__title-name">
 								{dictionary.header.title.name}
 							</span>
@@ -120,12 +120,22 @@ export default function Header({ dictionary }: HeaderProps) {
 								{dictionary.header.title.role}
 							</span>
 						</Link>
-					</h1>
-					<Link
-						href={`/${currentLang}/blog`}
+					</div>
+					{/* <Link
+						href={`/${language}/blog`}
 						className="header__blog-link"
 						aria-label="Blog LostInTab">
-						Blog LostInTab
+						{dictionary.header.blog}
+					</Link> */}
+
+					<Link
+						href="https://www.youtube.com/@LostInTab"
+						className="header__blog-link"
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label="Youtube LostInTab">
+						<Image src={LogoLostInTab} alt="" className="header__blog-logo" />
+						{dictionary.header.blog}
 					</Link>
 				</div>
 			</nav>

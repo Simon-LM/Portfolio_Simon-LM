@@ -1,269 +1,72 @@
 /** @format */
 
-// "use client";
+"use client";
 
-// import { useEffect, useState } from "react";
-// import { motion, useScroll } from "framer-motion";
-
-// interface Section {
-// 	id: string;
-// 	name: string;
-// }
-
-// const sections: Section[] = [
-// 	{ id: "hero", name: "Hero" },
-// 	{ id: "about", name: "About" },
-// 	{ id: "skills", name: "Skills" },
-// ];
-
-// export default function ScrollProgressBar() {
-// 	const [activeSection, setActiveSection] = useState<string>("hero");
-// 	const { scrollYProgress } = useScroll();
-
-// 	useEffect(() => {
-// 		const handleScroll = () => {
-// 			const pageHeight =
-// 				document.documentElement.scrollHeight - window.innerHeight;
-// 			const currentScroll = window.scrollY;
-
-// 			sections.forEach((section) => {
-// 				const element = document.getElementById(section.id);
-// 				if (element) {
-// 					const rect = element.getBoundingClientRect();
-// 					if (
-// 						rect.top <= window.innerHeight / 2 &&
-// 						rect.bottom >= window.innerHeight / 2
-// 					) {
-// 						setActiveSection(section.id);
-// 					}
-// 				}
-// 			});
-// 		};
-
-// 		window.addEventListener("scroll", handleScroll);
-// 		return () => window.removeEventListener("scroll", handleScroll);
-// 	}, []);
-
-// 	return (
-// 		<motion.div
-// 			className="scroll-progress"
-// 			style={{
-// 				position: "fixed",
-// 				right: "20px",
-// 				top: "50%",
-// 				transform: "translateY(-50%)",
-// 				zIndex: 100,
-// 			}}>
-// 			{sections.map((section) => (
-// 				<motion.div
-// 					key={section.id}
-// 					className="section-indicator"
-// 					style={{
-// 						margin: "10px 0",
-// 						width: "10px",
-// 						height: "10px",
-// 						borderRadius: "50%",
-// 						backgroundColor: activeSection === section.id ? "#0070f3" : "#ddd",
-// 						transition: "background-color 0.3s ease",
-// 					}}
-// 				/>
-// 			))}
-// 			<motion.div
-// 				className="progress-line"
-// 				style={{
-// 					position: "absolute",
-// 					left: "4px",
-// 					top: 0,
-// 					width: "2px",
-// 					height: "100%",
-// 					backgroundColor: "#ddd",
-// 					transformOrigin: "top",
-// 					scaleY: scrollYProgress,
-// 				}}
-// 			/>
-//         </motion.div>
-//         {sections.map((section) => (
-//             <motion.div
-//               key={section.id}
-//               className="section-indicator"
-//               style={{
-//                 margin: "15px 0",
-//                 padding: "5px 10px",
-//                 fontSize: "14px",
-//                 fontWeight: activeSection === section.id ? "600" : "400",
-//                 color: activeSection === section.id ? "#0070f3" : "#666",
-//                 transition: "all 0.3s ease",
-//                 cursor: "default",
-//                 textTransform: "uppercase",
-//                 letterSpacing: "1px"
-//               }}
-//             >
-//               {section.name}
-//             </motion.div>
-//           ))}
-//           <motion.div
-//             className="progress-line"
-//             style={{
-//               position: "absolute",
-//               left: "-10px",
-//               top: 0,
-//               width: "2px",
-//               height: "100%",
-//               backgroundColor: "#ddd",
-//               transformOrigin: "top",
-//               scaleY: scrollYProgress
-//             }}
-//           />
-// 	);
-// }
-
-// // // // // // // // // // // // // // // // //
-
-// // // // // // // // // // // // // // // // // // //
-
-// // // // // // // // // // // // // // // // // // // //
-
-// "use client";
-
-// import { useEffect, useState } from "react";
-// import { motion, useScroll } from "framer-motion";
+import React, { ReactNode } from "react";
+import { motion, useScroll } from "framer-motion";
+import { useEffect, useState } from "react";
+import { BsChevronUp, BsChevronDown } from "react-icons/bs";
 
 // interface Section {
 // 	id: string;
-// 	name: string;
+// 	name: string | JSX.Element;
 // 	ariaLabel: string;
 // }
 
 // const sections: Section[] = [
-// 	{ id: "hero", name: "Hero", ariaLabel: "Aller à la section d'accueil" },
-// 	{ id: "about", name: "About", ariaLabel: "Aller à la section à propos" },
-// 	{ id: "skills", name: "Skills", ariaLabel: "Aller à la section compétences" },
+// 	{
+// 		id: "hero",
+// 		name: <BsChevronUp size={16} className="scroll-progress__arrows" />,
+// 		ariaLabel: "Retourner en haut de la page",
+// 	},
+// 	{ id: "about", name: "Why?", ariaLabel: "Aller à la section Pourquoi ?" },
+// 	{
+// 		id: "skills",
+// 		name: "Skills",
+// 		ariaLabel: "Aller à la section compétences",
+// 	},
+// 	{
+// 		id: "portfolio",
+// 		name: "Portfolio",
+// 		ariaLabel: "Aller à la section portfolio",
+// 	},
+// 	{ id: "contact", name: "Contact", ariaLabel: "Aller à la section contact" },
+// 	{
+// 		id: "bottomFooter",
+// 		name: <BsChevronDown size={16} className="scroll-progress__arrows" />,
+// 		ariaLabel: "Aller en bas de la page",
+// 	},
 // ];
-
-// export default function ScrollProgressBar() {
-// 	const [activeSection, setActiveSection] = useState<string>("hero");
-// 	const { scrollYProgress } = useScroll();
-
-// 	useEffect(() => {
-// 		const handleScroll = () => {
-// 			const headerHeight = document.querySelector("header")?.offsetHeight || 0;
-// 			const scrollPosition = window.scrollY + window.innerHeight;
-// 			const documentHeight = document.documentElement.scrollHeight;
-
-// 			if (scrollPosition >= documentHeight - 100) {
-// 				setActiveSection(sections[sections.length - 1].id);
-// 				return;
-// 			}
-
-// 			if (window.scrollY <= headerHeight) {
-// 				setActiveSection("hero");
-// 				return;
-// 			}
-
-// 			sections.forEach((section) => {
-// 				const element = document.getElementById(section.id);
-// 				if (element) {
-// 					const rect = element.getBoundingClientRect();
-// 					const topThreshold = window.innerHeight * 0.4;
-// 					const bottomThreshold = window.innerHeight * 0.6;
-
-// 					if (rect.top <= topThreshold && rect.bottom >= bottomThreshold) {
-// 						setActiveSection(section.id);
-// 					}
-// 				}
-// 			});
-// 		};
-
-// 		window.addEventListener("scroll", handleScroll);
-// 		handleScroll();
-// 		return () => window.removeEventListener("scroll", handleScroll);
-// 	}, []);
-
-// 	return (
-// 		<motion.div
-// 			className="scroll-progress"
-// 			style={{
-// 				position: "fixed",
-// 				right: "1rem",
-// 				top: "50%",
-// 				transform: "translateY(-50%)",
-// 				zIndex: 100,
-// 				display: "flex",
-// 				flexDirection: "column",
-// 				alignItems: "flex-end",
-// 				height: "50vh",
-// 				justifyContent: "space-between",
-// 			}}>
-// 			{sections.map((section) => (
-// 				<motion.a
-// 					key={section.id}
-// 					href={`#${section.id}`}
-// 					className="section-indicator"
-// 					onClick={(e) => {
-// 						e.preventDefault();
-// 						if (section.id === "hero") {
-// 							window.scrollTo({
-// 								top: 0,
-// 								behavior: "smooth",
-// 							});
-// 						} else {
-// 							document.getElementById(section.id)?.scrollIntoView({
-// 								behavior: "smooth",
-// 							});
-// 						}
-// 					}}
-// 					style={{
-// 						margin: `${3}vh 0`,
-// 						padding: "1rem 0.2rem",
-// 						fontSize: "0.875rem",
-// 						color: activeSection === section.id ? "#6e4f00" : "#666",
-// 						transition: "all 0.3s ease",
-// 						cursor: "pointer",
-// 						textTransform: "uppercase",
-// 						letterSpacing: "0.0625rem",
-// 						transform: "rotate(-90deg)",
-// 						transformOrigin: "right center",
-// 						whiteSpace: "nowrap",
-// 						textDecoration: "none",
-// 					}}
-// 					aria-label={section.ariaLabel}
-// 					role="link">
-// 					{section.name}
-// 				</motion.a>
-// 			))}
-// 			<motion.div
-// 				className="progress-line"
-// 				style={{
-// 					position: "absolute",
-// 					left: "3rem",
-// 					top: 0,
-// 					width: "0.125rem",
-// 					height: "100%",
-// 					backgroundColor: "#6e4f00",
-// 					transformOrigin: "top",
-// 					scaleY: scrollYProgress,
-// 				}}
-// 			/>
-// 		</motion.div>
-// 	);
-// }
-
-// // // // // // // // // // // // // // // // // // // // // //
-"use client";
-
-import { useEffect, useState } from "react";
-import { motion, useScroll } from "framer-motion";
 
 interface Section {
 	id: string;
-	name: string;
+	name: ReactNode; // Au lieu de JSX.Element
 	ariaLabel: string;
 }
 
 const sections: Section[] = [
-	{ id: "hero", name: "Hero", ariaLabel: "Aller à la section d'accueil" },
-	{ id: "about", name: "About", ariaLabel: "Aller à la section à propos" },
-	{ id: "skills", name: "Skills", ariaLabel: "Aller à la section compétences" },
+	{
+		id: "hero",
+		name: <BsChevronUp size={16} className="scroll-progress__arrows" />,
+		ariaLabel: "Retourner en haut de la page",
+	},
+	{ id: "about", name: "Why?", ariaLabel: "Aller à la section Pourquoi ?" },
+	{
+		id: "skills",
+		name: "Skills",
+		ariaLabel: "Aller à la section compétences",
+	},
+	{
+		id: "portfolio",
+		name: "Portfolio",
+		ariaLabel: "Aller à la section portfolio",
+	},
+	{ id: "contact", name: "Contact", ariaLabel: "Aller à la section contact" },
+	{
+		id: "bottomFooter",
+		name: <BsChevronDown size={16} className="scroll-progress__arrows" />,
+		ariaLabel: "Aller en bas de la page",
+	},
 ];
 
 export default function ScrollProgressBar() {
@@ -276,24 +79,27 @@ export default function ScrollProgressBar() {
 			const scrollPosition = window.scrollY + window.innerHeight;
 			const documentHeight = document.documentElement.scrollHeight;
 
+			// Check if at bottom
 			if (scrollPosition >= documentHeight - 100) {
 				setActiveSection(sections[sections.length - 1].id);
 				return;
 			}
 
+			// Check if at top
 			if (window.scrollY <= headerHeight) {
 				setActiveSection("hero");
 				return;
 			}
 
+			// Check other sections
 			sections.forEach((section) => {
 				const element = document.getElementById(section.id);
 				if (element) {
 					const rect = element.getBoundingClientRect();
-					const topThreshold = window.innerHeight * 0.4;
-					const bottomThreshold = window.innerHeight * 0.6;
-
-					if (rect.top <= topThreshold && rect.bottom >= bottomThreshold) {
+					if (
+						rect.top <= window.innerHeight / 2 &&
+						rect.bottom >= window.innerHeight / 2
+					) {
 						setActiveSection(section.id);
 					}
 				}
@@ -301,37 +107,53 @@ export default function ScrollProgressBar() {
 		};
 
 		window.addEventListener("scroll", handleScroll);
-		handleScroll();
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
 
+	const handleClick = (
+		e: React.MouseEvent<HTMLAnchorElement>,
+		sectionId: string
+	) => {
+		e.preventDefault();
+		if (sectionId === "hero") {
+			window.scrollTo({ top: 0, behavior: "smooth" });
+		} else if (sectionId === "bottomFooter") {
+			window.scrollTo({
+				top: document.documentElement.scrollHeight,
+				behavior: "smooth",
+			});
+		} else {
+			document.getElementById(sectionId)?.scrollIntoView({
+				behavior: "smooth",
+			});
+		}
+	};
+
 	return (
-		<motion.div className="scroll-progress">
-			{sections.map((section) => (
-				<motion.a
-					key={section.id}
-					href={`#${section.id}`}
-					className="scroll-progress__indicator"
-					data-active={activeSection === section.id}
-					onClick={(e) => {
-						e.preventDefault();
-						if (section.id === "hero") {
-							window.scrollTo({ top: 0, behavior: "smooth" });
-						} else {
-							document.getElementById(section.id)?.scrollIntoView({
-								behavior: "smooth",
-							});
-						}
-					}}
-					aria-label={section.ariaLabel}
-					role="link">
-					{section.name}
-				</motion.a>
-			))}
+		<>
+			{/* Menu rotatif */}
+			<motion.div className="scroll-progress">
+				{sections.map((section) => (
+					<motion.a
+						key={section.id}
+						href={`#${section.id}`}
+						className="scroll-progress__indicator"
+						data-active={activeSection === section.id}
+						onClick={(e) => handleClick(e, section.id)}
+						aria-label={section.ariaLabel}
+						role="link">
+						{section.name}
+					</motion.a>
+				))}
+			</motion.div>
+
+			{/* Ligne de progression simple */}
 			<motion.div
-				className="scroll-progress__line"
-				style={{ scaleY: scrollYProgress }}
+				className="scroll-progress-line"
+				style={{
+					scaleY: scrollYProgress,
+				}}
 			/>
-		</motion.div>
+		</>
 	);
 }

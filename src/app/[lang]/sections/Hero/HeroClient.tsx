@@ -53,9 +53,9 @@ export default function HeroClient({ dictionary }: HeroProps) {
 			animate="visible"
 			className="hero">
 			<motion.div className="hero__content">
-				<motion.h2 variants={itemVariants} className="hero__title">
+				<motion.h1 variants={itemVariants} className="hero__title">
 					{dictionary.title}
-				</motion.h2>
+				</motion.h1>
 				{/* <motion.p variants={itemVariants} className="hero__subtitle">
 					{dictionary.subtitle}
 				</motion.p> */}

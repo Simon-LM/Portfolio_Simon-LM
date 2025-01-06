@@ -9,7 +9,7 @@
 			"role": "Web Accessibility Specialist"
 		},
 		"menu": "Menu",
-		"blog": "Blog LostInTab"
+		"blog": "LostInTab"
 	},
 	"main": {
 		"welcome": "Welcome to my site"
@@ -50,29 +50,24 @@
 				"frontend": {
 					"title": "Frontend & Accessibility",
 					"items": [
-						"React.js, Next.js, Vite, TypeScript",
-						"SCSS (7.1, module.scss, BEM), Tailwind CSS integration (via theme() or @apply)",
-						"Accessibility audits (Lighthouse, Wave, NVDA)",
-						"Web Performance: lazy loading, AVIF/WebP images (<picture>), PWA"
+						"`React.js, **Next.js**, Vite, **TypeScript**`",
+						"`**SCSS** (7.1, module.scss, BEM), **Tailwind CSS** `",
+						"`**Zustand**, Redux Toolkit`",
+						"`Accessibility audits (Lighthouse, Wave, **NVDA**)`",
+						"`**Web Performance**: lazy loading, AVIF/WebP`",
+						"`Automated Testing (Jest, Vitest, **Pa11y**)`"
 					]
 				},
 				"backend": {
-					"title": "Backend & APIs",
+					"title": "Backend & Tools",
 					"items": [
-						"REST & GraphQL APIs (Postman, Swagger)",
-						"PHP/Drupal knowledge",
-						"MongoDB, MariaDB, SQL"
+						"`**REST** & **GraphQL** APIs (Postman, Swagger)`",
+						"`**EmailJS**",
+						"`PHP/Drupal knowledge`",
+						"`**Figma**, Gimp, Inkscape, Kdenlive`"
 					]
 				},
-				"tools": {
-					"title": "Tools & Methods",
-					"items": [
-						"Git/GitHub, Docker basics",
-						"Automated Testing (Jest, Vitest)",
-						"Agile (Scrum, Scrumban) and Notion management",
-						"Figma, Gimp, Inkscape, Kdenlive"
-					]
-				},
+
 				"closingText": "With these skills, I deliver robust, maintainable, and inclusive web solutions that meet real user needs."
 			}
 		},
@@ -88,18 +83,233 @@
 			"form": {
 				"firstName": "First Name",
 				"lastName": "Last Name",
+				"optional": "optional",
+				"phone": "Phone",
 				"company": "Company",
 				"email": "Email",
+				"emailFormat": "Expected format: example@domain.com",
+				"phoneFormat": {
+					"line1": "Expected format: 06 12 34 56 78",
+					"line2": "or +33 6 12 34 56 78"
+				},
+				"subject": "Subject",
 				"message": "Message",
 				"submit": "Send",
 				"sending": "Sending...",
 				"success": "Message sent successfully!",
-				"error": "An error occurred while sending the message."
+				"error": "An error occurred while sending the message.",
+				"errors": {
+					"firstName": "First name must contain at least 2 characters",
+					"lastName": "Last name must contain at least 2 characters",
+					"email": "Invalid email format",
+					"subject": "Subject must contain at least 2 characters",
+					"message": "Message must contain at least 10 characters",
+					"gdpr": "You must agree to data processing"
+				},
+
+				"gdpr": {
+					"text": "Personal data collected (first name, last name, email address, phone number) is used only to respond to your request and kept for a maximum of 36 months. This data is processed by ProtonMail AI, which ensures its confidentiality. Your rights (access, rectification, deletion) can be exercised through this form.",
+					"privacyLink": "See our privacy policy.",
+					"checkbox": "I agree to the processing of my personal data"
+				}
 			},
 			"social": {
 				"linkedin": "https://linkedin.com/in/...",
 				"github": "https://github.com/...",
 				"twitter": "https://twitter.com/..."
+			}
+		},
+		"privacy": {
+			"title": "Privacy Policy",
+			"lastUpdate": "Last update: Junary 2025",
+			"sections": {
+				"introduction": {
+					"title": "Introduction",
+					"content": "This privacy policy explains how we collect, use and protect your personal information on simon-lm.dev."
+				},
+				"cookies": {
+					"title": "Use of Cookies",
+					"content": "Our site only uses essential technical cookies necessary for the site to function. No advertising or tracking cookies are used. No personal data is collected via cookies."
+				},
+				"dataCollection": {
+					"title": "Data Collection",
+					"content": "We only collect data that you voluntarily provide through our contact form:",
+					"items": [
+						"First and last name",
+						"Email address",
+						"Phone number (optional)",
+						"Company name (optional)",
+						"Message content"
+					]
+				},
+				"dataProcessing": {
+					"title": "Data Processing",
+					"content": "Data is processed internally via secure AI systems:",
+					"items": [
+						"ProtonMail AI for email processing",
+						"Internal AI systems ensuring anonymity",
+						"No resale or sharing with third parties"
+					]
+				},
+				"dataSecurity": {
+					"title": "Data Security",
+					"content": "We implement security measures to protect your data:",
+					"items": [
+						"Communications encryption",
+						"Restricted data access",
+						"Secure hosting in Switzerland"
+					]
+				},
+				"dataRetention": {
+					"title": "Data Retention",
+					"content": "Your data is kept for a maximum period of 36 months from our last contact. Beyond that, it is automatically deleted."
+				},
+				"yourRights": {
+					"title": "Your GDPR Rights",
+					"content": "Under GDPR, you have the following rights:",
+					"items": [
+						"Right to access your data",
+						"Right to rectification",
+						"Right to erasure",
+						"Right to restrict processing",
+						"Right to data portability",
+						"Right to object"
+					],
+					"exercise": "To exercise these rights, contact us via the contact form."
+				},
+				"contact": {
+					"title": "DPO Contact",
+					"content": "For any questions regarding your personal data :"
+				}
+			}
+		},
+		"legal": {
+			"title": "Legal Notice",
+			"lastUpdate": "Last update: January 2025",
+			"sections": {
+				"hosting": {
+					"title": "Website Hosting",
+					"content": "This site is hosted by Vercel Inc.",
+					"items": [
+						"Address: 340 S Lemon Ave #4133 Walnut, CA 91789, USA",
+						"Website: vercel.com",
+						"Email: privacy@vercel.com"
+					]
+				},
+				"ownership": {
+					"title": "Website Owner and Publisher",
+					"content": "Legal information about the website publisher:",
+					"items": [
+						"Website publisher: Simon LM",
+						"Address: Address anonymized with the host",
+						"Email: Contact form",
+						"Publication director: Simon LM"
+					]
+				},
+				"intellectual": {
+					"title": "Intellectual Property",
+					"content": "All content on this site (texts, images, videos, etc.) is the exclusive property of Simon LM, unless otherwise stated. Icons used come from open-source libraries and respect their respective licenses.",
+					"items": [
+						"Reproduction prohibited without authorization",
+						"Mentioned trademarks belong to their respective owners",
+						"Source code is protected by copyright"
+					]
+				},
+				"responsibility": {
+					"title": "Responsibility",
+					"content": "The publisher strives to ensure the accuracy of information but cannot guarantee its completeness or currentness. The site may be subject to technical interruptions for maintenance."
+				},
+				"contact": {
+					"title": "Contact",
+					"content": "For any questions regarding the site:"
+				}
+			}
+		},
+		"terms": {
+			"title": "Terms of Service",
+			"lastUpdate": "Last update: January 2025",
+			"sections": {
+				"purpose": {
+					"title": "Purpose",
+					"content": "These Terms of Service govern the access and use of the simon-lm.dev website."
+				},
+				"access": {
+					"title": "Website Access",
+					"content": "The website is freely accessible to any user with Internet access. The publisher cannot be held responsible for any malfunction or service interruption.",
+					"items": [
+						"24/7 accessibility, except in cases of force majeure",
+						"Possible maintenance with temporary interruption",
+						"Optimization for latest browser versions"
+					]
+				},
+				"usage": {
+					"title": "Website Usage",
+					"content": "Users agree not to disrupt the website's operation and not to use its content without prior authorization.",
+					"items": [
+						"Fair and respectful use of the website",
+						"Prohibition of any hacking attempts",
+						"Respect for copyright and intellectual property"
+					]
+				},
+				"intellectual": {
+					"title": "Intellectual Property",
+					"content": "All website content is protected by copyright. Any reproduction without prior agreement is prohibited.",
+					"items": [
+						"Protection of texts, images and source code",
+						"Use limited to personal purposes",
+						"Authorization required for any reproduction"
+					]
+				}
+			}
+		},
+		"accessibility": {
+			"title": "Accessibility Compliance Statement",
+			"lastUpdate": "Last update: January 2025",
+			"sections": {
+				"introduction": {
+					"title": "Introduction",
+					"content": "This website, simon-lm.dev, is a personal portfolio created and edited by Simon LM. Published in January 2025, it aims to fully comply with the French General Accessibility Improvement Framework (RGAA) criteria by March 2025. Digital accessibility is a priority to ensure that all people, including those with disabilities, can navigate and interact with this site without barriers."
+				},
+				"conformity": {
+					"title": "Compliance Status",
+					"content": "Currently, this site is partially compliant with RGAA 4.1 criteria. Adjustments are ongoing to achieve full compliance."
+				},
+				"improvements": {
+					"title": "Planned Improvements",
+					"content": "The identified areas for improvement include:",
+					"items": [
+						"Verification and optimization of compatibility with assistive technologies (screen readers, for example)",
+						"Improvement of keyboard navigation to ensure a smooth and accessible experience",
+						"Provision of additional options to adjust contrasts and colors"
+					]
+				},
+				"technologies": {
+					"title": "Technologies Used",
+					"content": "This site relies on the following technologies:",
+					"items": [
+						"Main framework: Next.js (React)",
+						"Languages: HTML5, CSS3, and JavaScript"
+					]
+				},
+				"contact": {
+					"title": "Feedback Procedure and Contact",
+					"content": "If you notice an accessibility issue on this site, please inform me through the contact form. Please describe the problem in detail (page concerned, nature of the difficulty, technologies used, etc.). I commit to analyzing your request and responding as soon as possible while implementing the necessary corrections."
+				},
+				"recourse": {
+					"title": "Legal Recourse",
+					"content": "If you believe your rights are not being respected or if the response provided is unsatisfactory, you can contact the French Rights Defender (Défenseur des droits):",
+					"items": [
+						"Online: https://www.defenseurdesdroits.fr",
+						"By mail (no stamp needed):",
+						"Défenseur des droits",
+						"Libre réponse 71120",
+						"75342 Paris CEDEX 07"
+					]
+				},
+				"legal": {
+					"title": "Additional Legal Information",
+					"content": "Digital accessibility is governed by Article 47 of Law No. 2005-102 of February 11, 2005, for equal rights and opportunities. Although this is a personal website and not subject to the same obligations as public sites, I voluntarily commit to respecting these standards to ensure inclusive navigation."
+				}
 			}
 		},
 		"footer": {

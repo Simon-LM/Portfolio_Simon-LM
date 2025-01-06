@@ -4,23 +4,29 @@
 
 import React from "react";
 import Link from "next/link";
-import { useLanguage } from "../../hooks/useLanguage";
+import { useLanguageStore } from "../../store/langueStore";
 // import {  RiNotification3Line } from "react-icons/ri";
-import { FaLinkedin, FaTwitter, FaYoutube, FaGithub } from "react-icons/fa";
+import { FaLinkedin, FaXTwitter, FaYoutube, FaGithub } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md";
 import { FaUniversalAccess } from "react-icons/fa";
 
 export default function StickyFooter() {
-	const { currentLang } = useLanguage();
+	const { language } = useLanguageStore();
+	// const { currentLang } = useLanguage();
+	// const accessibilityText =
+	// 	currentLang === "fr"
+	// 		? "Accessibilité : déclaration de conformité"
+	// 		: "Accessibility: compliance statement";
+
 	const accessibilityText =
-		currentLang === "fr"
+		language === "fr"
 			? "Accessibilité : déclaration de conformité"
 			: "Accessibility: compliance statement";
 
 	return (
 		<footer className="sticky-footer">
 			<nav className="sticky-footer__nav">
-				<Link
+				{/* <Link
 					href="/accessibility"
 					className="sticky-footer__accessibility"
 					aria-label={accessibilityText}>
@@ -28,18 +34,29 @@ export default function StickyFooter() {
 					<span className="sticky-footer__accessibility-text">
 						{accessibilityText}
 					</span>
+				</Link> */}
+
+				<Link
+					href={`/${language}/accessibility`}
+					className="sticky-footer__accessibility"
+					aria-label={accessibilityText}>
+					<FaUniversalAccess className="sticky-footer__accessibility-icon" />
+					<span className="sticky-footer__accessibility-text">
+						{accessibilityText}
+					</span>
 				</Link>
+
 				<div className="sticky-footer__social">
 					<Link
-						href="https://twitter.com/"
+						href="https://x.com/SimonLM_Dev"
 						className="sticky-footer__link"
 						target="_blank"
 						rel="noopener noreferrer"
 						aria-label="Twitter">
-						<FaTwitter className="sticky-footer__icon" />
+						<FaXTwitter className="sticky-footer__icon" />
 					</Link>
 					<Link
-						href="https://youtube.com/"
+						href="https://www.youtube.com/@LostInTab"
 						className="sticky-footer__link"
 						target="_blank"
 						rel="noopener noreferrer"
@@ -47,7 +64,7 @@ export default function StickyFooter() {
 						<FaYoutube className="sticky-footer__icon" />
 					</Link>
 					<Link
-						href="https://github.com/"
+						href="https://github.com/Simon-LM"
 						className="sticky-footer__link"
 						target="_blank"
 						rel="noopener noreferrer"
@@ -65,9 +82,9 @@ export default function StickyFooter() {
 						<FaLinkedin className="sticky-footer__icon" />
 					</Link>
 					<Link
-						href="#contact"
+						href={`/${language}/#contact`}
 						className="sticky-footer__link"
-						aria-label={currentLang === "fr" ? "Contact" : "Contact"}>
+						aria-label="Contact">
 						<MdEmail className="sticky-footer__icon" />
 					</Link>
 				</div>
