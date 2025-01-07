@@ -21,10 +21,15 @@
 		gap: 0.5rem;
 		min-width: 200px;
 
-		@media (max-width: 768px) {
+		@media (max-width: 54rem) {
 			width: 100%;
 			align-items: center;
-			text-align: center;
+			&-links {
+				display: flex;
+				flex-direction: column;
+				justify-content: left;
+				gap: 0.5rem;
+			}
 		}
 	}
 

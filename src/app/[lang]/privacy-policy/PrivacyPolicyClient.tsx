@@ -63,7 +63,9 @@ export default function PrivacyPolicyClient({
 			<Header dictionary={dictionary} />
 			<NavigationSticky />
 			<main className="privacy-policy">
-				<h1>{dictionary.sections.privacy.title}</h1>
+				<h1 className="privacy-policy__title">
+					{dictionary.sections.privacy.title}
+				</h1>
 
 				<p className="privacy-policy__update">
 					{dictionary.sections.privacy.lastUpdate}
@@ -71,7 +73,7 @@ export default function PrivacyPolicyClient({
 				{Object.entries(dictionary.sections.privacy.sections).map(
 					([key, section]: [string, PrivacySection]) => (
 						<section key={key} className="privacy-policy__section">
-							<h2>{section.title}</h2>
+							<h2 className="privacy-policy__section-title">{section.title}</h2>
 							<p>
 								{key === "contact" ? (
 									<>

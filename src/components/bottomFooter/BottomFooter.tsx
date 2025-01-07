@@ -70,6 +70,7 @@ export default function BottomFooter() {
 				aria-label={language === "fr" ? "Pied de page" : "Footer navigation"}>
 				<div className="bottomFooter__group">
 					<h2 className="bottomFooter__title">{t.legal.title}</h2>
+
 					<Link href={`/${language}/legal`}>{t.legal.mentions}</Link>
 					<Link href={`/${language}/terms`}>{t.legal.terms}</Link>
 					<Link href={`/${language}/privacy-policy`}>{t.legal.privacy}</Link>
@@ -89,46 +90,48 @@ export default function BottomFooter() {
 
 				<div className="bottomFooter__group">
 					<h2 className="bottomFooter__title">{t.resources.title}</h2>
-					<Link
-						href="/rss.xml"
-						target="_blank"
-						rel="noopener noreferrer"
-						className="bottomFooter__social-link">
-						<FaRss aria-hidden="true" />
-						<span>{t.resources.rss}</span>
-					</Link>
-					<Link
-						href="https://www.linkedin.com/"
-						target="_blank"
-						rel="noopener noreferrer"
-						className="bottomFooter__social-link">
-						<FaLinkedin aria-hidden="true" />
-						<span>LinkedIn</span>
-					</Link>
-					<Link
-						href="https://x.com/SimonLM_Dev"
-						target="_blank"
-						rel="noopener noreferrer"
-						className="bottomFooter__social-link">
-						<FaXTwitter aria-hidden="true" />
-						<span>X (Twitter)</span>
-					</Link>
-					<Link
-						href="https://www.youtube.com/@LostInTab"
-						target="_blank"
-						rel="noopener noreferrer"
-						className="bottomFooter__social-link">
-						<FaYoutube aria-hidden="true" />
-						<span>YouTube</span>
-					</Link>
-					<Link
-						href="https://github.com/Simon-LM"
-						target="_blank"
-						rel="noopener noreferrer"
-						className="bottomFooter__social-link">
-						<FaGithub aria-hidden="true" />
-						<span>GitHub</span>
-					</Link>
+					<div className="bottomFooter__group-links">
+						<Link
+							href="/rss.xml"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="bottomFooter__social-link">
+							<FaRss aria-hidden="true" />
+							<span>{t.resources.rss}</span>
+						</Link>
+						<Link
+							href="https://www.linkedin.com/"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="bottomFooter__social-link">
+							<FaLinkedin aria-hidden="true" />
+							<span>LinkedIn</span>
+						</Link>
+						<Link
+							href="https://x.com/SimonLM_Dev"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="bottomFooter__social-link">
+							<FaXTwitter aria-hidden="true" />
+							<span>X (Twitter)</span>
+						</Link>
+						<Link
+							href="https://www.youtube.com/@LostInTab"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="bottomFooter__social-link">
+							<FaYoutube aria-hidden="true" />
+							<span>YouTube</span>
+						</Link>
+						<Link
+							href="https://github.com/Simon-LM"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="bottomFooter__social-link">
+							<FaGithub aria-hidden="true" />
+							<span>GitHub</span>
+						</Link>
+					</div>
 				</div>
 			</nav>
 		</footer>

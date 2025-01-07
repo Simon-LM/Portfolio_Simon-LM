@@ -3,8 +3,8 @@
 "use client";
 
 import React from "react";
-import { useLanguageStore } from "../../../store/langueStore";
 import { useEffect, useState } from "react";
+import { useLanguageStore } from "../../../store/langueStore";
 import Header from "../../../components/header/Header";
 import NavigationSticky from "../../../components/navigationSticky/NavigationSticky";
 import StickyFooter from "../../../components/stickyFooter/StickyFooter";

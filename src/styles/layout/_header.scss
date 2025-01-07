@@ -1,22 +1,28 @@
 /** @format */
 
 .header {
-	// background: #e2cc50;
 	background: $color-header-bg;
 	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.22);
 	&__utils {
 		display: flex;
 		align-items: center;
 		justify-content: end;
-		gap: 0.5rem;
+		// gap: calc(0.25rem + 0.75vw);
+		// gap: 0.25rem;
+		padding-top: 0.25rem;
+		padding-bottom: 0.25rem;
 		margin: 0 auto;
-		padding: 0.25rem 0.75rem;
+		margin-inline: 0.75vw;
+		// background: palevioletred;
 	}
 	&__accessibility-icon {
+		display: block;
+		position: relative;
 		height: 1.75rem;
 		width: 1.75rem;
-		position: relative;
-		display: block;
+		border-radius: 1rem;
+		padding: 0.25rem;
+		// background: red;
 		&:hover {
 			cursor: pointer;
 			transition: all 0.2s ease;
@@ -30,6 +36,9 @@
 	&__lang {
 		display: flex;
 		align-items: center;
+		border-radius: 1rem;
+		padding: 0.25rem;
+		// background: yellowgreen;
 	}
 	&__lang-toggle {
 		display: flex;
@@ -37,9 +46,7 @@
 		border: 1px solid $color_lang-toggle_border;
 		border-radius: 1.25rem;
 		overflow: hidden;
-		margin: 0 auto;
 		background-color: $color_lang-toggle_bg;
-		margin-inline: -0.25rem;
 		&:hover {
 			cursor: pointer;
 			transition: all 0.2s ease;
@@ -81,34 +88,23 @@
 			// outline-offset: -3px;
 		}
 	}
-	// &__lang-icon {
-	// 	width: 1.75rem;
-	// 	height: 1.75rem;
-	// 	position: relative;
-	// 	display: block;
 
-	// 	img {
-	// 		width: 100%;
-	// 		height: 100%;
-	// 		object-fit: contain;
-	// 	}
-	// }
 	&__nav-main {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 0 1rem;
-		margin-inline: 0.5rem;
+		margin-inline: 0.75vw;
+		// background: purple;
 	}
 
 	&__title {
 		display: flex;
 		font-family: "Lexend Giga", sans-serif;
 		flex-grow: 1;
-		// max-width: 75%;
 		margin-bottom: 1rem;
-		margin-top: -1.5rem;
-		// background: red;
+		margin-top: -1.75rem;
+		// background: blueviolet;
+		@include word-wrap;
 		&-name {
 			font-family: inherit;
 			font-size: clamp(1.5rem, 3vw, 3em);
@@ -130,14 +126,23 @@
 	&__blog-link {
 		flex-shrink: 0;
 		white-space: nowrap;
-		padding-left: 0.5rem;
+		color: $primary-color !important;
+		font-weight: 600;
+		border-radius: 1.5rem;
+		border: 1px solid $dark-gray;
+		padding: 0.25rem;
+		padding-inline: calc(0.25rem + 0.25vw);
+		margin-top: 0.5rem;
+		margin-bottom: 0.5rem;
+		margin-right: 0.25rem;
+		background: $dark-gray;
 		// background: pink;
 	}
 	&__blog {
 		&-logo {
 			height: 1.75rem;
 			width: 1.75rem;
-			margin-right: 0.5rem;
+			margin-right: calc(0.25rem + 0.25vw);
 			vertical-align: middle;
 		}
 	}

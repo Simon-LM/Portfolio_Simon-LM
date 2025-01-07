@@ -5,7 +5,7 @@
 	bottom: 0;
 	left: 0;
 	right: 0;
-	padding: 0.5rem 1rem;
+	padding: 0.5rem calc(0.25rem + 0.5vw);
 	box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.15);
 	z-index: 1000;
 	background: $color-sticky-footer-bg;
@@ -68,7 +68,8 @@
 			padding: 0.25rem;
 			overflow: hidden;
 			text-overflow: ellipsis;
-			max-width: calc(100vw - (4rem * 6) - 2rem);
+			// max-width: calc(100vw - (4rem * 6) - 2rem);
+			max-width: calc(100vw - 10.5rem);
 			color: inherit;
 			// background: pink;
 		}
@@ -94,7 +95,7 @@
 		justify-content: center;
 		flex-grow: 1;
 		// background: green;
-		@media (max-width: 18rem) {
+		@media (max-width: 45rem) {
 			display: none;
 		}
 	}

@@ -1,7 +1,7 @@
 /** @format */
 
 "use client";
-
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -69,6 +69,10 @@ const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
 const phoneRegex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
 
 export default function ContactClient({ dictionary }: ContactProps) {
+	useEffect(() => {
+		emailjs.init(PUBLIC_KEY!);
+	}, []);
+
 	const createValidationSchema = () => {
 		return z.object({
 			firstName: z.string().min(2, dictionary.form.errors.firstName),
