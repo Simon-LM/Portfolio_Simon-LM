@@ -95,7 +95,8 @@ export default function BottomFooter() {
 							href="/rss.xml"
 							target="_blank"
 							rel="noopener noreferrer"
-							className="bottomFooter__social-link">
+							className="bottomFooter__social-link"
+							id="rss-link">
 							<FaRss aria-hidden="true" />
 							<span>{t.resources.rss}</span>
 						</Link>

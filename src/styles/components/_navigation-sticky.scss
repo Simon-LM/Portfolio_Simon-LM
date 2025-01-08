@@ -12,7 +12,7 @@
 		width: 2.5rem;
 		height: 2.5rem;
 		border-radius: 1.25rem;
-		background: var(--primary-color);
+		background: $color-main-bg;
 		border: none;
 		display: flex;
 		align-items: center;
@@ -59,6 +59,58 @@
 			opacity: 1;
 			width: auto;
 			transition: opacity 0.5s ease 0.5s, width 0s ease;
+		}
+	}
+	&.menu-open .menu-button {
+		background: var(--primary-color-dark);
+	}
+
+	.navigation-menu {
+		position: absolute;
+		top: 100%;
+		left: 0.5rem;
+		background: $color-main-bg;
+		border-radius: 0.25rem;
+		padding: 1rem;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+		min-width: 200px;
+
+		a {
+			display: block;
+			padding: 0.5rem 1rem;
+			color: var(--text-color);
+			text-decoration: none;
+			transition: background-color 0.3s;
+			border-radius: 0.25rem;
+
+			&:hover,
+			&:focus {
+				background-color: var(--primary-color-light);
+			}
+			// &:focus-visible {
+			// 	outline: 2px solid $color-link;
+			// 	outline-offset: 2px;
+			// }
+
+			&.skip-link {
+				@include sr-only;
+			}
+
+			&:focus-visible {
+				position: static;
+				width: auto;
+				height: auto;
+				padding: 0.5rem 1rem;
+				margin-bottom: 0.5rem;
+				overflow: visible;
+				clip: auto;
+				white-space: normal;
+				background: $color-sticky-footer-bg;
+				color: $color-sticky-footer-text;
+				outline: 2px solid $color-link;
+				outline-offset: 2px;
+				border-radius: 0.25rem;
+			}
 		}
 	}
 }

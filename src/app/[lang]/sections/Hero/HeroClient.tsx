@@ -51,9 +51,14 @@ export default function HeroClient({ dictionary }: HeroProps) {
 			variants={containerVariants}
 			initial="hidden"
 			animate="visible"
-			className="hero">
+			className="hero"
+			id="hero-section">
 			<motion.div className="hero__content">
-				<motion.h1 variants={itemVariants} className="hero__title">
+				<motion.h1
+					variants={itemVariants}
+					className="hero__title"
+					id="hero-title"
+					tabIndex={-1}>
 					{dictionary.title}
 				</motion.h1>
 				{/* <motion.p variants={itemVariants} className="hero__subtitle">
@@ -61,7 +66,10 @@ export default function HeroClient({ dictionary }: HeroProps) {
 				</motion.p> */}
 				<motion.div variants={itemVariants} className="hero__features">
 					{dictionary.features.map((feature, index) => (
-						<Collapse key={index} title={feature.title}>
+						<Collapse
+							key={index}
+							title={feature.title}
+							id={`hero-collapse-${index}`}>
 							{feature.description}
 						</Collapse>
 					))}

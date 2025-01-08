@@ -6,8 +6,9 @@
 	justify-content: center;
 	min-height: calc(100vh - 14rem);
 	padding: 2rem;
+	padding-bottom: 6rem;
 	margin-top: -4rem;
-	margin-bottom: 4rem;
+	background: $color-section-bg-even;
 
 	&__content {
 		max-width: 90%;

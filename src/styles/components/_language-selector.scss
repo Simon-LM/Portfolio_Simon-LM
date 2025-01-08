@@ -1,0 +1,38 @@
+/** @format */
+
+.language-selector {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	gap: 0.5rem;
+	margin: 0.5rem 0;
+	padding-bottom: 0.5rem;
+	border-bottom: 1px solid $color-sticky-footer-bg;
+
+	&__button {
+		flex: 1;
+		padding: 0.5rem;
+		border: 1px solid $dark-gray;
+		border-radius: 0.25rem;
+		background: transparent;
+		color: $color-main-text;
+		transition: all 0.3s ease;
+		font-size: 0.9rem;
+
+		&:disabled {
+			background: $color-sticky-footer-bg;
+			color: $color-sticky-footer-text;
+			cursor: default;
+		}
+
+		&:not(:disabled):hover {
+			background: $color_lang-toggle_disabled-hover_bg;
+			color: $color_lang-toggle_disabled-hover_text;
+		}
+
+		&:focus-visible {
+			outline: 2px solid $color-link;
+			outline-offset: 2px;
+		}
+	}
+}

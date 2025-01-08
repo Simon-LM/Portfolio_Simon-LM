@@ -8,13 +8,14 @@ import { motion, AnimatePresence } from "framer-motion";
 interface CollapseProps {
 	title: string;
 	children: React.ReactNode;
+	id?: string;
 }
 
-export default function Collapse({ title, children }: CollapseProps) {
+export default function Collapse({ title, children, id }: CollapseProps) {
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
-		<div className="collapse">
+		<div className="collapse" id={id}>
 			<button
 				className="collapse__trigger"
 				onClick={() => setIsOpen(!isOpen)}
