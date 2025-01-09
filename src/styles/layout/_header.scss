@@ -129,13 +129,14 @@
 		white-space: nowrap;
 		color: $primary-color !important;
 		font-weight: 600;
-		border-radius: 1.5rem;
+		border-radius: 0.75rem;
 		border: 1px solid $dark-gray;
 		padding: 0.25rem;
 		padding-inline: calc(0.25rem + 0.25vw);
 		margin-top: 0.5rem;
 		margin-bottom: 0.5rem;
 		margin-right: 0.25rem;
+		margin-left: 1rem;
 		background: $dark-gray;
 		// background: pink;
 	}

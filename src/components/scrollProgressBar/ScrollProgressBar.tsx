@@ -3,40 +3,10 @@
 "use client";
 
 import React, { ReactNode } from "react";
-import { motion, useScroll } from "framer-motion";
+import { motion } from "framer-motion";
+// import { motion, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import { BsChevronUp, BsChevronDown } from "react-icons/bs";
-
-// interface Section {
-// 	id: string;
-// 	name: string | JSX.Element;
-// 	ariaLabel: string;
-// }
-
-// const sections: Section[] = [
-// 	{
-// 		id: "hero",
-// 		name: <BsChevronUp size={16} className="scroll-progress__arrows" />,
-// 		ariaLabel: "Retourner en haut de la page",
-// 	},
-// 	{ id: "about", name: "Why?", ariaLabel: "Aller à la section Pourquoi ?" },
-// 	{
-// 		id: "skills",
-// 		name: "Skills",
-// 		ariaLabel: "Aller à la section compétences",
-// 	},
-// 	{
-// 		id: "portfolio",
-// 		name: "Portfolio",
-// 		ariaLabel: "Aller à la section portfolio",
-// 	},
-// 	{ id: "contact", name: "Contact", ariaLabel: "Aller à la section contact" },
-// 	{
-// 		id: "bottomFooter",
-// 		name: <BsChevronDown size={16} className="scroll-progress__arrows" />,
-// 		ariaLabel: "Aller en bas de la page",
-// 	},
-// ];
 
 interface Section {
 	id: string;
@@ -71,7 +41,7 @@ const sections: Section[] = [
 
 export default function ScrollProgressBar() {
 	const [activeSection, setActiveSection] = useState<string>("hero");
-	const { scrollYProgress } = useScroll();
+	// const { scrollYProgress } = useScroll();
 
 	useEffect(() => {
 		const handleScroll = () => {

@@ -111,7 +111,8 @@ export default function Header({ dictionary }: HeaderProps) {
 
 				<div className="header__nav-main">
 					<div className="header__title">
-						<Link href={`/${language}`}>
+						{/* <Link href={`/${language}`}> */}
+						<span>
 							<span className="header__title-name">
 								{dictionary.header.title.name}
 							</span>
@@ -119,7 +120,8 @@ export default function Header({ dictionary }: HeaderProps) {
 							<span className="header__title-role">
 								{dictionary.header.title.role}
 							</span>
-						</Link>
+						</span>
+						{/* </Link> */}
 					</div>
 					{/* <Link
 						href={`/${language}/blog`}
