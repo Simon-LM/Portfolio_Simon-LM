@@ -74,7 +74,41 @@
 		"portfolio": {
 			"title": "Portfolio",
 			"subtitle": "My recent projects",
-			"projects": []
+			"projects": {
+				"argentBank": {
+					"imageAlt": "ArgentBank banking application user dashboard interface",
+					"title": "ArgentBank - Banking Application",
+					"description": {
+						"short": "React banking application with secure authentication and user profile management, focusing on accessibility and performance.",
+						"detailed": "User interface built with React 18 and TypeScript, integrating Zod for type-safe data validation and Redux Toolkit for optimized state management. Secure authentication with automatic session management (useSessionTimeout) and strict form validation. Focus on digital accessibility (WCAG/RGAA) and performance (code splitting, lazy loading). Modular architecture tested with Vitest and Green IT best practices."
+					},
+					"tags": [
+						"React",
+						"TypeScript",
+						"Zod",
+						"Redux",
+						"A11y",
+						"Vitest",
+						"Green Code"
+					],
+					"links": {
+						"github": "https://github.com/Simon-LM/OC_P11_ArgentBank.git"
+					}
+				},
+				"ninaCarducci": {
+					"title": "Nina Carducci - SEO & A11y Optimization",
+					"description": {
+						"short": "Complete audit and optimization of a professional photographer's website, focused on accessibility, performance and SEO.",
+						"detailed": "Comprehensive optimization based on WCAG and RGAA standards, including: WebP/AVIF image conversion with srcset, improved contrast ratios (4.5), optimized keyboard navigation, ARIA labels, HTML5 semantics, Schema.org microdata. Audit performed using Lighthouse, Wave, Axe and RGAA checker. Asset minification and lazy loading for optimal performance."
+					},
+					"tags": ["SEO", "A11y", "Performance", "WCAG"],
+					"imageAlt": "Lighthouse results screenshot showing 100% score across all metrics",
+					"links": {
+						"github": "https://github.com/Simon-LM/OC_P9_Ninacarducci",
+						"website": "https://simon-lm.github.io/OC_P9_Ninacarducci/"
+					}
+				}
+			}
 		},
 		"contact": {
 			"title": "Contact",

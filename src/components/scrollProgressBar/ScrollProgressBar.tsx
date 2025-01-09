@@ -148,12 +148,12 @@ export default function ScrollProgressBar() {
 			</motion.div>
 
 			{/* Ligne de progression simple */}
-			<motion.div
+			{/* <motion.div
 				className="scroll-progress-line"
 				style={{
 					scaleY: scrollYProgress,
 				}}
-			/>
+			/> */}
 		</>
 	);
 }

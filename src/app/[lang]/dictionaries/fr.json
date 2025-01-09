@@ -73,7 +73,41 @@
 		"portfolio": {
 			"title": "Portfolio",
 			"subtitle": "Mes projets récents",
-			"projects": []
+			"projects": {
+				"argentBank": {
+					"imageAlt": "Interface de l'application bancaire ArgentBank montrant le tableau de bord utilisateur",
+					"title": "ArgentBank - Application Bancaire",
+					"description": {
+						"short": "Application bancaire React avec authentification sécurisée et gestion de profil utilisateur, mettant l'accent sur l'accessibilité et les performances.",
+						"detailed": "Interface utilisateur développée avec React 18 et TypeScript, intégrant Zod pour une validation de données type-safe et Redux Toolkit pour une gestion d'état optimisée. Authentification sécurisée avec gestion automatique de session (useSessionTimeout) et validation stricte des formulaires. Focus sur l'accessibilité numérique (WCAG/RGAA) et les performances (code splitting, lazy loading). Architecture modulaire testée avec Vitest et respect des bonnes pratiques Green IT."
+					},
+					"tags": [
+						"React",
+						"TypeScript",
+						"Zod",
+						"Redux",
+						"A11y",
+						"Vitest",
+						"Green Code"
+					],
+					"links": {
+						"github": "https://github.com/Simon-LM/OC_P11_ArgentBank.git"
+					}
+				},
+				"ninaCarducci": {
+					"title": "Nina Carducci - Optimisation SEO & A11y",
+					"description": {
+						"short": "Audit complet et optimisation d'un site de photographe professionnel, focalisé sur l'accessibilité, les performances et le SEO.",
+						"detailed": "Optimisation globale basée sur les normes WCAG et RGAA, incluant : conversion des images en WebP/AVIF avec srcset, amélioration des contrastes (ratio 4.5), navigation clavier optimisée, balises ARIA, sémantique HTML5, microdonnées Schema.org. Audit réalisé avec Lighthouse, Wave, Axe et RGAA checker. Minification des assets et chargement différé pour des performances optimales."
+					},
+					"tags": ["SEO", "A11y", "Performance", "WCAG"],
+					"imageAlt": "Capture d'écran des résultats Lighthouse montrant un score de 100% sur tous les critères",
+					"links": {
+						"github": "https://github.com/Simon-LM/OC_P9_ninacarducci",
+						"website": "https://simon-lm.github.io/OC_P9_Ninacarducci/"
+					}
+				}
+			}
 		},
 		"contact": {
 			"title": "Contact",
