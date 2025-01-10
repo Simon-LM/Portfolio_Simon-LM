@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /fr/legal
+Disallow: /en/legal
+Disallow: /fr/terms
+Disallow: /en/terms
+Disallow: /fr/privacy-policy
+Disallow: /en/privacy-policy
+
+# Sitemap
+Sitemap: https://www.simon-lm.dev/sitemap.xml

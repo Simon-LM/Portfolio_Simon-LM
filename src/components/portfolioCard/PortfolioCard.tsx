@@ -59,7 +59,11 @@ export default function PortfolioCard({
 					))}
 				</div>
 
-				<Collapse title="Plus de détails">
+				{/* <Collapse title="Plus de détails">
+					<div className="portfolio__card-details">{description.detailed}</div>
+				</Collapse> */}
+
+				<Collapse title="Plus de détails" headingLevel="h4">
 					<div className="portfolio__card-details">{description.detailed}</div>
 				</Collapse>
 

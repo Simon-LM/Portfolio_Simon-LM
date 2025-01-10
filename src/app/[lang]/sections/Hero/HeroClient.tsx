@@ -66,10 +66,17 @@ export default function HeroClient({ dictionary }: HeroProps) {
 				</motion.p> */}
 				<motion.div variants={itemVariants} className="hero__features">
 					{dictionary.features.map((feature, index) => (
+						// <Collapse
+						// 	key={index}
+						// 	title={feature.title}
+						// 	id={`hero-collapse-${index}`}>
+						// 	{feature.description}
+						// </Collapse>
 						<Collapse
 							key={index}
 							title={feature.title}
-							id={`hero-collapse-${index}`}>
+							id={`hero-collapse-${index}`}
+							headingLevel="h2">
 							{feature.description}
 						</Collapse>
 					))}

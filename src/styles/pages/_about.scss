@@ -40,13 +40,56 @@
 			border: none;
 		}
 	}
+
 	&__video-placeholder {
+		position: relative;
 		width: 100%;
-		height: 315px;
+		aspect-ratio: 1920/1080;
+		border-radius: 0.5rem;
+		overflow: hidden;
+	}
+
+	&__video-thumbnail {
+		object-fit: cover;
+	}
+
+	&__video-overlay {
+		position: absolute;
+		inset: 0;
 		display: flex;
+		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		background: $color_section_card-bg;
-		border-radius: 0.5rem;
+		background: rgba(0, 0, 0, 0.6);
+		color: $color-main-bg;
+		text-align: center;
+		padding: 2rem;
+
+		p {
+			background: $color-main-text;
+			color: $color-main-bg;
+			font-size: 1rem;
+			font-weight: 500;
+			margin: 0 auto;
+			margin-bottom: 1rem;
+		}
+	}
+
+	&__video-button {
+		padding: 0.5rem 1rem;
+		background: $color-section-title;
+		color: $color-main-bg;
+		border: 2px solid $color-main-bg;
+		border-radius: 0.25rem;
+		cursor: pointer;
+		font-size: 1.25rem;
+		font-weight: 600;
+		transition: all 0.3s ease;
+
+		&:hover,
+		&:focus-visible {
+			opacity: 0.9;
+			transform: translateY(-2px);
+		}
 	}
 }

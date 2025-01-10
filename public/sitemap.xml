@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <!-- Pages principales -->
+  <url>
+    <loc>https://www.simon-lm.dev/fr</loc>
+    <lastmod>2024-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.simon-lm.dev/en"/>
+  </url>
+  <url>
+    <loc>https://www.simon-lm.dev/en</loc>
+    <lastmod>2024-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.simon-lm.dev/fr"/>
+  </url>
+
+  <!-- Plan du site -->
+  <url>
+    <loc>https://www.simon-lm.dev/fr/sitemap</loc>
+    <lastmod>2024-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.simon-lm.dev/en/sitemap"/>
+  </url>
+  <url>
+    <loc>https://www.simon-lm.dev/en/sitemap</loc>
+    <lastmod>2024-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.simon-lm.dev/fr/sitemap"/>
+  </url>
+
+  <!-- Déclaration d'accessibilité -->
+  <url>
+    <loc>https://www.simon-lm.dev/fr/accessibility</loc>
+    <lastmod>2024-03-20</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.simon-lm.dev/en/accessibility"/>
+  </url>
+  <url>
+    <loc>https://www.simon-lm.dev/en/accessibility</loc>
+    <lastmod>2024-03-20</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.simon-lm.dev/fr/accessibility"/>
+  </url>
+</urlset>

@@ -10,7 +10,28 @@ import StickyFooter from "../../../components/stickyFooter/StickyFooter";
 import BottomFooter from "../../../components/bottomFooter/BottomFooter";
 import Link from "next/link";
 
-export default function SiteMapClient({ initialDictionary }: any) {
+interface SiteMapDictionary {
+	header: {
+		title: {
+			name: string;
+			role: string;
+		};
+		blog: string;
+		accessibilityIcon: {
+			alt: string;
+			title: string;
+		};
+	};
+}
+
+interface SiteMapProps {
+	initialDictionary: SiteMapDictionary;
+}
+
+// export default function SiteMapClient({ initialDictionary }: any) {
+// 	const { language } = useLanguageStore();
+
+export default function SiteMapClient({ initialDictionary }: SiteMapProps) {
 	const { language } = useLanguageStore();
 
 	return (
