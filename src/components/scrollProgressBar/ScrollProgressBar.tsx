@@ -3,7 +3,7 @@
 "use client";
 
 import React, { ReactNode } from "react";
-import { motion } from "framer-motion";
+// import { motion } from "framer-motion";
 // import { motion, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import { BsChevronUp, BsChevronDown } from "react-icons/bs";
@@ -102,20 +102,29 @@ export default function ScrollProgressBar() {
 	return (
 		<>
 			{/* Menu rotatif */}
-			<motion.div className="scroll-progress">
+			<nav
+				className="scroll-progress"
+				aria-hidden="true"
+				aria-label="Indicateur de position secondaire">
+				{/* <nav
+					className="scroll-progress"
+					aria-label="Indicateur de position secondaire"> */}
 				{sections.map((section) => (
-					<motion.a
+					<a
 						key={section.id}
 						href={`#${section.id}`}
 						className="scroll-progress__indicator"
 						data-active={activeSection === section.id}
+						tabIndex={-1}
 						onClick={(e) => handleClick(e, section.id)}
-						aria-label={section.ariaLabel}
-						role="link">
+						// aria-label={section.ariaLabel}
+						// role="link"
+					>
 						{section.name}
-					</motion.a>
+					</a>
 				))}
-			</motion.div>
+				{/* </nav> */}
+			</nav>
 
 			{/* Ligne de progression simple */}
 			{/* <motion.div

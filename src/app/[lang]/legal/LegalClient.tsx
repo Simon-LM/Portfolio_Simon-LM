@@ -62,7 +62,7 @@ export default function LegalClient({
 		<>
 			<Header dictionary={dictionary} />
 			<NavigationSticky />
-			<main className="legal">
+			<main className="legal" id="main-content">
 				<h1 className="legal__title">{dictionary.sections.legal.title}</h1>
 				<p className="legal__update">{dictionary.sections.legal.lastUpdate}</p>
 				{Object.entries(dictionary.sections.legal.sections).map(

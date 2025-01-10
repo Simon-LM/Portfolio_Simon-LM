@@ -3,6 +3,29 @@
 .header {
 	background: $color-header-bg;
 	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.22);
+	&__skip {
+		@include sr-only;
+
+		&:focus-visible {
+			position: absolute;
+			top: 0.5rem;
+			left: 50%;
+			transform: translateX(-50%);
+			width: auto;
+			height: auto;
+			padding: 0.5rem 1rem;
+			clip: auto;
+			background: $color-header-bg;
+			opacity: 0.8;
+			color: $color-main-text;
+			text-decoration: none;
+			font-weight: 500;
+			border: 2px solid $color-section-title;
+			border-radius: 0.25rem;
+			z-index: 1000;
+		}
+	}
+
 	&__utils {
 		display: flex;
 		align-items: center;
@@ -129,7 +152,7 @@
 		white-space: nowrap;
 		color: $primary-color !important;
 		font-weight: 600;
-		border-radius: 0.75rem;
+		border-radius: 0.125rem;
 		border: 1px solid $dark-gray;
 		padding: 0.25rem;
 		padding-inline: calc(0.25rem + 0.25vw);

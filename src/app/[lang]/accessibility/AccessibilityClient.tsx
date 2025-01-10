@@ -73,7 +73,7 @@ export default function AccessibilityClient({
 			<Header dictionary={dictionary} />
 			<NavigationSticky />
 			<main className="accessibility">
-				<h1 className="accessibility__title">
+				<h1 className="accessibility__title" id="main-content">
 					{dictionary.sections.accessibility.title}
 				</h1>
 				<p className="accessibility__update">

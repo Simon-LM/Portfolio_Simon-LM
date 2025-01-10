@@ -52,7 +52,7 @@ export default function HeroClient({ dictionary }: HeroProps) {
 			initial="hidden"
 			animate="visible"
 			className="hero"
-			id="hero-section">
+			id="main-content">
 			<motion.div className="hero__content">
 				<motion.h1
 					variants={itemVariants}

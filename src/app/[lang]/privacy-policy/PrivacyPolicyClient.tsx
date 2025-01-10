@@ -62,7 +62,7 @@ export default function PrivacyPolicyClient({
 		<>
 			<Header dictionary={dictionary} />
 			<NavigationSticky />
-			<main className="privacy-policy">
+			<main className="privacy-policy" id="main-content">
 				<h1 className="privacy-policy__title">
 					{dictionary.sections.privacy.title}
 				</h1>

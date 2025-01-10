@@ -20,6 +20,7 @@ export default function BottomFooter() {
 		fr: {
 			legal: {
 				title: "Informations légales",
+				sitemap: "Plan du site",
 				mentions: "Mentions légales",
 				terms: "CGU",
 				privacy: "Politique de confidentialité",
@@ -41,6 +42,7 @@ export default function BottomFooter() {
 		en: {
 			legal: {
 				title: "Legal Information",
+				sitemap: "Site Map",
 				mentions: "Legal Notice",
 				terms: "Terms",
 				privacy: "Privacy Policy",
@@ -68,26 +70,6 @@ export default function BottomFooter() {
 			<nav
 				className="bottomFooter__nav"
 				aria-label={language === "fr" ? "Pied de page" : "Footer navigation"}>
-				<div className="bottomFooter__group">
-					<h2 className="bottomFooter__title">{t.legal.title}</h2>
-
-					<Link href={`/${language}/legal`}>{t.legal.mentions}</Link>
-					<Link href={`/${language}/terms`}>{t.legal.terms}</Link>
-					<Link href={`/${language}/privacy-policy`}>{t.legal.privacy}</Link>
-					<Link href={`/${language}/accessibility`}>
-						{t.legal.accessibility}
-					</Link>
-				</div>
-
-				<div className="bottomFooter__group">
-					<h2 className="bottomFooter__title">{t.navigation.title}</h2>
-					<Link href={`/${language}`}>{t.navigation.home}</Link>
-					<Link href={`/${language}/#about`}>{t.navigation.why}</Link>
-					<Link href={`/${language}/#skills`}>{t.navigation.skills}</Link>
-					<Link href={`/${language}/#portfolio`}>{t.navigation.portfolio}</Link>
-					<Link href={`/${language}/#contact`}>{t.navigation.contact}</Link>
-				</div>
-
 				<div className="bottomFooter__group">
 					<h2 className="bottomFooter__title">{t.resources.title}</h2>
 					<div className="bottomFooter__group-links">
@@ -133,6 +115,25 @@ export default function BottomFooter() {
 							<span>GitHub</span>
 						</Link>
 					</div>
+				</div>
+				<div className="bottomFooter__group">
+					<h2 className="bottomFooter__title">{t.navigation.title}</h2>
+					<Link href={`/${language}`}>{t.navigation.home}</Link>
+					<Link href={`/${language}/#about`}>{t.navigation.why}</Link>
+					<Link href={`/${language}/#skills`}>{t.navigation.skills}</Link>
+					<Link href={`/${language}/#portfolio`}>{t.navigation.portfolio}</Link>
+					<Link href={`/${language}/#contact`}>{t.navigation.contact}</Link>
+				</div>
+				<div className="bottomFooter__group">
+					<h2 className="bottomFooter__title">{t.legal.title}</h2>
+
+					<Link href={`/${language}/sitemap`}>{t.legal.sitemap}</Link>
+					<Link href={`/${language}/legal`}>{t.legal.mentions}</Link>
+					<Link href={`/${language}/terms`}>{t.legal.terms}</Link>
+					<Link href={`/${language}/privacy-policy`}>{t.legal.privacy}</Link>
+					<Link href={`/${language}/accessibility`}>
+						{t.legal.accessibility}
+					</Link>
 				</div>
 			</nav>
 		</footer>

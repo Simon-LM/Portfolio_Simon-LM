@@ -73,6 +73,11 @@ export default function Header({ dictionary }: HeaderProps) {
 	return (
 		<header className="header">
 			<nav>
+				<a href="#main-content" className="header__skip">
+					{language === "fr"
+						? "Aller au contenu principal"
+						: "Skip to main content"}
+				</a>
 				<div className="header__utils">
 					<picture className="header__accessibility-icon">
 						<source srcSet={accessibilityIconAvif.src} type="image/avif" />

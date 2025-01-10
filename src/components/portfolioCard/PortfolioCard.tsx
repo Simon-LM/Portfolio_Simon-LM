@@ -21,6 +21,7 @@ interface PortfolioCardProps {
 		github: string;
 		website?: string;
 	};
+	priority?: boolean;
 }
 
 export default function PortfolioCard({
@@ -30,6 +31,7 @@ export default function PortfolioCard({
 	imageUrl,
 	imageAlt,
 	links,
+	priority = false,
 }: PortfolioCardProps) {
 	return (
 		<article className="portfolio__card">
@@ -40,7 +42,9 @@ export default function PortfolioCard({
 					width={1920}
 					height={1300}
 					className="portfolio__card-img"
-					// sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+					priority={priority}
+					loading={priority ? undefined : "lazy"}
+					sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
 				/>
 			</div>
 			<div className="portfolio__card-content">

@@ -49,6 +49,7 @@ export default function PortfolioClient({ dictionary }: PortfolioProps) {
 
 				<div className="portfolio__grid">
 					<PortfolioCard
+						priority={true}
 						title={dictionary.projects.argentBank.title}
 						description={dictionary.projects.argentBank.description}
 						tags={dictionary.projects.argentBank.tags}

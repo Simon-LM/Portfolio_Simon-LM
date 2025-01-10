@@ -61,7 +61,7 @@ export default function TermsClient({
 		<>
 			<Header dictionary={dictionary} />
 			<NavigationSticky />
-			<main className="terms">
+			<main className="terms" id="main-content">
 				<h1 className="terms__title">{dictionary.sections.terms.title}</h1>
 				<p className="terms__update">{dictionary.sections.terms.lastUpdate}</p>
 				{Object.entries(dictionary.sections.terms.sections).map(
