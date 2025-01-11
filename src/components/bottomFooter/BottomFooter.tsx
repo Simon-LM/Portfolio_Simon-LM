@@ -65,6 +65,21 @@ export default function BottomFooter() {
 
 	const t = translations[language];
 
+	const handleNavClick = (elementId: string) => {
+		const targetElement = document.getElementById(elementId);
+		if (targetElement) {
+			targetElement.setAttribute("tabindex", "-1");
+			targetElement.focus();
+			targetElement.addEventListener(
+				"blur",
+				() => {
+					targetElement.removeAttribute("tabindex");
+				},
+				{ once: true }
+			);
+		}
+	};
+
 	return (
 		<footer className="bottomFooter" role="contentinfo">
 			<nav
@@ -118,11 +133,31 @@ export default function BottomFooter() {
 				</div>
 				<div className="bottomFooter__group">
 					<h2 className="bottomFooter__title">{t.navigation.title}</h2>
-					<Link href={`/${language}`}>{t.navigation.home}</Link>
-					<Link href={`/${language}/#about`}>{t.navigation.why}</Link>
-					<Link href={`/${language}/#skills`}>{t.navigation.skills}</Link>
-					<Link href={`/${language}/#portfolio`}>{t.navigation.portfolio}</Link>
-					<Link href={`/${language}/#contact`}>{t.navigation.contact}</Link>
+					<Link
+						href={`/${language}/#main-content`}
+						onClick={() => handleNavClick("main-content")}>
+						{t.navigation.home}
+					</Link>
+					<Link
+						href={`/${language}/#about`}
+						onClick={() => handleNavClick("about")}>
+						{t.navigation.why}
+					</Link>
+					<Link
+						href={`/${language}/#skills`}
+						onClick={() => handleNavClick("skills")}>
+						{t.navigation.skills}
+					</Link>
+					<Link
+						href={`/${language}/#portfolio`}
+						onClick={() => handleNavClick("portfolio")}>
+						{t.navigation.portfolio}
+					</Link>
+					<Link
+						href={`/${language}/#contact`}
+						onClick={() => handleNavClick("contact")}>
+						{t.navigation.contact}
+					</Link>
 				</div>
 				<div className="bottomFooter__group">
 					<h2 className="bottomFooter__title">{t.legal.title}</h2>

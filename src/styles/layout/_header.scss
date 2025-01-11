@@ -15,12 +15,8 @@
 			height: auto;
 			padding: 0.5rem 1rem;
 			clip: auto;
-			background: $color-header-bg;
-			opacity: 0.8;
-			color: $color-main-text;
-			text-decoration: none;
 			font-weight: 500;
-			border: 2px solid $color-section-title;
+			// background: palevioletred;
 			border-radius: 0.25rem;
 			z-index: 1000;
 		}
@@ -30,8 +26,6 @@
 		display: flex;
 		align-items: center;
 		justify-content: end;
-		// gap: calc(0.25rem + 0.75vw);
-		// gap: 0.25rem;
 		padding-top: 0.25rem;
 		padding-bottom: 0.25rem;
 		margin: 0 auto;
@@ -48,7 +42,6 @@
 		padding: 0.25rem;
 		// background: red;
 		&:hover {
-			cursor: pointer;
 			transition: all 0.2s ease;
 			transform: scale(1.1);
 		}
@@ -71,10 +64,12 @@
 		border-radius: 1.25rem;
 		overflow: hidden;
 		background-color: $color_lang-toggle_bg;
-		&:hover {
-			cursor: pointer;
-			transition: all 0.2s ease;
-			// transform: scale(1.05);
+
+		&:focus-within {
+			outline: 2px solid $color-focus-outline !important;
+			box-shadow: 0 0 0 4px rgba(white, 0.75) !important;
+			outline-offset: 2px;
+			border-radius: 1rem;
 		}
 	}
 
@@ -105,11 +100,9 @@
 		}
 
 		&:focus-visible {
-			background-color: $color_lang-toggle_disabled-hover_bg;
-			color: $color_lang-toggle_disabled-hover_text;
-			// outline: 1px solid white;
-			outline: none;
-			// outline-offset: -3px;
+			outline: none !important;
+			box-shadow: none !important;
+			border-radius: 1.25rem !important;
 		}
 	}
 

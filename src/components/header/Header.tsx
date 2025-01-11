@@ -17,7 +17,7 @@ import accessibilityIconWebp from "../../../public/icons/Icon_Accessibility_Cont
 import accessibilityIconAvif from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.avif";
 import accessibilityIconPng from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.png";
 
-import LogoLostInTab from "../../../public/Logo_LostInTab/LOGO_LostInTab_circle_2024.png";
+import LogoLostInTab from "../../../public/Logo_LostInTab/LOGO_LostInTab_circle_60-60_2024.png";
 
 interface HeaderProps {
 	dictionary: {
@@ -140,8 +140,19 @@ export default function Header({ dictionary }: HeaderProps) {
 						className="header__blog-link"
 						target="_blank"
 						rel="noopener noreferrer"
-						aria-label="Youtube LostInTab">
-						<Image src={LogoLostInTab} alt="" className="header__blog-logo" />
+						aria-label="Youtube LostInTab"
+						title={
+							language === "fr"
+								? "Visiter la chaîne YouTube LostInTab"
+								: "Visit LostInTab YouTube channel"
+						}>
+						<Image
+							src={LogoLostInTab}
+							alt="Logo LostInTab"
+							width={60}
+							height={60}
+							className="header__blog-logo"
+						/>
 						{dictionary.header.blog}
 					</Link>
 				</div>

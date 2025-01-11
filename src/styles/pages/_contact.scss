@@ -85,11 +85,16 @@
 			background: $color-main-bg;
 			transition: border-color 0.2s ease;
 
-			&:focus {
-				outline: 2px solid $color-link;
-				outline-offset: 2px;
-				border-width: 2px;
+			&:focus-visible {
+				background: $color-main-bg !important;
+				color: $color-main-text !important;
 			}
+
+			// &:focus {
+			// 	outline: 2px solid $color-link;
+			// 	outline-offset: 2px;
+			// 	border-width: 2px;
+			// }
 			&[data-required="true"] {
 				border-width: 2px;
 				border-color: $color-main-text;
@@ -158,6 +163,9 @@
 				height: 1.25rem;
 				margin: 0.125rem 0 0 0;
 				flex-shrink: 0;
+				&:focus-visible {
+					border-radius: 0.25rem !important;
+				}
 			}
 
 			.contact__form-label {
@@ -183,11 +191,6 @@
 
 			&:hover {
 				opacity: 0.9;
-			}
-
-			&:focus-visible {
-				outline: 2px solid $color-link;
-				outline-offset: 2px;
 			}
 		}
 		&__toast {

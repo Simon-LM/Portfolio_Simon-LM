@@ -35,12 +35,21 @@ button,
 a {
 	padding: 0.25em;
 	cursor: pointer;
-	// &:hover,
-	// &:focus-visible {
-	// 	opacity: 0.8;
-	// }
 	&:visited,
 	&:link {
 		text-decoration: none;
 	}
+	&:hover {
+		opacity: 0.85;
+	}
+}
+
+a,
+button,
+input,
+select,
+textarea,
+[role="button"],
+[tabindex="0"] {
+	@include focus-visible;
 }
