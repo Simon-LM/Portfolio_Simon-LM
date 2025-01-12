@@ -92,7 +92,8 @@
 						"Green Code"
 					],
 					"links": {
-						"github": "https://github.com/Simon-LM/OC_P11_ArgentBank.git"
+						"github": "https://github.com/Simon-LM/OC_P11_ArgentBank.git",
+						"website": "https://slm-argentbank.vercel.app"
 					}
 				},
 				"ninaCarducci": {
@@ -106,6 +107,19 @@
 					"links": {
 						"github": "https://github.com/Simon-LM/OC_P9_Ninacarducci",
 						"website": "https://simon-lm.github.io/OC_P9_Ninacarducci/"
+					}
+				},
+				"kasa": {
+					"title": "Kasa - Rental Platform",
+					"description": {
+						"short": "Complete redesign of a real estate rental platform with React.",
+						"detailed": "Modernization of a legacy ASP.NET application to a modern JavaScript stack. Focus on accessibility and responsive design."
+					},
+					"tags": ["React", "React Router", "Sass", "A11y", "Responsive"],
+					"imageAlt": "Kasa application interface",
+					"links": {
+						"github": "https://github.com/Simon-LM/OC_P8_KASA",
+						"website": "https://slm-kaza-simon-lms-projects.vercel.app/"
 					}
 				}
 			}

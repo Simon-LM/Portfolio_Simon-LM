@@ -91,7 +91,8 @@
 						"Green Code"
 					],
 					"links": {
-						"github": "https://github.com/Simon-LM/OC_P11_ArgentBank.git"
+						"github": "https://github.com/Simon-LM/OC_P11_ArgentBank.git",
+						"website": "https://slm-argentbank.vercel.app"
 					}
 				},
 				"ninaCarducci": {
@@ -105,6 +106,19 @@
 					"links": {
 						"github": "https://github.com/Simon-LM/OC_P9_ninacarducci",
 						"website": "https://simon-lm.github.io/OC_P9_Ninacarducci/"
+					}
+				},
+				"kasa": {
+					"imageAlt": "Interface de l'application Kasa montrant la page d'accueil avec les locations",
+					"title": "Kasa - Plateforme de Location",
+					"description": {
+						"short": "Refonte complète d'une plateforme de location immobilière avec React, incluant carrousel d'images, composants réutilisables et routage avancé.",
+						"detailed": "Modernisation d'une application legacy ASP.NET vers une stack JavaScript moderne. Développement avec React et React Router pour une navigation fluide, Sass pour des styles maintenables. Implémentation de composants clés comme un carrousel d'images personnalisé, des collapses réutilisables, et gestion avancée du routage. Focus sur l'accessibilité avec navigation au clavier et contraste des couleurs optimisé (ratio 4.5). Architecture modulaire avec mock JSON en attendant l'API, responsive design jusqu'à 375px."
+					},
+					"tags": ["React", "React Router", "Sass", "A11y", "Responsive"],
+					"links": {
+						"github": "https://github.com/Simon-LM/OC_P8_KASA",
+						"website": "https://slm-kaza-simon-lms-projects.vercel.app/"
 					}
 				}
 			}
