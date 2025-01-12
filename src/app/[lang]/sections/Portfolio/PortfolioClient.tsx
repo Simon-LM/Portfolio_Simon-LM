@@ -36,6 +36,19 @@ interface PortfolioProps {
 					website?: string;
 				};
 			};
+			kasa: {
+				title: string;
+				description: {
+					short: string;
+					detailed: string;
+				};
+				tags: string[];
+				imageAlt: string;
+				links: {
+					github: string;
+					website?: string;
+				};
+			};
 		};
 	};
 }
