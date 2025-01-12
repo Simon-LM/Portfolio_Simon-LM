@@ -80,7 +80,7 @@
 					"title": "ArgentBank - Banking Application",
 					"description": {
 						"short": "React banking application with secure authentication and user profile management, focusing on accessibility and performance.",
-						"detailed": "User interface built with React 18 and TypeScript, integrating Zod for type-safe data validation and Redux Toolkit for optimized state management. Secure authentication with automatic session management (useSessionTimeout) and strict form validation. Focus on digital accessibility (WCAG/RGAA) and performance (code splitting, lazy loading). Modular architecture tested with Vitest and Green IT best practices."
+						"detailed": "User interface built with React 18 and TypeScript, integrating Zod for type-safe data validation and Redux Toolkit for optimized state management. Secure authentication with automatic session management (useSessionTimeout) and strict form validation. Focus on digital accessibility (WCAG/RGAA) and performance (code splitting, lazy loading). Modular architecture tested with Vitest and Green IT best practices. [ Project completed during an OpenClassrooms training. ]"
 					},
 					"tags": [
 						"React",
@@ -100,7 +100,7 @@
 					"title": "Nina Carducci - SEO & A11y Optimization",
 					"description": {
 						"short": "Complete audit and optimization of a professional photographer's website, focused on accessibility, performance and SEO.",
-						"detailed": "Comprehensive optimization based on WCAG and RGAA standards, including: WebP/AVIF image conversion with srcset, improved contrast ratios (4.5), optimized keyboard navigation, ARIA labels, HTML5 semantics, Schema.org microdata. Audit performed using Lighthouse, Wave, Axe and RGAA checker. Asset minification and lazy loading for optimal performance."
+						"detailed": "Comprehensive optimization based on WCAG and RGAA standards, including: WebP/AVIF image conversion with srcset, improved contrast ratios (4.5), optimized keyboard navigation, ARIA labels, HTML5 semantics, Schema.org microdata. Audit performed using Lighthouse, Wave, Axe and RGAA checker. Asset minification and lazy loading for optimal performance. [ Project completed during an OpenClassrooms training. ]"
 					},
 					"tags": ["SEO", "A11y", "Performance", "WCAG"],
 					"imageAlt": "Lighthouse results screenshot showing 100% score across all metrics",
@@ -113,9 +113,9 @@
 					"title": "Kasa - Rental Platform",
 					"description": {
 						"short": "Complete redesign of a real estate rental platform with React.",
-						"detailed": "Modernization of a legacy ASP.NET application to a modern JavaScript stack. Focus on accessibility and responsive design."
+						"detailed": "Modernization of a legacy ASP.NET application to a modern JavaScript stack. Development with React and React Router for smooth navigation, Scss for maintainable styles. Implementation of key components such as custom image carousel, reusable collapses, and advanced routing management. Focus on accessibility with keyboard navigation and optimized color contrast (ratio 4.5). Modular architecture with JSON mock pending API, responsive design down to 375px. [ Project completed during an OpenClassrooms training. ]"
 					},
-					"tags": ["React", "React Router", "Sass", "A11y", "Responsive"],
+					"tags": ["React", "React Router", "Scss", "A11y", "Responsive"],
 					"imageAlt": "Kasa application interface",
 					"links": {
 						"github": "https://github.com/Simon-LM/OC_P8_KASA",

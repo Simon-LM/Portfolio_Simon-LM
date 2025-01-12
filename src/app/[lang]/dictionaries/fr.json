@@ -79,7 +79,7 @@
 					"title": "ArgentBank - Application Bancaire",
 					"description": {
 						"short": "Application bancaire React avec authentification sécurisée et gestion de profil utilisateur, mettant l'accent sur l'accessibilité et les performances.",
-						"detailed": "Interface utilisateur développée avec React 18 et TypeScript, intégrant Zod pour une validation de données type-safe et Redux Toolkit pour une gestion d'état optimisée. Authentification sécurisée avec gestion automatique de session (useSessionTimeout) et validation stricte des formulaires. Focus sur l'accessibilité numérique (WCAG/RGAA) et les performances (code splitting, lazy loading). Architecture modulaire testée avec Vitest et respect des bonnes pratiques Green IT."
+						"detailed": "Interface utilisateur développée avec React 18 et TypeScript, intégrant Zod pour une validation de données type-safe et Redux Toolkit pour une gestion d'état optimisée. Authentification sécurisée avec gestion automatique de session (useSessionTimeout) et validation stricte des formulaires. Focus sur l'accessibilité numérique (WCAG/RGAA) et les performances (code splitting, lazy loading). Architecture modulaire testée avec Vitest et respect des bonnes pratiques Green IT. [ Projet réalisé, lors d'une formation OpenClassrooms. ]"
 					},
 					"tags": [
 						"React",
@@ -99,7 +99,7 @@
 					"title": "Nina Carducci - Optimisation SEO & A11y",
 					"description": {
 						"short": "Audit complet et optimisation d'un site de photographe professionnel, focalisé sur l'accessibilité, les performances et le SEO.",
-						"detailed": "Optimisation globale basée sur les normes WCAG et RGAA, incluant : conversion des images en WebP/AVIF avec srcset, amélioration des contrastes (ratio 4.5), navigation clavier optimisée, balises ARIA, sémantique HTML5, microdonnées Schema.org. Audit réalisé avec Lighthouse, Wave, Axe et RGAA checker. Minification des assets et chargement différé pour des performances optimales."
+						"detailed": "Optimisation globale basée sur les normes WCAG et RGAA, incluant : conversion des images en WebP/AVIF avec srcset, amélioration des contrastes (ratio 4.5), navigation clavier optimisée, balises ARIA, sémantique HTML5, microdonnées Schema.org. Audit réalisé avec Lighthouse, Wave, Axe et RGAA checker. Minification des assets et chargement différé pour des performances optimales. [ Projet réalisé, lors d'une formation OpenClassrooms. ]"
 					},
 					"tags": ["SEO", "A11y", "Performance", "WCAG"],
 					"imageAlt": "Capture d'écran des résultats Lighthouse montrant un score de 100% sur tous les critères",
@@ -113,9 +113,9 @@
 					"title": "Kasa - Plateforme de Location",
 					"description": {
 						"short": "Refonte complète d'une plateforme de location immobilière avec React, incluant carrousel d'images, composants réutilisables et routage avancé.",
-						"detailed": "Modernisation d'une application legacy ASP.NET vers une stack JavaScript moderne. Développement avec React et React Router pour une navigation fluide, Sass pour des styles maintenables. Implémentation de composants clés comme un carrousel d'images personnalisé, des collapses réutilisables, et gestion avancée du routage. Focus sur l'accessibilité avec navigation au clavier et contraste des couleurs optimisé (ratio 4.5). Architecture modulaire avec mock JSON en attendant l'API, responsive design jusqu'à 375px."
+						"detailed": "Modernisation d'une application legacy ASP.NET vers une stack JavaScript moderne. Développement avec React et React Router pour une navigation fluide, Scss pour des styles maintenables. Implémentation de composants clés comme un carrousel d'images personnalisé, des collapses réutilisables, et gestion avancée du routage. Focus sur l'accessibilité avec navigation au clavier et contraste des couleurs optimisé (ratio 4.5). Architecture modulaire avec mock JSON en attendant l'API, responsive design jusqu'à 375px. [ Projet réalisé, lors d'une formation OpenClassrooms. ]"
 					},
-					"tags": ["React", "React Router", "Sass", "A11y", "Responsive"],
+					"tags": ["React", "React Route", "Scss", "A11y", "Responsive"],
 					"links": {
 						"github": "https://github.com/Simon-LM/OC_P8_KASA",
 						"website": "https://slm-kaza-simon-lms-projects.vercel.app/"
