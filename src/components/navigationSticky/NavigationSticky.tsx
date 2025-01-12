@@ -8,20 +8,6 @@ import { useLanguageStore } from "../../store/langueStore";
 import Link from "next/link";
 import LanguageSelector from "../languageSelector/LanguageSelector";
 
-// interface NavigationStickyProps {
-// 	t: {
-// 		skipLink: string;
-// 		home: string;
-// 		why: string;
-// 		skills: string;
-// 		portfolio: string;
-// 		contact: string;
-// 		social: string;
-// 		menu: string;
-// 		closeMenu: string;
-// 	};
-// }
-
 export default function NavigationSticky() {
 	const [isHeaderVisible, setIsHeaderVisible] = useState(true);
 	const [isHovered, setIsHovered] = useState(false);
@@ -56,6 +42,25 @@ export default function NavigationSticky() {
 			closeMenu: "Close menu",
 		},
 	};
+
+	useEffect(() => {
+		const handleFocusOut = (event: FocusEvent) => {
+			if (
+				isMenuOpen &&
+				menuRef.current &&
+				!menuRef.current.contains(event.relatedTarget as Node)
+			) {
+				setIsMenuOpen(false);
+			}
+		};
+
+		const menuElement = menuRef.current;
+		menuElement?.addEventListener("focusout", handleFocusOut);
+
+		return () => {
+			menuElement?.removeEventListener("focusout", handleFocusOut);
+		};
+	}, [isMenuOpen]);
 
 	const t = translations[language as keyof typeof translations];
 
@@ -137,7 +142,7 @@ export default function NavigationSticky() {
 						{t.contact}
 					</Link>
 
-					<Link href={`/${language}/#bottomFooter`} onClick={handleNavClick}>
+					<Link href={`/${language}/#rss-link`} onClick={handleNavClick}>
 						{t.social}
 					</Link>
 				</div>

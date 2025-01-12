@@ -1,8 +1,8 @@
 {
 	"header": {
 		"accessibilityIcon": {
-			"alt": "",
-			"title": "Icône d'accessibilité"
+			"alt": "Paramètres d'accessibilité",
+			"title": "Paramètres d'accessibilité"
 		},
 		"title": {
 			"name": "Simon LM",
@@ -144,6 +144,9 @@
 				"sending": "Envoi en cours...",
 				"success": "Message envoyé avec succès !",
 				"error": "Une erreur est survenue lors de l'envoi.",
+				"recaptcha": {
+					"error": "Veuillez valider le captcha"
+				},
 				"errors": {
 					"firstName": "Le prénom doit contenir au moins 2 caractères",
 					"lastName": "Le nom doit contenir au moins 2 caractères",

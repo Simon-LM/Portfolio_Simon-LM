@@ -11,8 +11,8 @@ import emailjs from "@emailjs/browser";
 import { Toaster, toast } from "react-hot-toast";
 import Link from "next/link";
 
-// import ReCAPTCHA from "react-google-recaptcha";
-// import { useRef } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
+import { useRef } from "react";
 
 interface FormErrors {
 	firstName: string;
@@ -58,13 +58,16 @@ interface ContactProps {
 		title: string;
 		subtitle: string;
 		form: FormDictionary;
+		recaptcha: {
+			error: string;
+		};
 	};
 }
 
 const SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
 const TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
 const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
-// const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
 const phoneRegex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
 
@@ -92,20 +95,19 @@ export default function ContactClient({ dictionary }: ContactProps) {
 				message: dictionary.form.errors.gdpr,
 			}),
 
-			// recaptcha: z.string().min(1, "Veuillez cocher la case reCAPTCHA"),
+			recaptcha: z.string().min(1, "Veuillez cocher la case reCAPTCHA"),
 		});
 	};
 
+	// export default function ContactClient({ dictionary }: ContactProps) {
+	const recaptchaRef = useRef<ReCAPTCHA>(null);
 	const schema = createValidationSchema();
 	type FormData = z.infer<typeof schema>;
-
-	// export default function ContactClient({ dictionary }: ContactProps) {
-	// const recaptchaRef = useRef<ReCAPTCHA>(null);
 
 	const {
 		register,
 		handleSubmit,
-		// setValue,
+		setValue,
 		formState: { errors },
 		reset,
 	} = useForm<FormData>({
@@ -113,10 +115,10 @@ export default function ContactClient({ dictionary }: ContactProps) {
 	});
 
 	const onSubmit = async (data: FormData) => {
-		// if (!recaptchaRef.current?.getValue()) {
-		// 	toast.error(dictionary.recaptcha.error);
-		// 	return;
-		// }
+		if (!recaptchaRef.current?.getValue()) {
+			toast.error(dictionary.recaptcha.error);
+			return;
+		}
 		const loadingToast = toast.loading(dictionary.form.sending);
 		try {
 			// Préparer les données pour EmailJS
@@ -169,10 +171,10 @@ export default function ContactClient({ dictionary }: ContactProps) {
 	};
 
 	return (
+		// <form onSubmit={handleSubmit(onSubmit)}>
 		<motion.section id="contact" className="contact">
 			<div className="contact__container">
 				<h2 className="contact__title">{dictionary.title}</h2>
-				{/* <p className="contact__subtitle">{dictionary.subtitle}</p> */}
 
 				<Form.Root className="contact__form" onSubmit={handleSubmit(onSubmit)}>
 					{/* Honeypot field  */}
@@ -228,9 +230,6 @@ export default function ContactClient({ dictionary }: ContactProps) {
 								</Form.Message>
 							)}
 						</Form.Field>
-						{/* </div>
-
-					<div className="contact__form-fields"> */}
 
 						<Form.Field className="contact__form-field" name="company">
 							{/* <Form.Label className="contact__form-label">
@@ -248,39 +247,7 @@ export default function ContactClient({ dictionary }: ContactProps) {
 							</Form.Control>
 						</Form.Field>
 
-						{/* <Form.Field className="contact__form-field" name="phone">
-							<Form.Label className="contact__form-label">
-								{dictionary.form.phone}
-							</Form.Label>
-							<Form.Control asChild>
-								<input
-									type="tel"
-									className="contact__form-input"
-									{...register("phone")}
-									aria-invalid={errors.phone ? "true" : "false"}
-									pattern="^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$"
-									aria-describedby="phone-format"
-								/>
-							</Form.Control>
-							<div id="phone-format" className="contact__form-hint-phones">
-								<div className="contact__form-hint">
-									{dictionary.form.phoneFormat.line1}
-								</div>
-								<div className="contact__form-hint">
-									{dictionary.form.phoneFormat.line2}
-								</div>
-							</div>
-							{errors.phone && (
-								<Form.Message className="contact__form-error">
-									{errors.phone.message}
-								</Form.Message>
-							)}
-						</Form.Field> */}
-
 						<Form.Field className="contact__form-field" name="phone">
-							{/* <Form.Label className="contact__form-label">
-								{dictionary.form.phone}
-							</Form.Label> */}
 							<Form.Label className="contact__form-label">
 								{dictionary.form.phone}
 								<span className="optional">{dictionary.form.optional}</span>
@@ -416,15 +383,9 @@ export default function ContactClient({ dictionary }: ContactProps) {
 						</button>
 					</Form.Submit>
 				</Form.Root>
-
-				{/* <div className="contact__email-wrapper">
-					<a href={`mailto:${dictionary.email}`} className="contact__email">
-						{dictionary.email}
-					</a>
-				</div> */}
 			</div>
 			<div className="contact__form-recaptcha">
-				{/* <ReCAPTCHA
+				<ReCAPTCHA
 					ref={recaptchaRef}
 					sitekey={RECAPTCHA_SITE_KEY!}
 					onChange={(value: string | null) =>
@@ -432,7 +393,7 @@ export default function ContactClient({ dictionary }: ContactProps) {
 					}
 					theme="light"
 					size="normal"
-				/> */}
+				/>
 			</div>
 			<Toaster
 				position="top-center"
@@ -455,5 +416,7 @@ export default function ContactClient({ dictionary }: ContactProps) {
 				}}
 			/>
 		</motion.section>
+		// </form>
 	);
 }
+// }

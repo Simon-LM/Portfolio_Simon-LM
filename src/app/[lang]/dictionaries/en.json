@@ -1,8 +1,8 @@
 {
 	"header": {
 		"accessibilityIcon": {
-			"alt": "",
-			"title": "Accessibility icon"
+			"alt": "Accessibility settings",
+			"title": "Accessibility settings"
 		},
 		"title": {
 			"name": "Simon LM",
@@ -146,6 +146,9 @@
 				"sending": "Sending...",
 				"success": "Message sent successfully!",
 				"error": "An error occurred while sending the message.",
+				"recaptcha": {
+					"error": "Please validate the captcha"
+				},
 				"errors": {
 					"firstName": "First name must contain at least 2 characters",
 					"lastName": "Last name must contain at least 2 characters",

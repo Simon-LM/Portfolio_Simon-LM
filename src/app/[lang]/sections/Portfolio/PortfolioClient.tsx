@@ -62,6 +62,7 @@ export default function PortfolioClient({ dictionary }: PortfolioProps) {
 
 				<div className="portfolio__grid">
 					<PortfolioCard
+						priority={true}
 						title={dictionary.projects.kasa.title}
 						description={dictionary.projects.kasa.description}
 						tags={dictionary.projects.kasa.tags}
@@ -70,7 +71,6 @@ export default function PortfolioClient({ dictionary }: PortfolioProps) {
 						links={dictionary.projects.kasa.links}
 					/>
 					<PortfolioCard
-						priority={true}
 						title={dictionary.projects.argentBank.title}
 						description={dictionary.projects.argentBank.description}
 						tags={dictionary.projects.argentBank.tags}
