@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import * as Form from "@radix-ui/react-form";
-import emailjs from "@emailjs/browser";
 import { Toaster, toast } from "react-hot-toast";
 import Link from "next/link";
 import Script from "next/script";
@@ -95,7 +94,7 @@ interface FormDictionary {
 // const TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
 
 // Garder uniquement
-const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+// const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
 const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
 const phoneRegex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
@@ -103,13 +102,6 @@ const phoneRegex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
 export default function ContactClient({ dictionary, lang }: ContactProps) {
 	// Ajouter lang ici
 	const [isLoading, setIsLoading] = useState(false);
-
-	// Initialize EmailJS
-	useEffect(() => {
-		if (PUBLIC_KEY) {
-			emailjs.init(PUBLIC_KEY);
-		}
-	}, []);
 
 	// Load reCAPTCHA v3
 	useEffect(() => {

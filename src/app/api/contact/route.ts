@@ -106,7 +106,13 @@ export async function POST(request: NextRequest) {
 					company: typedFormData.company || "",
 					subject: typedFormData.subject,
 					message: typedFormData.message,
+					reply_to: typedFormData.email, // Ajout de la variable reply_to
 				};
+
+				// Optionnel : Ajouter des variables système si nécessaire
+				// emailParams.system_date = new Date().toLocaleDateString();
+				// emailParams.system_time = new Date().toLocaleTimeString();
+				// emailParams.system_language = language;
 
 				// Log des paramètres envoyés pour le débogage
 				console.log("EmailJS Template Parameters:", emailParams);
