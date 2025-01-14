@@ -26,6 +26,10 @@ async function verifyRecaptcha(token: string) {
 			}
 		);
 
+		if (!response.ok) {
+			throw new Error(`reCAPTCHA verification failed: ${response.statusText}`);
+		}
+
 		const data = await response.json();
 		// Log détaillé de la réponse
 		console.log("reCAPTCHA API Response:", {
@@ -52,13 +56,34 @@ async function verifyRecaptcha(token: string) {
 	}
 }
 
+// Définir une interface pour les erreurs
+interface ApiError extends Error {
+	message: string;
+	code?: string;
+	status?: number;
+}
+
 export async function POST(request: NextRequest) {
 	try {
+		if (!RECAPTCHA_SECRET_KEY) {
+			throw new Error("RECAPTCHA_SECRET_KEY is not configured");
+		}
+
 		const body = await request.json();
+		console.log("Received request body:", body);
+
 		const { "g-recaptcha-response": recaptchaToken, ...formData } = body;
+
+		if (!recaptchaToken) {
+			return NextResponse.json(
+				{ error: "Missing reCAPTCHA token" },
+				{ status: 400 }
+			);
+		}
 
 		// Vérifier le reCAPTCHA
 		const recaptchaResult = await verifyRecaptcha(recaptchaToken);
+		console.log("reCAPTCHA verification result:", recaptchaResult);
 		if (!recaptchaResult.success) {
 			return NextResponse.json(
 				{ error: "reCAPTCHA verification failed" },
@@ -67,18 +92,29 @@ export async function POST(request: NextRequest) {
 		}
 
 		// Envoyer l'email avec EmailJS
-		await emailjs.send(
+		const emailjsResponse = await emailjs.send(
 			process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
 			process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
 			formData,
 			process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
 		);
 
-		return NextResponse.json({ message: "Email sent successfully" });
-	} catch (error) {
-		console.error("API error:", error);
+		console.log("EmailJS Response:", emailjsResponse);
+
+		return NextResponse.json({
+			message: "Email sent successfully",
+			recaptchaScore: recaptchaResult.score,
+		});
+	} catch (error: unknown) {
+		// Type guard pour l'erreur
+		const apiError = error as ApiError;
+		console.error("API error:", apiError);
+
 		return NextResponse.json(
-			{ error: "Internal server error" },
+			{
+				error: "Server error",
+				details: apiError.message,
+			},
 			{ status: 500 }
 		);
 	}
