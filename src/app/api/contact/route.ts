@@ -97,6 +97,20 @@ export async function POST(request: NextRequest) {
 					throw new Error("Missing EmailJS configuration");
 				}
 
+				// Mapper les données du formulaire aux variables EmailJS avec les noms correspondants au template
+				const emailParams: { [key: string]: string } = {
+					firstName: typedFormData.firstName,
+					lastName: typedFormData.lastName,
+					email: typedFormData.email,
+					phone: typedFormData.phone || "",
+					company: typedFormData.company || "",
+					subject: typedFormData.subject,
+					message: typedFormData.message,
+				};
+
+				// Log des paramètres envoyés pour le débogage
+				console.log("EmailJS Template Parameters:", emailParams);
+
 				const emailResponse = await fetch(
 					"https://api.emailjs.com/api/v1.0/email/send",
 					{
@@ -106,12 +120,10 @@ export async function POST(request: NextRequest) {
 							Origin: "https://simon-lm.dev",
 						},
 						body: JSON.stringify({
-							...emailjsConfig,
-							template_params: {
-								...typedFormData,
-								"g-recaptcha-response": token,
-								subject: typedFormData.subject || "Contact Form Submission",
-							},
+							service_id: emailjsConfig.service_id,
+							template_id: emailjsConfig.template_id,
+							user_id: emailjsConfig.user_id,
+							template_params: emailParams, // Utiliser les paramètres mappés
 						}),
 					}
 				);
