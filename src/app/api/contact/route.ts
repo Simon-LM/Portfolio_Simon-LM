@@ -5,7 +5,7 @@ import emailjs from "@emailjs/browser";
 
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
-const MINIMUM_SCORE = 0.1;
+const MINIMUM_SCORE = 0;
 
 async function verifyRecaptcha(token: string) {
 	try {
@@ -21,7 +21,14 @@ async function verifyRecaptcha(token: string) {
 		);
 
 		const data = await response.json();
-		console.log("reCAPTCHA response:", data); // Ajout pour debug
+		// Ajouter plus de logs pour le débogage
+		console.log("reCAPTCHA full response:", {
+			success: data.success,
+			score: data.score,
+			action: data.action,
+			challengeTs: data.challenge_ts,
+			hostname: data.hostname,
+		});
 
 		return {
 			success: data.success && data.score >= MINIMUM_SCORE,
