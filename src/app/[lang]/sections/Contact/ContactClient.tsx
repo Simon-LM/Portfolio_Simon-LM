@@ -33,6 +33,7 @@ interface ReCaptchaRenderOptions {
 
 interface ContactProps {
 	dictionary: ContactDictionary;
+	lang: string; // Ajouter cette ligne
 }
 
 interface ContactDictionary {
@@ -99,7 +100,8 @@ const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
 const phoneRegex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
 
-export default function ContactClient({ dictionary }: ContactProps) {
+export default function ContactClient({ dictionary, lang }: ContactProps) {
+	// Ajouter lang ici
 	const [isLoading, setIsLoading] = useState(false);
 
 	// Initialize EmailJS
@@ -438,7 +440,7 @@ export default function ContactClient({ dictionary }: ContactProps) {
 								<p>
 									{dictionary.form.gdpr.text}{" "}
 									<Link
-										href="/privacy-policy"
+										href={`/${lang}/privacy-policy`} // Ajouter le paramètre de langue
 										className="contact__form-gdpr-link">
 										{dictionary.form.gdpr.privacyLink}
 									</Link>

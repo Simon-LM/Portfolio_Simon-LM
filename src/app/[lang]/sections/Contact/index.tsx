@@ -9,5 +9,10 @@ export default async function Contact({
 	params: { lang: string };
 }) {
 	const dictionary = await getDictionary(params.lang as "en" | "fr");
-	return <ContactClient dictionary={dictionary.sections.contact} />;
+	return (
+		<ContactClient
+			dictionary={dictionary.sections.contact}
+			lang={params.lang} // Passer la langue au composant client
+		/>
+	);
 }
