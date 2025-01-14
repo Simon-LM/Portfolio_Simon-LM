@@ -41,6 +41,13 @@ export default function LangLayout({
 }) {
 	return (
 		<html lang={lang} suppressHydrationWarning>
+			<head>
+				<link
+					rel="preload"
+					as="image"
+					href="/_next/static/media/Icon_Accessibility_Contrasts-Visuals.71537667.png"
+				/>
+			</head>
 			<body>{children}</body>
 		</html>
 	);

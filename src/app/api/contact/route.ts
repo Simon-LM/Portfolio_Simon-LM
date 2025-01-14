@@ -88,10 +88,34 @@ export async function POST(request: NextRequest) {
 	}; // Type plus précis
 
 	try {
-		if (!RECAPTCHA_SECRET_KEY) {
-			console.error("Missing RECAPTCHA_SECRET_KEY");
+		// Vérifier toutes les variables d'environnement au démarrage
+		const requiredEnvVars = {
+			RECAPTCHA_SECRET_KEY: process.env.RECAPTCHA_SECRET_KEY,
+			SERVICE_ID: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+			TEMPLATE_ID: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
+			PUBLIC_KEY: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
+		};
+
+		// Log pour debug
+		console.log("Environment variables status:", {
+			...Object.entries(requiredEnvVars).reduce(
+				(acc, [key, value]) => ({
+					...acc,
+					[key]: !!value,
+				}),
+				{}
+			),
+		});
+
+		// Vérifier si une variable manque (correction du paramètre inutilisé)
+		const missingVars = Object.entries(requiredEnvVars)
+			.filter(([, value]) => !value) // Enlever le '_' inutilisé
+			.map(([key]) => key);
+
+		if (missingVars.length > 0) {
+			console.error("Missing environment variables:", missingVars);
 			return NextResponse.json(
-				{ error: "Server configuration error" },
+				{ error: "Server configuration error", details: missingVars },
 				{ status: 500 }
 			);
 		}
