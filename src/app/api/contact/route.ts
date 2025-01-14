@@ -1,7 +1,11 @@
 /** @format */
 
 import { NextRequest, NextResponse } from "next/server";
-import emailjs from "@emailjs/browser";
+// Supprimer ces importations conflictuelles
+// import emailjs from "@emailjs/browser";
+// import { SMTPClient } from "emailjs";
+
+// Utiliser uniquement @emailjs/browser
 
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
@@ -63,7 +67,26 @@ interface ApiError extends Error {
 	status?: number;
 }
 
+// Ajouter cette interface en haut du fichier avec les autres interfaces
+interface FormDataType {
+	firstName: string;
+	lastName: string;
+	email: string;
+	phone?: string;
+	company?: string;
+	subject: string;
+	message: string;
+}
+
 export async function POST(request: NextRequest) {
+	let requestFormData: FormDataType = {
+		firstName: "",
+		lastName: "",
+		email: "",
+		subject: "",
+		message: "",
+	}; // Type plus précis
+
 	try {
 		if (!RECAPTCHA_SECRET_KEY) {
 			console.error("Missing RECAPTCHA_SECRET_KEY");
@@ -83,6 +106,7 @@ export async function POST(request: NextRequest) {
 		console.log("Request body:", body);
 
 		const { "g-recaptcha-response": recaptchaToken, ...formData } = body;
+		requestFormData = formData as FormDataType; // Cast typé
 
 		if (!recaptchaToken) {
 			console.error("Missing reCAPTCHA token");
@@ -102,23 +126,26 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Envoyer l'email avec EmailJS
-		const emailjsResponse = await emailjs.send(
-			process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!, // serviceID en premier
-			process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!, // templateID en second
-			formData, // données du formulaire
-			process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY // public key en dernier
+		// Envoyer l'email directement avec @emailjs/browser
+		const emailResponse = await fetch(
+			"https://api.emailjs.com/api/v1.0/email/send",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					service_id: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+					template_id: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
+					user_id: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
+					template_params: requestFormData,
+				}),
+			}
 		);
 
-		// Ajoutons plus de logs pour déboguer
-		console.log("EmailJS Configuration:", {
-			serviceID: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
-			templateID: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
-			hasPublicKey: !!process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
-			formData: formData,
-		});
-
-		console.log("EmailJS Response:", emailjsResponse);
+		if (!emailResponse.ok) {
+			throw new Error("Failed to send email");
+		}
 
 		return NextResponse.json({
 			message: "Email sent successfully",
@@ -127,10 +154,16 @@ export async function POST(request: NextRequest) {
 	} catch (error: unknown) {
 		// Type guard pour l'erreur
 		const apiError = error as ApiError;
-		console.error("API Error:", {
+		console.error("Detailed API Error:", {
 			message: apiError.message,
+			name: apiError.name,
 			stack: apiError.stack,
-			type: typeof error,
+			formData: requestFormData, // Maintenant correctement typé
+			emailConfig: {
+				serviceID: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+				hasTemplate: !!process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
+				hasPublicKey: !!process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
+			},
 		});
 
 		return NextResponse.json(
@@ -139,7 +172,7 @@ export async function POST(request: NextRequest) {
 				details:
 					process.env.NODE_ENV === "development"
 						? apiError.message
-						: "An unexpected error occurred",
+						: "Email sending failed",
 			},
 			{ status: 500 }
 		);
