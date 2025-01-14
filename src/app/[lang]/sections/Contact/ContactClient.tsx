@@ -235,11 +235,17 @@ export default function ContactClient({ dictionary }: ContactProps) {
 
 	return (
 		<>
-			{/* Script reCAPTCHA v3 */}
 			<Script
 				src={`https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}&badge=bottomleft`}
 				strategy="afterInteractive"
 			/>
+
+			{/* Label caché pour le textarea reCAPTCHA */}
+			<div className="sr-only" aria-hidden="false">
+				<label htmlFor="g-recaptcha-response-100000" id="recaptcha-label">
+					reCAPTCHA verification response
+				</label>
+			</div>
 
 			<section id="contact" className="contact">
 				<div className="contact__container">

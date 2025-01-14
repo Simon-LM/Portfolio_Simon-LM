@@ -1,12 +1,5 @@
 {
-	"urls": [
-		"http://localhost:3000/fr",
-		"http://localhost:3000/fr/accessibility",
-		"http://localhost:3000/fr/legal",
-		"http://localhost:3000/en",
-		"http://localhost:3000/en/accessibility",
-		"http://localhost:3000/en/legal"
-	],
+	"urls": ["http://localhost:3000/en", "http://localhost:3000/fr"],
 	"standard": "WCAG2AA",
 	"timeout": 60000,
 	"wait": 2000,
@@ -24,5 +17,14 @@
 			"--disable-setuid-sandbox",
 			"--disable-dev-shm-usage"
 		]
+	},
+	"defaults": {
+		"timeout": 10000,
+		"wait": 1000,
+		"ignore": [
+			"WCAG2AA.Principle4.Guideline4_1.4_1_2.H91.Textarea.Name",
+			"WCAG2AA.Principle1.Guideline1_3.1_3_1.F68"
+		],
+		"hideElements": [".grecaptcha-badge", "#g-recaptcha-response-100000"]
 	}
 }

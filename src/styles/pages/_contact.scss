@@ -265,10 +265,35 @@
 	}
 }
 
+// Uniquement pour positionner le badge légal
 .grecaptcha-badge {
 	z-index: 999 !important;
 	bottom: 5rem !important;
 	left: 2rem !important;
-	min-width: 16rem !important;
-	min-height: 4rem !important;
+}
+
+.g-recaptcha-response {
+	position: absolute !important;
+	clip: rect(1px, 1px, 1px, 1px) !important;
+	padding: 0 !important;
+	border: 0 !important;
+	height: 1px !important;
+	width: 1px !important;
+	overflow: hidden !important;
+	&:focus {
+		outline: 2px solid $color-link;
+	}
+}
+
+// Ajouter un style pour le label caché
+.sr-only:not([aria-hidden="true"]) {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
 }
