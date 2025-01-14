@@ -60,12 +60,12 @@ async function verifyRecaptcha(token: string) {
 	}
 }
 
-// Définir une interface pour les erreurs
-interface ApiError extends Error {
+// Supprimer l'interface inutilisée et la remplacer par un type plus simple
+type ApiErrorResponse = {
 	message: string;
-	code?: string;
 	status?: number;
-}
+	details?: string;
+};
 
 // Ajouter cette interface en haut du fichier avec les autres interfaces
 interface FormDataType {
@@ -150,25 +150,36 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Envoyer l'email directement avec @emailjs/browser
+		// Simplifier l'envoi d'email
+		const emailData = {
+			service_id: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+			template_id: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
+			user_id: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
+			template_params: requestFormData,
+		};
+
+		console.log("Attempting to send email with config:", {
+			...emailData,
+			template_params: "REDACTED",
+		});
+
 		const emailResponse = await fetch(
 			"https://api.emailjs.com/api/v1.0/email/send",
 			{
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					service_id: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
-					template_id: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
-					user_id: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
-					template_params: requestFormData,
-				}),
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(emailData),
 			}
 		);
 
 		if (!emailResponse.ok) {
-			throw new Error("Failed to send email");
+			const errorText = await emailResponse.text();
+			console.error("EmailJS Error:", {
+				status: emailResponse.status,
+				statusText: emailResponse.statusText,
+				body: errorText,
+			});
+			throw new Error(`EmailJS Error: ${errorText}`);
 		}
 
 		return NextResponse.json({
@@ -176,29 +187,25 @@ export async function POST(request: NextRequest) {
 			recaptchaScore: recaptchaResult.score,
 		});
 	} catch (error: unknown) {
-		// Type guard pour l'erreur
-		const apiError = error as ApiError;
-		console.error("Detailed API Error:", {
-			message: apiError.message,
-			name: apiError.name,
-			stack: apiError.stack,
-			formData: requestFormData, // Maintenant correctement typé
-			emailConfig: {
-				serviceID: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
-				hasTemplate: !!process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
-				hasPublicKey: !!process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
-			},
-		});
+		const errorResponse: ApiErrorResponse = {
+			message: error instanceof Error ? error.message : "Unknown error",
+			status: 500,
+			details:
+				process.env.NODE_ENV === "development"
+					? error instanceof Error
+						? error.stack
+						: "No stack trace"
+					: undefined,
+		};
+
+		console.error("Full server error:", errorResponse);
 
 		return NextResponse.json(
 			{
 				error: "Server error",
-				details:
-					process.env.NODE_ENV === "development"
-						? apiError.message
-						: "Email sending failed",
+				details: errorResponse.message,
 			},
-			{ status: 500 }
+			{ status: errorResponse.status }
 		);
 	}
 }
