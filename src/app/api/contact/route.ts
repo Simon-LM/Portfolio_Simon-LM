@@ -88,6 +88,36 @@ export async function POST(request: NextRequest) {
 	}; // Type plus précis
 
 	try {
+		// Log toutes les variables au début pour debug
+		console.log("=== DEBUG START ===");
+		console.log({
+			hasRecaptchaSecret: !!process.env.RECAPTCHA_SECRET_KEY,
+			hasServiceId: !!process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+			hasTemplateId: !!process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
+			hasPublicKey: !!process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
+			isDevelopment: process.env.NODE_ENV === "development",
+		});
+
+		// Vérification initiale des variables d'environnement
+		console.log("=== ENV VARS CHECK ===");
+		console.log(
+			"RECAPTCHA_SECRET_KEY exists:",
+			!!process.env.RECAPTCHA_SECRET_KEY
+		);
+		console.log(
+			"SERVICE_ID exists:",
+			!!process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
+		);
+		console.log(
+			"TEMPLATE_ID exists:",
+			!!process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
+		);
+		console.log(
+			"PUBLIC_KEY exists:",
+			!!process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+		);
+		console.log("==================");
+
 		// Vérifier toutes les variables d'environnement au démarrage
 		const requiredEnvVars = {
 			RECAPTCHA_SECRET_KEY: process.env.RECAPTCHA_SECRET_KEY,
@@ -158,28 +188,49 @@ export async function POST(request: NextRequest) {
 			template_params: requestFormData,
 		};
 
+		// Avant l'envoi de l'email
+		console.log("Email config:", {
+			service_id: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+			template_id: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
+			user_id: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
+			template_params_exists: !!requestFormData,
+		});
+
 		console.log("Attempting to send email with config:", {
 			...emailData,
 			template_params: "REDACTED",
 		});
 
+		// Modification de l'appel EmailJS
 		const emailResponse = await fetch(
 			"https://api.emailjs.com/api/v1.0/email/send",
 			{
 				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(emailData),
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					service_id: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+					template_id: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
+					user_id: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
+					template_params: {
+						...requestFormData,
+						"g-recaptcha-response": recaptchaToken,
+					},
+				}),
 			}
 		);
 
+		// Log de la réponse EmailJS
+		const responseText = await emailResponse.text();
+		console.log("EmailJS Response:", {
+			status: emailResponse.status,
+			ok: emailResponse.ok,
+			text: responseText,
+		});
+
 		if (!emailResponse.ok) {
-			const errorText = await emailResponse.text();
-			console.error("EmailJS Error:", {
-				status: emailResponse.status,
-				statusText: emailResponse.statusText,
-				body: errorText,
-			});
-			throw new Error(`EmailJS Error: ${errorText}`);
+			throw new Error(`EmailJS Error: ${responseText}`);
 		}
 
 		return NextResponse.json({
@@ -187,6 +238,14 @@ export async function POST(request: NextRequest) {
 			recaptchaScore: recaptchaResult.score,
 		});
 	} catch (error: unknown) {
+		console.error("=== ERROR DETAILS ===");
+		console.error(error);
+		console.error("DETAILED ERROR:", {
+			error: error instanceof Error ? error.message : "Unknown error",
+			stack: error instanceof Error ? error.stack : "No stack trace",
+			env: process.env.NODE_ENV,
+		});
+		// ...existing error handling...
 		const errorResponse: ApiErrorResponse = {
 			message: error instanceof Error ? error.message : "Unknown error",
 			status: 500,
