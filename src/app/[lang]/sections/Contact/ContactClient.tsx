@@ -340,7 +340,8 @@ export default function ContactClient({ dictionary }: ContactProps) {
 										className="contact__form-input"
 										{...register("phone")}
 										aria-invalid={errors.phone ? "true" : "false"}
-										pattern="^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$"
+										// Correction du pattern en échappant les caractères spéciaux
+										pattern="^(?:(?:\+|00)33|0)\s*[1-9](?:[\s\.\-]*\d{2}){4}$"
 										aria-describedby="phone-format"
 									/>
 								</Form.Control>

@@ -66,17 +66,28 @@ interface ApiError extends Error {
 export async function POST(request: NextRequest) {
 	try {
 		if (!RECAPTCHA_SECRET_KEY) {
-			throw new Error("RECAPTCHA_SECRET_KEY is not configured");
+			console.error("Missing RECAPTCHA_SECRET_KEY");
+			return NextResponse.json(
+				{ error: "Server configuration error" },
+				{ status: 500 }
+			);
 		}
 
 		const body = await request.json();
-		console.log("Received request body:", body);
+
+		if (!body) {
+			console.error("Empty request body");
+			return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+		}
+
+		console.log("Request body:", body);
 
 		const { "g-recaptcha-response": recaptchaToken, ...formData } = body;
 
 		if (!recaptchaToken) {
+			console.error("Missing reCAPTCHA token");
 			return NextResponse.json(
-				{ error: "Missing reCAPTCHA token" },
+				{ error: "Missing security token" },
 				{ status: 400 }
 			);
 		}
@@ -93,11 +104,19 @@ export async function POST(request: NextRequest) {
 
 		// Envoyer l'email avec EmailJS
 		const emailjsResponse = await emailjs.send(
-			process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-			process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-			formData,
-			process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+			process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!, // serviceID en premier
+			process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!, // templateID en second
+			formData, // données du formulaire
+			process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY // public key en dernier
 		);
+
+		// Ajoutons plus de logs pour déboguer
+		console.log("EmailJS Configuration:", {
+			serviceID: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+			templateID: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
+			hasPublicKey: !!process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
+			formData: formData,
+		});
 
 		console.log("EmailJS Response:", emailjsResponse);
 
@@ -108,12 +127,19 @@ export async function POST(request: NextRequest) {
 	} catch (error: unknown) {
 		// Type guard pour l'erreur
 		const apiError = error as ApiError;
-		console.error("API error:", apiError);
+		console.error("API Error:", {
+			message: apiError.message,
+			stack: apiError.stack,
+			type: typeof error,
+		});
 
 		return NextResponse.json(
 			{
 				error: "Server error",
-				details: apiError.message,
+				details:
+					process.env.NODE_ENV === "development"
+						? apiError.message
+						: "An unexpected error occurred",
 			},
 			{ status: 500 }
 		);
