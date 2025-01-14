@@ -9,6 +9,12 @@ const MINIMUM_SCORE = 0;
 
 async function verifyRecaptcha(token: string) {
 	try {
+		// Log avant la vérification
+		console.log(
+			"Attempting reCAPTCHA verification with token:",
+			token.substring(0, 20) + "..."
+		);
+
 		const response = await fetch(
 			"https://www.google.com/recaptcha/api/siteverify",
 			{
@@ -21,22 +27,28 @@ async function verifyRecaptcha(token: string) {
 		);
 
 		const data = await response.json();
-		// Ajouter plus de logs pour le débogage
-		console.log("reCAPTCHA full response:", {
+		// Log détaillé de la réponse
+		console.log("reCAPTCHA API Response:", {
 			success: data.success,
 			score: data.score,
 			action: data.action,
 			challengeTs: data.challenge_ts,
 			hostname: data.hostname,
+			errorCodes: data["error-codes"], // Important pour le debug
 		});
 
 		return {
 			success: data.success && data.score >= MINIMUM_SCORE,
 			score: data.score,
+			details: data, // Ajout des détails complets
 		};
 	} catch (error) {
-		console.error("reCAPTCHA verification failed:", error);
-		return { success: false, score: 0 };
+		console.error("reCAPTCHA Verification Error:", {
+			error,
+			secretKeyPresent: !!RECAPTCHA_SECRET_KEY,
+			secretKeyLength: RECAPTCHA_SECRET_KEY?.length,
+		});
+		return { success: false, score: 0, details: null };
 	}
 }
 
