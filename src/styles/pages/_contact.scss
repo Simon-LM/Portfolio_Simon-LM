@@ -198,10 +198,19 @@
 			padding: 1.5rem 2rem;
 			font-weight: 500;
 			font-size: 1.2rem;
-			background: $primary-color;
-			color: $off-white;
 			max-width: 20rem;
 			text-align: center;
+
+			// &[data-type="success"] {
+			// 	background: $color-main-bg;
+			// 	color: $color-main-text;
+			// }
+
+			// &[data-type="error"] {
+			// 	background: transparent;
+			// 	padding: 0;
+			// 	box-shadow: none;
+			// }
 		}
 		&__form-recaptcha {
 			margin: 1rem 0;
@@ -218,28 +227,37 @@
 
 .recaptcha-error {
 	text-align: left;
+	background: $color-main-bg;
+	padding: 1.5rem;
+	border-radius: 0.5rem;
+	color: $color-main-text;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
 	h3 {
 		font-size: 1.1rem;
-		font-weight: 600;
-		margin-bottom: 0.75rem;
+		font-weight: 700;
+		margin-bottom: 1rem;
 		text-align: center;
+		color: inherit;
+		color: $secondary-color;
 	}
 
 	p {
-		font-weight: 500;
-		margin: 0.75rem 0 0.5rem 0;
+		font-weight: 600;
+		margin: 0.75rem 0;
+		color: inherit;
 	}
 
 	ul {
 		list-style: none;
 		padding-left: 1rem;
-		margin: 0.5rem 0;
+		margin: 0.75rem 0;
 	}
 
 	li {
-		margin: 0.25rem 0;
+		margin: 0.5rem 0;
 		font-size: 0.9rem;
+		color: inherit;
 
 		&::before {
 			content: "•";
@@ -250,10 +268,12 @@
 	&__link {
 		color: inherit;
 		text-decoration: underline;
+		font-weight: 600;
 
 		&:hover,
 		&:focus {
 			text-decoration: none;
+			opacity: 0.9;
 		}
 	}
 }
@@ -265,11 +285,13 @@
 	}
 }
 
-// Uniquement pour positionner le badge légal
+// Badge reCAPTCHA v3
 .grecaptcha-badge {
 	z-index: 999 !important;
 	bottom: 5rem !important;
 	left: 2rem !important;
+	// hide
+	bottom: 0rem !important;
 }
 
 .g-recaptcha-response {

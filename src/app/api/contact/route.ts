@@ -4,7 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 import emailjs from "@emailjs/browser";
 
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
-const MINIMUM_SCORE = 0.5;
+
+const MINIMUM_SCORE = 0.1;
 
 async function verifyRecaptcha(token: string) {
 	try {
@@ -20,6 +21,8 @@ async function verifyRecaptcha(token: string) {
 		);
 
 		const data = await response.json();
+		console.log("reCAPTCHA response:", data); // Ajout pour debug
+
 		return {
 			success: data.success && data.score >= MINIMUM_SCORE,
 			score: data.score,

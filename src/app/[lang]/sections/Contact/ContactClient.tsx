@@ -158,11 +158,13 @@ export default function ContactClient({ dictionary }: ContactProps) {
 	// Optimiser la gestion de reCAPTCHA
 	const executeRecaptcha = async () => {
 		try {
-			return await window.grecaptcha.execute(RECAPTCHA_SITE_KEY || "", {
+			const token = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY || "", {
 				action: "submit_contact",
 			});
+			console.log("reCAPTCHA token generated"); // Debug
+			return token;
 		} catch (error) {
-			console.error("reCAPTCHA execution failed:", error);
+			console.error("reCAPTCHA execution error details:", error);
 			throw error;
 		}
 	};
@@ -479,16 +481,21 @@ export default function ContactClient({ dictionary }: ContactProps) {
 					gutter={8}
 					toastOptions={{
 						className: "contact__toast",
+						duration: 15000,
+						style: {
+							background: "transparent",
+							boxShadow: "none",
+						},
 						success: {
 							style: {
-								background: "var(--color-success)",
-								color: "var(--color-text-light)",
+								background: "$color-main-bg",
+								color: "$color-main-text",
 							},
 						},
 						error: {
 							style: {
-								background: "var(--color-error)",
-								color: "var(--color-text-light)",
+								background: "transparent",
+								padding: 0,
 							},
 						},
 					}}
