@@ -145,7 +145,24 @@
 				"success": "Message envoyé avec succès !",
 				"error": "Une erreur est survenue lors de l'envoi.",
 				"recaptcha": {
-					"error": "Veuillez valider le captcha"
+					"error": {
+						"title": "Vérification de sécurité échouée",
+						"cause": "Causes possibles :",
+						"reasons": [
+							"Utilisation d'un VPN",
+							"Utilisation d'un proxy",
+							"Navigation automatisée détectée",
+							"Activité inhabituelle"
+						],
+						"solutions": {
+							"title": "Solutions suggérées :",
+							"items": [
+								"Désactiver temporairement votre VPN",
+								"Réessayer plus tard",
+								"Me contacter sur LinkedIn"
+							]
+						}
+					}
 				},
 				"errors": {
 					"firstName": "Le prénom doit contenir au moins 2 caractères",

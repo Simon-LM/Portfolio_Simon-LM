@@ -147,7 +147,24 @@
 				"success": "Message sent successfully!",
 				"error": "An error occurred while sending the message.",
 				"recaptcha": {
-					"error": "Please validate the captcha"
+					"error": {
+						"title": "Security Check Failed",
+						"cause": "Possible causes:",
+						"reasons": [
+							"VPN usage detected",
+							"Proxy usage detected",
+							"Automated browsing detected",
+							"Unusual activity"
+						],
+						"solutions": {
+							"title": "Suggested solutions:",
+							"items": [
+								"Temporarily disable your VPN",
+								"Try again later",
+								"Contact me on LinkedIn"
+							]
+						}
+					}
 				},
 				"errors": {
 					"firstName": "First name must contain at least 2 characters",
