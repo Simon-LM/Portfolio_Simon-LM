@@ -1,20 +1,9 @@
 /** @format */
 
 import { NextRequest, NextResponse } from "next/server";
-// Supprimer ces importations conflictuelles
-// import emailjs from "@emailjs/browser";
-// import { SMTPClient } from "emailjs";
 
-// Utiliser uniquement @emailjs/browser
+const MINIMUM_SCORE = 0.5;
 
-// Supprimer ces constantes qui ne sont plus utilisées
-// const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
-// const MINIMUM_SCORE = 0;
-
-// Supprimer la fonction verifyRecaptcha qui n'est plus utilisée
-// async function verifyRecaptcha(token: string) { ... }
-
-// Ajouter cette interface en haut du fichier avec les autres interfaces
 interface FormDataType {
 	firstName: string;
 	lastName: string;
@@ -30,7 +19,7 @@ interface FormDataType {
 
 export async function POST(request: NextRequest) {
 	try {
-		// Vérifier si le corps de la requête est valide
+		// 1. Parser le corps de la requête
 		let body;
 		try {
 			body = await request.json();
@@ -43,11 +32,11 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Extraire et typer les données du formulaire
+		// 2. Extraire le token reCAPTCHA et les données du formulaire
 		const { "g-recaptcha-response": token, ...formData } = body;
-		const typedFormData = formData as FormDataType; // Ajouter le typage ici
+		const typedFormData = formData as FormDataType;
 
-		// Vérifier les variables d'environnement cruciales
+		// 3. Vérifier les variables d'environnement
 		console.log("Environment Check:", {
 			EMAILJS_SERVICE_ID: !!process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
 			EMAILJS_TEMPLATE_ID: !!process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
@@ -55,7 +44,7 @@ export async function POST(request: NextRequest) {
 			RECAPTCHA_SECRET_KEY: !!process.env.RECAPTCHA_SECRET_KEY,
 		});
 
-		// Extraire le token reCAPTCHA
+		// 4. Vérifier la présence du token reCAPTCHA
 		if (!token) {
 			console.error("No reCAPTCHA token provided");
 			return NextResponse.json(
@@ -63,109 +52,99 @@ export async function POST(request: NextRequest) {
 				{ status: 400 }
 			);
 		}
-
-		// La vérification reCAPTCHA se fait maintenant directement dans la fonction POST
+		// 5. Vérification reCAPTCHA avec score
 		const recaptchaResponse = await fetch(
 			`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`,
 			{ method: "POST" }
 		);
 
 		const recaptchaResult = await recaptchaResponse.json();
-		console.log("reCAPTCHA verification result:", recaptchaResult);
+		console.log("reCAPTCHA Result:", {
+			success: recaptchaResult.success,
+			score: recaptchaResult.score,
+			action: recaptchaResult.action,
+		});
 
-		// Envoyer l'email seulement si reCAPTCHA est valide
-		if (recaptchaResult.success) {
-			try {
-				// Vérifier toutes les variables EmailJS
-				const emailjsConfig = {
-					service_id: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
-					template_id: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
-					user_id: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
-				};
-
-				// Log de débogage
-				console.log("EmailJS Configuration Check:", {
-					hasServiceId: !!emailjsConfig.service_id,
-					hasTemplateId: !!emailjsConfig.template_id,
-					hasUserId: !!emailjsConfig.user_id,
-					formDataKeys: Object.keys(typedFormData),
-				});
-
-				// Vérifier que toutes les configs sont présentes
-				if (
-					!emailjsConfig.service_id ||
-					!emailjsConfig.template_id ||
-					!emailjsConfig.user_id
-				) {
-					throw new Error("Missing EmailJS configuration");
-				}
-
-				// Mapper les données du formulaire aux variables EmailJS avec les noms correspondants au template
-				const emailParams: { [key: string]: string } = {
-					firstName: typedFormData.firstName,
-					lastName: typedFormData.lastName,
-					reply_to: typedFormData.email,
-					phone: typedFormData.phone || "",
-					company: typedFormData.company || "",
-					subject: typedFormData.subject,
-					message: typedFormData.message,
-					// Utiliser les métadonnées envoyées par le client :
-					system_date: typedFormData.date || "",
-					system_time: typedFormData.heure || "",
-					system_language: typedFormData.lang || "fr",
-				};
-
-				const emailResponse = await fetch(
-					"https://api.emailjs.com/api/v1.0/email/send",
-					{
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-							Origin: "https://simon-lm.dev",
-						},
-						body: JSON.stringify({
-							service_id: emailjsConfig.service_id,
-							template_id: emailjsConfig.template_id,
-							user_id: emailjsConfig.user_id,
-							template_params: emailParams,
-						}),
-					}
-				);
-
-				// Log de la réponse pour debug
-				const responseText = await emailResponse.text();
-				console.log("EmailJS Response:", {
-					status: emailResponse.status,
-					ok: emailResponse.ok,
-					text: responseText,
-					headers: Object.fromEntries(emailResponse.headers),
-				});
-
-				if (!emailResponse.ok) {
-					throw new Error(`EmailJS Error: ${responseText}`);
-				}
-
-				return NextResponse.json({
-					success: true,
-					message: "Email sent successfully",
-				});
-			} catch (error: unknown) {
-				console.error("EmailJS Detailed Error:", error);
-				const emailError = error as Error; // Type assertion ici
-				return NextResponse.json(
-					{
-						error: "Failed to send email",
-						details: emailError.message,
-					},
-					{ status: 500 }
-				);
-			}
+		// 6. Vérifier le score reCAPTCHA
+		if (!recaptchaResult.success || recaptchaResult.score < MINIMUM_SCORE) {
+			console.error("reCAPTCHA verification failed:", {
+				success: recaptchaResult.success,
+				score: recaptchaResult.score,
+			});
+			return NextResponse.json(
+				{
+					error: "reCAPTCHA verification failed",
+					details: `Score: ${recaptchaResult.score}, Required: ${MINIMUM_SCORE}`,
+				},
+				{ status: 400 }
+			);
 		}
 
-		return NextResponse.json(
-			{ error: "reCAPTCHA verification failed" },
-			{ status: 400 }
+		// 7. Configuration EmailJS
+		const emailjsConfig = {
+			service_id: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+			template_id: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
+			user_id: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
+		};
+
+		if (
+			!emailjsConfig.service_id ||
+			!emailjsConfig.template_id ||
+			!emailjsConfig.user_id
+		) {
+			throw new Error("Missing EmailJS configuration");
+		}
+
+		// 8. Préparer les paramètres EmailJS
+		const emailParams: { [key: string]: string } = {
+			firstName: typedFormData.firstName,
+			lastName: typedFormData.lastName,
+			reply_to: typedFormData.email,
+			phone: typedFormData.phone || "",
+			company: typedFormData.company || "",
+			subject: typedFormData.subject,
+			message: typedFormData.message,
+			// Utiliser les métadonnées envoyées par le client :
+			system_date: typedFormData.date || "",
+			system_time: typedFormData.heure || "",
+			system_language: typedFormData.lang || "fr",
+		};
+
+		// 9. Envoyer l'email via EmailJS
+		const emailResponse = await fetch(
+			"https://api.emailjs.com/api/v1.0/email/send",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Origin: "https://simon-lm.dev",
+				},
+				body: JSON.stringify({
+					service_id: emailjsConfig.service_id,
+					template_id: emailjsConfig.template_id,
+					user_id: emailjsConfig.user_id,
+					template_params: emailParams,
+				}),
+			}
 		);
+
+		// 10. Gérer la réponse EmailJS
+		const responseText = await emailResponse.text();
+		console.log("EmailJS Response:", {
+			status: emailResponse.status,
+			ok: emailResponse.ok,
+			text: responseText,
+			headers: Object.fromEntries(emailResponse.headers),
+		});
+
+		if (!emailResponse.ok) {
+			throw new Error(`EmailJS Error: ${responseText}`);
+		}
+
+		return NextResponse.json({
+			success: true,
+			message: "Email sent successfully",
+		});
 	} catch (error: unknown) {
 		console.error("Server error:", error);
 		return NextResponse.json(
