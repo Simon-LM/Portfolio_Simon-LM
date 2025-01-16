@@ -23,6 +23,9 @@ interface FormDataType {
 	company?: string;
 	subject: string;
 	message: string;
+	lang?: string;
+	date?: string;
+	heure?: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -101,21 +104,16 @@ export async function POST(request: NextRequest) {
 				const emailParams: { [key: string]: string } = {
 					firstName: typedFormData.firstName,
 					lastName: typedFormData.lastName,
-					email: typedFormData.email,
+					reply_to: typedFormData.email,
 					phone: typedFormData.phone || "",
 					company: typedFormData.company || "",
 					subject: typedFormData.subject,
 					message: typedFormData.message,
-					reply_to: typedFormData.email, // Ajout de la variable reply_to
+					// Utiliser les métadonnées envoyées par le client :
+					system_date: typedFormData.date || "",
+					system_time: typedFormData.heure || "",
+					system_language: typedFormData.lang || "fr",
 				};
-
-				// Optionnel : Ajouter des variables système si nécessaire
-				// emailParams.system_date = new Date().toLocaleDateString();
-				// emailParams.system_time = new Date().toLocaleTimeString();
-				// emailParams.system_language = language;
-
-				// Log des paramètres envoyés pour le débogage
-				console.log("EmailJS Template Parameters:", emailParams);
 
 				const emailResponse = await fetch(
 					"https://api.emailjs.com/api/v1.0/email/send",
@@ -129,7 +127,7 @@ export async function POST(request: NextRequest) {
 							service_id: emailjsConfig.service_id,
 							template_id: emailjsConfig.template_id,
 							user_id: emailjsConfig.user_id,
-							template_params: emailParams, // Utiliser les paramètres mappés
+							template_params: emailParams,
 						}),
 					}
 				);

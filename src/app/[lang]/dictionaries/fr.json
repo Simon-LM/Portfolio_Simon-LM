@@ -391,5 +391,14 @@
 		"footer": {
 			"accessibility": "Accessibilité : déclaration de conformité"
 		}
+	},
+	"errors": {
+		"noRecaptchaToken": "Aucun token reCAPTCHA fourni.",
+		"failedToSendEmail": "Échec de l'envoi de l'email.",
+		"recaptchaVerificationFailed": "La vérification reCAPTCHA a échoué.",
+		"serverError": "Erreur du serveur."
+	},
+	"messages": {
+		"emailSentSuccessfully": "Email envoyé avec succès."
 	}
 }

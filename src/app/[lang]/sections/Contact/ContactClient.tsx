@@ -9,6 +9,7 @@ import * as Form from "@radix-ui/react-form";
 import { Toaster, toast } from "react-hot-toast";
 import Link from "next/link";
 import Script from "next/script";
+import { generateMetadata } from "../../../../utils/metadata";
 
 declare global {
 	interface Window {
@@ -32,7 +33,7 @@ interface ReCaptchaRenderOptions {
 
 interface ContactProps {
 	dictionary: ContactDictionary;
-	lang: string; // Ajouter cette ligne
+	lang: string;
 }
 
 interface ContactDictionary {
@@ -88,6 +89,15 @@ interface FormDictionary {
 		checkbox: string;
 	};
 }
+// interface FormDataType {
+// 	firstName: string;
+// 	lastName: string;
+// 	email: string;
+// 	phone?: string;
+// 	company?: string;
+// 	subject: string;
+// 	message: string;
+// }
 
 // Supprimer ces lignes
 // const SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
@@ -100,7 +110,7 @@ const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 const phoneRegex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
 
 export default function ContactClient({ dictionary, lang }: ContactProps) {
-	// Ajouter lang ici
+	// const { register, handleSubmit } = useForm<FormDataType>();
 	const [isLoading, setIsLoading] = useState(false);
 
 	// Load reCAPTCHA v3
@@ -170,6 +180,9 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 			// Exécuter reCAPTCHA v3
 			const token = await executeRecaptcha();
 
+			// 1. Générer les métadonnées côté client
+			const metadata = generateMetadata(lang);
+
 			// Appeler l'API route avec le token reCAPTCHA
 			const response = await fetch("/api/contact", {
 				method: "POST",
@@ -179,6 +192,7 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 				body: JSON.stringify({
 					...formData,
 					"g-recaptcha-response": token,
+					...metadata,
 				}),
 			});
 
@@ -253,11 +267,14 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 						{/* Honeypot field  */}
 						<div className="sr-only" aria-hidden="true">
 							<Form.Field className="contact__form-field" name="honeypot">
-								<Form.Label className="contact__form-label">
+								<Form.Label
+									className="contact__form-label"
+									htmlFor="contact-honeypot">
 									Ne pas remplir
 								</Form.Label>
 								<Form.Control asChild>
 									<input
+										id="contact-honeypot"
 										tabIndex={-1}
 										{...register("honeypot")}
 										autoComplete="off"
@@ -270,11 +287,12 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 						<div className="contact__form-fields">
 							{/* First Name */}
 							<Form.Field className="contact__form-field" name="firstName">
-								<Form.Label className="contact__form-label">
+								<Form.Label className="contact__form-label" htmlFor="firstName">
 									{dictionary.form.firstName}
 								</Form.Label>
 								<Form.Control asChild>
 									<input
+										id="firstName"
 										className="contact__form-input"
 										{...register("firstName")}
 										aria-invalid={errors.firstName ? "true" : "false"}
@@ -290,11 +308,12 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 
 							{/* Last Name */}
 							<Form.Field className="contact__form-field" name="lastName">
-								<Form.Label className="contact__form-label">
+								<Form.Label className="contact__form-label" htmlFor="lastName">
 									{dictionary.form.lastName}
 								</Form.Label>
 								<Form.Control asChild>
 									<input
+										id="lastName"
 										className="contact__form-input"
 										{...register("lastName")}
 										aria-invalid={errors.lastName ? "true" : "false"}
@@ -310,12 +329,13 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 
 							{/* Company */}
 							<Form.Field className="contact__form-field" name="company">
-								<Form.Label className="contact__form-label">
+								<Form.Label className="contact__form-label" htmlFor="company">
 									{dictionary.form.company}
 									<span className="optional">{dictionary.form.optional}</span>
 								</Form.Label>
 								<Form.Control asChild>
 									<input
+										id="company"
 										className="contact__form-input"
 										{...register("company")}
 									/>
@@ -324,12 +344,13 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 
 							{/* Phone */}
 							<Form.Field className="contact__form-field" name="phone">
-								<Form.Label className="contact__form-label">
+								<Form.Label className="contact__form-label" htmlFor="phone">
 									{dictionary.form.phone}
 									<span className="optional">{dictionary.form.optional}</span>
 								</Form.Label>
 								<Form.Control asChild>
 									<input
+										id="phone"
 										type="tel"
 										className="contact__form-input"
 										{...register("phone")}
@@ -358,11 +379,12 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 							<Form.Field
 								className="contact__form-field contact__form-field-email"
 								name="email">
-								<Form.Label className="contact__form-label">
+								<Form.Label className="contact__form-label" htmlFor="email">
 									{dictionary.form.email}
 								</Form.Label>
 								<Form.Control asChild>
 									<input
+										id="email"
 										type="email"
 										className="contact__form-input"
 										{...register("email")}
@@ -384,11 +406,12 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 
 						{/* Subject */}
 						<Form.Field className="contact__form-field" name="subject">
-							<Form.Label className="contact__form-label">
+							<Form.Label className="contact__form-label" htmlFor="subject">
 								{dictionary.form.subject}
 							</Form.Label>
 							<Form.Control asChild>
 								<input
+									id="subject"
 									className="contact__form-input"
 									{...register("subject")}
 									aria-invalid={errors.subject ? "true" : "false"}
@@ -406,11 +429,12 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 						<Form.Field
 							className="contact__form-field contact__form-field-textarea"
 							name="message">
-							<Form.Label className="contact__form-label">
+							<Form.Label className="contact__form-label" htmlFor="message">
 								{dictionary.form.message}
 							</Form.Label>
 							<Form.Control asChild>
 								<textarea
+									id="message"
 									className="contact__form-textarea"
 									{...register("message")}
 									aria-invalid={errors.message ? "true" : "false"}
@@ -441,12 +465,15 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 							<div className="contact__form-gdpr-consent">
 								<Form.Control asChild>
 									<input
+										id="gdprConsent"
 										type="checkbox"
 										{...register("gdprConsent")}
 										aria-invalid={errors.gdprConsent ? "true" : "false"}
 									/>
 								</Form.Control>
-								<Form.Label className="contact__form-label">
+								<Form.Label
+									className="contact__form-label"
+									htmlFor="gdprConsent">
 									{dictionary.form.gdpr.checkbox}
 								</Form.Label>
 							</div>
