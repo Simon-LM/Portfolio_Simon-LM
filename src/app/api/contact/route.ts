@@ -1,25 +1,26 @@
 /** @format */
 
 import { NextRequest, NextResponse } from "next/server";
+import { FormData } from "../../../types";
 
 const MINIMUM_SCORE = 0.5;
 
-interface FormDataType {
-	firstName: string;
-	lastName: string;
-	email: string;
-	phone?: string;
-	company?: string;
-	subject: string;
-	message: string;
-	lang?: string;
-	date?: string;
-	heure?: string;
-}
+// interface FormDataType {
+// 	firstName: string;
+// 	lastName: string;
+// 	email: string;
+// 	phone?: string;
+// 	company?: string;
+// 	subject: string;
+// 	message: string;
+// 	lang?: string;
+// 	date?: string;
+// 	heure?: string;
+// }
 
 export async function POST(request: NextRequest) {
 	try {
-		// 1. Parser le corps de la requête
+		// 1. Parse request body
 		let body;
 		try {
 			body = await request.json();
@@ -32,11 +33,11 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// 2. Extraire le token reCAPTCHA et les données du formulaire
+		// 2. Extract reCAPTCHA token and form data
 		const { "g-recaptcha-response": token, ...formData } = body;
-		const typedFormData = formData as FormDataType;
+		const typedFormData = formData as FormData;
 
-		// 3. Vérifier les variables d'environnement
+		// 3. Check environment variables
 		console.log("Environment Check:", {
 			EMAILJS_SERVICE_ID: !!process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
 			EMAILJS_TEMPLATE_ID: !!process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
@@ -44,7 +45,7 @@ export async function POST(request: NextRequest) {
 			RECAPTCHA_SECRET_KEY: !!process.env.RECAPTCHA_SECRET_KEY,
 		});
 
-		// 4. Vérifier la présence du token reCAPTCHA
+		// 4. Check reCAPTCHA token presence
 		if (!token) {
 			console.error("No reCAPTCHA token provided");
 			return NextResponse.json(
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
 				{ status: 400 }
 			);
 		}
-		// 5. Vérification reCAPTCHA avec score
+		// 5. Verify reCAPTCHA with score
 		const recaptchaResponse = await fetch(
 			`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`,
 			{ method: "POST" }
@@ -65,7 +66,7 @@ export async function POST(request: NextRequest) {
 			action: recaptchaResult.action,
 		});
 
-		// 6. Vérifier le score reCAPTCHA
+		// 6. Check reCAPTCHA score
 		if (!recaptchaResult.success || recaptchaResult.score < MINIMUM_SCORE) {
 			console.error("reCAPTCHA verification failed:", {
 				success: recaptchaResult.success,
@@ -80,7 +81,7 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// 7. Configuration EmailJS
+		// 7. EmailJS Configuration
 		const emailjsConfig = {
 			service_id: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
 			template_id: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
 			throw new Error("Missing EmailJS configuration");
 		}
 
-		// 8. Préparer les paramètres EmailJS
+		// 8. Prepare EmailJS parameters
 		const emailParams: { [key: string]: string } = {
 			firstName: typedFormData.firstName,
 			lastName: typedFormData.lastName,
@@ -104,13 +105,12 @@ export async function POST(request: NextRequest) {
 			company: typedFormData.company || "",
 			subject: typedFormData.subject,
 			message: typedFormData.message,
-			// Utiliser les métadonnées envoyées par le client :
 			system_date: typedFormData.date || "",
 			system_time: typedFormData.heure || "",
 			system_language: typedFormData.lang || "fr",
 		};
 
-		// 9. Envoyer l'email via EmailJS
+		// 9. Send email via EmailJS
 		const emailResponse = await fetch(
 			"https://api.emailjs.com/api/v1.0/email/send",
 			{
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
 			}
 		);
 
-		// 10. Gérer la réponse EmailJS
+		// 10. Handle EmailJS response
 		const responseText = await emailResponse.text();
 		console.log("EmailJS Response:", {
 			status: emailResponse.status,

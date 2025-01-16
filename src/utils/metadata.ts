@@ -1,10 +1,12 @@
 /** @format */
 
-export interface Metadata {
-	date: string;
-	heure: string;
-	langue: string;
-}
+import { Metadata } from "../types/common/metadata";
+
+// export interface Metadata {
+// 	date: string;
+// 	heure: string;
+// 	langue: string;
+// }
 
 export const generateMetadata = (langue: string): Metadata => {
 	const currentDate = new Date();

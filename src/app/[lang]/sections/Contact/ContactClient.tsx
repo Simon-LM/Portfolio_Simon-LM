@@ -11,6 +11,9 @@ import Link from "next/link";
 import Script from "next/script";
 import { generateMetadata } from "../../../../utils/metadata";
 
+import { ContactProps, ReCaptchaRenderOptions } from "../../../../types";
+
+// Define reCAPTCHA types for TypeScript
 declare global {
 	interface Window {
 		grecaptcha: {
@@ -24,96 +27,82 @@ declare global {
 	}
 }
 
-interface ReCaptchaRenderOptions {
-	sitekey: string;
-	size?: "invisible";
-	badge?: "bottomright" | "bottomleft" | "inline";
-	theme?: "light" | "dark";
-}
-
-interface ContactProps {
-	dictionary: ContactDictionary;
-	lang: string;
-}
-
-interface ContactDictionary {
-	title: string;
-	subtitle: string;
-	form: FormDictionary;
-	social: {
-		linkedin: string;
-		twitter: string;
-	};
-}
-
-interface FormDictionary {
-	firstName: string;
-	lastName: string;
-	optional: string;
-	phone: string;
-	company: string;
-	email: string;
-	emailFormat: string;
-	phoneFormat: {
-		line1: string;
-		line2: string;
-	};
-	subject: string;
-	message: string;
-	submit: string;
-	sending: string;
-	success: string;
-	error: string;
-	recaptcha: {
-		error: {
-			title: string;
-			cause: string;
-			reasons: string[];
-			solutions: {
-				title: string;
-				items: string[];
-			};
-		};
-	};
-	errors: {
-		firstName: string;
-		lastName: string;
-		email: string;
-		subject: string;
-		message: string;
-		gdpr: string;
-	};
-	gdpr: {
-		text: string;
-		privacyLink: string;
-		checkbox: string;
-	};
-}
-// interface FormDataType {
-// 	firstName: string;
-// 	lastName: string;
-// 	email: string;
-// 	phone?: string;
-// 	company?: string;
-// 	subject: string;
-// 	message: string;
+// interface ReCaptchaRenderOptions {
+// 	sitekey: string;
+// 	size?: "invisible";
+// 	badge?: "bottomright" | "bottomleft" | "inline";
+// 	theme?: "light" | "dark";
 // }
 
-// Supprimer ces lignes
-// const SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-// const TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+// interface ContactProps {
+// 	dictionary: ContactDictionary;
+// 	lang: string;
+// }
 
-// Garder uniquement
-// const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+// interface ContactDictionary {
+// 	title: string;
+// 	subtitle: string;
+// 	form: FormDictionary;
+// 	social: {
+// 		linkedin: string;
+// 		twitter: string;
+// 	};
+// }
+
+// interface FormDictionary {
+// 	firstName: string;
+// 	lastName: string;
+// 	optional: string;
+// 	phone: string;
+// 	company: string;
+// 	email: string;
+// 	emailFormat: string;
+// 	phoneFormat: {
+// 		line1: string;
+// 		line2: string;
+// 	};
+// 	subject: string;
+// 	message: string;
+// 	submit: string;
+// 	sending: string;
+// 	success: string;
+// 	error: string;
+// 	recaptcha: {
+// 		error: {
+// 			title: string;
+// 			cause: string;
+// 			reasons: string[];
+// 			solutions: {
+// 				title: string;
+// 				items: string[];
+// 			};
+// 		};
+// 	};
+// 	errors: {
+// 		firstName: string;
+// 		lastName: string;
+// 		email: string;
+// 		subject: string;
+// 		message: string;
+// 		gdpr: string;
+// 	};
+// 	gdpr: {
+// 		text: string;
+// 		privacyLink: string;
+// 		checkbox: string;
+// 	};
+// }
+
 const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
+// Minimum French phone number validation
 const phoneRegex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
 
 export default function ContactClient({ dictionary, lang }: ContactProps) {
 	// const { register, handleSubmit } = useForm<FormDataType>();
 	const [isLoading, setIsLoading] = useState(false);
 
-	// Load reCAPTCHA v3
+	// Initialize reCAPTCHA when component mounts
 	useEffect(() => {
 		const loadReCaptcha = () => {
 			window.grecaptcha?.ready(() => {
@@ -126,6 +115,7 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 		}
 	}, []);
 
+	// Create Zod validation schema with translated error messages
 	const createValidationSchema = () => {
 		return z.object({
 			firstName: z.string().min(2, dictionary.form.errors.firstName),
@@ -159,7 +149,7 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 		resolver: zodResolver(schema),
 	});
 
-	// Optimiser la gestion de reCAPTCHA
+	// Execute reCAPTCHA and return token
 	const executeRecaptcha = async () => {
 		try {
 			const token = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY || "", {
@@ -173,17 +163,17 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 		}
 	};
 
-	// Optimiser l'envoi du formulaire
+	// Handle form submission with reCAPTCHA verification
 	const onSubmit = async (formData: FormData) => {
 		setIsLoading(true);
 		try {
-			// Exécuter reCAPTCHA v3
+			// Generate reCAPTCHA token
 			const token = await executeRecaptcha();
 
-			// 1. Générer les métadonnées côté client
+			// Generate client-side metadata (language, date, time)
 			const metadata = generateMetadata(lang);
 
-			// Appeler l'API route avec le token reCAPTCHA
+			// Send form data to API with reCAPTCHA token and metadata
 			const response = await fetch("/api/contact", {
 				method: "POST",
 				headers: {
@@ -198,6 +188,7 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 
 			const data = await response.json();
 
+			// Handle response and show appropriate toast message
 			if (response.ok) {
 				toast.success(dictionary.form.success);
 				reset();
@@ -205,6 +196,7 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 				throw new Error(data.error || "Failed to send message");
 			}
 		} catch (error) {
+			// Handle errors and display detailed reCAPTCHA error messages
 			console.error("Form submission error:", error);
 			toast.error(
 				<div className="recaptcha-error" role="alert">
@@ -245,12 +237,13 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 
 	return (
 		<>
+			{/* Load reCAPTCHA script */}
 			<Script
 				src={`https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}&badge=bottomleft`}
 				strategy="afterInteractive"
 			/>
 
-			{/* Label caché pour le textarea reCAPTCHA */}
+			{/* Hidden label for accessibility */}
 			<div className="sr-only" aria-hidden="false">
 				<label htmlFor="g-recaptcha-response-100000" id="recaptcha-label">
 					reCAPTCHA verification response
@@ -258,6 +251,7 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 			</div>
 
 			<section id="contact" className="contact">
+				{/* Contact form with honeypot and reCAPTCHA protection */}
 				<div className="contact__container">
 					<h2 className="contact__title">{dictionary.title}</h2>
 
@@ -497,6 +491,7 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 					</Form.Root>
 				</div>
 
+				{/* Toast notifications configuration */}
 				<Toaster
 					position="top-center"
 					reverseOrder={false}
