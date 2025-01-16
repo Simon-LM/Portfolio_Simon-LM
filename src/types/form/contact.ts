@@ -28,6 +28,7 @@ export interface ContactDictionary {
 		linkedin: string;
 		twitter: string;
 	};
+	// register: boolean;
 }
 
 export interface FormDictionary {

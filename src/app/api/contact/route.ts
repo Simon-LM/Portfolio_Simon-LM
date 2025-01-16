@@ -5,19 +5,6 @@ import { FormData } from "../../../types";
 
 const MINIMUM_SCORE = 0.5;
 
-// interface FormDataType {
-// 	firstName: string;
-// 	lastName: string;
-// 	email: string;
-// 	phone?: string;
-// 	company?: string;
-// 	subject: string;
-// 	message: string;
-// 	lang?: string;
-// 	date?: string;
-// 	heure?: string;
-// }
-
 export async function POST(request: NextRequest) {
 	try {
 		// 1. Parse request body

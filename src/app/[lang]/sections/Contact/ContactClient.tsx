@@ -1,119 +1,24 @@
 /** @format */
 
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import * as Form from "@radix-ui/react-form";
 import { Toaster, toast } from "react-hot-toast";
-import Link from "next/link";
-import Script from "next/script";
 import { generateMetadata } from "../../../../utils/metadata";
-
-import { ContactProps, ReCaptchaRenderOptions } from "../../../../types";
-
-// Define reCAPTCHA types for TypeScript
-declare global {
-	interface Window {
-		grecaptcha: {
-			ready: (callback: () => void) => void;
-			execute: (
-				siteKey: string,
-				options: { action: string }
-			) => Promise<string>;
-			render: (container: string, options: ReCaptchaRenderOptions) => number;
-		};
-	}
-}
-
-// interface ReCaptchaRenderOptions {
-// 	sitekey: string;
-// 	size?: "invisible";
-// 	badge?: "bottomright" | "bottomleft" | "inline";
-// 	theme?: "light" | "dark";
-// }
-
-// interface ContactProps {
-// 	dictionary: ContactDictionary;
-// 	lang: string;
-// }
-
-// interface ContactDictionary {
-// 	title: string;
-// 	subtitle: string;
-// 	form: FormDictionary;
-// 	social: {
-// 		linkedin: string;
-// 		twitter: string;
-// 	};
-// }
-
-// interface FormDictionary {
-// 	firstName: string;
-// 	lastName: string;
-// 	optional: string;
-// 	phone: string;
-// 	company: string;
-// 	email: string;
-// 	emailFormat: string;
-// 	phoneFormat: {
-// 		line1: string;
-// 		line2: string;
-// 	};
-// 	subject: string;
-// 	message: string;
-// 	submit: string;
-// 	sending: string;
-// 	success: string;
-// 	error: string;
-// 	recaptcha: {
-// 		error: {
-// 			title: string;
-// 			cause: string;
-// 			reasons: string[];
-// 			solutions: {
-// 				title: string;
-// 				items: string[];
-// 			};
-// 		};
-// 	};
-// 	errors: {
-// 		firstName: string;
-// 		lastName: string;
-// 		email: string;
-// 		subject: string;
-// 		message: string;
-// 		gdpr: string;
-// 	};
-// 	gdpr: {
-// 		text: string;
-// 		privacyLink: string;
-// 		checkbox: string;
-// 	};
-// }
-
-const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+import { ContactProps, FormData } from "../../../../types";
+import { ContactForm } from "./components/ContactForm";
+import { RecaptchaScript } from "./components/RecaptchaScript";
+import { useRecaptcha } from "./hooks/useRecaptcha";
+import { ErrorToast } from "./components/ErrorToast";
 
 // Minimum French phone number validation
 const phoneRegex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
 
 export default function ContactClient({ dictionary, lang }: ContactProps) {
-	// const { register, handleSubmit } = useForm<FormDataType>();
 	const [isLoading, setIsLoading] = useState(false);
-
-	// Initialize reCAPTCHA when component mounts
-	useEffect(() => {
-		const loadReCaptcha = () => {
-			window.grecaptcha?.ready(() => {
-				console.log("reCAPTCHA v3 is ready");
-			});
-		};
-
-		if (typeof window !== "undefined" && window.grecaptcha) {
-			loadReCaptcha();
-		}
-	}, []);
+	const { executeRecaptcha } = useRecaptcha();
 
 	// Create Zod validation schema with translated error messages
 	const createValidationSchema = () => {
@@ -138,7 +43,7 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 	};
 
 	const schema = createValidationSchema();
-	type FormData = z.infer<typeof schema>;
+	// type FormData = z.infer<typeof schema>;
 
 	const {
 		register,
@@ -148,20 +53,6 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 	} = useForm<FormData>({
 		resolver: zodResolver(schema),
 	});
-
-	// Execute reCAPTCHA and return token
-	const executeRecaptcha = async () => {
-		try {
-			const token = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY || "", {
-				action: "submit_contact",
-			});
-			console.log("reCAPTCHA token generated"); // Debug
-			return token;
-		} catch (error) {
-			console.error("reCAPTCHA execution error details:", error);
-			throw error;
-		}
-	};
 
 	// Handle form submission with reCAPTCHA verification
 	const onSubmit = async (formData: FormData) => {
@@ -198,38 +89,7 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 		} catch (error) {
 			// Handle errors and display detailed reCAPTCHA error messages
 			console.error("Form submission error:", error);
-			toast.error(
-				<div className="recaptcha-error" role="alert">
-					<h3>{dictionary.form.recaptcha.error.title}</h3>
-					<p>{dictionary.form.recaptcha.error.cause}</p>
-					<ul>
-						{dictionary.form.recaptcha.error.reasons.map((reason, index) => (
-							<li key={index}>{reason}</li>
-						))}
-					</ul>
-					<p>{dictionary.form.recaptcha.error.solutions.title}</p>
-					<ul>
-						{dictionary.form.recaptcha.error.solutions.items.map(
-							(solution, index) => (
-								<li key={index}>
-									{index === 2 ? (
-										<a
-											href={dictionary.social.linkedin}
-											target="_blank"
-											rel="noopener noreferrer"
-											className="recaptcha-error__link">
-											{solution}
-										</a>
-									) : (
-										solution
-									)}
-								</li>
-							)
-						)}
-					</ul>
-				</div>,
-				{ duration: 10000 }
-			);
+			toast.error(<ErrorToast dictionary={dictionary} />);
 		} finally {
 			setIsLoading(false);
 		}
@@ -238,267 +98,27 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 	return (
 		<>
 			{/* Load reCAPTCHA script */}
-			<Script
-				src={`https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}&badge=bottomleft`}
-				strategy="afterInteractive"
-			/>
-
-			{/* Hidden label for accessibility */}
-			<div className="sr-only" aria-hidden="false">
-				<label htmlFor="g-recaptcha-response-100000" id="recaptcha-label">
-					reCAPTCHA verification response
-				</label>
-			</div>
+			<RecaptchaScript />
 
 			<section id="contact" className="contact">
-				{/* Contact form with honeypot and reCAPTCHA protection */}
 				<div className="contact__container">
 					<h2 className="contact__title">{dictionary.title}</h2>
-
-					<Form.Root
-						className="contact__form"
-						onSubmit={handleSubmit(onSubmit)}>
-						{/* Honeypot field  */}
-						<div className="sr-only" aria-hidden="true">
-							<Form.Field className="contact__form-field" name="honeypot">
-								<Form.Label
-									className="contact__form-label"
-									htmlFor="contact-honeypot">
-									Ne pas remplir
-								</Form.Label>
-								<Form.Control asChild>
-									<input
-										id="contact-honeypot"
-										tabIndex={-1}
-										{...register("honeypot")}
-										autoComplete="off"
-									/>
-								</Form.Control>
-							</Form.Field>
-						</div>
-
-						{/* Form fields */}
-						<div className="contact__form-fields">
-							{/* First Name */}
-							<Form.Field className="contact__form-field" name="firstName">
-								<Form.Label className="contact__form-label" htmlFor="firstName">
-									{dictionary.form.firstName}
-								</Form.Label>
-								<Form.Control asChild>
-									<input
-										id="firstName"
-										className="contact__form-input"
-										{...register("firstName")}
-										aria-invalid={errors.firstName ? "true" : "false"}
-										data-required="true"
-									/>
-								</Form.Control>
-								{errors.firstName && (
-									<Form.Message className="contact__form-error">
-										{errors.firstName.message}
-									</Form.Message>
-								)}
-							</Form.Field>
-
-							{/* Last Name */}
-							<Form.Field className="contact__form-field" name="lastName">
-								<Form.Label className="contact__form-label" htmlFor="lastName">
-									{dictionary.form.lastName}
-								</Form.Label>
-								<Form.Control asChild>
-									<input
-										id="lastName"
-										className="contact__form-input"
-										{...register("lastName")}
-										aria-invalid={errors.lastName ? "true" : "false"}
-										data-required="true"
-									/>
-								</Form.Control>
-								{errors.lastName && (
-									<Form.Message className="contact__form-error">
-										{errors.lastName.message}
-									</Form.Message>
-								)}
-							</Form.Field>
-
-							{/* Company */}
-							<Form.Field className="contact__form-field" name="company">
-								<Form.Label className="contact__form-label" htmlFor="company">
-									{dictionary.form.company}
-									<span className="optional">{dictionary.form.optional}</span>
-								</Form.Label>
-								<Form.Control asChild>
-									<input
-										id="company"
-										className="contact__form-input"
-										{...register("company")}
-									/>
-								</Form.Control>
-							</Form.Field>
-
-							{/* Phone */}
-							<Form.Field className="contact__form-field" name="phone">
-								<Form.Label className="contact__form-label" htmlFor="phone">
-									{dictionary.form.phone}
-									<span className="optional">{dictionary.form.optional}</span>
-								</Form.Label>
-								<Form.Control asChild>
-									<input
-										id="phone"
-										type="tel"
-										className="contact__form-input"
-										{...register("phone")}
-										aria-invalid={errors.phone ? "true" : "false"}
-										// Correction du pattern en échappant les caractères spéciaux
-										pattern="^(?:(?:\+|00)33|0)\s*[1-9](?:[\s\.\-]*\d{2}){4}$"
-										aria-describedby="phone-format"
-									/>
-								</Form.Control>
-								<div id="phone-format" className="contact__form-hint-phones">
-									<div className="contact__form-hint">
-										{dictionary.form.phoneFormat.line1}
-									</div>
-									<div className="contact__form-hint">
-										{dictionary.form.phoneFormat.line2}
-									</div>
-								</div>
-								{errors.phone && (
-									<Form.Message className="contact__form-error">
-										{errors.phone.message}
-									</Form.Message>
-								)}
-							</Form.Field>
-
-							{/* Email */}
-							<Form.Field
-								className="contact__form-field contact__form-field-email"
-								name="email">
-								<Form.Label className="contact__form-label" htmlFor="email">
-									{dictionary.form.email}
-								</Form.Label>
-								<Form.Control asChild>
-									<input
-										id="email"
-										type="email"
-										className="contact__form-input"
-										{...register("email")}
-										aria-invalid={errors.email ? "true" : "false"}
-										aria-describedby="email-format"
-										data-required="true"
-									/>
-								</Form.Control>
-								<div id="email-format" className="contact__form-hint">
-									{dictionary.form.emailFormat}
-								</div>
-								{errors.email && (
-									<Form.Message className="contact__form-error">
-										{errors.email.message}
-									</Form.Message>
-								)}
-							</Form.Field>
-						</div>
-
-						{/* Subject */}
-						<Form.Field className="contact__form-field" name="subject">
-							<Form.Label className="contact__form-label" htmlFor="subject">
-								{dictionary.form.subject}
-							</Form.Label>
-							<Form.Control asChild>
-								<input
-									id="subject"
-									className="contact__form-input"
-									{...register("subject")}
-									aria-invalid={errors.subject ? "true" : "false"}
-									data-required="true"
-								/>
-							</Form.Control>
-							{errors.subject && (
-								<Form.Message className="contact__form-error">
-									{errors.subject.message}
-								</Form.Message>
-							)}
-						</Form.Field>
-
-						{/* Message */}
-						<Form.Field
-							className="contact__form-field contact__form-field-textarea"
-							name="message">
-							<Form.Label className="contact__form-label" htmlFor="message">
-								{dictionary.form.message}
-							</Form.Label>
-							<Form.Control asChild>
-								<textarea
-									id="message"
-									className="contact__form-textarea"
-									{...register("message")}
-									aria-invalid={errors.message ? "true" : "false"}
-									data-required="true"
-								/>
-							</Form.Control>
-							{errors.message && (
-								<Form.Message className="contact__form-error">
-									{errors.message.message}
-								</Form.Message>
-							)}
-						</Form.Field>
-
-						{/* GDPR Consent */}
-						<Form.Field
-							className="contact__form-field contact__form-field--checkbox"
-							name="gdprConsent">
-							<div className="contact__form-gdpr-text">
-								<p>
-									{dictionary.form.gdpr.text}{" "}
-									<Link
-										href={`/${lang}/privacy-policy`} // Ajouter le paramètre de langue
-										className="contact__form-gdpr-link">
-										{dictionary.form.gdpr.privacyLink}
-									</Link>
-								</p>
-							</div>
-							<div className="contact__form-gdpr-consent">
-								<Form.Control asChild>
-									<input
-										id="gdprConsent"
-										type="checkbox"
-										{...register("gdprConsent")}
-										aria-invalid={errors.gdprConsent ? "true" : "false"}
-									/>
-								</Form.Control>
-								<Form.Label
-									className="contact__form-label"
-									htmlFor="gdprConsent">
-									{dictionary.form.gdpr.checkbox}
-								</Form.Label>
-							</div>
-							{errors.gdprConsent && (
-								<Form.Message className="contact__form-error">
-									{errors.gdprConsent.message}
-								</Form.Message>
-							)}
-						</Form.Field>
-
-						{/* Submit button */}
-						<Form.Submit asChild>
-							<button
-								className="contact__form-submit"
-								type="submit"
-								disabled={isLoading}
-								aria-busy={isLoading}>
-								{isLoading ? dictionary.form.sending : dictionary.form.submit}
-							</button>
-						</Form.Submit>
-					</Form.Root>
+					<ContactForm
+						onSubmit={handleSubmit(onSubmit)}
+						register={register}
+						errors={errors}
+						dictionary={dictionary}
+						isLoading={isLoading}
+						lang={lang}
+					/>
 				</div>
-
-				{/* Toast notifications configuration */}
 				<Toaster
 					position="top-center"
 					reverseOrder={false}
 					gutter={8}
 					toastOptions={{
 						className: "contact__toast",
-						duration: 15000,
+						duration: 12000,
 						style: {
 							background: "transparent",
 							boxShadow: "none",

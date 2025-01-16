@@ -7,10 +7,16 @@ export interface ReCaptchaRenderOptions {
 	theme?: "light" | "dark";
 }
 
-export interface Window {
-	grecaptcha: {
-		ready: (callback: () => void) => void;
-		execute: (siteKey: string, options: { action: string }) => Promise<string>;
-		render: (container: string, options: ReCaptchaRenderOptions) => number;
-	};
+// Déclaration globale de Window pour reCAPTCHA
+declare global {
+	interface Window {
+		grecaptcha: {
+			ready: (callback: () => void) => void;
+			execute: (
+				siteKey: string,
+				options: { action: string }
+			) => Promise<string>;
+			render: (container: string, options: ReCaptchaRenderOptions) => number;
+		};
+	}
 }
