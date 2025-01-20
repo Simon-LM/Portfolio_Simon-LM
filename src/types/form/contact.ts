@@ -1,5 +1,7 @@
 /** @format */
 
+import { ReCaptchaConsentDictionary } from "./recaptcha";
+
 export interface FormData {
 	firstName: string;
 	lastName: string;
@@ -18,17 +20,18 @@ export interface FormData {
 export interface ContactProps {
 	dictionary: ContactDictionary;
 	lang: string;
+	hasConsent?: boolean | null;
 }
 
 export interface ContactDictionary {
 	title: string;
 	subtitle: string;
+	loading?: string;
 	form: FormDictionary;
 	social: {
 		linkedin: string;
 		twitter: string;
 	};
-	// register: boolean;
 }
 
 export interface FormDictionary {
@@ -49,17 +52,7 @@ export interface FormDictionary {
 	sending: string;
 	success: string;
 	error: string;
-	recaptcha: {
-		error: {
-			title: string;
-			cause: string;
-			reasons: string[];
-			solutions: {
-				title: string;
-				items: string[];
-			};
-		};
-	};
+	recaptcha: ReCaptchaConsentDictionary;
 	errors: {
 		firstName: string;
 		lastName: string;

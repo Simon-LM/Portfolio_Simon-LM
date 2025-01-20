@@ -16,7 +16,11 @@ import { ErrorToast } from "./components/ErrorToast";
 // Minimum French phone number validation
 const phoneRegex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
 
-export default function ContactClient({ dictionary, lang }: ContactProps) {
+export default function ContactClient({
+	dictionary,
+	lang,
+	hasConsent,
+}: ContactProps) {
 	const [isLoading, setIsLoading] = useState(false);
 	const { executeRecaptcha } = useRecaptcha();
 
@@ -98,11 +102,11 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 	return (
 		<>
 			{/* Load reCAPTCHA script */}
-			<RecaptchaScript />
+			{hasConsent && <RecaptchaScript />}
 
 			<section id="contact" className="contact">
 				<div className="contact__container">
-					<h2 className="contact__title">{dictionary.title}</h2>
+					{/* <h2 className="contact__title">{dictionary.title}</h2> */}
 					<ContactForm
 						onSubmit={handleSubmit(onSubmit)}
 						register={register}
@@ -110,6 +114,7 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 						dictionary={dictionary}
 						isLoading={isLoading}
 						lang={lang}
+						isBlocked={!hasConsent}
 					/>
 				</div>
 				<Toaster

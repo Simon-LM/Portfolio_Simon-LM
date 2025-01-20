@@ -7,6 +7,27 @@ export interface ReCaptchaRenderOptions {
 	theme?: "light" | "dark";
 }
 
+export interface ReCaptchaConsentDictionary {
+	consent: {
+		title: string;
+		description: string;
+		accept: string;
+		decline: string;
+		alternative: string;
+		declinedMessage: string;
+		linkedinAlternative: string;
+	};
+	error: {
+		title: string;
+		cause: string;
+		reasons: string[];
+		solutions: {
+			title: string;
+			items: string[];
+		};
+	};
+}
+
 // Déclaration globale de Window pour reCAPTCHA
 declare global {
 	interface Window {

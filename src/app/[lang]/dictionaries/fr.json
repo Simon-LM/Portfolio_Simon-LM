@@ -124,6 +124,7 @@
 			}
 		},
 		"contact": {
+			"loading": "Chargement...",
 			"title": "Contact",
 			"subtitle": "Prenons contact",
 			"form": {
@@ -162,6 +163,15 @@
 								"Me contacter sur LinkedIn"
 							]
 						}
+					},
+					"consent": {
+						"title": "Protection anti-spam accessible",
+						"description": "Pour garantir l'accessibilité à tous, j'utilise reCAPTCHA v3 qui évite les tests visuels ou sonores traditionnels. Cette solution de Google analyse votre adresse IP et votre comportement de navigation pour distinguer les humains des robots. En acceptant, vous consentez à cette collecte de données par Google.",
+						"accept": "J'accepte",
+						"decline": "Je refuse",
+						"alternative": "Si vous refusez reCAPTCHA, vous pouvez me contacter sur",
+						"declinedMessage": "Le formulaire n'est pas accessible sans reCAPTCHA.",
+						"linkedinAlternative": "Me contacter sur LinkedIn à la place"
 					}
 				},
 				"errors": {

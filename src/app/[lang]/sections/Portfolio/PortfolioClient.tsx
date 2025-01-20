@@ -55,7 +55,7 @@ interface PortfolioProps {
 
 export default function PortfolioClient({ dictionary }: PortfolioProps) {
 	return (
-		<motion.section id="portfolio" className="portfolio">
+		<motion.section className="portfolio">
 			<div className="portfolio__container">
 				<h2 className="portfolio__title">{dictionary.title}</h2>
 				{/* <p className="portfolio__subtitle">{dictionary.subtitle}</p> */}

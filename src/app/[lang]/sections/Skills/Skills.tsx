@@ -87,7 +87,6 @@ export default function Skills({ dictionary }: SkillsProps) {
 	return (
 		<motion.section
 			className="skills"
-			id="skills"
 			variants={containerVariants}
 			initial="hidden"
 			whileInView="visible"

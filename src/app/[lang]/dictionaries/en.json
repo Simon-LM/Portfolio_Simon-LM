@@ -125,6 +125,7 @@
 			}
 		},
 		"contact": {
+			"loading": "Loading...",
 			"title": "Contact",
 			"subtitle": "Let's get in touch",
 			"email": "contact@example.com",
@@ -164,6 +165,15 @@
 								"Contact me on LinkedIn"
 							]
 						}
+					},
+					"consent": {
+						"title": "Accessible spam protection",
+						"description": "To ensure accessibility for everyone, I use reCAPTCHA v3 which avoids traditional visual or audio tests. This Google solution analyzes your IP address and browsing behavior to distinguish humans from bots. By accepting, you consent to this data collection by Google.",
+						"accept": "I accept",
+						"decline": "I decline",
+						"alternative": "If you decline reCAPTCHA, you can contact me on",
+						"declinedMessage": "The form is not accessible without reCAPTCHA.",
+						"linkedinAlternative": "Contact me on LinkedIn instead"
 					}
 				},
 				"errors": {

@@ -19,7 +19,7 @@
 			}
 		],
 		"paths": {
-			"@components/*": ["./src/*"]
+			"@/*": ["./src/*"]
 		},
 		"types": ["react", "react-dom", "jest", "node", "@testing-library/jest-dom"]
 	},

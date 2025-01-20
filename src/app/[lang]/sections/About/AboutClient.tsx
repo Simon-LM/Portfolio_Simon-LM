@@ -26,7 +26,7 @@ interface AboutProps {
 
 export default function AboutClient({ dictionary }: AboutProps) {
 	return (
-		<section id="about" className="about">
+		<section className="about">
 			<div className="about__container">
 				<h2 className="about__title">{dictionary.title}</h2>
 				<p className="about__subtitle">{dictionary.subtitle}</p>

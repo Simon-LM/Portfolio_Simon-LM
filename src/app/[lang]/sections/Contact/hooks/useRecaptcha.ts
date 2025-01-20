@@ -9,6 +9,21 @@ export const useRecaptcha = () => {
 		const loadReCaptcha = () => {
 			window.grecaptcha?.ready(() => {
 				console.log("reCAPTCHA v3 is ready");
+
+				// Améliorer l'accessibilité du textarea
+				const textarea = document.querySelector(".g-recaptcha-response");
+				if (textarea) {
+					textarea.setAttribute("aria-label", "reCAPTCHA challenge response");
+					textarea.setAttribute("aria-hidden", "true");
+					textarea.setAttribute("title", "reCAPTCHA response field");
+				}
+
+				// Améliorer l'accessibilité de l'iframe
+				const iframe = document.querySelector('iframe[src*="recaptcha"]');
+				if (iframe) {
+					iframe.setAttribute("title", "reCAPTCHA challenge");
+					iframe.setAttribute("aria-hidden", "true");
+				}
 			});
 		};
 
