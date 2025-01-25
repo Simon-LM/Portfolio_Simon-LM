@@ -207,14 +207,21 @@
 				},
 				"cookies": {
 					"title": "Use of Cookies",
-					"content": "Our site only uses essential technical cookies necessary for the site to function. No advertising or tracking cookies are used. No personal data is collected via cookies."
+					"content": "The site only uses essential technical cookies:",
+					"items": [
+						"Technical cookies necessary for site operation",
+						"Google reCAPTCHA v3 cookies (only after consent)",
+						"No advertising or tracking cookies",
+						"Storage duration limited to session"
+					]
 				},
 				"dataCollection": {
 					"title": "Data Collection",
-					"content": "We only collect data that you voluntarily provide through our contact form:",
+					"content": "We collect the following data:",
 					"items": [
-						"First and last name",
-						"Email address",
+						"Data provided through contact form (name, email, etc.)",
+						"Navigation data for reCAPTCHA v3 (with prior consent)",
+						"IP address for spam protection (with consent)",
 						"Phone number (optional)",
 						"Company name (optional)",
 						"Message content"
@@ -222,9 +229,10 @@
 				},
 				"dataProcessing": {
 					"title": "Data Processing",
-					"content": "Data is processed internally via secure AI systems:",
+					"content": "Your data is processed securely:",
 					"items": [
 						"ProtonMail AI for email processing",
+						"Google reCAPTCHA v3 for spam protection (with explicit consent)",
 						"Internal AI systems ensuring anonymity",
 						"No resale or sharing with third parties"
 					]

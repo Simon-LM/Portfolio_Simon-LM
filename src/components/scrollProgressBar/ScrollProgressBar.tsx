@@ -7,70 +7,39 @@ import React, { ReactNode } from "react";
 // import { motion, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import { BsChevronUp, BsChevronDown } from "react-icons/bs";
-import { useLanguage } from "../../hooks/useLanguage";
 
 interface Section {
 	id: string;
-	name: ReactNode; // Au lieu de JSX.Element
-	ariaLabel: {
-		fr: string;
-		en: string;
-	};
+	name: ReactNode;
+	ariaLabel: string;
 }
 
 const sections: Section[] = [
 	{
 		id: "hero",
 		name: <BsChevronUp size={16} className="scroll-progress__arrows" />,
-		ariaLabel: {
-			fr: "Retourner en haut de la page",
-			en: "Back to top",
-		},
+		ariaLabel: "Retourner en haut de la page",
 	},
-	{
-		id: "about",
-		name: "Why?",
-		ariaLabel: {
-			fr: "Aller à la section Pourquoi ?",
-			en: "Go to Why section",
-		},
-	},
+	{ id: "about", name: "Why?", ariaLabel: "Aller à la section Pourquoi ?" },
 	{
 		id: "skills",
 		name: "Skills",
-		ariaLabel: {
-			fr: "Aller à la section compétences",
-			en: "Go to Skills section",
-		},
+		ariaLabel: "Aller à la section compétences",
 	},
 	{
 		id: "portfolio",
 		name: "Portfolio",
-		ariaLabel: {
-			fr: "Aller à la section portfolio",
-			en: "Go to Portfolio section",
-		},
+		ariaLabel: "Aller à la section portfolio",
 	},
-	{
-		id: "contact",
-		name: "Contact",
-		ariaLabel: {
-			fr: "Aller à la section contact",
-			en: "Go to Contact section",
-		},
-	},
+	{ id: "contact", name: "Contact", ariaLabel: "Aller à la section contact" },
 	{
 		id: "bottomFooter",
 		name: <BsChevronDown size={16} className="scroll-progress__arrows" />,
-		ariaLabel: {
-			fr: "Aller en bas de la page",
-			en: "Go to bottom of page",
-		},
+		ariaLabel: "Aller en bas de la page",
 	},
 ];
 
 export default function ScrollProgressBar() {
-	const { currentLang } = useLanguage();
 	const [activeSection, setActiveSection] = useState<string>("hero");
 	// const { scrollYProgress } = useScroll();
 
@@ -132,15 +101,11 @@ export default function ScrollProgressBar() {
 
 	return (
 		<>
-			{/* Menu rotatif */}
+			{/* Rotary menu */}
 			<nav
 				className="scroll-progress"
 				aria-hidden="true"
-				aria-label={
-					currentLang === "fr"
-						? "Indicateur de position secondaire"
-						: "Secondary position indicator"
-				}>
+				aria-label="Indicateur de position secondaire">
 				{/* <nav
 					className="scroll-progress"
 					aria-label="Indicateur de position secondaire"> */}
@@ -152,9 +117,7 @@ export default function ScrollProgressBar() {
 						data-active={activeSection === section.id}
 						tabIndex={-1}
 						onClick={(e) => handleClick(e, section.id)}
-						aria-label={
-							section.ariaLabel[currentLang as keyof typeof section.ariaLabel]
-						}
+						// aria-label={section.ariaLabel}
 						// role="link"
 					>
 						{section.name}
@@ -163,7 +126,7 @@ export default function ScrollProgressBar() {
 				{/* </nav> */}
 			</nav>
 
-			{/* Ligne de progression simple */}
+			{/* Simple progress line */}
 			{/* <motion.div
 				className="scroll-progress-line"
 				style={{

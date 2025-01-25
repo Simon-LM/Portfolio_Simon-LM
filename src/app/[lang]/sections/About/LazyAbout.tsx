@@ -1,7 +1,7 @@
 /** @format */
+
 // "use client";
 
-// import { useEffect, useState } from "react";
 // import { useInView } from "react-intersection-observer";
 // import dynamic from "next/dynamic";
 // import { AboutDictionary } from "@/types/components/sections";
@@ -15,22 +15,25 @@
 // }
 
 // export const LazyAbout = ({ dictionary }: LazyAboutProps) => {
-// 	const { ref, inView } = useInView({ triggerOnce: true });
-// 	const [showAbout, setShowAbout] = useState(false);
-
-// 	useEffect(() => {
-// 		if (inView) setShowAbout(true);
-// 	}, [inView]);
+// 	const { ref, inView } = useInView({
+// 		triggerOnce: true,
+// 		threshold: 0.1, // Déclenche le chargement quand 10% de la section est visible
+// 		rootMargin: "100px", // Pré-charge 100px avant que la section soit visible
+// 	});
 
 // 	return (
-// 		<section id="about" className="about" ref={ref}>
-// 			{showAbout && <AboutClient dictionary={dictionary} />}
+// 		<section
+// 			id="about"
+// 			className={`about ${!inView ? "about--placeholder" : ""}`}
+// 			ref={ref}>
+// 			{inView && <AboutClient dictionary={dictionary} />}
 // 		</section>
 // 	);
 // };
 
 "use client";
 
+import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import dynamic from "next/dynamic";
 import { AboutDictionary } from "@/types/components/sections";
@@ -44,18 +47,39 @@ interface LazyAboutProps {
 }
 
 export const LazyAbout = ({ dictionary }: LazyAboutProps) => {
+	const [shouldLoad, setShouldLoad] = useState(false);
 	const { ref, inView } = useInView({
 		triggerOnce: true,
-		threshold: 0.1, // Déclenche le chargement quand 10% de la section est visible
-		rootMargin: "100px", // Pré-charge 100px avant que la section soit visible
+		threshold: 0.1,
+		rootMargin: "100px",
 	});
+
+	useEffect(() => {
+		const heroSection = document.getElementById("main-content");
+
+		const handleHeroFocus = () => {
+			setShouldLoad(true);
+		};
+
+		if (heroSection) {
+			heroSection.addEventListener("focus", handleHeroFocus);
+			heroSection.addEventListener("focusin", handleHeroFocus);
+		}
+
+		return () => {
+			if (heroSection) {
+				heroSection.removeEventListener("focus", handleHeroFocus);
+				heroSection.removeEventListener("focusin", handleHeroFocus);
+			}
+		};
+	}, []);
 
 	return (
 		<section
-			id={inView ? "about" : "about-placeholder"}
-			className="about"
+			id="about"
+			className={`about ${!inView ? "about--placeholder" : ""}`}
 			ref={ref}>
-			{inView && <AboutClient dictionary={dictionary} />}
+			{(inView || shouldLoad) && <AboutClient dictionary={dictionary} />}
 		</section>
 	);
 };

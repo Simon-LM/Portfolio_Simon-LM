@@ -10,7 +10,7 @@ export const useRecaptcha = () => {
 			window.grecaptcha?.ready(() => {
 				console.log("reCAPTCHA v3 is ready");
 
-				// Améliorer l'accessibilité du textarea
+				// Improve textarea accessibility
 				const textarea = document.querySelector(".g-recaptcha-response");
 				if (textarea) {
 					textarea.setAttribute("aria-label", "reCAPTCHA challenge response");
@@ -18,7 +18,7 @@ export const useRecaptcha = () => {
 					textarea.setAttribute("title", "reCAPTCHA response field");
 				}
 
-				// Améliorer l'accessibilité de l'iframe
+				// Improve iframe accessibility
 				const iframe = document.querySelector('iframe[src*="recaptcha"]');
 				if (iframe) {
 					iframe.setAttribute("title", "reCAPTCHA challenge");

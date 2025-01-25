@@ -2,7 +2,9 @@
 
 import * as Form from "@radix-ui/react-form";
 import Link from "next/link";
-import { FormFieldsProps } from "../../../../../types/components/sections";
+import { FormFieldsProps } from "@/types/components/sections";
+import { useConsentStore } from "../hooks/useConsentState";
+import { useRef, useEffect } from "react";
 
 export const FormFields = ({
 	register,
@@ -11,7 +13,51 @@ export const FormFields = ({
 	lang,
 	isBlocked,
 }: FormFieldsProps) => {
+	const formRef = useRef<HTMLDivElement>(null);
+	const hasConsent = useConsentStore((state) => state.hasConsent);
+
 	const fieldProps = isBlocked ? { tabIndex: -1 } : {};
+
+	useEffect(() => {
+		if (!hasConsent) {
+			const formInputs = document.querySelectorAll(
+				".contact__form input, .contact__form textarea, .contact__form a"
+			);
+			formInputs.forEach((input) => {
+				input.addEventListener("mousedown", (e) => {
+					if (!hasConsent) {
+						e.preventDefault();
+						const consentButton = document.querySelector(
+							".contact__consent-button"
+						);
+						(consentButton as HTMLElement)?.focus();
+					}
+				});
+				input.addEventListener("focusin", (e) => {
+					if (!hasConsent) {
+						e.preventDefault();
+						const consentButton = document.querySelector(
+							".contact__consent-button"
+						);
+						(consentButton as HTMLElement)?.focus();
+					}
+				});
+			});
+		}
+	}, [hasConsent]);
+
+	useEffect(() => {
+		const form = formRef.current;
+		if (!form) return;
+
+		if (!hasConsent) {
+			form.inert = true;
+			form.setAttribute("aria-hidden", "true");
+		} else {
+			form.inert = false;
+			form.removeAttribute("aria-hidden");
+		}
+	}, [hasConsent]);
 
 	return (
 		<>
@@ -35,7 +81,11 @@ export const FormFields = ({
 			</div>
 
 			{/* Form fields */}
-			<div className="contact__form-fields">
+			<div
+				ref={formRef}
+				className="contact__form-fields"
+				aria-hidden={!hasConsent}
+				inert={!hasConsent}>
 				{/* First Name */}
 				<Form.Field className="contact__form-field" name="firstName">
 					<Form.Label className="contact__form-label" htmlFor="firstName">
@@ -206,41 +256,41 @@ export const FormFields = ({
 				)}
 			</Form.Field>
 
-			{/* GDPR Consent */}
-			<Form.Field
-				className="contact__form-field contact__form-field--checkbox"
-				name="gdprConsent">
-				<div className="contact__form-gdpr-text">
-					<p>
-						{dictionary.form.gdpr.text}{" "}
-						<Link
-							href={`/${lang}/privacy-policy`} // Ajouter le paramètre de langue
-							className="contact__form-gdpr-link"
-							tabIndex={isBlocked ? -1 : 0}>
-							{dictionary.form.gdpr.privacyLink}
-						</Link>
-					</p>
-				</div>
-				<div className="contact__form-gdpr-consent">
-					<Form.Control asChild>
-						<input
-							id="gdprConsent"
-							type="checkbox"
-							{...register("gdprConsent")}
-							{...fieldProps}
-							aria-invalid={errors.gdprConsent ? "true" : "false"}
-						/>
-					</Form.Control>
-					<Form.Label className="contact__form-label" htmlFor="gdprConsent">
-						{dictionary.form.gdpr.checkbox}
-					</Form.Label>
-				</div>
-				{errors.gdprConsent && (
-					<Form.Message className="contact__form-error">
-						{errors.gdprConsent.message}
-					</Form.Message>
-				)}
-			</Form.Field>
+			{/* GDPR Consent - Only displayed after reCAPTCHA consent */}
+			{hasConsent && (
+				<Form.Field
+					className="contact__form-field contact__form-field--checkbox"
+					name="gdprConsent">
+					<div className="contact__form-gdpr-text">
+						<p>
+							{dictionary.form.gdpr.text}{" "}
+							<Link
+								href={`/${lang}/privacy-policy`}
+								className="contact__form-gdpr-link">
+								{dictionary.form.gdpr.privacyLink}
+							</Link>
+						</p>
+					</div>
+					<div className="contact__form-gdpr-consent">
+						<Form.Control asChild>
+							<input
+								id="gdprConsent"
+								type="checkbox"
+								{...register("gdprConsent")}
+								aria-invalid={errors.gdprConsent ? "true" : "false"}
+							/>
+						</Form.Control>
+						<Form.Label className="contact__form-label" htmlFor="gdprConsent">
+							{dictionary.form.gdpr.checkbox}
+						</Form.Label>
+					</div>
+					{errors.gdprConsent && (
+						<Form.Message className="contact__form-error">
+							{errors.gdprConsent.message}
+						</Form.Message>
+					)}
+				</Form.Field>
+			)}
 		</>
 	);
 };

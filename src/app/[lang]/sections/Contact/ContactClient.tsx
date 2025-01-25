@@ -47,7 +47,6 @@ export default function ContactClient({
 	};
 
 	const schema = createValidationSchema();
-	// type FormData = z.infer<typeof schema>;
 
 	const {
 		register,

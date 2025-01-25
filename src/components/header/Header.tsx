@@ -19,6 +19,7 @@ import accessibilityIconPng from "../../../public/icons/Icon_Accessibility_Contr
 
 import LogoLostInTab from "../../../public/Logo_LostInTab/LOGO_LostInTab_circle_60-60_2024.png";
 
+// Types and Interfaces
 interface HeaderProps {
 	dictionary: {
 		header: {
@@ -57,7 +58,7 @@ export default function Header({ dictionary }: HeaderProps) {
 		router.push(`/${newLang}/${currentPath}`);
 	};
 
-	// Rendu initial avant hydratation
+	// Initial render before hydration
 	if (!mounted) {
 		return (
 			<header className="header">
@@ -69,7 +70,7 @@ export default function Header({ dictionary }: HeaderProps) {
 			</header>
 		);
 	}
-	// Rendu après hydratation
+	// Render after hydration
 	return (
 		<header className="header">
 			<nav>

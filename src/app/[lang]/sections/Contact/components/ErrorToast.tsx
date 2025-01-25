@@ -1,6 +1,6 @@
 /** @format */
 
-import { ErrorToastProps } from "../../../../../types/components/sections";
+import { ErrorToastProps } from "@/types/components/sections";
 
 export const ErrorToast = ({ dictionary }: ErrorToastProps) => (
 	<div className="recaptcha-error" role="alert">

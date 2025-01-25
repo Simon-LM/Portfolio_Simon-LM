@@ -5,7 +5,7 @@
 import { usePathname, useRouter } from "next/navigation";
 
 /**
- * Hook personnalisé pour gérer la langue actuelle et changer de langue
+ * Custom hook to manage current language and language switching
  */
 export function useLanguage() {
 	const router = useRouter();
@@ -15,8 +15,8 @@ export function useLanguage() {
 	const currentLang = pathname.split("/")[1] || "fr";
 
 	/**
-	 * Fonction pour changer de langue
-	 * @param newLang - Nouvelle langue à sélectionner ('en' ou 'fr')
+	 * Function to change language
+	 * @param newLang - New language to select ('en' or 'fr')
 	 */
 	const switchLanguage = (newLang: "fr" | "en") => {
 		const newPath = pathname.replace(/^\/[^\/]+/, `/${newLang}`);

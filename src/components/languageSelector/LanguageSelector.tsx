@@ -5,7 +5,11 @@
 import { useLanguageStore } from "../../store/langueStore";
 import { useRouter } from "next/navigation";
 
-export default function LanguageSelector() {
+interface LanguageSelectorProps {
+	onKeyDown?: (event: React.KeyboardEvent) => void;
+}
+
+export default function LanguageSelector({ onKeyDown }: LanguageSelectorProps) {
 	const { language, setLanguage } = useLanguageStore();
 	const router = useRouter();
 
@@ -23,16 +27,18 @@ export default function LanguageSelector() {
 			<button
 				onClick={() => switchLanguage("fr")}
 				className="language-selector__button"
-				aria-pressed={language === "fr"}
+				role="menuitem"
 				disabled={language === "fr"}
+				onKeyDown={onKeyDown}
 				aria-label="Passer au français">
 				Français
 			</button>
 			<button
 				onClick={() => switchLanguage("en")}
 				className="language-selector__button"
-				aria-pressed={language === "en"}
+				role="menuitem"
 				disabled={language === "en"}
+				onKeyDown={onKeyDown}
 				aria-label="Switch to English">
 				English
 			</button>

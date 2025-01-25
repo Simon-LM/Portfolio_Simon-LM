@@ -8,6 +8,13 @@
 	margin-bottom: 0;
 	background: $color-section-bg-even;
 
+	&--placeholder {
+		min-height: 100vh;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
 	&__overlay {
 		position: absolute;
 		top: 0;
@@ -30,7 +37,7 @@
 
 	&__consent {
 		position: absolute;
-		top: 25%;
+		top: 40%;
 		left: 50%;
 		transform: translate(-50%, -50%);
 		z-index: 3;

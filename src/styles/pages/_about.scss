@@ -4,6 +4,13 @@
 	padding: 2rem 2rem 3rem;
 	background: $color-section-bg-odd;
 
+	&--placeholder {
+		min-height: 100vh;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
 	&__container {
 		max-width: 90%;
 		margin: 0 auto;

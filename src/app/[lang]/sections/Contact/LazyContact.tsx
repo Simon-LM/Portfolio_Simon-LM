@@ -18,13 +18,40 @@ interface LazyContactProps {
 }
 
 export const LazyContact = ({ dictionary, lang }: LazyContactProps) => {
+	const [shouldLoad, setShouldLoad] = useState(false);
 	const { ref, inView } = useInView({ triggerOnce: true });
 	const [showContact, setShowContact] = useState(false);
 	const [hasConsent, setHasConsent] = useState<boolean | null>(null);
 
 	useEffect(() => {
-		if (inView) {
+		const portfolioSection = document.getElementById("portfolio");
+
+		const handlePortfolioFocus = () => {
+			setShouldLoad(true);
 			setShowContact(true);
+		};
+
+		if (portfolioSection) {
+			portfolioSection.addEventListener("focus", handlePortfolioFocus);
+			portfolioSection.addEventListener("focusin", handlePortfolioFocus);
+
+			// For Edge
+			// portfolioSection.addEventListener("click", handlePortfolioFocus);
+		}
+
+		return () => {
+			if (portfolioSection) {
+				portfolioSection.removeEventListener("focus", handlePortfolioFocus);
+				portfolioSection.removeEventListener("focusin", handlePortfolioFocus);
+				// For Edge
+				// portfolioSection.removeEventListener("click", handlePortfolioFocus);
+			}
+		};
+	}, []);
+
+	useEffect(() => {
+		if (inView) {
+			setShouldLoad(true);
 		}
 	}, [inView]);
 
@@ -32,56 +59,9 @@ export const LazyContact = ({ dictionary, lang }: LazyContactProps) => {
 		setHasConsent(true);
 	};
 
-	// const handleDeclineConsent = () => {
-	// 	setHasConsent(false);
-	// };
-
 	return (
-		// <section id="contact" className="contact" ref={ref}>
-		// 	{!showContact && (
-		// 		<div className="contact__placeholder">
-		// 			<div className="contact__loading">
-		// 				{dictionary.loading || "Loading..."}
-		// 			</div>
-		// 		</div>
-		// 	)}
-		// 	{showContact && <ContactClient dictionary={dictionary} lang={lang} />}
-		// </section>
-
-		// <section id="contact" className="contact" ref={ref}>
-		// 	{!showContact ? (
-		// 		<div className="contact__placeholder">
-		// 			<div className="contact__loading">
-		// 				{dictionary.loading || "Loading..."}
-		// 			</div>
-		// 		</div>
-		// 	) : !hasConsent ? (
-		// 		<div className="contact__container">
-		// 			<h2 className="contact__title">{dictionary.title}</h2>
-		// 			<ConsentModal
-		// 				dictionary={dictionary}
-		// 				onAccept={handleAcceptConsent}
-		// 				// onDecline={handleDeclineConsent}
-		// 			/>
-		// 		</div>
-		// 	) : hasConsent === true ? (
-		// 		<ContactClient dictionary={dictionary} lang={lang} />
-		// 	) : (
-		// 		<div className="contact__declined">
-		// 			<p>{dictionary.form.recaptcha.consent.declinedMessage}</p>
-		// 			<a
-		// 				href={dictionary.social.linkedin}
-		// 				target="_blank"
-		// 				rel="noopener noreferrer"
-		// 				className="contact__declined-link">
-		// 				{dictionary.form.recaptcha.consent.linkedinAlternative}
-		// 			</a>
-		// 		</div>
-		// 	)}
-		// </section>
-
 		<section id="contact" className="contact" ref={ref}>
-			{showContact && (
+			{(showContact || shouldLoad) && (
 				<div className="contact__container">
 					<h2 className="contact__title">{dictionary.title}</h2>
 					<div
