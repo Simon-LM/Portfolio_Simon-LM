@@ -85,7 +85,56 @@ export default function BottomFooter() {
 		}
 	};
 
-	const handleKeyDown = (event: React.KeyboardEvent) => {
+	// const handleKeyDown = (event: React.KeyboardEvent) => {
+	// 	if (isCursorNavigationEnabled) {
+	// 		return;
+	// 	}
+
+	// 	if (
+	// 		!(
+	// 			event.key === "ArrowDown" ||
+	// 			event.key === "ArrowUp" ||
+	// 			event.key === "ArrowLeft" ||
+	// 			event.key === "ArrowRight"
+	// 		)
+	// 	) {
+	// 		return;
+	// 	}
+	// 	event.preventDefault();
+
+	// 	const groups = document.querySelectorAll(".bottomFooter__group");
+	// 	const currentGroup = (event.target as HTMLElement).closest(
+	// 		".bottomFooter__group"
+	// 	);
+	// 	const groupIndex = Array.from(groups).indexOf(currentGroup as Element);
+
+	// 	if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+	// 		const links = currentGroup?.querySelectorAll("a");
+	// 		if (!links?.length) return;
+
+	// 		const currentIndex = Array.from(links).indexOf(
+	// 			event.target as HTMLElement
+	// 		);
+	// 		if (currentIndex === -1) return;
+
+	// 		const nextIndex =
+	// 			event.key === "ArrowDown"
+	// 				? (currentIndex + 1) % links.length
+	// 				: (currentIndex - 1 + links.length) % links.length;
+
+	// 		(links[nextIndex] as HTMLElement).focus();
+	// 	} else {
+	// 		const nextGroupIndex =
+	// 			event.key === "ArrowRight"
+	// 				? (groupIndex + 1) % groups.length
+	// 				: (groupIndex - 1 + groups.length) % groups.length;
+
+	// 		const firstLink = groups[nextGroupIndex]?.querySelector("a");
+	// 		firstLink?.focus();
+	// 	}
+	// };
+
+	const handleKeyDown = (event: React.KeyboardEvent<HTMLAnchorElement>) => {
 		if (isCursorNavigationEnabled) {
 			return;
 		}
@@ -103,17 +152,17 @@ export default function BottomFooter() {
 		event.preventDefault();
 
 		const groups = document.querySelectorAll(".bottomFooter__group");
-		const currentGroup = (event.target as HTMLElement).closest(
+		const currentGroup = (event.target as HTMLAnchorElement).closest(
 			".bottomFooter__group"
 		);
 		const groupIndex = Array.from(groups).indexOf(currentGroup as Element);
 
 		if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-			const links = currentGroup?.querySelectorAll("a");
+			const links = currentGroup?.querySelectorAll<HTMLAnchorElement>("a");
 			if (!links?.length) return;
 
 			const currentIndex = Array.from(links).indexOf(
-				event.target as HTMLElement
+				event.target as HTMLAnchorElement
 			);
 			if (currentIndex === -1) return;
 
@@ -122,14 +171,15 @@ export default function BottomFooter() {
 					? (currentIndex + 1) % links.length
 					: (currentIndex - 1 + links.length) % links.length;
 
-			(links[nextIndex] as HTMLElement).focus();
+			links[nextIndex].focus();
 		} else {
 			const nextGroupIndex =
 				event.key === "ArrowRight"
 					? (groupIndex + 1) % groups.length
 					: (groupIndex - 1 + groups.length) % groups.length;
 
-			const firstLink = groups[nextGroupIndex]?.querySelector("a");
+			const nextGroup = groups[nextGroupIndex];
+			const firstLink = nextGroup?.querySelector<HTMLAnchorElement>("a");
 			firstLink?.focus();
 		}
 	};
