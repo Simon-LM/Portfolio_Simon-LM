@@ -21,14 +21,29 @@
 
 @mixin focus-visible {
 	&:focus-visible {
-		background-color: $color-focus-bg;
-		color: $color-focus-text !important;
-		outline: 2px solid $color-focus-outline !important;
+		background-color: $color_focus-bg;
+		color: $color_focus-text !important;
+		outline: 2px solid $color_focus-outline !important;
 		box-shadow: 0 0 0 4px rgba(white, 0.75) !important;
 		outline-offset: 2px;
 		border-radius: 0.25rem;
 		text-decoration: none !important;
 		opacity: 1 !important;
+	}
+}
+
+@mixin sticky-footer-link-states {
+	&:hover {
+		color: $color_link !important;
+		@extend %link-hover-base;
+	}
+
+	&:focus-visible {
+		color: $color_link !important;
+		@extend %link-hover-base;
+		box-shadow: none !important;
+		outline-offset: 2px;
+		opacity: 0.8 !important;
 	}
 }
 

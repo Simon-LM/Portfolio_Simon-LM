@@ -9,8 +9,8 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: 1rem;
-		background: $color-hero-collapse-bg-title;
-		border: 2px solid $color-hero-collapse-border;
+		background: $color_collapse_bg-title;
+		border: 2px solid $color_collapse_border;
 		border-radius: 0.5rem;
 		cursor: pointer;
 
@@ -22,17 +22,17 @@
 	&__title {
 		font-size: 1.25rem;
 		font-weight: 700;
-		color: $color-hero-collapse-title;
+		color: $color_collapse_title;
 		margin: 0.5rem 1rem;
 	}
 	&__icon {
-		color: $color-hero-collapse-title;
+		color: $color_collapse_title;
 	}
 	&__content {
 		padding: 1.5rem 1rem;
 		border-top: none;
 		border-bottom-left-radius: 0.5rem;
 		border-bottom-right-radius: 0.5rem;
-		background: $color-hero-collapse-bg;
+		background: $color_collapse_bg;
 	}
 }

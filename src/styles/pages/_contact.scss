@@ -3,10 +3,11 @@
 .contact {
 	position: relative;
 	min-height: 100vh;
-	padding: 2rem 2rem;
-	padding-bottom: 4rem;
+	padding: 2rem;
+	padding-top: 2.5rem;
+	padding-bottom: 3rem;
 	margin-bottom: 0;
-	background: $color-section-bg-even;
+	background: $color_section_bg-even;
 
 	&--placeholder {
 		min-height: 100vh;
@@ -49,7 +50,7 @@
 		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
 		&-title {
-			margin-bottom: 1rem;
+			margin-bottom: rem;
 			font-size: 1.5rem;
 			color: $color-section-title;
 		}
@@ -80,7 +81,7 @@
 			}
 
 			&--decline {
-				display: none; // Supprimer le bouton decline
+				display: none;
 			}
 		}
 
@@ -104,7 +105,7 @@
 	}
 
 	&__title {
-		margin-bottom: 2rem;
+		margin-bottom: 0rem;
 		color: $color-section-title;
 	}
 
@@ -182,8 +183,7 @@
 			// }
 			&[data-required="true"] {
 				border-width: 2px;
-				border-color: $color-main-text;
-				border-color: $secondary-color;
+				border-color: $link-color;
 			}
 			&[aria-invalid="true"] {
 				border-color: #dc2626;
@@ -230,7 +230,6 @@
 
 		&-gdpr-link {
 			color: $color-link !important;
-			text-decoration: underline !important;
 
 			&:hover,
 			&:focus {

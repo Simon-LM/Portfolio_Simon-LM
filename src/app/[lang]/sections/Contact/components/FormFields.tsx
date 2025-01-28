@@ -19,30 +19,49 @@ export const FormFields = ({
 	const fieldProps = isBlocked ? { tabIndex: -1 } : {};
 
 	useEffect(() => {
+		if (!formRef.current) return;
+
+		// 	if (!hasConsent) {
+		// 		const formInputs = document.querySelectorAll(
+		// 			".contact__form input, .contact__form textarea, .contact__form a"
+		// 		);
+		// 		formInputs.forEach((input) => {
+		// 			input.addEventListener("mousedown", (e) => {
+		// 				if (!hasConsent) {
+		// 					e.preventDefault();
+		// 					const consentButton = document.querySelector(
+		// 						".contact__consent-button"
+		// 					);
+		// 					(consentButton as HTMLElement)?.focus();
+		// 				}
+		// 			});
+		// 			input.addEventListener("focusin", (e) => {
+		// 				if (!hasConsent) {
+		// 					e.preventDefault();
+		// 					const consentButton = document.querySelector(
+		// 						".contact__consent-button"
+		// 					);
+		// 					(consentButton as HTMLElement)?.focus();
+		// 				}
+		// 			});
+		// 		});
+		// 	}
+		// }, [hasConsent]);
+
 		if (!hasConsent) {
-			const formInputs = document.querySelectorAll(
-				".contact__form input, .contact__form textarea, .contact__form a"
-			);
-			formInputs.forEach((input) => {
-				input.addEventListener("mousedown", (e) => {
-					if (!hasConsent) {
-						e.preventDefault();
-						const consentButton = document.querySelector(
-							".contact__consent-button"
-						);
-						(consentButton as HTMLElement)?.focus();
-					}
+			formRef.current.setAttribute("inert", "true");
+			formRef.current
+				.querySelectorAll("input, textarea, button, a")
+				.forEach((el) => {
+					el.setAttribute("tabindex", "-1");
 				});
-				input.addEventListener("focusin", (e) => {
-					if (!hasConsent) {
-						e.preventDefault();
-						const consentButton = document.querySelector(
-							".contact__consent-button"
-						);
-						(consentButton as HTMLElement)?.focus();
-					}
+		} else {
+			formRef.current.removeAttribute("inert");
+			formRef.current
+				.querySelectorAll("input, textarea, button, a")
+				.forEach((el) => {
+					el.removeAttribute("tabindex");
 				});
-			});
 		}
 	}, [hasConsent]);
 

@@ -1,0 +1,14 @@
+/** @format */
+
+%link-hover-base {
+	background: $color_link-bg;
+	height: 2rem;
+	border-radius: 1.5rem;
+}
+
+%flex-center-group {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+	justify-content: center;
+}

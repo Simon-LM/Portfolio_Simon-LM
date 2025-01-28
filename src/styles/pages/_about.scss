@@ -1,8 +1,10 @@
 /** @format */
 
 .about {
-	padding: 2rem 2rem 3rem;
-	background: $color-section-bg-odd;
+	padding: 2rem;
+	padding-top: 1rem;
+	padding-bottom: 2.5rem;
+	background: $color_section_bg-odd;
 
 	&--placeholder {
 		min-height: 100vh;
@@ -68,15 +70,15 @@
 		align-items: center;
 		justify-content: center;
 		background: rgba(0, 0, 0, 0.6);
-		color: $color-main-bg;
 		text-align: center;
 		padding: 2rem;
 
 		p {
-			background: $color-main-text;
-			color: $color-main-bg;
+			background: $color_about_overlay-bg;
+			color: $color_about_overlay-text;
 			font-size: 1rem;
 			font-weight: 500;
+			padding: 0.125em 0.5em;
 			margin: 0 auto;
 			margin-bottom: 1rem;
 		}
@@ -84,9 +86,9 @@
 
 	&__video-button {
 		padding: 0.5rem 1rem;
-		background: $color-section-title;
-		color: $color-main-bg;
-		border: 2px solid $color-main-bg;
+		background: $color_about_button-bg;
+		color: $color_about_button-text;
+		border: 2px solid $color_about_button-border;
 		border-radius: 0.25rem;
 		cursor: pointer;
 		font-size: 1.25rem;

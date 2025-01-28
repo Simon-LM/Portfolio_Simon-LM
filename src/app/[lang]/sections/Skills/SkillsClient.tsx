@@ -60,25 +60,93 @@ const styleIcons = [
 	{ Icon: SiTailwindcss, label: "Tailwind" },
 ];
 
+// const techIconsVariants = {
+// 	hidden: { opacity: 0, x: -100 },
+// 	visible: {
+// 		opacity: 1,
+// 		x: 0,
+// 		transition: {
+// 			staggerChildren: 0.2,
+// 		},
+// 	},
+// };
+
+// const iconVariants = {
+// 	hidden: { opacity: 0, x: -50 },
+// 	visible: {
+// 		opacity: 1,
+// 		x: 0,
+// 		transition: {
+// 			duration: 0.5,
+// 			ease: "easeOut",
+// 		},
+// 	},
+// };
+
+// const techIconsVariants = {
+// 	hidden: {
+// 		opacity: 0,
+// 		x: -100,
+// 		rotate: -180,
+// 	},
+// 	visible: {
+// 		opacity: 1,
+// 		x: 0,
+// 		rotate: 0,
+// 		transition: {
+// 			staggerChildren: 0.2,
+// 		},
+// 	},
+// };
+
+// const iconVariants = {
+// 	hidden: {
+// 		opacity: 0,
+// 		x: -50,
+// 		rotate: -180,
+// 	},
+// 	visible: {
+// 		opacity: 1,
+// 		x: 0,
+// 		rotate: 0,
+// 		transition: {
+// 			duration: 1,
+// 			ease: "easeOut",
+// 		},
+// 	},
+// };
+
 const techIconsVariants = {
-	hidden: { opacity: 0, x: -100 },
+	hidden: {
+		opacity: 0,
+	},
 	visible: {
 		opacity: 1,
-		x: 0,
 		transition: {
-			staggerChildren: 0.2,
+			staggerChildren: 0.2, // Ralentir le délai entre chaque icône
+			delayChildren: 0.5, // Augmenter le délai initial
 		},
 	},
 };
 
 const iconVariants = {
-	hidden: { opacity: 0, x: -50 },
+	hidden: {
+		opacity: 0,
+		x: -100,
+		rotate: -180,
+		scale: 0.5,
+	},
 	visible: {
 		opacity: 1,
 		x: 0,
+		rotate: 0,
+		scale: 1,
 		transition: {
-			duration: 0.5,
-			ease: "easeOut",
+			type: "spring",
+			stiffness: 70, // Réduire la rigidité
+			damping: 15, // Augmenter l'amortissement
+			mass: 1, // Augmenter la masse
+			duration: 2.5, // Augmenter la durée
 		},
 	},
 };

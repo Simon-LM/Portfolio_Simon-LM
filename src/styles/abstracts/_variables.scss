@@ -1,18 +1,123 @@
 /** @format */
 
-$off-white: #f8f9ff;
-$near-black: #0a0b14;
+// $off-white: #f8f9ff;
+// $near-black: #0a0b14;
 
-$primary-color: #f4c430;
-$primary-color: #e6b800;
-$primary-color: #dab846;
-$secondary-color: #284b63;
-$tertiary-color: #e6dbc9;
+// $primary-color: #dab846;
+// $secondary-color: #284b63; #075985 #0c4a6e
+// $tertiary-color: #e6dbc9;
 
-// $dark-gray: #353535;
-$dark-gray: #2e2e2c;
-$medium-gray: #464643;
-$light-gray: #e8ebf2;
+// // $dark-gray: #353535;
+// $dark-gray: #2e2e2c;
+// $medium-gray: #464643;
+// $light-gray: #e8ebf2;
+
+// Tailwindcss Colors
+$colors: (
+	stone: (
+		50: #fafaf9,
+		100: #f5f5f4,
+		200: #e7e5e4,
+		300: #d6d3d1,
+		400: #a8a29e,
+		500: #78716c,
+		600: #57534e,
+		700: #44403c,
+		800: #292524,
+		900: #1c1917,
+		950: #0c0a09,
+	),
+	slate: (
+		50: #f8fafc,
+		100: #f1f5f9,
+		200: #e2e8f0,
+		300: #cbd5e1,
+		400: #94a3b8,
+		500: #64748b,
+		600: #475569,
+		700: #334155,
+		800: #1e293b,
+		900: #0f172a,
+		950: #020617,
+	),
+	amber: (
+		50: #fffbeb,
+		100: #fef3c7,
+		200: #fde68a,
+		300: #fcd34d,
+		400: #fbbf24,
+		500: #f59e0b,
+		// Accents
+		600: #d97706,
+		// hover/focus
+		700: #b45309,
+		800: #92400e,
+		900: #78350f,
+		950: #451a03,
+	),
+	sky: (
+		50: #f0f9ff,
+		100: #e0f2fe,
+		200: #bae6fd,
+		300: #7dd3fc,
+		400: #38bdf8,
+		500: #0ea5e9,
+		// link-color - Liens
+		600: #0284c7,
+		// hover/focus
+		700: #0369a1,
+		800: #075985,
+		900: #0c4a6e,
+		950: #082f49,
+	),
+	emerald: (
+		50: #ecfdf5,
+		100: #d1fae5,
+		200: #a7f3d0,
+		300: #6ee7b7,
+		400: #34d399,
+		500: #10b981,
+		// success/validation
+		600: #059669,
+		700: #047857,
+		800: #065f46,
+		900: #064e3b,
+		950: #022c22,
+	),
+);
+
+// Base Colors
+$off-white: #fafaf9;
+$near-black: #0c0a09;
+
+// Gray Scale with Stone Tints
+$gray-darker: #292524; // stone-800
+
+$gray-dark: #44403c; // stone-700
+$dark-gray: $gray-dark;
+
+$gray-medium-dark: #57534e; // stone-600
+
+$gray-medium: #78716c; // stone-500
+$medium-gray: $gray-medium;
+$gray-medium-light: #78716c; // stone-500
+
+$gray-light: #a8a29e; // stone-400
+$light-gray: $gray-light;
+
+$gray-lighter: #d6d3d1; // stone-300
+$gray-lightest: #e7e5e4; // stone-200
+
+// Semantic Variables
+$primary-color: #fcd34d;
+$secondary-color: #451a03;
+$tertiary-color: #fef3c7;
+$link-color: #0c4a6e;
+// $link-color: #075985;
+$link-color-hover: #075985;
+$success-color: #059669;
+
+// // // // // // // // // // // //
 
 // Usage variables in the code
 $color-main-bg: $off-white;
@@ -22,47 +127,69 @@ $color-pages-title: $near-black;
 
 $color-header-bg: $primary-color;
 $color-header-text: $near-black;
-$color-header-text-role: $dark-gray;
+$color-header-text-role: $gray-dark;
 
 $color_lang-toggle_bg: $off-white;
-$color_lang-toggle_border: $dark-gray;
-$color_lang-toggle_bg-activated: $dark-gray;
+$color_lang-toggle_border: $gray-dark;
+$color_lang-toggle_bg-activated: $gray-dark;
 $color_lang-toggle_text-activated: $off-white;
-$color_lang-toggle_text-disabled: $medium-gray;
+$color_lang-toggle_text-disabled: $gray-medium;
 $color_lang-toggle_disabled-hover_bg: $secondary-color;
 $color_lang-toggle_disabled-hover_text: $off-white;
 
-$color-scroll-progress-line: $secondary-color;
-$color-scroll-progress-indicator: $medium-gray;
-$color-scroll-progress-indicator-active: $secondary-color;
+$color-scroll-progress-line: $link-color;
+$color-scroll-progress-indicator: $gray-medium-dark;
+$color-scroll-progress-indicator-active: $link-color;
+
+$color_collapse_title: $off-white;
+$color_collapse_bg: $gray-lighter;
+$color_collapse_bg-title: $gray-dark;
+$color_collapse_border: $gray-dark;
+
+$color_section_bg-even: $off-white;
+$color-section-bg-even: $off-white;
+$color_section_bg-odd: $gray-lightest;
+$color-section-bg-odd: $gray-lightest;
+$color_section_title: $secondary-color;
+$color-section-title: $secondary-color;
 
 $color-hero-bg: $off-white;
 $color-hero-title: $near-black;
-$color-hero-collapse-title: $off-white;
-$color-hero-collapse-bg-title: $medium-gray;
-$color-hero-collapse-bg: $light-gray;
-$color-hero-collapse-border: $medium-gray;
 $color-hero-text: $near-black;
 
-$color-section-bg-even: $off-white;
-$color-section-bg-odd: $tertiary-color;
-$color-section-title: $secondary-color;
+$color_about_overlay-bg: $near-black;
+$color_about_overlay-text: $off-white;
+$color_about_button-bg: $link-color;
+$color_about_button-border: $off-white;
+$color_about_button-text: $off-white;
 
-$color_section_card-bg: $light-gray;
+$color_skills-icon_bg: $tertiary-color;
+$color_skills-icon_text: $secondary-color;
 
-$color_contact_form-bg: $light-gray;
+$color_section_card-bg: $gray-lighter;
+$color_section-even_card-bg: $gray-lighter;
+$color_section-odd_card-bg: $gray-light;
 
-$color-bottom-footer-bg: $light-gray;
-$color-bottom-footer-title: $secondary-color;
-$color-bottom-footer-text: $near-black;
+$color_portfolio-tag_bg: $tertiary-color;
+$color_portfolio-tag_bg-texte: $secondary-color;
 
-$color-sticky-footer-bg: $dark-gray;
-$color-sticky-footer-text: $off-white;
+$color_contact_form-bg: $gray-lighter;
 
-// $color-accent: $secondary-color;
-$color-link: $secondary-color;
+$color-bottom-footer-bg: $gray-light;
+$color-bottom-footer-bg: $gray-dark;
+$color-bottom-footer-title: $tertiary-color;
+$color-bottom-footer-text: $off-white;
+
+$color_sticky-footer_bg: $gray-darker;
+$color_sticky-footer_text: $off-white;
+
+$color-link: $link-color;
+$color_link: $link-color;
+$color-link-hover: $link-color-hover;
+$color_link-hover: $link-color-hover;
 $color-link-bg: $off-white;
+$color_link-bg: $off-white;
 
-$color-focus-outline: $secondary-color;
-$color-focus-bg: $secondary-color;
-$color-focus-text: $off-white;
+$color_focus-outline: $link-color;
+$color_focus-bg: $link-color;
+$color_focus-text: $off-white;

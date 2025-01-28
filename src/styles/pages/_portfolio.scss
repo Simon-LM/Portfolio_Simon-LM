@@ -1,7 +1,9 @@
 /** @format */
 
 .portfolio {
-	padding: 4rem 2rem;
+	padding: 2rem;
+	padding-top: 1.5rem;
+	padding-bottom: 2.5rem;
 	background: $color-section-bg-odd;
 
 	&__container {
@@ -14,7 +16,6 @@
 
 	&__title {
 		text-align: center;
-		margin-top: 0;
 		margin-bottom: 2rem;
 		color: $color-section-title;
 	}

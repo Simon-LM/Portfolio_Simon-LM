@@ -7,8 +7,8 @@
 	right: 0;
 	padding: 0.5rem calc(0.25rem + 0.5vw);
 	box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.15);
-	z-index: 1000; // S'assurer que cette valeur est supérieure à celle du badge reCAPTCHA
-	background: $color-sticky-footer-bg;
+	z-index: 1000;
+	background: $color_sticky-footer_bg;
 
 	&__nav {
 		display: flex;
@@ -22,29 +22,12 @@
 		width: 2rem;
 		align-items: center;
 		justify-content: center;
-		color: $color-sticky-footer-text !important;
+		color: $color_sticky-footer_text !important;
 		font-size: 1.5rem;
 		cursor: pointer;
-		// transition: color 0.3s;
 		min-width: 2rem;
 
-		&:hover {
-			color: $color-link !important;
-			background: $color-link-bg !important;
-			height: 2rem;
-			width: 2rem;
-			border-radius: 1.5rem;
-		}
-
-		&:focus-visible {
-			color: $color-link !important;
-			background: $color-link-bg;
-			box-shadow: none !important;
-			height: 2rem;
-			border-radius: 1.5rem;
-			outline: 1px solid $primary-color;
-			outline-offset: 2px;
-		}
+		@include sticky-footer-link-states;
 	}
 
 	&__accessibility {
@@ -53,15 +36,12 @@
 		justify-content: center;
 		gap: 0.25rem;
 		white-space: nowrap;
-		color: $color-sticky-footer-text !important;
-		// flex-shrink: 0;
-		// background: palevioletred;
+		color: $color_sticky-footer_text !important;
 
 		&-icon {
 			height: 2rem;
 			width: 2rem;
 			flex-shrink: 0;
-			// background: purple;
 		}
 		&-text {
 			white-space: nowrap;
@@ -69,45 +49,21 @@
 			padding: 0.25rem;
 			overflow: hidden;
 			text-overflow: ellipsis;
-			// max-width: calc(100vw - (4rem * 6) - 2rem);
 			max-width: calc(100vw - 10.5rem);
 			color: inherit;
-			// background: pink;
 		}
-		&:hover {
-			color: $color-link !important;
-			background: $color-link-bg;
-			height: 2rem;
-			border-radius: 1.5rem;
-		}
-		&:focus-visible {
-			color: $color-link !important;
-			background: $color-link-bg;
-			box-shadow: none !important;
-			height: 2rem;
-			border-radius: 1.5rem;
-			outline: 1px solid $primary-color;
-			outline-offset: 2px;
-		}
+		@include sticky-footer-link-states;
 	}
 	&__social {
-		display: flex;
-		gap: 0.5rem;
-		align-items: center;
-		justify-content: center;
+		@extend %flex-center-group;
 		flex-grow: 1;
-		// background: green;
 		@media (max-width: 45rem) {
 			display: none;
 		}
 	}
 	&__fixed-links {
-		display: flex;
-		gap: 0.5rem;
-		align-items: center;
-		justify-content: center;
+		@extend %flex-center-group;
 		margin-left: auto;
 		flex-shrink: 0;
-		// background: blue;
 	}
 }

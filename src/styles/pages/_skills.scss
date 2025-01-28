@@ -3,8 +3,9 @@
 .skills {
 	// min-width: 100vh;
 	padding: 2rem;
-	padding-bottom: 6rem;
-	background-color: $color-section-bg-even;
+	padding-top: 1.5rem;
+	padding-bottom: 2.5rem;
+	background-color: $color_section_bg-even;
 
 	&--placeholder {
 		min-height: 100vh;
@@ -24,7 +25,7 @@
 	&__title {
 		text-align: center;
 		margin-bottom: 2rem;
-		color: $color-section-title;
+		color: $color_section_title;
 	}
 
 	&__presentation {
@@ -44,14 +45,14 @@
 		flex-wrap: wrap;
 		flex-direction: row;
 		justify-content: center;
-		gap: 2rem;
+		gap: 1.5rem;
 		margin-bottom: 3rem;
 	}
 
 	&__icons-group {
 		display: flex;
 		justify-content: center;
-		gap: 2rem;
+		gap: 1.5rem;
 		flex-wrap: wrap;
 	}
 	&__icon-wrapper {
@@ -59,18 +60,43 @@
 		flex-direction: column;
 		align-items: center;
 		gap: 0.5rem;
+		height: 5rem;
+		width: 5rem;
+		padding: 1rem;
+		border-radius: 4rem;
+		background: $color_skills-icon_bg;
+		box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+
+		&:hover {
+			animation: rotate360 1.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+		}
 	}
 
+	@keyframes rotate360 {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
+	}
 	&__icon {
 		width: 3rem;
 		height: 3rem;
-		color: $color-section-title;
+		// padding: 0.75rem;
+		border-radius: 2.5rem;
+		background: $color_skills-icon_bg;
+		color: $color_skills-icon_text;
 		transition: transform 0.2s ease;
 	}
 
 	&__icon-label {
 		font-size: 0.875rem;
-		color: $color-section-title;
+		font-weight: 600;
+		// padding: 0.5rem;
+		// border-radius: 0.25rem;
+		// background: $color_skills-icon_bg;
+		color: $color_skills-icon_text;
 	}
 
 	&__cards {
@@ -92,8 +118,9 @@
 
 		&-title {
 			color: $color-section-title;
+			font-size: 1.5rem;
+			margin-top: 1rem;
 			margin-bottom: 1.5rem;
-			font-size: 1.25rem;
 		}
 
 		&-list {
@@ -119,5 +146,9 @@
 		margin: 3rem auto 0;
 		text-align: center;
 		font-style: italic;
+	}
+
+	strong {
+		font-weight: 600;
 	}
 }
