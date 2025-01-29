@@ -11,6 +11,7 @@ interface CollapseProps {
 	children: React.ReactNode;
 	id?: string;
 	headingLevel?: "h2" | "h3" | "h4";
+	className?: string;
 }
 
 export default function Collapse({
@@ -18,6 +19,7 @@ export default function Collapse({
 	children,
 	id,
 	headingLevel = "h2",
+	className = "",
 }: CollapseProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const HeadingTag = headingLevel;
@@ -58,7 +60,7 @@ export default function Collapse({
 	}, [isOpen]);
 
 	return (
-		<div className="collapse" id={id}>
+		<div className={`collapse ${className}`.trim()} id={id}>
 			<button
 				id={headerId}
 				className="collapse__trigger"

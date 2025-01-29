@@ -113,7 +113,6 @@ $primary-color: #fcd34d;
 $secondary-color: #451a03;
 $tertiary-color: #fef3c7;
 $link-color: #0c4a6e;
-// $link-color: #075985;
 $link-color-hover: #075985;
 $success-color: #059669;
 
@@ -121,7 +120,9 @@ $success-color: #059669;
 
 // Usage variables in the code
 $color-main-bg: $off-white;
+$color_main-bg: $off-white;
 $color-main-text: $near-black;
+$color_main-text: $near-black;
 
 $color-pages-title: $near-black;
 
@@ -134,12 +135,12 @@ $color_lang-toggle_border: $gray-dark;
 $color_lang-toggle_bg-activated: $gray-dark;
 $color_lang-toggle_text-activated: $off-white;
 $color_lang-toggle_text-disabled: $gray-medium;
-$color_lang-toggle_disabled-hover_bg: $secondary-color;
+$color_lang-toggle_disabled-hover_bg: $link-color;
 $color_lang-toggle_disabled-hover_text: $off-white;
 
-$color-scroll-progress-line: $link-color;
-$color-scroll-progress-indicator: $gray-medium-dark;
-$color-scroll-progress-indicator-active: $link-color;
+$color_scroll-progress_line: $link-color;
+$color_scroll-progress_indicator: $gray-medium-dark;
+$color_scroll-progress_indicator-active: $link-color;
 
 $color_collapse_title: $off-white;
 $color_collapse_bg: $gray-lighter;
@@ -174,11 +175,14 @@ $color_portfolio-tag_bg: $tertiary-color;
 $color_portfolio-tag_bg-texte: $secondary-color;
 
 $color_contact_form-bg: $gray-lighter;
+$color_contact_modal_bg: $gray-lightest;
 
-$color-bottom-footer-bg: $gray-light;
-$color-bottom-footer-bg: $gray-dark;
-$color-bottom-footer-title: $tertiary-color;
-$color-bottom-footer-text: $off-white;
+$color_bottom-footer_bg: $gray-light;
+$color_bottom-footer_bg: $gray-dark;
+$color_bottom-footer_title: $tertiary-color;
+$color_bottom-footer_text: $off-white;
+$color_bottom-footer_link-bg: $off-white;
+$color_bottom-footer_link-text: $link-color;
 
 $color_sticky-footer_bg: $gray-darker;
 $color_sticky-footer_text: $off-white;

@@ -10,7 +10,9 @@ import {
 	SiSass,
 	SiTailwindcss,
 } from "react-icons/si";
-import MarkdownText from "../../../../utils/MarkdownText";
+import MarkdownText from "@/utils/MarkdownText";
+import { useState } from "react";
+import { IconType } from "react-icons";
 
 interface SkillsDictionary {
 	title: string;
@@ -26,6 +28,32 @@ interface SkillsDictionary {
 interface SkillsProps {
 	dictionary: SkillsDictionary;
 }
+interface IconWrapperProps {
+	Icon: IconType;
+	label: string;
+}
+
+const IconWrapper = ({ Icon, label }: IconWrapperProps) => {
+	const [isRotating, setIsRotating] = useState(false);
+
+	const handleMouseEnter = () => {
+		if (!isRotating) {
+			setIsRotating(true);
+			setTimeout(() => setIsRotating(false), 1250);
+		}
+	};
+
+	return (
+		<motion.div
+			key={label}
+			className={`skills__icon-wrapper ${isRotating ? "is-rotating" : ""}`}
+			variants={iconVariants}
+			onMouseEnter={handleMouseEnter}>
+			<Icon className="skills__icon" />
+			<span className="skills__icon-label">{label}</span>
+		</motion.div>
+	);
+};
 
 const containerVariants = {
 	hidden: { opacity: 0 },
@@ -59,62 +87,6 @@ const styleIcons = [
 	{ Icon: SiSass, label: "SCSS" },
 	{ Icon: SiTailwindcss, label: "Tailwind" },
 ];
-
-// const techIconsVariants = {
-// 	hidden: { opacity: 0, x: -100 },
-// 	visible: {
-// 		opacity: 1,
-// 		x: 0,
-// 		transition: {
-// 			staggerChildren: 0.2,
-// 		},
-// 	},
-// };
-
-// const iconVariants = {
-// 	hidden: { opacity: 0, x: -50 },
-// 	visible: {
-// 		opacity: 1,
-// 		x: 0,
-// 		transition: {
-// 			duration: 0.5,
-// 			ease: "easeOut",
-// 		},
-// 	},
-// };
-
-// const techIconsVariants = {
-// 	hidden: {
-// 		opacity: 0,
-// 		x: -100,
-// 		rotate: -180,
-// 	},
-// 	visible: {
-// 		opacity: 1,
-// 		x: 0,
-// 		rotate: 0,
-// 		transition: {
-// 			staggerChildren: 0.2,
-// 		},
-// 	},
-// };
-
-// const iconVariants = {
-// 	hidden: {
-// 		opacity: 0,
-// 		x: -50,
-// 		rotate: -180,
-// 	},
-// 	visible: {
-// 		opacity: 1,
-// 		x: 0,
-// 		rotate: 0,
-// 		transition: {
-// 			duration: 1,
-// 			ease: "easeOut",
-// 		},
-// 	},
-// };
 
 const techIconsVariants = {
 	hidden: {
@@ -174,7 +146,7 @@ export default function Skills({ dictionary }: SkillsProps) {
 					whileInView="visible"
 					viewport={{ once: true }}>
 					<motion.div className="skills__icons-group">
-						{frontendIcons.map(({ Icon, label }) => (
+						{/* {frontendIcons.map(({ Icon, label }) => (
 							<motion.div
 								key={label}
 								className="skills__icon-wrapper"
@@ -182,11 +154,14 @@ export default function Skills({ dictionary }: SkillsProps) {
 								<Icon className="skills__icon" />
 								<span className="skills__icon-label">{label}</span>
 							</motion.div>
+						))} */}
+						{frontendIcons.map(({ Icon, label }) => (
+							<IconWrapper key={label} Icon={Icon} label={label} />
 						))}
 					</motion.div>
 
 					<motion.div className="skills__icons-group">
-						{styleIcons.map(({ Icon, label }) => (
+						{/* {styleIcons.map(({ Icon, label }) => (
 							<motion.div
 								key={label}
 								className="skills__icon-wrapper"
@@ -194,6 +169,9 @@ export default function Skills({ dictionary }: SkillsProps) {
 								<Icon className="skills__icon" />
 								<span className="skills__icon-label">{label}</span>
 							</motion.div>
+						))} */}
+						{styleIcons.map(({ Icon, label }) => (
+							<IconWrapper key={label} Icon={Icon} label={label} />
 						))}
 					</motion.div>
 				</motion.div>

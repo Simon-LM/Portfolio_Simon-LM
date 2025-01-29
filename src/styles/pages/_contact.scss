@@ -44,7 +44,7 @@
 		z-index: 3;
 		width: 90%;
 		max-width: 500px;
-		background: $color-main-bg;
+		background: $color_contact_modal_bg;
 		padding: 2rem;
 		border-radius: 0.5rem;
 		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -52,7 +52,7 @@
 		&-title {
 			margin-bottom: rem;
 			font-size: 1.5rem;
-			color: $color-section-title;
+			color: $color_section_title;
 		}
 
 		&-text {
@@ -70,9 +70,13 @@
 			padding: 0.75rem 1.5rem;
 			border-radius: 0.25rem;
 			border: none;
+			border: 2px solid $color_main-bg;
 			font-weight: 500;
-			cursor: pointer;
-			transition: opacity 0.2s;
+			transition: all 0.3s ease;
+			&:hover {
+				background: $color-link-hover;
+				transform: translateY(-1px);
+			}
 
 			&--accept {
 				background: $color-link;
@@ -106,7 +110,7 @@
 
 	&__title {
 		margin-bottom: 0rem;
-		color: $color-section-title;
+		color: $color_section_title;
 	}
 
 	&__subtitle {
@@ -149,12 +153,12 @@
 			justify-content: space-between;
 			align-items: center;
 			margin-bottom: 0.5rem;
-			color: $color-main-text;
+			color: $color_main-text;
 			font-weight: 500;
 			width: 100%;
 			.optional {
 				font-size: 0.75rem;
-				color: rgba($color-main-text, 0.66);
+				color: rgba($color_main-text, 0.66);
 				font-weight: normal;
 				font-style: italic;
 			}
@@ -172,8 +176,8 @@
 			transition: border-color 0.2s ease;
 
 			&:focus-visible {
-				background: $color-main-bg !important;
-				color: $color-main-text !important;
+				background: $color_main-bg !important;
+				color: $color_main-text !important;
 			}
 
 			// &:focus {
@@ -206,7 +210,7 @@
 			display: flex;
 			font-size: 0.75rem;
 			margin-top: 0.25rem;
-			color: $color-main-text;
+			color: $color_main-text;
 		}
 
 		&-error {
@@ -222,7 +226,7 @@
 
 			p {
 				text-align: left;
-				color: $color-main-text;
+				color: $color_main-text;
 				font-size: 0.875rem;
 				line-height: 1.5;
 			}
@@ -268,13 +272,15 @@
 			font-size: 1rem;
 			font-weight: 500;
 			border-radius: 0.25rem;
-			border: none;
+			// border: none;
+			border: 2px solid $color_main-bg;
 			background: $color-link;
 			color: $off-white;
-			transition: opacity 0.3s ease;
+			transition: all 0.3s ease;
 
 			&:hover {
-				opacity: 0.9;
+				background: $color-link-hover;
+				transform: translateY(-1px);
 			}
 		}
 		&__toast {
@@ -311,10 +317,10 @@
 
 .recaptcha-error {
 	text-align: left;
-	background: $color-main-bg;
+	background: $color_main-bg;
 	padding: 1.5rem;
 	border-radius: 0.5rem;
-	color: $color-main-text;
+	color: $color_main-text;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
 	h3 {

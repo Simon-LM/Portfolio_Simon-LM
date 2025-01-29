@@ -40,7 +40,8 @@ a {
 		text-decoration: none;
 	}
 	&:hover {
-		opacity: 0.85;
+		background-color: $color-link-hover;
+		color: $off-white !important;
 	}
 }
 

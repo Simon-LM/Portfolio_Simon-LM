@@ -9,7 +9,7 @@
 	right: 0.125rem;
 	height: 50vh;
 	width: 0.125rem;
-	background-color: $color-scroll-progress-line;
+	background-color: $color_scroll-progress_line;
 	@media screen and (max-height: 34rem) {
 		display: none;
 	}
@@ -23,7 +23,10 @@
 	flex-direction: row-reverse;
 	transform: rotate(-90deg);
 	gap: 0 1rem;
-
+	a:hover {
+		opacity: 0.9;
+		// opacity: 1;
+	}
 	&__arrows {
 		display: flex;
 		height: fit-content;
@@ -45,14 +48,13 @@
 		font-weight: 500;
 		text-transform: uppercase;
 		letter-spacing: 0.0625rem;
-		// transition: all 0.2s ease;
 		white-space: nowrap;
 		text-decoration: none;
-		color: $color-scroll-progress-indicator !important;
+		color: $color_scroll-progress_indicator !important;
 
 		&[data-active="true"] {
 			color: $color-main-bg !important;
-			background-color: $color-scroll-progress-indicator-active;
+			background: $color_scroll-progress_indicator-active;
 		}
 	}
 	// @media screen and (min-width: 960px) {

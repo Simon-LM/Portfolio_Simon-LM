@@ -2,7 +2,7 @@
 .bottomFooter {
 	display: flex;
 	flex-wrap: wrap;
-	background: $color-bottom-footer-bg;
+	background: $color_bottom-footer_bg;
 	padding: 2rem 1rem;
 	padding-bottom: 6rem;
 	&__nav {
@@ -41,18 +41,21 @@
 		font-size: 1.1rem;
 		font-weight: bold;
 		margin-bottom: 0.5rem;
-		color: $color-bottom-footer-title;
+		color: $color_bottom-footer_title;
 	}
 
 	a {
-		color: $color-bottom-footer-text;
+		width: fit-content;
+		color: $color_bottom-footer_text;
+		border-radius: 0.25rem;
 		text-decoration: none;
 		transition: color 0.3s ease;
-
-		&:hover,
-		&:focus {
-			// color: $color-link;
-			text-decoration: underline;
+		&:hover {
+			background: $color_bottom-footer_link-bg;
+			color: $color_bottom-footer_link-text !important;
+			span {
+				color: $color_bottom-footer_link-text;
+			}
 		}
 	}
 	&__social-link {
@@ -60,7 +63,7 @@
 		align-items: center;
 		gap: 0.5rem;
 		span {
-			color: $color-bottom-footer-text;
+			color: $color_bottom-footer_text;
 		}
 
 		svg {

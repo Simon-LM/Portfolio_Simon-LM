@@ -146,7 +146,7 @@
 		color: $primary-color !important;
 		font-weight: 600;
 		border-radius: 0.125rem;
-		border: 1px solid $dark-gray;
+		// border: 1px solid $dark-gray;
 		padding: 0.25rem;
 		padding-inline: calc(0.25rem + 0.25vw);
 		margin-top: 0.5rem;
@@ -155,6 +155,12 @@
 		margin-left: 1rem;
 		background: $dark-gray;
 		// background: pink;
+		&:hover {
+			opacity: 1;
+		}
+		&:focus-visible {
+			border-radius: 0.125rem;
+		}
 	}
 	&__blog {
 		&-logo {

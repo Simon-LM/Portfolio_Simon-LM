@@ -1,6 +1,8 @@
 /** @format */
 
 .collapse {
+	// max-width: 60rem;
+	box-sizing: border-box;
 	margin-bottom: 1rem;
 
 	&__trigger {
@@ -12,7 +14,6 @@
 		background: $color_collapse_bg-title;
 		border: 2px solid $color_collapse_border;
 		border-radius: 0.5rem;
-		cursor: pointer;
 
 		&[aria-expanded="true"] {
 			border-bottom-left-radius: 0;
@@ -29,6 +30,13 @@
 		color: $color_collapse_title;
 	}
 	&__content {
+		display: block;
+		width: inherit;
+		box-sizing: border-box;
+		// overflow-wrap: break-word;
+		// overflow-x: hidden;
+		// word-wrap: break-word;
+		text-align: left;
 		padding: 1.5rem 1rem;
 		border-top: none;
 		border-bottom-left-radius: 0.5rem;

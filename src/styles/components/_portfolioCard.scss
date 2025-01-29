@@ -15,9 +15,14 @@
 	box-shadow: 0 4px 6px rgba($dark-gray, 0.1);
 	transition: transform 0.3s ease;
 	margin-bottom: 3rem;
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+		0 2px 4px -2px rgba(0, 0, 0, 0.1);
+	transition: all 0.3s ease;
 
 	&:hover {
-		transform: translateY(-5px);
+		transform: translateY(-2px);
+		box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+			0 8px 10px -6px rgba(0, 0, 0, 0.1);
 	}
 
 	&-image {
@@ -55,7 +60,6 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
-
 		gap: 0.5rem;
 		margin-bottom: 1.5rem;
 	}
@@ -69,17 +73,19 @@
 		font-size: 0.8rem;
 	}
 
+	&-collapse {
+		margin: auto;
+		max-width: 53.8rem;
+		width: 100%;
+	}
+
 	&-details {
 		width: 100%;
 		padding: 1rem;
 		line-height: 1.6;
 		color: $color-main-text;
-		// background: $color-hero-collapse-bg;
-		// border: 1px solid $color-hero-collapse-border;
 		border-radius: 0 0 0.25rem 0.25rem;
-		// margin-left: -1rem;
 		margin-top: -1rem;
-		// margin-bottom: 1rem;
 		box-sizing: border-box;
 	}
 
@@ -93,11 +99,11 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.5rem;
+		border-radius: 0.25rem;
 		color: $color-link;
 		text-decoration: underline;
-
 		&:hover {
-			opacity: 0.8;
+			opacity: 1;
 		}
 	}
 }
