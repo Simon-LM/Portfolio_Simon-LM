@@ -154,9 +154,9 @@
 		margin-right: 0.25rem;
 		margin-left: 1rem;
 		background: $dark-gray;
-		// background: pink;
 		&:hover {
 			opacity: 1;
+			color: $off-white !important;
 		}
 		&:focus-visible {
 			border-radius: 0.125rem;

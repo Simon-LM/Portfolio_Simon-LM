@@ -1,7 +1,6 @@
 /** @format */
 
 .collapse {
-	// max-width: 60rem;
 	box-sizing: border-box;
 	margin-bottom: 1rem;
 
@@ -19,6 +18,10 @@
 			border-bottom-left-radius: 0;
 			border-bottom-right-radius: 0;
 		}
+
+		&:hover {
+			background: $color-link-hover;
+		}
 	}
 	&__title {
 		font-size: 1.25rem;
@@ -33,9 +36,6 @@
 		display: block;
 		width: inherit;
 		box-sizing: border-box;
-		// overflow-wrap: break-word;
-		// overflow-x: hidden;
-		// word-wrap: break-word;
 		text-align: left;
 		padding: 1.5rem 1rem;
 		border-top: none;

@@ -1,11 +1,13 @@
 /** @format */
 
+/** @format */
+
 "use client";
 
-import React, { ReactNode } from "react";
+import React, { useEffect, useRef, useState, ReactNode } from "react";
 // import { motion } from "framer-motion";
 // import { motion, useScroll } from "framer-motion";
-import { useEffect, useState } from "react";
+
 import { BsChevronUp, BsChevronDown } from "react-icons/bs";
 
 interface Section {
@@ -40,6 +42,7 @@ const sections: Section[] = [
 ];
 
 export default function ScrollProgressBar() {
+	const navRef = useRef<HTMLElement>(null);
 	const [activeSection, setActiveSection] = useState<string>("hero");
 	// const { scrollYProgress } = useScroll();
 
@@ -80,6 +83,19 @@ export default function ScrollProgressBar() {
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
 
+	useEffect(() => {
+		const darkLinkColor = "#d6d3d1";
+		const lightLinkColor = "#78716c";
+		const newColor =
+			activeSection === "bottomFooter" ? darkLinkColor : lightLinkColor;
+		if (navRef.current) {
+			navRef.current.style.setProperty(
+				"--scroll-progress-link-color",
+				newColor
+			);
+		}
+	}, [activeSection]);
+
 	const handleClick = (
 		e: React.MouseEvent<HTMLAnchorElement>,
 		sectionId: string
@@ -103,6 +119,7 @@ export default function ScrollProgressBar() {
 		<>
 			{/* Rotary menu */}
 			<nav
+				ref={navRef}
 				className="scroll-progress"
 				aria-hidden="true"
 				aria-label="Indicateur de position secondaire">

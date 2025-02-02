@@ -1,5 +1,11 @@
 /** @format */
 
+$scroll-progress-link-default: if(
+	lightness($color_bottom-footer_bg) < 50,
+	$off-white,
+	$color_scroll-progress_indicator
+);
+
 .scroll-progress-line {
 	position: fixed;
 	z-index: 99;
@@ -23,10 +29,18 @@
 	flex-direction: row-reverse;
 	transform: rotate(-90deg);
 	gap: 0 1rem;
-	a:hover {
-		opacity: 0.9;
-		// opacity: 1;
+
+	a {
+		color: var(--scroll-progress-link-color, #{$scroll-progress-link-default});
+		transition: color 0.3s ease;
+
+		&:hover {
+			opacity: 0.95;
+			background: $color-link-hover;
+			color: $off-white !important;
+		}
 	}
+
 	&__arrows {
 		display: flex;
 		height: fit-content;
@@ -50,7 +64,8 @@
 		letter-spacing: 0.0625rem;
 		white-space: nowrap;
 		text-decoration: none;
-		color: $color_scroll-progress_indicator !important;
+		// color: $color_scroll-progress_indicator !important;
+		color: var(--scroll-progress-link-color, #{$scroll-progress-link-default});
 
 		&[data-active="true"] {
 			color: $color-main-bg !important;

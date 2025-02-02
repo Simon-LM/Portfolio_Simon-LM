@@ -22,13 +22,21 @@
 		&:disabled {
 			background: $color-sticky-footer-bg;
 			color: $color-sticky-footer-text;
-			cursor: default;
 		}
 
 		&:not(:disabled):hover {
 			background: $color_lang-toggle_disabled-hover_bg;
 			color: $color_lang-toggle_disabled-hover_text;
+			&:hover {
+				background: $color-link-hover;
+				color: $off-white;
+			}
 		}
+
+		// &:hover {
+		// 	background: $color-link-hover;
+		// 	color: $off-white;
+		// }
 
 		&:focus-visible {
 			outline: 2px solid $color-link;

@@ -42,7 +42,7 @@
 
 		&:hover {
 			transform: scale(1.05);
-			background: $color-link-hover;
+			background: $color-link-hover !important;
 			.menu-text {
 				color: $off-white !important;
 			}
@@ -104,6 +104,8 @@
 
 			&:hover {
 				opacity: 1;
+				background: $color-link-hover;
+				color: $off-white;
 			}
 
 			&:focus-visible {
