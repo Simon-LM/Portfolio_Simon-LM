@@ -160,7 +160,13 @@ export default function NavigationSticky() {
 
 			{isMenuOpen && (
 				<div ref={menuRef} className="navigation-menu">
+					<LanguageSelector onKeyDown={handleKeyDown} />
+
 					<ul id="menu-list" role="menu">
+						{/* <li role="none">
+							<LanguageSelector onKeyDown={handleKeyDown} />
+						</li> */}
+
 						<li role="none">
 							<Link
 								className="nav-link skip-link"
@@ -170,10 +176,6 @@ export default function NavigationSticky() {
 								onKeyDown={handleKeyDown}>
 								{t.sitemap}
 							</Link>
-						</li>
-
-						<li role="none">
-							<LanguageSelector onKeyDown={handleKeyDown} />
 						</li>
 
 						<li role="none">

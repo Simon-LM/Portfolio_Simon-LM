@@ -48,6 +48,7 @@
 				"heading": "Compétences clés",
 				"frontend": {
 					"title": "Frontend & Accessibilité",
+					"ariaLabel": "Frontend et Accessibilité",
 					"items": [
 						"`React.js, **Next.js**, Vite, **TypeScript**`",
 						"`**SCSS** (7.1, module.scss, BEM), **Tailwind CSS**`",
@@ -59,8 +60,9 @@
 				},
 				"backend": {
 					"title": "Backend & Outils",
+					"ariaLabel": "Backend et Outils",
 					"items": [
-						"`APIs **REST** & **GraphQL** (Postman, Swagger)`",
+						"`APIs **REST** et **GraphQL** (Postman, Swagger)`",
 						"`**EmailJS**`",
 						"`Notions en PHP/Drupal`",
 						"`**Figma**, Gimp, Inkscape, Kdenlive`"

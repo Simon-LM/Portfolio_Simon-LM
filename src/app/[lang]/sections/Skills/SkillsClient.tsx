@@ -18,8 +18,8 @@ interface SkillsDictionary {
 	title: string;
 	presentation: string;
 	competences: {
-		frontend: { title: string; items: string[] };
-		backend: { title: string; items: string[] };
+		frontend: { title: string; items: string[]; ariaLabel?: string };
+		backend: { title: string; items: string[]; ariaLabel?: string };
 		tools: { title: string; items: string[] };
 		closingText: string;
 	};
@@ -180,7 +180,9 @@ export default function Skills({ dictionary }: SkillsProps) {
 					<motion.div className="skills__cards" variants={containerVariants}>
 						{/* Frontend Card */}
 						<motion.div className="skills__card" variants={itemVariants}>
-							<h3 className="skills__card-title">
+							<h3
+								className="skills__card-title"
+								aria-label={dictionary.competences.frontend.ariaLabel}>
 								{dictionary.competences.frontend.title}
 							</h3>
 							<ul className="skills__card-list">
@@ -194,7 +196,9 @@ export default function Skills({ dictionary }: SkillsProps) {
 
 						{/* Backend Card */}
 						<motion.div className="skills__card" variants={itemVariants}>
-							<h3 className="skills__card-title">
+							<h3
+								className="skills__card-title"
+								aria-label={dictionary.competences.backend.ariaLabel}>
 								{dictionary.competences.backend.title}
 							</h3>
 							<ul className="skills__card-list">
