@@ -122,7 +122,10 @@ export default function Header({ dictionary }: HeaderProps) {
 							<span className="header__title-name">
 								{dictionary.header.title.name}
 							</span>
-							<span className="header__title-separator"> | </span>
+							<span className="header__title-separator" aria-hidden="true">
+								{" "}
+								|{" "}
+							</span>
 							<span className="header__title-role">
 								{dictionary.header.title.role}
 							</span>
