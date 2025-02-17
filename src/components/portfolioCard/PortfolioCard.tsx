@@ -22,6 +22,12 @@ interface PortfolioCardProps {
 		website?: string;
 	};
 	priority?: boolean;
+	dictionary: {
+		links: {
+			github: string;
+			website: string;
+		};
+	};
 }
 
 export default function PortfolioCard({
@@ -31,6 +37,7 @@ export default function PortfolioCard({
 	imageUrl,
 	imageAlt,
 	links,
+	dictionary,
 	priority = false,
 }: PortfolioCardProps) {
 	return (
@@ -75,7 +82,8 @@ export default function PortfolioCard({
 						href={links.github}
 						className="portfolio__card-link"
 						target="_blank"
-						rel="noopener noreferrer">
+						rel="noopener noreferrer"
+						aria-label={`${dictionary.links.github} ${title}`}>
 						<FaGithub aria-hidden="true" />
 						GitHub
 					</Link>
@@ -84,7 +92,8 @@ export default function PortfolioCard({
 							href={links.website}
 							className="portfolio__card-link"
 							target="_blank"
-							rel="noopener noreferrer">
+							rel="noopener noreferrer"
+							aria-label={`${dictionary.links.website} ${title}`}>
 							<FaGlobe aria-hidden="true" />
 							Site web
 						</Link>

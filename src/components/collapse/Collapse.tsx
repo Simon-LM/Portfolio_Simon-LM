@@ -71,7 +71,8 @@ export default function Collapse({
 				<HeadingTag className="collapse__title">{title}</HeadingTag>
 				<motion.span
 					animate={{ rotate: isOpen ? 180 : 0 }}
-					className="collapse__icon">
+					className="collapse__icon"
+					aria-hidden="true">
 					▼
 				</motion.span>
 			</button>

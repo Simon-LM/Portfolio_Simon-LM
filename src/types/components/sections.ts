@@ -21,7 +21,11 @@ export interface SkillsDictionary {
 }
 export interface PortfolioDictionary {
 	title: string;
-	subtitle: string; // Retrait du caractère optionnel
+	subtitle: string;
+	links: {
+		github: string;
+		website: string;
+	};
 	projects: {
 		argentBank: {
 			title: string;

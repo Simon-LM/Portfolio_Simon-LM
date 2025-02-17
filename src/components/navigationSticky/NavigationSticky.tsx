@@ -144,7 +144,8 @@ export default function NavigationSticky() {
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={() => setIsHovered(false)}
 			role="navigation"
-			aria-label={t.menu}>
+			// aria-label={t.menu}
+		>
 			<button
 				ref={buttonRef}
 				className="menu-button"
@@ -155,7 +156,9 @@ export default function NavigationSticky() {
 				onClick={() => setIsMenuOpen(!isMenuOpen)}
 				onKeyDown={handleKeyDown}>
 				<RiMenu3Line />
-				<span className="menu-text">{t.menu}</span>
+				<span className="menu-text" aria-hidden="true">
+					{t.menu}
+				</span>
 			</button>
 
 			{isMenuOpen && (
@@ -163,10 +166,6 @@ export default function NavigationSticky() {
 					<LanguageSelector onKeyDown={handleKeyDown} />
 
 					<ul id="menu-list" role="menu">
-						{/* <li role="none">
-							<LanguageSelector onKeyDown={handleKeyDown} />
-						</li> */}
-
 						<li role="none">
 							<Link
 								className="nav-link skip-link"

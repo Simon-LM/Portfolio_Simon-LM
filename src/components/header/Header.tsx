@@ -98,17 +98,25 @@ export default function Header({ dictionary }: HeaderProps) {
 							<button
 								onClick={() => switchLanguage("en")}
 								className="header__lang-button"
-								aria-pressed={language === "en"}
 								disabled={language === "en"}
-								aria-label="Switch to English">
+								aria-label="Switch to English"
+								aria-current={language === "en" ? "true" : undefined}
+								// aria-label={`Switch to English${
+								// language === "en" ? " Anglais actif" : " inactive"
+								// }`}
+							>
 								EN
 							</button>
 							<button
 								onClick={() => switchLanguage("fr")}
 								className="header__lang-button"
-								aria-pressed={language === "fr"}
 								disabled={language === "fr"}
-								aria-label="Passer au français">
+								aria-label="Passer au français"
+								aria-current={language === "fr" ? "true" : undefined}
+								// aria-label={`Passer au français${
+								// language === "fr" ? " French active" : " inactif"
+								// }`}
+							>
 								FR
 							</button>
 						</div>
@@ -144,12 +152,12 @@ export default function Header({ dictionary }: HeaderProps) {
 						className="header__blog-link"
 						target="_blank"
 						rel="noopener noreferrer"
-						aria-label="Youtube LostInTab"
 						title={
 							language === "fr"
-								? "Visiter la chaîne YouTube LostInTab"
-								: "Visit LostInTab YouTube channel"
-						}>
+								? "Visiter la chaîne YouTube"
+								: "Visit the YouTube channel"
+						}
+						aria-label="Youtube LostInTab">
 						<Image
 							src={LogoLostInTab}
 							alt="Logo LostInTab"

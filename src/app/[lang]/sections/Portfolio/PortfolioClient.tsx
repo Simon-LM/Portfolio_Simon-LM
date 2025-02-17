@@ -9,6 +9,12 @@ interface PortfolioProps {
 	dictionary: {
 		title: string;
 		subtitle: string;
+
+		links: {
+			github: string;
+			website: string;
+		};
+
 		projects: {
 			argentBank: {
 				title: string;
@@ -69,6 +75,7 @@ export default function PortfolioClient({ dictionary }: PortfolioProps) {
 						imageUrl="/Portfolios/P8_Kasa/Kasa_01-1920.png"
 						imageAlt={dictionary.projects.kasa.imageAlt}
 						links={dictionary.projects.kasa.links}
+						dictionary={dictionary}
 					/>
 					<PortfolioCard
 						title={dictionary.projects.argentBank.title}
@@ -77,6 +84,7 @@ export default function PortfolioClient({ dictionary }: PortfolioProps) {
 						imageUrl="/Portfolios/P11_ArgentBank/ArgentBank_01-1920.png"
 						imageAlt={dictionary.projects.argentBank.imageAlt}
 						links={dictionary.projects.argentBank.links}
+						dictionary={dictionary}
 					/>
 					<PortfolioCard
 						title={dictionary.projects.ninaCarducci.title}
@@ -85,6 +93,7 @@ export default function PortfolioClient({ dictionary }: PortfolioProps) {
 						imageUrl="/Portfolios/P9_Nina/Nina-Lighthouse_01.png"
 						imageAlt={dictionary.projects.ninaCarducci.imageAlt}
 						links={dictionary.projects.ninaCarducci.links}
+						dictionary={dictionary}
 					/>
 				</div>
 			</div>

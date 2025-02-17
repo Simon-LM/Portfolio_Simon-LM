@@ -54,7 +54,7 @@
 						"`**SCSS** (7.1, module.scss, BEM), **Tailwind CSS**`",
 						"`Audits d'accessibilité (Lighthouse, Wave, **NVDA**)`",
 						"`**Zustand**, Redux Toolkit`",
-						"`**Performance web** : lazy loading, images AVIF/WebP`",
+						"`**Performance web** : lazy loading, images AVIF ou WebP`",
 						"`Tests automatisés (Jest, Vitest, **Pa11y**)`"
 					]
 				},
@@ -64,7 +64,7 @@
 					"items": [
 						"`APIs **REST** et **GraphQL** (Postman, Swagger)`",
 						"`**EmailJS**`",
-						"`Notions en PHP/Drupal`",
+						"`Notions en PHP et Drupal`",
 						"`**Figma**, Gimp, Inkscape, Kdenlive`"
 					]
 				},
@@ -75,6 +75,10 @@
 		"portfolio": {
 			"title": "Portfolio",
 			"subtitle": "Mes projets récents",
+			"links": {
+				"github": "Voir le code source sur GitHub de",
+				"website": "Visiter le site web de"
+			},
 			"projects": {
 				"argentBank": {
 					"imageAlt": "Interface de l'application bancaire ArgentBank montrant le tableau de bord utilisateur",
