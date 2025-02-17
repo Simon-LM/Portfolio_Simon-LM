@@ -43,7 +43,7 @@
 		"skills": {
 			"title": "Compétences",
 			"subtitle": "Technologies & Expertise",
-			"presentation": "Développeur front-end spécialisé en accessibilité web, je conçois et intègre des interfaces inclusives, performantes et conformes aux normes (RGAA, WCAG). J'adopte une approche Content First, conciliant optimisation technique, responsive design et expérience utilisateur.",
+			"presentation": "Développeur frontend spécialisé en accessibilité web, je conçois et intègre des interfaces inclusives, performantes et conformes aux normes (RGAA, WCAG). J'adopte une approche Content First, conciliant optimisation technique, responsive design et expérience utilisateur.",
 			"competences": {
 				"heading": "Compétences clés",
 				"frontend": {

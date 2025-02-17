@@ -31,6 +31,7 @@ export default function NavigationSticky() {
 			social: "Réseaux sociaux",
 			menu: "Menu",
 			closeMenu: "Fermer le menu",
+			navigationLabel: "Menu navigation principale",
 		},
 		en: {
 			skipLink: "Content",
@@ -43,6 +44,7 @@ export default function NavigationSticky() {
 			social: "Social Networks",
 			menu: "Menu",
 			closeMenu: "Close menu",
+			navigationLabel: "Main Menu navigation",
 		},
 	};
 
@@ -117,6 +119,7 @@ export default function NavigationSticky() {
 			// Sélectionner tous les éléments interactifs du menu
 			const menuItems = document.querySelectorAll(
 				'[role="menuitem"]:not([disabled])'
+				// '[role="menuitem"]:not([disabled]):not([data-lang-selector])'
 			);
 			const currentIndex = Array.from(menuItems).indexOf(
 				event.target as HTMLElement
@@ -143,19 +146,19 @@ export default function NavigationSticky() {
 			} ${isMenuOpen ? "menu-open" : ""}`}
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={() => setIsHovered(false)}
-			role="navigation"
-			// aria-label={t.menu}
+			// role="navigation"
+			// aria-label={t.navigationLabel}
 		>
 			<button
 				ref={buttonRef}
 				className="menu-button"
-				aria-label={isMenuOpen ? t.closeMenu : t.menu}
+				// aria-label={isMenuOpen ? t.closeMenu : t.menu}
 				aria-expanded={isMenuOpen}
-				aria-controls="menu-list"
-				aria-haspopup="true"
+				// aria-controls="menu-list"
+				// aria-haspopup="true"
 				onClick={() => setIsMenuOpen(!isMenuOpen)}
 				onKeyDown={handleKeyDown}>
-				<RiMenu3Line />
+				<RiMenu3Line role="img" aria-label={t.navigationLabel} />
 				<span className="menu-text" aria-hidden="true">
 					{t.menu}
 				</span>

@@ -25,6 +25,7 @@ export default function LanguageSelector({ onKeyDown }: LanguageSelectorProps) {
 			role="group"
 			aria-label="Sélecteur de langue">
 			<button
+				// data-lang-selector
 				onClick={() => switchLanguage("fr")}
 				className="language-selector__button"
 				role="menuitem"
@@ -34,6 +35,7 @@ export default function LanguageSelector({ onKeyDown }: LanguageSelectorProps) {
 				Français
 			</button>
 			<button
+				// data-lang-selector
 				onClick={() => switchLanguage("en")}
 				className="language-selector__button"
 				role="menuitem"

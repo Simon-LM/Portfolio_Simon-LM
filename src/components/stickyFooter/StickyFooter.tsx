@@ -53,7 +53,11 @@ export default function StickyFooter() {
 						target="_blank"
 						rel="noopener noreferrer"
 						aria-label="Twitter">
-						<FaXTwitter className="sticky-footer__icon" />
+						<FaXTwitter
+							className="sticky-footer__icon"
+							role="img"
+							aria-label="Twitter"
+						/>
 					</Link>
 					<Link
 						href="https://www.youtube.com/@LostInTab"
@@ -61,7 +65,11 @@ export default function StickyFooter() {
 						target="_blank"
 						rel="noopener noreferrer"
 						aria-label="YouTube">
-						<FaYoutube className="sticky-footer__icon" />
+						<FaYoutube
+							className="sticky-footer__icon"
+							role="img"
+							aria-label="Youtube"
+						/>
 					</Link>
 					<Link
 						href="https://github.com/Simon-LM"
@@ -69,7 +77,11 @@ export default function StickyFooter() {
 						target="_blank"
 						rel="noopener noreferrer"
 						aria-label="GitHub">
-						<FaGithub className="sticky-footer__icon" />
+						<FaGithub
+							className="sticky-footer__icon"
+							role="img"
+							aria-label="GitHub"
+						/>
 					</Link>
 				</div>
 				<div className="sticky-footer__fixed-links">
@@ -79,13 +91,21 @@ export default function StickyFooter() {
 						target="_blank"
 						rel="noopener noreferrer"
 						aria-label="LinkedIn">
-						<FaLinkedin className="sticky-footer__icon" />
+						<FaLinkedin
+							className="sticky-footer__icon"
+							role="img"
+							aria-label="LinkedIn"
+						/>
 					</Link>
 					<Link
 						href={`/${language}/#contact`}
 						className="sticky-footer__link"
 						aria-label="Contact">
-						<MdEmail className="sticky-footer__icon" />
+						<MdEmail
+							className="sticky-footer__icon"
+							role="img"
+							aria-label="Contact"
+						/>
 					</Link>
 				</div>
 			</nav>

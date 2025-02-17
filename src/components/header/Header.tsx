@@ -16,7 +16,6 @@ import {
 import accessibilityIconWebp from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.webp";
 import accessibilityIconAvif from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.avif";
 import accessibilityIconPng from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.png";
-
 import LogoLostInTab from "../../../public/Logo_LostInTab/LOGO_LostInTab_circle_60-60_2024.png";
 
 // Types and Interfaces
@@ -153,9 +152,7 @@ export default function Header({ dictionary }: HeaderProps) {
 						target="_blank"
 						rel="noopener noreferrer"
 						title={
-							language === "fr"
-								? "Visiter la chaîne YouTube"
-								: "Visit the YouTube channel"
+							language === "fr" ? "Visiter la chaîne" : "Visit the channel"
 						}
 						aria-label="Youtube LostInTab">
 						<Image
