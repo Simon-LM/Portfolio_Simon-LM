@@ -152,15 +152,18 @@ export default function Header({ dictionary }: HeaderProps) {
 						target="_blank"
 						rel="noopener noreferrer"
 						title={
-							language === "fr" ? "Visiter la chaîne" : "Visit the channel"
+							language === "fr"
+								? "Visiter la chaîne Youtube"
+								: "Visit the Youtube channel"
 						}
-						aria-label="Youtube LostInTab">
+						aria-label="LostInTab">
 						<Image
 							src={LogoLostInTab}
 							alt="Logo LostInTab"
 							width={60}
 							height={60}
 							className="header__blog-logo"
+							aria-hidden="true"
 						/>
 						{dictionary.header.blog}
 					</Link>

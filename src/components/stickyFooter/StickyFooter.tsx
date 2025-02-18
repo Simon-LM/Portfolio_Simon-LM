@@ -24,7 +24,10 @@ export default function StickyFooter() {
 			: "Accessibility: compliance statement";
 
 	return (
-		<footer className="sticky-footer">
+		<footer
+			className="sticky-footer"
+			role="contentinfo"
+			aria-label={language === "fr" ? "Liens rapides" : "Quick links"}>
 			<nav className="sticky-footer__nav">
 				{/* <Link
 					href="/accessibility"

@@ -49,6 +49,10 @@
 		border-radius: 0.5rem;
 		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
+		&:focus-within {
+			outline: 2px solid $color-link;
+		}
+
 		&-title {
 			margin-bottom: rem;
 			font-size: 1.5rem;
@@ -85,7 +89,10 @@
 			}
 
 			&--decline {
-				display: none;
+				// display: none;
+				background: $color-link;
+				color: $off-white;
+				width: 100%;
 			}
 		}
 

@@ -34,6 +34,7 @@ export default async function Home(
 			<Contact dictionary={dictionary.sections.contact} lang={params.lang} />
 			<StickyFooter />
 			<BottomFooter />
+			{/* <StickyFooter /> */}
 		</>
 	);
 }
