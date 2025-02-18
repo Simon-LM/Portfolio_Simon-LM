@@ -49,6 +49,13 @@ export default function NavigationSticky() {
 	};
 
 	useEffect(() => {
+		if (isMenuOpen) {
+			const langSelector = document.getElementById("language-selector");
+			langSelector?.focus();
+		}
+	}, [isMenuOpen]);
+
+	useEffect(() => {
 		const handleFocusOut = (event: FocusEvent) => {
 			if (
 				isMenuOpen &&
@@ -118,7 +125,7 @@ export default function NavigationSticky() {
 			event.preventDefault();
 			// Sélectionner tous les éléments interactifs du menu
 			const menuItems = document.querySelectorAll(
-				'[role="menuitem"]:not([disabled])'
+				'#menu-list [role="menuitem"]:not([disabled])'
 				// '[role="menuitem"]:not([disabled]):not([data-lang-selector])'
 			);
 			const currentIndex = Array.from(menuItems).indexOf(
@@ -166,9 +173,15 @@ export default function NavigationSticky() {
 
 			{isMenuOpen && (
 				<div ref={menuRef} className="navigation-menu">
-					<LanguageSelector onKeyDown={handleKeyDown} />
+					{/* <LanguageSelector id="language-selector" onKeyDown={handleKeyDown} /> */}
 
 					<ul id="menu-list" role="menu">
+						<li role="none">
+							<LanguageSelector
+								id="language-selector"
+								onKeyDown={handleKeyDown}
+							/>
+						</li>
 						<li role="none">
 							<Link
 								className="nav-link skip-link"

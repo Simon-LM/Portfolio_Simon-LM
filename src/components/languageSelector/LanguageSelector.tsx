@@ -6,10 +6,14 @@ import { useLanguageStore } from "../../store/langueStore";
 import { useRouter } from "next/navigation";
 
 interface LanguageSelectorProps {
+	id?: string;
 	onKeyDown?: (event: React.KeyboardEvent) => void;
 }
 
-export default function LanguageSelector({ onKeyDown }: LanguageSelectorProps) {
+export default function LanguageSelector({
+	id,
+	onKeyDown,
+}: LanguageSelectorProps) {
 	const { language, setLanguage } = useLanguageStore();
 	const router = useRouter();
 
@@ -21,6 +25,7 @@ export default function LanguageSelector({ onKeyDown }: LanguageSelectorProps) {
 
 	return (
 		<div
+			id={id}
 			className="language-selector"
 			role="group"
 			aria-label="Sélecteur de langue">
