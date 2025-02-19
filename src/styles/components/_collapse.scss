@@ -11,7 +11,9 @@
 		align-items: center;
 		padding: 1rem;
 		background: $color_collapse_bg-title;
-		border: 2px solid $color_collapse_border;
+		// border: 2px solid $color_collapse_border;
+		border: none;
+		color: $color_collapse_title;
 		border-radius: 0.5rem;
 
 		&[aria-expanded="true"] {
@@ -21,6 +23,9 @@
 
 		&:hover {
 			background: $color-link-hover;
+		}
+		&:focus-visible {
+			border-radius: 0.5rem;
 		}
 	}
 	&__title {

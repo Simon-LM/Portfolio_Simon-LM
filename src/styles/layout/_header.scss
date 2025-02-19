@@ -62,7 +62,8 @@
 		width: fit-content;
 		border: 1px solid $color_lang-toggle_border;
 		border-radius: 1.25rem;
-		overflow: hidden;
+		// overflow: hidden;
+		overflow: visible;
 		background-color: $color_lang-toggle_bg;
 
 		&:focus-within {
@@ -74,6 +75,7 @@
 	}
 
 	&__lang-button {
+		position: relative;
 		display: flex;
 		align-items: center;
 		// gap: 0.5rem;
@@ -104,6 +106,38 @@
 			box-shadow: none !important;
 			border-radius: 1.25rem !important;
 		}
+
+		&[data-tooltip]:hover::after,
+		&[data-tooltip]:focus-visible::after {
+			content: attr(data-tooltip);
+			position: absolute;
+			top: calc(100% + -1.25rem);
+			left: -205%;
+			transform: translateX(-50%);
+			background: rgba(0, 0, 0, 0.8);
+			// background: $link-color;
+			color: #fff;
+			padding: 0.25rem 0.5rem;
+			border-radius: 0.25rem;
+			white-space: nowrap;
+			font-size: 0.75rem;
+			pointer-events: none;
+			z-index: 10;
+		}
+
+		// &[data-tooltip]:hover::before,
+		// &[data-tooltip]:focus-visible::before {
+		// 	content: "";
+		// 	position: absolute;
+		// 	top: calc(100% + 0.15rem);
+		// 	left: -200%;
+		// 	transform: translateX(-50%);
+		// 	border-width: 0.3rem;
+		// 	border-style: solid;
+		// 	border-color: rgba(0, 0, 0, 0.75) transparent transparent transparent;
+
+		// 	z-index: 10;
+		// }
 	}
 
 	&__nav-main {
@@ -141,6 +175,7 @@
 		}
 	}
 	&__blog-link {
+		position: relative;
 		flex-shrink: 0;
 		white-space: nowrap;
 		color: $primary-color !important;
@@ -161,6 +196,38 @@
 		&:focus-visible {
 			border-radius: 0.125rem;
 		}
+
+		&[data-tooltip]:hover::after,
+		&[data-tooltip]:focus-visible::after {
+			content: attr(data-tooltip);
+			position: absolute;
+			top: calc(100% + 0.3rem);
+			left: 25%;
+			transform: translateX(-50%);
+			background: rgba(0, 0, 0, 0.75);
+			// background: $link-color;
+			color: #fff;
+			padding: 0.25rem 0.5rem;
+			border-radius: 0.25rem;
+			white-space: nowrap;
+			font-size: 0.75rem;
+			pointer-events: none;
+			z-index: 10;
+		}
+
+		// &[data-tooltip]:hover::before,
+		// &[data-tooltip]:focus-visible::before {
+		// 	content: "";
+		// 	position: absolute;
+		// 	top: calc(100% + 0.45rem);
+		// 	left: 30%;
+		// 	transform: translateX(-50%);
+		// 	border-width: 0.3rem;
+		// 	border-style: solid;
+		// 	border-color: rgba(0, 0, 0, 0.75) transparent transparent transparent;
+
+		// 	z-index: 10;
+		// }
 	}
 	&__blog {
 		&-logo {

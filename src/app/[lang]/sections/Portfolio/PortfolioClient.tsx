@@ -86,7 +86,7 @@ export default function PortfolioClient({ dictionary }: PortfolioProps) {
 						links={dictionary.projects.argentBank.links}
 						dictionary={dictionary}
 					/>
-					<PortfolioCard
+					{/* <PortfolioCard
 						title={dictionary.projects.ninaCarducci.title}
 						description={dictionary.projects.ninaCarducci.description}
 						tags={dictionary.projects.ninaCarducci.tags}
@@ -94,7 +94,7 @@ export default function PortfolioClient({ dictionary }: PortfolioProps) {
 						imageAlt={dictionary.projects.ninaCarducci.imageAlt}
 						links={dictionary.projects.ninaCarducci.links}
 						dictionary={dictionary}
-					/>
+					/> */}
 				</div>
 			</div>
 		</motion.section>

@@ -72,7 +72,7 @@ export default function Header({ dictionary }: HeaderProps) {
 	// Render after hydration
 	return (
 		<header className="header">
-			<nav>
+			<div>
 				<a href="#main-content" className="header__skip">
 					{language === "fr"
 						? "Aller au contenu principal"
@@ -99,6 +99,7 @@ export default function Header({ dictionary }: HeaderProps) {
 								className="header__lang-button"
 								disabled={language === "en"}
 								aria-label="Switch to English"
+								data-tooltip="Switch to English"
 								aria-current={language === "en" ? "true" : undefined}
 								// aria-label={`Switch to English${
 								// language === "en" ? " Anglais actif" : " inactive"
@@ -111,6 +112,7 @@ export default function Header({ dictionary }: HeaderProps) {
 								className="header__lang-button"
 								disabled={language === "fr"}
 								aria-label="Passer au français"
+								data-tooltip="Passer au français"
 								aria-current={language === "fr" ? "true" : undefined}
 								// aria-label={`Passer au français${
 								// language === "fr" ? " French active" : " inactif"
@@ -151,12 +153,16 @@ export default function Header({ dictionary }: HeaderProps) {
 						className="header__blog-link"
 						target="_blank"
 						rel="noopener noreferrer"
-						title={
+						data-tooltip={
 							language === "fr"
 								? "Visiter la chaîne Youtube"
 								: "Visit the Youtube channel"
 						}
-						aria-label="LostInTab">
+						aria-label={
+							language === "fr"
+								? "Visiter la chaîne Youtube de LostInTab"
+								: "Visit the Youtube channel of LostInTab"
+						}>
 						<Image
 							src={LogoLostInTab}
 							alt="Logo LostInTab"
@@ -168,7 +174,7 @@ export default function Header({ dictionary }: HeaderProps) {
 						{dictionary.header.blog}
 					</Link>
 				</div>
-			</nav>
+			</div>
 		</header>
 	);
 }

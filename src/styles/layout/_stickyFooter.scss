@@ -19,6 +19,7 @@
 	}
 
 	&__link {
+		position: relative;
 		display: flex;
 		height: 2rem;
 		width: 2rem;
@@ -30,6 +31,35 @@
 		min-width: 2rem;
 
 		@include sticky-footer-link-states;
+
+		&[data-tooltip]:hover::after,
+		&[data-tooltip]:focus-visible::after {
+			content: attr(data-tooltip);
+			position: absolute;
+			bottom: 120%;
+			left: 50%;
+			transform: translateX(-50%);
+			background: rgba(0, 0, 0, 0.75);
+			color: #fff;
+			padding: 0.25rem 0.5rem;
+			border-radius: 0.25rem;
+			white-space: nowrap;
+			font-size: 0.75rem;
+			pointer-events: none;
+			z-index: 10;
+		}
+		&[data-tooltip]:hover::before,
+		&[data-tooltip]:focus-visible::before {
+			content: "";
+			position: absolute;
+			bottom: 115%;
+			left: 50%;
+			transform: translateX(-50%);
+			border-width: 0.3rem;
+			border-style: solid;
+			border-color: transparent transparent rgba(0, 0, 0, 0.75) transparent;
+			z-index: 10;
+		}
 	}
 
 	&__accessibility {

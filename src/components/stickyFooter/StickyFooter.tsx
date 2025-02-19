@@ -55,7 +55,8 @@ export default function StickyFooter() {
 						className="sticky-footer__link"
 						target="_blank"
 						rel="noopener noreferrer"
-						aria-label="Twitter">
+						aria-label="Twitter"
+						data-tooltip="Twitter">
 						<FaXTwitter
 							className="sticky-footer__icon"
 							role="img"
@@ -67,7 +68,8 @@ export default function StickyFooter() {
 						className="sticky-footer__link"
 						target="_blank"
 						rel="noopener noreferrer"
-						aria-label="YouTube">
+						aria-label="YouTube"
+						data-tooltip="YouTube">
 						<FaYoutube
 							className="sticky-footer__icon"
 							role="img"
@@ -79,7 +81,8 @@ export default function StickyFooter() {
 						className="sticky-footer__link"
 						target="_blank"
 						rel="noopener noreferrer"
-						aria-label="GitHub">
+						aria-label="GitHub"
+						data-tooltip="GitHub">
 						<FaGithub
 							className="sticky-footer__icon"
 							role="img"
@@ -93,7 +96,8 @@ export default function StickyFooter() {
 						className="sticky-footer__link"
 						target="_blank"
 						rel="noopener noreferrer"
-						aria-label="LinkedIn">
+						aria-label="LinkedIn"
+						data-tooltip="LinkedIn">
 						<FaLinkedin
 							className="sticky-footer__icon"
 							role="img"
@@ -103,7 +107,8 @@ export default function StickyFooter() {
 					<Link
 						href={`/${language}/#contact`}
 						className="sticky-footer__link"
-						aria-label="Contact">
+						aria-label="Contact"
+						data-tooltip="Contact">
 						<MdEmail
 							className="sticky-footer__icon"
 							role="img"

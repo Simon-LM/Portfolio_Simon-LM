@@ -139,7 +139,14 @@ export default function SiteMapClient({ initialDictionary }: SiteMapProps) {
 									</Link>
 								</li>
 								<li>
-									<Link href={`/${language}/terms`} className="sitemap__link">
+									<Link
+										href={`/${language}/terms`}
+										className="sitemap__link"
+										title={
+											language === "fr"
+												? "Conditions Générales d’Utilisation"
+												: "Terms of Service"
+										}>
 										{language === "fr" ? "CGU" : "Terms"}
 									</Link>
 								</li>
@@ -154,7 +161,9 @@ export default function SiteMapClient({ initialDictionary }: SiteMapProps) {
 									<Link
 										href={`/${language}/accessibility`}
 										className="sitemap__link">
-										{language === "fr" ? "Accessibilité" : "Accessibility"}
+										{language === "fr"
+											? "Accessibilité : déclaration de conformité"
+											: "Accessibility: compliance statement "}
 									</Link>
 								</li>
 							</ul>

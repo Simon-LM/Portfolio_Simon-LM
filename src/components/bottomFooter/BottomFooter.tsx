@@ -29,7 +29,7 @@ export default function BottomFooter() {
 				mentions: "Mentions légales",
 				terms: "CGU",
 				privacy: "Politique de confidentialité",
-				accessibility: "Accessibilité",
+				accessibility: "Accessibilité : Déclaration de conformité ",
 			},
 			navigation: {
 				title: "Navigation",
@@ -51,7 +51,7 @@ export default function BottomFooter() {
 				mentions: "Legal Notice",
 				terms: "Terms",
 				privacy: "Privacy Policy",
-				accessibility: "Accessibility",
+				accessibility: "Accessibility : compliance statement",
 			},
 			navigation: {
 				title: "Navigation",
@@ -287,7 +287,14 @@ export default function BottomFooter() {
 					<Link href={`/${language}/legal`} onKeyDown={handleKeyDown}>
 						{t.legal.mentions}
 					</Link>
-					<Link href={`/${language}/terms`} onKeyDown={handleKeyDown}>
+					<Link
+						href={`/${language}/terms`}
+						onKeyDown={handleKeyDown}
+						title={
+							language === "fr"
+								? "Conditions Générales d’Utilisation"
+								: "Terms of Service"
+						}>
 						{t.legal.terms}
 					</Link>
 					<Link href={`/${language}/privacy-policy`} onKeyDown={handleKeyDown}>
