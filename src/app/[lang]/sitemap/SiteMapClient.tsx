@@ -44,10 +44,10 @@ export default function SiteMapClient({ initialDictionary }: SiteMapProps) {
 				</h1>
 
 				{/* Arborescence visuelle */}
-				<div className="sitemap__tree" aria-hidden="true">
-					<svg viewBox="0 0 1000 600">
-						{/* Niveau 1 - Accueil */}
-						<text x="500" y="50" className="sitemap__text">
+				{/* <div className="sitemap__tree" aria-hidden="true">
+					<svg viewBox="0 0 1000 600"> */}
+				{/* Niveau 1 - Accueil */}
+				{/* <text x="500" y="50" className="sitemap__text">
 							{language === "fr" ? "Accueil" : "Home"}
 						</text>
 						<line
@@ -56,10 +56,10 @@ export default function SiteMapClient({ initialDictionary }: SiteMapProps) {
 							x2="500"
 							y2="100"
 							className="sitemap__line"
-						/>
+						/> */}
 
-						{/* Niveau 2 - Sections principales */}
-						<text x="250" y="150">
+				{/* Niveau 2 - Sections principales */}
+				{/* <text x="250" y="150">
 							{language === "fr"
 								? "Pourquoi l'accessibilité"
 								: "Why Accessibility"}
@@ -76,10 +76,10 @@ export default function SiteMapClient({ initialDictionary }: SiteMapProps) {
 							x2="750"
 							y2="160"
 							className="sitemap__line"
-						/>
+						/> */}
 
-						{/* Niveau 3 - Pages légales */}
-						<text x="200" y="250">
+				{/* Niveau 3 - Pages légales */}
+				{/* <text x="200" y="250">
 							{language === "fr" ? "Mentions légales" : "Legal Notice"}
 						</text>
 						<text x="400" y="250">
@@ -92,7 +92,7 @@ export default function SiteMapClient({ initialDictionary }: SiteMapProps) {
 							{language === "fr" ? "Accessibilité" : "Accessibility"}
 						</text>
 					</svg>
-				</div>
+				</div> */}
 
 				{/* Liste de liens hiérarchique */}
 				<nav className="sitemap__nav" aria-label="Plan du site">
