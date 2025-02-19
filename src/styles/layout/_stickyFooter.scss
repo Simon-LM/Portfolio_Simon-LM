@@ -39,8 +39,8 @@
 			bottom: 120%;
 			left: 50%;
 			transform: translateX(-50%);
-			background: rgba(0, 0, 0, 0.75);
-			color: #fff;
+			background: $color_tooltip_bg;
+			color: $color_tooltip_text;
 			padding: 0.25rem 0.5rem;
 			border-radius: 0.25rem;
 			white-space: nowrap;
@@ -57,7 +57,7 @@
 			transform: translateX(-50%);
 			border-width: 0.3rem;
 			border-style: solid;
-			border-color: transparent transparent rgba(0, 0, 0, 0.75) transparent;
+			border-color: transparent transparent $color_tooltip_bg transparent;
 			z-index: 10;
 		}
 	}

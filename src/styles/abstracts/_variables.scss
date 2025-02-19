@@ -1,17 +1,5 @@
 /** @format */
 
-// $off-white: #f8f9ff;
-// $near-black: #0a0b14;
-
-// $primary-color: #dab846;
-// $secondary-color: #284b63; #075985 #0c4a6e
-// $tertiary-color: #e6dbc9;
-
-// // $dark-gray: #353535;
-// $dark-gray: #2e2e2c;
-// $medium-gray: #464643;
-// $light-gray: #e8ebf2;
-
 // Tailwindcss Colors
 $colors: (
 	stone: (
@@ -91,20 +79,12 @@ $off-white: #fafaf9;
 $near-black: #0c0a09;
 
 // Gray Scale with Stone Tints
+$gray-darkest: #1c1917; // stone-900
 $gray-darker: #292524; // stone-800
-
 $gray-dark: #44403c; // stone-700
-$dark-gray: $gray-dark;
-
 $gray-medium-dark: #57534e; // stone-600
-
-$gray-medium: #78716c; // stone-500
-$medium-gray: $gray-medium;
 $gray-medium-light: #78716c; // stone-500
-
 $gray-light: #a8a29e; // stone-400
-$light-gray: $gray-light;
-
 $gray-lighter: #d6d3d1; // stone-300
 $gray-lightest: #e7e5e4; // stone-200
 
@@ -126,15 +106,17 @@ $color_main-text: $near-black;
 
 $color-pages-title: $near-black;
 
-$color-header-bg: $primary-color;
-$color-header-text: $near-black;
-$color-header-text-role: $gray-dark;
+$color_header_bg: $primary-color;
+$color_header_text: $near-black;
+$color_header_text-role: $gray-dark;
+$color_header_blog-link_bg: $gray-dark;
+$color_header_blog-link_text: $primary-color;
 
 $color_lang-toggle_bg: $off-white;
 $color_lang-toggle_border: $gray-dark;
 $color_lang-toggle_bg-activated: $gray-dark;
 $color_lang-toggle_text-activated: $off-white;
-$color_lang-toggle_text-disabled: $gray-medium;
+$color_lang-toggle_text-disabled: $gray-dark;
 $color_lang-toggle_disabled-hover_bg: $link-color;
 $color_lang-toggle_disabled-hover_text: $off-white;
 
@@ -148,12 +130,8 @@ $color_collapse_bg-title: $gray-dark;
 $color_collapse_border: $gray-dark;
 
 $color_section_bg-even: $off-white;
-$color-section-bg-even: $off-white;
 $color_section_bg-odd: $gray-lightest;
-$color-section-bg-odd: $gray-lightest;
 $color_section_title: $secondary-color;
-$color-section-title: $secondary-color;
-
 $color-hero-bg: $off-white;
 $color-hero-title: $near-black;
 $color-hero-text: $near-black;
@@ -177,7 +155,6 @@ $color_portfolio-tag_bg-texte: $secondary-color;
 $color_contact_form-bg: $gray-lighter;
 $color_contact_modal_bg: $gray-lightest;
 
-// $color_bottom-footer_bg: $gray-light;
 $color_bottom-footer_bg: $gray-dark;
 $color_bottom-footer_title: $tertiary-color;
 $color_bottom-footer_text: $off-white;
@@ -187,13 +164,13 @@ $color_bottom-footer_link-text: $link-color;
 $color_sticky-footer_bg: $gray-darker;
 $color_sticky-footer_text: $off-white;
 
-$color-link: $link-color;
 $color_link: $link-color;
-$color-link-hover: $link-color-hover;
 $color_link-hover: $link-color-hover;
-$color-link-bg: $off-white;
 $color_link-bg: $off-white;
 
 $color_focus-outline: $link-color;
 $color_focus-bg: $link-color;
 $color_focus-text: $off-white;
+
+$color_tooltip_text: $off-white;
+$color_tooltip_bg: rgba($near-black, 0.8);

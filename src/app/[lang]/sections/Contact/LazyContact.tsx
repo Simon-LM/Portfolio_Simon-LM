@@ -27,11 +27,13 @@ export const LazyContact = ({ dictionary, lang }: LazyContactProps) => {
 	const contactTitleRef = useRef<HTMLHeadingElement>(null);
 	// Référence pour le texte d'information lors du refus
 	const consentInfoRef = useRef<HTMLParagraphElement>(null);
+
 	// Référence pour compter les appuis sur Tab depuis le message
-	const trapCountRef = useRef(0);
+	// const trapCountRef = useRef(0);
 
 	// Pour informer sur l’accessibilité du formulaire
-	const [consentInfo, setConsentInfo] = useState("");
+	// const [consentInfo, setConsentInfo] = useState("");
+	const [consentInfo] = useState("");
 
 	useEffect(() => {
 		const portfolioSection = document.getElementById("portfolio");

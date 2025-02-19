@@ -4,7 +4,7 @@
 	padding: 2rem;
 	padding-top: 1.5rem;
 	padding-bottom: 2.5rem;
-	background: $color-section-bg-odd;
+	background: $color_section_bg-odd;
 
 	&__container {
 		display: flex;
@@ -17,7 +17,7 @@
 	&__title {
 		text-align: center;
 		margin-bottom: 2rem;
-		color: $color-section-title;
+		color: $color_section_title;
 	}
 
 	&__subtitle {

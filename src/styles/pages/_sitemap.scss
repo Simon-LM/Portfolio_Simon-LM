@@ -18,11 +18,11 @@
 		text {
 			font-size: 1rem;
 			text-anchor: middle;
-			fill: $color-main-text;
+			fill: $color_main_text;
 		}
 
 		.sitemap__line {
-			stroke: $color-section-title;
+			stroke: $color_section_title;
 			stroke-width: 1;
 		}
 	}
@@ -49,7 +49,7 @@
 		span {
 			display: block;
 			font-weight: bold;
-			color: $color-section-title;
+			color: $color_section_title;
 			margin: 1.5rem 0 1rem;
 			font-size: 1.2rem;
 		}
@@ -59,9 +59,9 @@
 		display: inline-block;
 		padding: 0.8rem 1.5rem;
 		background: $color_section_card-bg;
-		border: 2px solid $color-section-title;
+		border: 2px solid $color_section_title;
 		border-radius: 0.25rem;
-		color: $color-main-text;
+		color: $color_main_text;
 		text-decoration: none;
 		transition: all 0.3s ease;
 
@@ -69,40 +69,9 @@
 		&:focus-visible {
 			background: $link-color;
 			border-color: $link-color;
-			color: $color-main-bg;
+			color: $color_main_bg;
 			transform: translateY(-2px);
 			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 		}
 	}
-
-	// &__list {
-	// 	list-style: none;
-	// 	padding: 0;
-
-	// 	ul {
-	// 		list-style: none;
-	// 		padding-left: 2rem;
-	// 		margin: 1rem 0;
-	// 	}
-
-	// 	li {
-	// 		margin: 0.5rem 0;
-	// 	}
-
-	// 	a {
-	// 		color: $color-link;
-	// 		text-decoration: none;
-
-	// 		&:hover,
-	// 		&:focus-visible {
-	// 			text-decoration: underline;
-	// 			outline: none;
-	// 		}
-	// 	}
-
-	// 	span {
-	// 		font-weight: bold;
-	// 		color: $color-section-title;
-	// 	}
-	// }
 }

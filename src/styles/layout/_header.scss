@@ -1,7 +1,7 @@
 /** @format */
 
 .header {
-	background: $color-header-bg;
+	background: $color_header_bg;
 	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.22);
 	&__skip {
 		@include sr-only;
@@ -62,7 +62,6 @@
 		width: fit-content;
 		border: 1px solid $color_lang-toggle_border;
 		border-radius: 1.25rem;
-		// overflow: hidden;
 		overflow: visible;
 		background-color: $color_lang-toggle_bg;
 
@@ -88,12 +87,10 @@
 		border-radius: 1.25rem;
 		font-weight: 700;
 		font-size: 0.75rem;
-		// margin-inline: -0.125rem;
 
 		&:disabled {
 			background-color: $color_lang-toggle_bg-activated;
 			color: $color_lang-toggle_text-activated;
-			// box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 		}
 
 		&:not(:disabled):hover {
@@ -114,9 +111,9 @@
 			top: calc(100% + -1.25rem);
 			left: -205%;
 			transform: translateX(-50%);
-			background: rgba(0, 0, 0, 0.8);
+			background: $color_tooltip_bg;
 			// background: $link-color;
-			color: #fff;
+			color: $color_tooltip_text;
 			padding: 0.25rem 0.5rem;
 			border-radius: 0.25rem;
 			white-space: nowrap;
@@ -124,20 +121,6 @@
 			pointer-events: none;
 			z-index: 10;
 		}
-
-		// &[data-tooltip]:hover::before,
-		// &[data-tooltip]:focus-visible::before {
-		// 	content: "";
-		// 	position: absolute;
-		// 	top: calc(100% + 0.15rem);
-		// 	left: -200%;
-		// 	transform: translateX(-50%);
-		// 	border-width: 0.3rem;
-		// 	border-style: solid;
-		// 	border-color: rgba(0, 0, 0, 0.75) transparent transparent transparent;
-
-		// 	z-index: 10;
-		// }
 	}
 
 	&__nav-main {
@@ -178,17 +161,16 @@
 		position: relative;
 		flex-shrink: 0;
 		white-space: nowrap;
-		color: $primary-color !important;
+		color: $color_header_blog-link_text !important;
 		font-weight: 600;
 		border-radius: 0.125rem;
-		// border: 1px solid $dark-gray;
 		padding: 0.25rem;
 		padding-inline: calc(0.25rem + 0.25vw);
 		margin-top: 0.5rem;
 		margin-bottom: 0.5rem;
 		margin-right: 0.25rem;
 		margin-left: 1rem;
-		background: $dark-gray;
+		background: $color_header_blog-link_bg;
 		&:hover {
 			opacity: 1;
 			color: $off-white !important;
@@ -204,9 +186,9 @@
 			top: calc(100% + 0.3rem);
 			left: 25%;
 			transform: translateX(-50%);
-			background: rgba(0, 0, 0, 0.75);
+			background: $color_tooltip_bg;
 			// background: $link-color;
-			color: #fff;
+			color: $color_tooltip_text;
 			padding: 0.25rem 0.5rem;
 			border-radius: 0.25rem;
 			white-space: nowrap;
@@ -214,20 +196,6 @@
 			pointer-events: none;
 			z-index: 10;
 		}
-
-		// &[data-tooltip]:hover::before,
-		// &[data-tooltip]:focus-visible::before {
-		// 	content: "";
-		// 	position: absolute;
-		// 	top: calc(100% + 0.45rem);
-		// 	left: 30%;
-		// 	transform: translateX(-50%);
-		// 	border-width: 0.3rem;
-		// 	border-style: solid;
-		// 	border-color: rgba(0, 0, 0, 0.75) transparent transparent transparent;
-
-		// 	z-index: 10;
-		// }
 	}
 	&__blog {
 		&-logo {

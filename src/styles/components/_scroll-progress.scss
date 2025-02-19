@@ -56,7 +56,7 @@ $scroll-progress-link-default: if(
 		text-align: center;
 		align-items: center;
 		border-radius: 1rem;
-		padding: 0.12rem 0.5rem;
+		padding: 0.125rem 0.5rem;
 		margin: 0;
 		font-size: 0.75rem;
 		font-weight: 500;
@@ -64,11 +64,10 @@ $scroll-progress-link-default: if(
 		letter-spacing: 0.0625rem;
 		white-space: nowrap;
 		text-decoration: none;
-		// color: $color_scroll-progress_indicator !important;
 		color: var(--scroll-progress-link-color, #{$scroll-progress-link-default});
 
 		&[data-active="true"] {
-			color: $color-main-bg !important;
+			color: $color_main_bg !important;
 			background: $color_scroll-progress_indicator-active;
 		}
 	}

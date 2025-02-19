@@ -37,7 +37,7 @@
 	&__subtitle {
 		text-align: center;
 		margin-bottom: 2rem;
-		color: $color-section-title;
+		color: $color_section_title;
 	}
 
 	&__icons-container {
@@ -94,9 +94,6 @@
 	&__icon-label {
 		font-size: 0.875rem;
 		font-weight: 600;
-		// padding: 0.5rem;
-		// border-radius: 0.25rem;
-		// background: $color_skills-icon_bg;
 		color: $color_skills-icon_text;
 	}
 
@@ -115,10 +112,10 @@
 		background: $color_section_card-bg;
 		padding: 2rem;
 		border-radius: 0.5rem;
-		box-shadow: 0 4px 6px rgba($dark-gray, 0.1);
+		box-shadow: 0 4px 6px rgba($gray-dark, 0.1);
 
 		&-title {
-			color: $color-section-title;
+			color: $color_section_title;
 			font-size: 1.5rem;
 			margin-top: 1rem;
 			margin-bottom: 1.5rem;

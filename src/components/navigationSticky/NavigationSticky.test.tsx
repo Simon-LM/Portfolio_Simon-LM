@@ -1,7 +1,7 @@
 /** @format */
 
-import { render, screen, fireEvent } from "@testing-library/react";
-import NavigationSticky from "./NavigationSticky";
+// import { render, screen, fireEvent } from "@testing-library/react";
+// import NavigationSticky from "./NavigationSticky";
 import "@testing-library/jest-dom";
 
 jest.mock("../../store/langueStore", () => ({
@@ -36,12 +36,12 @@ jest.mock("../languageSelector/LanguageSelector", () => {
 });
 
 // Mock du store de langue
-jest.mock("../../store/langueStore", () => ({
-	useLanguageStore: () => ({
-		language: "fr",
-		setLanguage: jest.fn(),
-	}),
-}));
+// jest.mock("../../store/langueStore", () => ({
+// 	useLanguageStore: () => ({
+// 		language: "fr",
+// 		setLanguage: jest.fn(),
+// 	}),
+// }));
 
 // describe("NavigationSticky", () => {
 // it("affiche les liens avec les bons href", () => {
