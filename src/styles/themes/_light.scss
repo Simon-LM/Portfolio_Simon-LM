@@ -1,0 +1,223 @@
+/** @format */
+
+@import "../abstracts/base-palette";
+@import "../abstracts/theme-utils";
+
+// // Variables fondamentales - thème light
+// $off-white: #fafaf9;
+// $near-black: #0c0a09;
+
+// // Gray Scale with Stone Tints
+// $gray-darkest: #1c1917;
+// $gray-darker: #292524;
+// $gray-dark: #44403c;
+// $gray-medium-dark: #57534e;
+// $gray-medium-light: #78716c;
+// $gray-light: #a8a29e;
+// $gray-lighter: #d6d3d1;
+// $gray-lightest: #e7e5e4;
+
+// // Semantic Variables
+// $primary-color: #fcd34d;
+// $secondary-color: #451a03;
+// $tertiary-color: #fef3c7;
+// $link-color: #0c4a6e;
+// $link-color-hover: #075985;
+// $success-color: #059669;
+
+// // Usage variables in the code
+// $color-main-bg: $off-white;
+// $color_main-bg: $off-white;
+// $color-main-text: $near-black;
+// $color_main-text: $near-black;
+
+// $color-pages-title: $near-black;
+
+// $color_header_bg: $primary-color;
+// $color_header_text: $near-black;
+// $color_header_text-role: $gray-dark;
+// $color_header_blog-link_bg: $gray-dark;
+// $color_header_blog-link_text: $primary-color;
+
+// $color_lang-toggle_bg: $off-white;
+// $color_lang-toggle_border: $gray-dark;
+// $color_lang-toggle_bg-activated: $gray-dark;
+// $color_lang-toggle_text-activated: $off-white;
+// $color_lang-toggle_text-disabled: $gray-dark;
+// $color_lang-toggle_disabled-hover_bg: $link-color;
+// $color_lang-toggle_disabled-hover_text: $off-white;
+
+// $color_scroll-progress_line: $link-color;
+// $color_scroll-progress_indicator: $gray-medium-dark;
+// $color_scroll-progress_indicator-active: $link-color;
+
+// $color_collapse_title: $off-white;
+// $color_collapse_bg: $gray-lighter;
+// $color_collapse_bg-title: $gray-dark;
+// $color_collapse_border: $gray-dark;
+
+// $color_section_bg-even: $off-white;
+// $color_section_bg-odd: $gray-lightest;
+// $color_section_title: $secondary-color;
+// $color-hero-bg: $off-white;
+// $color-hero-title: $near-black;
+// $color-hero-text: $near-black;
+
+// $color_about_overlay-bg: $near-black;
+// $color_about_overlay-text: $off-white;
+// $color_about_button-bg: $link-color;
+// $color_about_button-border: $off-white;
+// $color_about_button-text: $off-white;
+
+// $color_skills-icon_bg: $tertiary-color;
+// $color_skills-icon_text: $secondary-color;
+
+// $color_section_card-bg: $gray-lighter;
+// $color_section-even_card-bg: $gray-lighter;
+// $color_section-odd_card-bg: $gray-light;
+
+// $color_portfolio-tag_bg: $tertiary-color;
+// $color_portfolio-tag_bg-texte: $secondary-color;
+
+// $color_contact_form-bg: $gray-lighter;
+// $color_contact_modal_bg: $gray-lightest;
+
+// $color_bottom-footer_bg: $gray-dark;
+// $color_bottom-footer_title: $tertiary-color;
+// $color_bottom-footer_text: $off-white;
+// $color_bottom-footer_link-bg: $off-white;
+// $color_bottom-footer_link-text: $link-color;
+
+// $color_sticky-footer_bg: $gray-darker;
+// $color_sticky-footer_text: $off-white;
+
+// $color_link: $link-color;
+// $color_link-hover: $link-color-hover;
+// $color_link-bg: $off-white;
+
+// $color_focus-outline: $link-color;
+// $color_focus-bg: $link-color;
+// $color_focus-text: $off-white;
+
+// $color_tooltip_text: $off-white;
+// $color_tooltip_bg: rgba($near-black, 0.8);
+
+@mixin light-theme-variables() {
+	// $off-white: #fafaf9 !global;
+	// $near-black: #0c0a09 !global;
+
+	// $gray-darkest: #1c1917 !global;
+	// $gray-darker: #292524 !global;
+	// $gray-dark: #44403c !global;
+	// $gray-medium-dark: #57534e !global;
+	// $gray-medium-light: #78716c !global;
+	// $gray-light: #a8a29e !global;
+	// $gray-lighter: #d6d3d1 !global;
+	// $gray-lightest: #e7e5e4 !global;
+
+	// $primary-color: #fcd34d !global;
+	// $secondary-color: #451a03 !global;
+	// $tertiary-color: #fef3c7 !global;
+	// $link-color: #0c4a6e !global;
+	// $link-color-hover: #075985 !global;
+	// $success-color: #059669 !global;
+
+	// Couleurs fondamentales avec accès direct à la palette Tailwind
+	$off-white: get-color("stone", 50) !global;
+	$near-black: get-color("stone", 950) !global;
+
+	// Échelle de gris
+	$gray-darkest: get-color("stone", 900) !global;
+	$gray-darker: get-color("stone", 800) !global;
+	$gray-dark: get-color("stone", 700) !global;
+	$gray-medium-dark: get-color("stone", 600) !global;
+	$gray-medium-light: get-color("stone", 500) !global;
+	$gray-light: get-color("stone", 400) !global;
+	$gray-lighter: get-color("stone", 300) !global;
+	$gray-lightest: get-color("stone", 200) !global;
+
+	// Couleurs sémantiques
+	$primary-color: get-color("amber", 300) !global;
+	$secondary-color: get-color("amber", 950) !global;
+	$tertiary-color: get-color("amber", 100) !global;
+	$link-color: get-color("sky", 900) !global;
+	$link-color-hover: get-color("sky", 800) !global;
+	$success-color: get-color("emerald", 600) !global;
+
+	// Usage variables in the code
+	$color-main-bg: $off-white !global;
+	$color_main-bg: $off-white !global;
+	$color-main-text: $near-black !global;
+	$color_main-text: $near-black !global;
+
+	$color-pages-title: $near-black !global;
+
+	$color_header_bg: $primary-color !global;
+	$color_header_text: $near-black !global;
+	$color_header_text-role: $gray-dark !global;
+	$color_header_blog-link_bg: $gray-dark !global;
+	$color_header_blog-link_text: $primary-color !global;
+
+	$color_lang-toggle_bg: $off-white !global;
+	$color_lang-toggle_border: $gray-dark !global;
+	$color_lang-toggle_bg-activated: $gray-dark !global;
+	$color_lang-toggle_text-activated: $off-white !global;
+	$color_lang-toggle_text-disabled: $gray-dark !global;
+	$color_lang-toggle_disabled-hover_bg: $link-color !global;
+	$color_lang-toggle_disabled-hover_text: $off-white !global;
+
+	$color_scroll-progress_line: $link-color !global;
+	$color_scroll-progress_indicator: $gray-medium-dark !global;
+	$color_scroll-progress_indicator-active: $link-color !global;
+
+	$color_collapse_title: $off-white !global;
+	$color_collapse_bg: $gray-lighter !global;
+	$color_collapse_bg-title: $gray-dark !global;
+	$color_collapse_border: $gray-dark !global;
+
+	$color_section_bg-even: $off-white !global;
+	$color_section_bg-odd: $gray-lightest !global;
+	$color_section_title: $secondary-color !global;
+	$color-hero-bg: $off-white !global;
+	$color-hero-title: $near-black !global;
+	$color-hero-text: $near-black !global;
+
+	$color_about_overlay-bg: $near-black !global;
+	$color_about_overlay-text: $off-white !global;
+	$color_about_button-bg: $link-color !global;
+	$color_about_button-border: $off-white !global;
+	$color_about_button-text: $off-white !global;
+
+	$color_skills-icon_bg: $tertiary-color !global;
+	$color_skills-icon_text: $secondary-color !global;
+
+	$color_section_card-bg: $gray-lighter !global;
+	$color_section-even_card-bg: $gray-lighter !global;
+	$color_section-odd_card-bg: $gray-light !global;
+
+	$color_portfolio-tag_bg: $tertiary-color !global;
+	$color_portfolio-tag_bg-texte: $secondary-color !global;
+
+	$color_contact_form-bg: $gray-lighter !global;
+	$color_contact_modal_bg: $gray-lightest !global;
+
+	$color_bottom-footer_bg: $gray-dark !global;
+	$color_bottom-footer_title: $tertiary-color !global;
+	$color_bottom-footer_text: $off-white !global;
+	$color_bottom-footer_link-bg: $off-white !global;
+	$color_bottom-footer_link-text: $link-color !global;
+
+	$color_sticky-footer_bg: $gray-darker !global;
+	$color_sticky-footer_text: $off-white !global;
+
+	$color_link: $link-color !global;
+	$color_link-hover: $link-color-hover !global;
+	$color_link-bg: $off-white !global;
+
+	$color_focus-outline: $link-color !global;
+	$color_focus-bg: $link-color !global;
+	$color_focus-text: $off-white !global;
+
+	$color_tooltip_text: $off-white !global;
+	$color_tooltip_bg: rgba($near-black, 0.8) !global;
+}

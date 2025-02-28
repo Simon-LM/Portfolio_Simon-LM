@@ -1,7 +1,7 @@
 /** @format */
 
 .header {
-	background: $color_header_bg;
+	background: var(--color-header-bg);
 	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.22);
 	&__skip {
 		@include sr-only;
@@ -60,13 +60,13 @@
 	&__lang-toggle {
 		display: flex;
 		width: fit-content;
-		border: 1px solid $color_lang-toggle_border;
+		border: 1px solid var(--color-lang-toggle-border);
 		border-radius: 1.25rem;
 		overflow: visible;
-		background-color: $color_lang-toggle_bg;
+		background-color: var(--color-lang-toggle-bg);
 
 		&:focus-within {
-			outline: 2px solid $color-focus-outline !important;
+			outline: 2px solid var(--color-focus-outline) !important;
 			box-shadow: 0 0 0 4px rgba(white, 0.75) !important;
 			outline-offset: 2px;
 			border-radius: 1rem;
@@ -81,7 +81,7 @@
 		padding: 0.125rem 0.5rem;
 		border: none;
 		background-color: transparent;
-		color: $color_lang-toggle_text-disabled;
+		color: var(--color-lang-toggle-text-disabled);
 		transition: all 0.5s ease;
 		text-align: center;
 		border-radius: 1.25rem;
@@ -89,13 +89,13 @@
 		font-size: 0.75rem;
 
 		&:disabled {
-			background-color: $color_lang-toggle_bg-activated;
-			color: $color_lang-toggle_text-activated;
+			background-color: var(--color-lang-toggle-bg-activated);
+			color: var(--color-lang-toggle-text-activated);
 		}
 
 		&:not(:disabled):hover {
-			background-color: $color_lang-toggle_disabled-hover_bg;
-			color: $color_lang-toggle_disabled-hover_text;
+			background-color: var(--color-lang-toggle-disabled-hover-bg);
+			color: var(--color-lang-toggle-disabled-hover-text);
 		}
 
 		&:focus-visible {
@@ -111,9 +111,9 @@
 			top: calc(100% + -1.25rem);
 			left: -205%;
 			transform: translateX(-50%);
-			background: $color_tooltip_bg;
+			background: var(--color-tooltip-bg);
 			// background: $link-color;
-			color: $color_tooltip_text;
+			color: var(--color-tooltip-text);
 			padding: 0.25rem 0.5rem;
 			border-radius: 0.25rem;
 			white-space: nowrap;
@@ -154,14 +154,14 @@
 			font-family: inherit;
 			font-size: clamp(1rem, 2vw, 1.5rem);
 			font-weight: 400;
-			color: $color-header-text-role;
+			color: var(--color-header-text-role);
 		}
 	}
 	&__blog-link {
 		position: relative;
 		flex-shrink: 0;
 		white-space: nowrap;
-		color: $color_header_blog-link_text !important;
+		color: var(--color-header-blog-link-text) !important;
 		font-weight: 600;
 		border-radius: 0.125rem;
 		padding: 0.25rem;
@@ -170,10 +170,10 @@
 		margin-bottom: 0.5rem;
 		margin-right: 0.25rem;
 		margin-left: 1rem;
-		background: $color_header_blog-link_bg;
+		background: var(--color-header-blog-link-bg);
 		&:hover {
 			opacity: 1;
-			color: $off-white !important;
+			color: var(--off-white) !important;
 		}
 		&:focus-visible {
 			border-radius: 0.125rem;
@@ -186,9 +186,9 @@
 			top: calc(100% + 0.3rem);
 			left: 25%;
 			transform: translateX(-50%);
-			background: $color_tooltip_bg;
+			background: var(--color-tooltip-bg);
 			// background: $link-color;
-			color: $color_tooltip_text;
+			color: var(--color-tooltip-text);
 			padding: 0.25rem 0.5rem;
 			border-radius: 0.25rem;
 			white-space: nowrap;

@@ -1,10 +1,12 @@
 /** @format */
 
-$scroll-progress-link-default: if(
-	lightness($color_bottom-footer_bg) < 50,
-	$off-white,
-	$color_scroll-progress_indicator
-);
+// Remplacer la logique SCSS par une variable CSS avec fallback
+:root {
+	--scroll-progress-link-default: var(
+		--off-white,
+		var(--color-scroll-progress-indicator)
+	);
+}
 
 .scroll-progress-line {
 	position: fixed;
@@ -15,7 +17,7 @@ $scroll-progress-link-default: if(
 	right: 0.125rem;
 	height: 50vh;
 	width: 0.125rem;
-	background-color: $color_scroll-progress_line;
+	background-color: var(--color-scroll-progress-line);
 	@media screen and (max-height: 34rem) {
 		display: none;
 	}
@@ -31,13 +33,16 @@ $scroll-progress-link-default: if(
 	gap: 0 1rem;
 
 	a {
-		color: var(--scroll-progress-link-color, #{$scroll-progress-link-default});
+		color: var(
+			--scroll-progress-link-color,
+			var(--scroll-progress-link-default)
+		);
 		transition: color 0.3s ease;
 
 		&:hover {
 			opacity: 0.95;
-			background: $color-link-hover;
-			color: $off-white !important;
+			background: var(--color-link-hover);
+			color: var(--off-white) !important;
 		}
 	}
 
@@ -64,11 +69,14 @@ $scroll-progress-link-default: if(
 		letter-spacing: 0.0625rem;
 		white-space: nowrap;
 		text-decoration: none;
-		color: var(--scroll-progress-link-color, #{$scroll-progress-link-default});
+		color: var(
+			--scroll-progress-link-color,
+			var(--scroll-progress-link-default)
+		);
 
 		&[data-active="true"] {
-			color: $color_main_bg !important;
-			background: $color_scroll-progress_indicator-active;
+			color: var(--color-main-bg) !important;
+			background: var(--color-scroll-progress-indicator-active);
 		}
 	}
 	// @media screen and (min-width: 960px) {

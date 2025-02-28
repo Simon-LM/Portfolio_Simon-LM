@@ -5,7 +5,7 @@
 	padding: 2rem;
 	padding-top: 1.5rem;
 	padding-bottom: 2.5rem;
-	background-color: $color_section_bg-even;
+	background-color: var(--color-section-bg-even);
 
 	&--placeholder {
 		min-height: 100vh;
@@ -25,7 +25,7 @@
 	&__title {
 		text-align: center;
 		margin-bottom: 2rem;
-		color: $color_section_title;
+		color: var(--color-section-title);
 	}
 
 	&__presentation {
@@ -37,7 +37,7 @@
 	&__subtitle {
 		text-align: center;
 		margin-bottom: 2rem;
-		color: $color_section_title;
+		color: var(--color-section-title);
 	}
 
 	&__icons-container {
@@ -64,7 +64,7 @@
 		width: 5rem;
 		padding: 1rem;
 		border-radius: 4rem;
-		background: $color_skills-icon_bg;
+		background: var(--color-skills-icon-bg);
 		box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 
 		&.is-rotating {
@@ -86,15 +86,15 @@
 		height: 3rem;
 		// padding: 0.75rem;
 		border-radius: 2.5rem;
-		background: $color_skills-icon_bg;
-		color: $color_skills-icon_text;
+		background: var(--color-skills-icon-bg);
+		color: var(--color-skills-icon-text);
 		transition: transform 0.2s ease;
 	}
 
 	&__icon-label {
 		font-size: 0.875rem;
 		font-weight: 600;
-		color: $color_skills-icon_text;
+		color: var(--color-skills-icon-text);
 	}
 
 	&__cards {
@@ -109,13 +109,13 @@
 	&__card {
 		flex: 1 1 15rem;
 		max-width: 100%;
-		background: $color_section_card-bg;
+		background: var(--color-section-card-bg);
 		padding: 2rem;
 		border-radius: 0.5rem;
-		box-shadow: 0 4px 6px rgba($gray-dark, 0.1);
+		box-shadow: 0 4px 6px rgba(var(--color-gray-dark), 0.1);
 
 		&-title {
-			color: $color_section_title;
+			color: var(--color-section-title);
 			font-size: 1.5rem;
 			margin-top: 1rem;
 			margin-bottom: 1.5rem;

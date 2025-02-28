@@ -2,7 +2,21 @@
 
 @import "base/normalize";
 
-@import "abstracts/variables";
+@import "abstracts/base-palette";
+@import "abstracts/theme-utils";
+@import "themes/light";
+
+// @import "abstracts/variables";
+@import "abstracts/theme-system";
+
+// @import "themes/dark";
+// @import "themes/high-contrast";
+// @import "themes/deuteranopia";
+// @import "themes/protanopia";
+
+// @import "abstracts/theme-system";
+// @import "abstracts/variables";
+
 @import "abstracts/functions";
 @import "abstracts/mixins";
 @import "abstracts/placeholders";
@@ -11,27 +25,26 @@
 @import "base/typography";
 
 @import "components/language-selector";
-
-@import "layout/header";
 @import "components/navigation-sticky";
 @import "components/scroll-progress";
+@import "components/collapse";
+@import "components/portfolioCard";
+@import "components/theme-toggle";
+
+@import "layout/header";
 @import "layout/bottomFooter";
 @import "layout/stickyFooter";
 
 @import "pages/hero";
-@import "components/collapse";
 @import "pages/about";
 @import "pages/skills";
 @import "pages/portfolio";
-@import "components/portfolioCard";
 @import "pages/contact";
 @import "pages/privacy-policy";
 @import "pages/legal";
 @import "pages/terms";
 @import "pages/accessibility";
 @import "pages/sitemap";
-
-// @import "themes/dark";
 
 @import "accessibility/motion";
 @import "accessibility/a11y";

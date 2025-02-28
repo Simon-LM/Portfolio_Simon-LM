@@ -10,10 +10,10 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: 1rem;
-		background: $color_collapse_bg-title;
+		background: var(--color-collapse-bg-title);
 		// border: 2px solid $color_collapse_border;
 		border: none;
-		color: $color_collapse_title;
+		color: var(--color-collapse-title);
 		border-radius: 0.5rem;
 
 		&[aria-expanded="true"] {
@@ -22,7 +22,7 @@
 		}
 
 		&:hover {
-			background: $color-link-hover;
+			background: var(--color-link-hover);
 		}
 		&:focus-visible {
 			border-radius: 0.5rem;
@@ -31,11 +31,11 @@
 	&__title {
 		font-size: 1.25rem;
 		font-weight: 700;
-		color: $color_collapse_title;
+		color: var(--color-collapse-title);
 		margin: 0.5rem 1rem;
 	}
 	&__icon {
-		color: $color_collapse_title;
+		color: var(--color-collapse-title);
 	}
 	&__content {
 		display: block;
@@ -46,6 +46,6 @@
 		border-top: none;
 		border-bottom-left-radius: 0.5rem;
 		border-bottom-right-radius: 0.5rem;
-		background: $color_collapse_bg;
+		background: var(--color-collapse-bg);
 	}
 }

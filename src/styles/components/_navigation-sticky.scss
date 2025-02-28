@@ -12,7 +12,7 @@
 		width: 2.5rem;
 		height: 2.5rem;
 		border-radius: 1.25rem;
-		background: $color_main_bg;
+		background: var(--color-main-bg);
 		border: none;
 		display: flex;
 		align-items: center;
@@ -42,16 +42,16 @@
 
 		&:hover {
 			transform: scale(1.05);
-			background: $color-link-hover !important;
+			background: var(--color-link-hover) !important;
 			.menu-text {
-				color: $off-white !important;
+				color: var(--off-white) !important;
 			}
 		}
 		&:focus-visible {
-			background: $color_focus-bg;
-			color: $color_focus-text !important;
+			background: var(--color-focus-bg);
+			color: var(--color-focus-text) !important;
 			.menu-text {
-				color: $color_focus-text !important;
+				color: var(--color-focus-text) !important;
 			}
 		}
 	}
@@ -74,7 +74,7 @@
 		position: absolute;
 		top: 100%;
 		left: 0.5rem;
-		background: $color_main_bg;
+		background: var(--color-main-bg);
 		border-radius: 0.25rem;
 		padding: 1rem;
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -104,8 +104,8 @@
 
 			&:hover {
 				opacity: 1;
-				background: $color-link-hover;
-				color: $off-white;
+				background: var(--color-link-hover);
+				color: var(--off-white);
 			}
 
 			&:focus-visible {

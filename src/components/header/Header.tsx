@@ -12,6 +12,7 @@ import {
 	shouldUpdateDictionary,
 	DICTIONARY_VERSION,
 } from "../../utils/dictionaryVersion";
+import ThemeToggleButton from "../themeToggleButton/ThemeToggleButton";
 
 import accessibilityIconWebp from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.webp";
 import accessibilityIconAvif from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.avif";
@@ -92,6 +93,9 @@ export default function Header({ dictionary }: HeaderProps) {
 							priority
 						/>
 					</picture>
+
+					<ThemeToggleButton language={language} />
+
 					<div className="header__lang">
 						<div className="header__lang-toggle">
 							<button

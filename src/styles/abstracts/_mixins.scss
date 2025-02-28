@@ -21,9 +21,9 @@
 
 @mixin focus-visible {
 	&:focus-visible {
-		background-color: $color_focus-bg;
-		color: $color_focus-text !important;
-		outline: 2px solid $color_focus-outline !important;
+		background-color: var(--color-focus-bg);
+		color: var(--color-focus-text) !important;
+		outline: 2px solid var(--color-focus-outline) !important;
 		box-shadow: 0 0 0 4px rgba(white, 0.75) !important;
 		outline-offset: 2px;
 		border-radius: 0.25rem;
@@ -34,12 +34,12 @@
 
 @mixin sticky-footer-link-states {
 	&:hover {
-		color: $color_link !important;
+		color: var(--color-link) !important;
 		@extend %link-hover-base;
 	}
 
 	&:focus-visible {
-		color: $color_link !important;
+		color: var(--color-link) !important;
 		@extend %link-hover-base;
 		box-shadow: none !important;
 		outline-offset: 2px;
@@ -55,7 +55,7 @@
 	margin-top: -4rem;
 	padding: 2rem;
 	padding-top: 3rem;
-	background: $color-main-bg;
+	background: var(--color-main-bg);
 }
 @mixin page-title {
 	display: flex;
@@ -63,14 +63,14 @@
 	align-items: center;
 	text-align: center;
 	font-size: 3rem;
-	color: $color-pages-title;
+	color: var(--color-pages-title);
 	margin-bottom: 2rem;
 	@include word-wrap;
 }
 
 @mixin page-update {
 	font-style: italic;
-	color: $color-main-text;
+	color: var(--color-main-text);
 	margin-bottom: 2rem;
 }
 
@@ -79,7 +79,7 @@
 
 	&-title {
 		font-size: 2rem;
-		color: $color-section-title;
+		color: var(--color-section-title);
 		margin-bottom: 1rem;
 	}
 
@@ -97,12 +97,14 @@
 }
 
 @mixin page-link {
-	color: $color-link !important;
+	color: var(--color-link) !important;
 	text-decoration: underline !important;
 
 	&:hover,
 	&:focus {
-		text-decoration: none;
+		color: var(--off-white) !important;
+		text-decoration: none !important;
+		padding: 0.05em 0.125em !important;
 	}
 }
 // END | Pages : Legal, Accessibility, Privacy Policy, Terms

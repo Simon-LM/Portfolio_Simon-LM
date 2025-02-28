@@ -7,7 +7,7 @@
 	padding-top: 2.5rem;
 	padding-bottom: 3rem;
 	margin-bottom: 0;
-	background: $color_section_bg-even;
+	background: var(--color-section-bg-even);
 
 	&--placeholder {
 		min-height: 100vh;
@@ -44,19 +44,19 @@
 		z-index: 3;
 		width: 72.5%;
 		max-width: 50rem;
-		background: $color_contact_modal_bg;
+		background: var(--color-contact-modal-bg);
 		padding: 2rem;
 		border-radius: 0.5rem;
 		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
 		&:focus-within {
-			outline: 2px solid $color-link;
+			outline: 2px solid var(--color-link);
 		}
 
 		&-title {
 			margin-bottom: rem;
 			font-size: 1.5rem;
-			color: $color_section_title;
+			color: var(--color-section-title);
 		}
 
 		&-text {
@@ -74,24 +74,24 @@
 			padding: 0.75rem 1.5rem;
 			border-radius: 0.25rem;
 			border: none;
-			border: 2px solid $color_main-bg;
+			border: 2px solid var(--color-main-bg);
 			font-weight: 500;
 			transition: all 0.3s ease;
 			&:hover {
-				background: $color-link-hover;
+				background: var(--color-link-hover);
 				transform: translateY(-1px);
 			}
 
 			&--accept {
-				background: $color-link;
-				color: $off-white;
+				background: var(--color-link);
+				color: var(--off-white);
 				width: 100%;
 			}
 
 			&--decline {
 				// display: none;
-				background: $color-link;
-				color: $off-white;
+				background: var(--color-link);
+				color: var(--off-white);
 				width: 100%;
 			}
 		}
@@ -117,7 +117,7 @@
 
 	&__title {
 		margin-bottom: 0rem;
-		color: $color_section_title;
+		color: var(--color-section-title);
 	}
 
 	&__subtitle {
@@ -132,9 +132,9 @@
 		max-width: 100%;
 		padding: 1.5rem 3rem 2rem 3rem;
 		margin-bottom: 2rem;
-		background: $color_contact_form-bg;
+		background: var(--color-contact-form-bg);
 		border-radius: 0.5rem;
-		box-shadow: 0 2px 4px rgba($gray-dark, 0.1);
+		box-shadow: 0 2px 4px rgba(var(--color-gray-dark), 0.1);
 
 		&-fields {
 			display: flex;
@@ -160,12 +160,12 @@
 			justify-content: space-between;
 			align-items: center;
 			margin-bottom: 0.5rem;
-			color: $color_main-text;
+			color: var(--color-main-text);
 			font-weight: 500;
 			width: 100%;
 			.optional {
 				font-size: 0.75rem;
-				color: rgba($color_main-text, 0.66);
+				color: rgba(var(--color-main-text), 0.66);
 				font-weight: normal;
 				font-style: italic;
 			}
@@ -175,16 +175,16 @@
 		&-textarea {
 			width: 100%;
 			padding: 0.75rem;
-			border: 1px solid $gray-medium-light;
+			border: 1px solid var(--gray-medium-light);
 			border-radius: 0.25rem;
 			font-family: inherit;
 			font-size: 1rem;
-			background: $color-main-bg;
+			background: var(--color-main-bg);
 			transition: border-color 0.2s ease;
 
 			&:focus-visible {
-				background: $color_main-bg !important;
-				color: $color_main-text !important;
+				background: var(--color-main-bg) !important;
+				color: var(--color-main-text) !important;
 			}
 
 			// &:focus {
@@ -194,7 +194,7 @@
 			// }
 			&[data-required="true"] {
 				border-width: 2px;
-				border-color: $link-color;
+				border-color: var(--color-link);
 			}
 			&[aria-invalid="true"] {
 				border-color: #dc2626;
@@ -217,7 +217,7 @@
 			display: flex;
 			font-size: 0.75rem;
 			margin-top: 0.25rem;
-			color: $color_main-text;
+			color: var(--color-main-text);
 		}
 
 		&-error {
@@ -233,14 +233,14 @@
 
 			p {
 				text-align: left;
-				color: $color_main-text;
+				color: var(--color-main-text);
 				font-size: 0.875rem;
 				line-height: 1.5;
 			}
 		}
 
 		&-gdpr-link {
-			color: $color-link !important;
+			color: var(--color-link) !important;
 
 			&:hover,
 			&:focus {
@@ -280,13 +280,13 @@
 			font-weight: 500;
 			border-radius: 0.25rem;
 			// border: none;
-			border: 2px solid $color_main-bg;
-			background: $color-link;
-			color: $off-white;
+			border: 2px solid var(--color-main-bg);
+			background: var(--color-link);
+			color: var(--off-white);
 			transition: all 0.3s ease;
 
 			&:hover {
-				background: $color-link-hover;
+				background: var(--color-link-hover);
 				transform: translateY(-1px);
 			}
 		}
@@ -299,8 +299,8 @@
 			text-align: center;
 
 			&[data-type="success"] {
-				background: $color-main-bg;
-				color: $success-color;
+				background: var(--color-main-bg);
+				color: var(--color-success);
 			}
 
 			// &[data-type="error"] {
@@ -324,10 +324,10 @@
 
 .recaptcha-error {
 	text-align: left;
-	background: $color_main-bg;
+	background: var(--color-main-bg);
 	padding: 1.5rem;
 	border-radius: 0.5rem;
-	color: $color_main-text;
+	color: var(--color-main-text);
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
 	h3 {
@@ -400,7 +400,7 @@
 	width: 1px !important;
 	overflow: hidden !important;
 	&:focus {
-		outline: 2px solid $color-link;
+		outline: 2px solid var(--color-link);
 	}
 }
 

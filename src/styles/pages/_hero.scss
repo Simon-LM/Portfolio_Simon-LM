@@ -8,7 +8,7 @@
 	padding: 2rem;
 	padding-bottom: 6rem;
 	margin-top: -4rem;
-	background: $color_section_bg-even;
+	background: var(--color-section-bg-even);
 
 	&__content {
 		max-width: 90%;
@@ -24,7 +24,7 @@
 		font-family: "Quicksand", sans-serif;
 		margin-bottom: 3rem;
 		font-size: clamp(2.5rem, 5vw, 3rem);
-		color: $color_hero_title;
+		color: var(--color-hero-title);
 	}
 
 	&__subtitle {

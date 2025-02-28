@@ -1,0 +1,132 @@
+/** @format */
+
+/**
+ * Utilitaires pour la gestion des thèmes
+ * - Accès simplifié aux couleurs Tailwind
+ * - Génération automatique du thème sombre
+ */
+
+// Fonction pour accéder aux couleurs Tailwind
+@function get-color($family, $weight) {
+	@return map-get(map-get($colors, $family), $weight);
+}
+
+// Fonction pour obtenir le poids inversé (pour dark mode)
+@function invert-weight($weight) {
+	@return 1000 - $weight;
+}
+
+// Fonction pour obtenir la couleur inversée pour le thème sombre
+@function get-dark-color($family, $weight) {
+	$inverted-weight: invert-weight($weight);
+	@return get-color($family, $inverted-weight);
+}
+
+// Mixin qui génère le thème sombre à partir des conventions Tailwind
+@mixin generate-dark-theme() {
+	// Couleurs fondamentales inversées
+	$off-white: get-dark-color("stone", 50) !global;
+	$near-black: get-dark-color("stone", 950) !global;
+
+	// Échelle de gris inversée
+	$gray-darkest: get-dark-color("stone", 900) !global;
+	$gray-darker: get-dark-color("stone", 800) !global;
+	$gray-dark: get-dark-color("stone", 700) !global;
+	$gray-medium-dark: get-dark-color("stone", 600) !global;
+	$gray-medium-light: get-dark-color("stone", 500) !global;
+	$gray-light: get-dark-color("stone", 400) !global;
+	$gray-lighter: get-dark-color("stone", 300) !global;
+	$gray-lightest: get-dark-color("stone", 200) !global;
+
+	// Couleurs sémantiques adaptées pour le thème sombre
+	// Certaines couleurs peuvent rester les mêmes pour la cohérence visuelle
+	$primary-color: get-color(
+		"amber",
+		300
+	) !global; // On garde la même couleur d'accent
+	// $secondary-color: get-color("amber", 800) !global; // Ajusté manuellement
+	$secondary-color: get-color("amber", 100) !global; // Ajusté manuellement
+	$tertiary-color: get-color("amber", 950) !global; // Ajusté manuellement
+
+	// Liens plus clairs pour contraster sur fond sombre
+	$link-color: get-color("sky", 700) !global;
+	$link-color-hover: get-color("sky", 600) !global;
+	$success-color: get-color("emerald", 600) !global;
+
+	// Génération des variables d'interface utilisateur dérivées
+	$color-main-bg: $off-white !global;
+	$color_main-bg: $off-white !global;
+	$color-main-text: $near-black !global;
+	$color_main-text: $near-black !global;
+
+	$color-pages-title: $near-black !global;
+
+	$color_header_bg: $primary-color !global;
+	$color_header_text: $near-black !global;
+	$color_header_text-role: $gray-dark !global;
+	$color_header_blog-link_bg: $gray-dark !global;
+	$color_header_blog-link_text: $primary-color !global;
+
+	$color_lang-toggle_bg: $off-white !global;
+	$color_lang-toggle_border: $gray-dark !global;
+	$color_lang-toggle_bg-activated: $gray-dark !global;
+	$color_lang-toggle_text-activated: $off-white !global;
+	$color_lang-toggle_text-disabled: $gray-dark !global;
+	$color_lang-toggle_disabled-hover_bg: $link-color !global;
+	$color_lang-toggle_disabled-hover_text: $off-white !global;
+
+	$color_scroll-progress_line: $link-color !global;
+	$color_scroll-progress_indicator: $gray-medium-dark !global;
+	$color_scroll-progress_indicator-active: $link-color !global;
+
+	$color_collapse_title: $off-white !global;
+	$color_collapse_bg: $gray-lighter !global;
+	$color_collapse_bg-title: $gray-dark !global;
+	$color_collapse_border: $gray-dark !global;
+
+	$color_section_bg-even: $off-white !global;
+	$color_section_bg-odd: $gray-lightest !global;
+	$color_section_title: $secondary-color !global;
+	$color-hero-bg: $off-white !global;
+	$color-hero-title: $near-black !global;
+	$color-hero-text: $near-black !global;
+
+	$color_about_overlay-bg: $near-black !global;
+	$color_about_overlay-text: $off-white !global;
+	$color_about_button-bg: $link-color !global;
+	$color_about_button-border: $off-white !global;
+	$color_about_button-text: $off-white !global;
+
+	$color_skills-icon_bg: $tertiary-color !global;
+	$color_skills-icon_text: $secondary-color !global;
+
+	$color_section_card-bg: $gray-lighter !global;
+	$color_section-even_card-bg: $gray-lighter !global;
+	$color_section-odd_card-bg: $gray-light !global;
+
+	$color_portfolio-tag_bg: $tertiary-color !global;
+	$color_portfolio-tag_bg-texte: $secondary-color !global;
+
+	$color_contact_form-bg: $gray-lighter !global;
+	$color_contact_modal_bg: $gray-lightest !global;
+
+	$color_bottom-footer_bg: $gray-dark !global;
+	$color_bottom-footer_title: $tertiary-color !global;
+	$color_bottom-footer_text: $off-white !global;
+	$color_bottom-footer_link-bg: $off-white !global;
+	$color_bottom-footer_link-text: $link-color !global;
+
+	$color_sticky-footer_bg: $gray-darker !global;
+	$color_sticky-footer_text: $off-white !global;
+
+	$color_link: $link-color !global;
+	$color_link-hover: $link-color-hover !global;
+	$color_link-bg: $off-white !global;
+
+	$color_focus-outline: $link-color !global;
+	$color_focus-bg: $link-color !global;
+	$color_focus-text: $off-white !global;
+
+	$color_tooltip_text: $off-white !global;
+	$color_tooltip_bg: rgba($near-black, 0.8) !global;
+}

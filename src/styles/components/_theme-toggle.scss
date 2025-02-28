@@ -1,0 +1,31 @@
+/** @format */
+
+.theme-toggle {
+	display: flex;
+	gap: 0.5rem;
+
+	&__button {
+		padding: 0.25rem 0.5rem;
+		border-radius: 0.25rem;
+		background: transparent;
+		border: 2px solid;
+		font-size: 0.85rem;
+
+		&.active {
+			background: var(--primary-color);
+			color: var(--bg-color);
+		}
+
+		&:hover,
+		&:focus {
+			outline: 2px solid var(--primary-color);
+		}
+	}
+
+	&.skeleton {
+		width: 150px;
+		height: 30px;
+		background-color: #e0e0e0;
+		border-radius: 0.25rem;
+	}
+}

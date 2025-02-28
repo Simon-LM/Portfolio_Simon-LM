@@ -41,7 +41,7 @@ h1 {
 	font-weight: 600;
 	line-height: 1.3;
 	letter-spacing: -0.025em;
-	color: $color-main-text;
+	color: var(--color-main-text);
 }
 
 h2 {
@@ -49,7 +49,7 @@ h2 {
 	font-size: 2.6rem;
 	font-weight: 600;
 	letter-spacing: -0.02em;
-	color: $color-section-title;
+	color: var(--color-section-title);
 	margin-top: 1rem;
 }
 
@@ -61,7 +61,7 @@ h6 {
 	// font-size: 2rem;
 	font-weight: 600;
 	letter-spacing: -0.02em;
-	color: $color-section-title;
+	color: var(--color-section-title);
 }
 
 p {
@@ -70,7 +70,7 @@ p {
 	font-size: 1rem;
 	line-height: 1.6;
 	margin-bottom: 1.5rem;
-	color: $color-main-text;
+	color: var(--color-main-text);
 }
 
 div,
@@ -80,7 +80,7 @@ nav {
 	font-weight: 400;
 	font-size: 1rem;
 	line-height: 1.3;
-	color: $color-main-text;
+	color: var(--color-main-text);
 }
 a {
 	&:hover,
@@ -89,6 +89,6 @@ a {
 	}
 	&:visited,
 	&:link {
-		color: $color-main-text;
+		color: var(--color-main-text);
 	}
 }

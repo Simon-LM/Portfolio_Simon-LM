@@ -20,7 +20,7 @@ body {
 	// max-width: 1280px;
 	max-width: 1920px;
 	margin: 0 auto;
-	background: $color-main-bg;
+	background: var(--color-main-bg);
 }
 main {
 	margin: 0 auto;
@@ -41,8 +41,8 @@ a {
 		text-decoration: none;
 	}
 	&:hover {
-		background-color: $color-link-hover;
-		color: $off-white;
+		background-color: var(--color-link-hover);
+		color: var(--off-white);
 	}
 }
 
