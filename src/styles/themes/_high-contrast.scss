@@ -3,21 +3,27 @@
 @import "../abstracts/theme-utils";
 
 @mixin high-contrast-theme-variables() {
-	// Utiliser les couleurs du thème light comme base
-	// @include light-theme-variables();
-
 	// Transformation automatique vers le thème à fort contraste
-	// @include generate-high-contrast-theme();
+	@include generate-high-contrast-theme();
 
-	// Ajustements spécifiques si nécessaire
-	// Les sections doivent être clairement délimitées
-	// $color_section_bg-odd: #000000 !global;
-	// $color_section_bg-even: #000000 !global;
+	// Surcharges spécifiques pour des éléments critiques
+	$color_section_bg-odd: #000000 !global;
+	$color_section_bg-even: #000000 !global;
 
-	// Assurez-vous que les liens sont toujours visibles
-	// $color_link: get-high-contrast("link") !global;
-	// $color_link-hover: get-high-contrast("hover") !global;
+	// Bordures plus visibles pour les éléments interactifs
+	$color_collapse_border: #ffff00 !global;
+	$color_about_button-border: #ffff00 !global;
 
-	// Élements interactifs avec bordure visible
-	// $color_collapse_border: get-high-contrast("text") !global;
+	// Assurer une meilleure visibilité des liens
+	$color_link: #00ffff !global;
+	$color_link-hover: #ffffff !global;
+
+	// Surcharge pour les boutons
+	$color_about_button-bg: #bfff00 !global;
+	$color_about_button-text: #000000 !global;
+
+	// Surcharges pour l'entête
+	$color_header_bg: #000000 !global;
+	$color_header_text: #ffff00 !global;
+	$color_header_text-role: #ffff00 !global;
 }

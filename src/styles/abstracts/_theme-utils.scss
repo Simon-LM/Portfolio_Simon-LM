@@ -99,7 +99,9 @@ $hc-colors: (
 	// État focus en blanc
 	"heading": #bfff00,
 	// Titres vert-jaune
-	"success": #00ff00 // Validation en vert,,,
+	"success": #00ff00,
+	// Validation en vert,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+	"error": #ff0000,
 );
 
 // Fonction pour déterminer si une couleur est sombre ou claire
@@ -150,6 +152,159 @@ $hc-colors: (
 			@return map-get($hc-colors, "background");
 		}
 	}
+}
+
+// -----------------------------------------------
+// UTILITAIRES POUR THÈMES DALTONIENS
+// -----------------------------------------------
+
+// Matrices de simulation du daltonisme
+// Ces matrices sont utilisées pour simuler comment une personne daltonienne percevrait une couleur
+$protanopia-matrix: (0.567, 0.433, 0, 0.558, 0.442, 0, 0, 0.242, 0.758);
+
+$deuteranopia-matrix: (0.625, 0.375, 0, 0.7, 0.3, 0, 0, 0.3, 0.7);
+
+$tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
+
+// Fonction pour convertir RGB en LMS (espace de cônes)
+@function rgb-to-lms($color) {
+	$r: red($color) / 255;
+	$g: green($color) / 255;
+	$b: blue($color) / 255;
+
+	$l: (0.3904 * $r) + (0.5498 * $g) + (0.0598 * $b);
+	$m: (0.0456 * $r) + (0.7416 * $g) + (0.2128 * $b);
+	$s: (0 * $r) + (0 * $g) + (1 * $b);
+
+	@return ($l, $m, $s);
+}
+
+// Fonction pour convertir LMS en RGB
+@function lms-to-rgb($lms) {
+	$l: nth($lms, 1);
+	$m: nth($lms, 2);
+	$s: nth($lms, 3);
+
+	$r: (2.85 * $l) - (1.62 * $m) - (0.23 * $s);
+	$g: (-0.25 * $l) + (1.18 * $m) + (0.06 * $s);
+	$b: (0 * $l) + (0 * $m) + (1 * $s);
+
+	$r: max(0, min(1, $r)) * 255;
+	$g: max(0, min(1, $g)) * 255;
+	$b: max(0, min(1, $b)) * 255;
+
+	@return rgb($r, $g, $b);
+}
+
+// Fonction qui transforme une couleur pour l'adapter à un type spécifique de daltonisme
+@function adapt-color-for-colorblindness($color, $type, $enhance-factor: 1.5) {
+	// Sélection de la matrice appropriée
+	$matrix: $protanopia-matrix;
+	@if $type == "deuteranopia" {
+		$matrix: $deuteranopia-matrix;
+	} @else if $type == "tritanopia" {
+		$matrix: $tritanopia-matrix;
+	}
+
+	// Pour les couleurs essentielles, utiliser des teintes spécifiques
+	// fortement contrastées pour chaque type de daltonisme
+	@if $type == "deuteranopia" {
+		@if is-similar-to($color, #ff0000) or is-similar-to($color, #00ff00) {
+			@if brightness($color) < 0.5 {
+				@return #0075ff; // Bleu pour les rouges/verts foncés
+			} @else {
+				@return #ffcc00; // Jaune doré pour les rouges/verts clairs
+			}
+		}
+	} @else if $type == "protanopia" {
+		@if is-similar-to($color, #ff0000) or is-similar-to($color, #00ff00) {
+			@if brightness($color) < 0.5 {
+				@return #0090ff; // Bleu clair pour les rouges/verts foncés
+			} @else {
+				@return #ffd700; // Or pour les rouges/verts clairs
+			}
+		}
+	} @else if $type == "tritanopia" {
+		@if is-similar-to($color, #0000ff) or is-similar-to($color, #ffff00) {
+			@if brightness($color) < 0.5 {
+				@return #ff3399; // Rose pour les bleus/jaunes foncés
+			} @else {
+				@return #ff6600; // Orange pour les bleus/jaunes clairs
+			}
+		}
+	}
+
+	// Pour les autres couleurs, appliquer un algorithme de transformation
+	// qui augmente la saturation dans les canaux que la personne distingue le mieux
+	$h: hue($color);
+	$s: saturation($color);
+	$l: lightness($color);
+
+	@if $type == "deuteranopia" or $type == "protanopia" {
+		// Pour la confusion rouge-vert, déplacer vers bleu ou jaune
+		@if $h >= 30 and $h <= 150 {
+			// Vert -> Bleu-vert
+			$h: 180;
+			$s: min(100%, $s * $enhance-factor);
+		} @else if $h >= 330 or $h <= 30 {
+			// Rouge -> Jaune-orange
+			$h: 40;
+			$s: min(100%, $s * $enhance-factor);
+		}
+	} @else if $type == "tritanopia" {
+		// Pour la confusion bleu-jaune, déplacer vers rouge ou vert
+		@if $h >= 180 and $h <= 270 {
+			// Bleu -> Magenta
+			$h: 300;
+			$s: min(100%, $s * $enhance-factor);
+		} @else if $h >= 60 and $h <= 180 {
+			// Jaune-vert -> Vert
+			$h: 120;
+			$s: min(100%, $s * $enhance-factor);
+		}
+	}
+
+	@return hsl($h, $s, $l);
+}
+
+// Fonctions auxiliaires
+@function brightness($color) {
+	@return (red($color) * 0.299 + green($color) * 0.587 + blue($color) * 0.114) /
+		255;
+}
+
+@function is-similar-to($color1, $color2, $threshold: 60) {
+	$r1: red($color1);
+	$g1: green($color1);
+	$b1: blue($color1);
+
+	$r2: red($color2);
+	$g2: green($color2);
+	$b2: blue($color2);
+
+	$r_diff: abs($r1 - $r2);
+	$g_diff: abs($g1 - $g2);
+	$b_diff: abs($b1 - $b2);
+
+	$total_diff: $r_diff + $g_diff + $b_diff;
+
+	@return $total_diff < $threshold;
+}
+
+// Fonction spécifique pour chaque type de daltonisme
+@function get-deuteranopia-color($family, $weight) {
+	$original-color: get-color($family, $weight);
+	@return adapt-color-for-colorblindness($original-color, "deuteranopia");
+}
+
+@function get-protanopia-color($family, $weight) {
+	$original-color: get-color($family, $weight);
+	@return adapt-color-for-colorblindness($original-color, "protanopia");
+}
+
+@function get-tritanopia-color($family, $weight) {
+	$original-color: get-color($family, $weight);
+	@return adapt-color-for-colorblindness($original-color, "tritanopia");
 }
 
 // -----------------------------------------------
@@ -240,6 +395,11 @@ $hc-colors: (
 	$color_focus-bg: $link-color !global;
 	$color_focus-text: $off-white !global;
 
+	// // États de validation et d'erreur
+	// $color_error: $error-color !global;
+	// $color_error-text: $off-white !global;
+	// $color_error-border: darken($error-color, 10%) !global;
+
 	// Infobulles
 	$color_tooltip_text: $off-white !global;
 	$color_tooltip_bg: rgba($near-black, 0.8) !global;
@@ -284,86 +444,169 @@ $hc-colors: (
 	$link-color: get-dark-color("sky", 900, $steps) !global;
 	$link-color-hover: get-dark-color("sky", 800, $steps) !global;
 	$success-color: get-color("emerald", 500) !global;
+	$error-color: #ef4444 !global;
 
 	// Application des variables dérivées
 	@include apply-theme-variables;
 }
 
-// // Mixin qui génère le thème à fort contraste de manière simplifiée
-// @mixin generate-high-contrast-theme() {
-// 	// Couleurs fondamentales basées sur les rôles
-// 	$off-white: get-high-contrast("background") !global;
-// 	$near-black: get-high-contrast("text") !global;
+// Mixin qui génère le thème à fort contraste
+@mixin generate-high-contrast-theme() {
+	// Couleurs fondamentales basées sur les rôles
+	$off-white: map-get($hc-colors, "background") !global;
+	$near-black: map-get($hc-colors, "text") !global;
 
-// 	// Simplification des niveaux de gris en utilisant uniquement 2 couleurs
-// 	// Les éléments de premier plan utilisent la couleur de texte
-// 	$gray-darkest: get-high-contrast("text") !global;
-// 	$gray-darker: get-high-contrast("text") !global;
-// 	$gray-dark: get-high-contrast("text") !global;
-// 	$gray-medium-dark: get-high-contrast("text") !global;
-// 	$gray-medium-light: get-high-contrast("text") !global;
+	// Simplification des niveaux de gris en utilisant uniquement 2 couleurs
+	// Les éléments de premier plan utilisent la couleur de texte
+	$gray-darkest: map-get($hc-colors, "text") !global;
+	$gray-darker: map-get($hc-colors, "text") !global;
+	$gray-dark: map-get($hc-colors, "text") !global;
+	$gray-medium-dark: map-get($hc-colors, "text") !global;
+	$gray-medium-light: map-get($hc-colors, "text") !global;
 
-// 	// Les éléments de fond utilisent la couleur de fond
-// 	$gray-light: get-high-contrast("background") !global;
-// 	$gray-lighter: get-high-contrast("background") !global;
-// 	$gray-lightest: get-high-contrast("background") !global;
+	// Les éléments de fond utilisent la couleur de fond
+	$gray-light: map-get($hc-colors, "background") !global;
+	$gray-lighter: map-get($hc-colors, "background") !global;
+	$gray-lightest: map-get($hc-colors, "background") !global;
 
-// 	// Couleurs sémantiques simplifiées par rôle
-// 	$primary-color: get-high-contrast("accent") !global;
-// 	$secondary-color: get-high-contrast("heading") !global;
-// 	$tertiary-color: get-high-contrast("text") !global;
-// 	$link-color: get-high-contrast("link") !global;
-// 	$link-color-hover: get-high-contrast("hover") !global;
-// 	$success-color: get-high-contrast("success") !global;
+	// Couleurs sémantiques simplifiées par rôle
+	$primary-color: map-get($hc-colors, "heading") !global;
+	$secondary-color: map-get($hc-colors, "text") !global;
+	$tertiary-color: map-get($hc-colors, "background") !global;
+	$link-color: map-get($hc-colors, "link") !global;
+	$link-color-hover: map-get($hc-colors, "focus") !global;
+	$success-color: map-get($hc-colors, "success") !global;
+	$error-color: map-get($hc-colors, "error") !global;
 
-// 	// Application des variables dérivées
-// 	@include apply-theme-variables;
+	// Application des variables dérivées
+	@include apply-theme-variables;
 
-// 	// // // // // // // // // // // // // // // // //
+	// Ajustements critiques pour l'accessibilité - appliquer directement
+	$color_header_text: map-get($hc-colors, "text") !global;
+	$color_header_bg: map-get($hc-colors, "background") !global;
+	$color_focus-outline: map-get($hc-colors, "focus") !global;
+	$color_collapse_border: map-get($hc-colors, "text") !global;
 
-// 	// // Parcourir toutes les variables définies dans la portée globale
-// 	// @each $name, $value in global-variable-exists() {
-// 	//   @if str-index($name, "color_") or str-index($name, "color-") {
-// 	// 	// Analyse du nom pour déterminer le rôle
-// 	// 	$element_type: str-replace($name, "color_", "");
-// 	// 	$element_type: str-replace($element_type, "color-", "");
+	// Ajustements spécifiques pour les éléments importants
+	$color_section_title: map-get($hc-colors, "heading") !global;
+	$color_section_bg-even: map-get($hc-colors, "background") !global;
+	$color_section_bg-odd: map-get($hc-colors, "background") !global;
 
-// 	// 	// Transformation automatique basée sur le nom de la variable
-// 	// 	global-variable-set($name, transform-for-high-contrast($value, $element_type));
-// 	//   }
-// 	// }
+	// Assurer la lisibilité des textes sur tous les fonds
+	$color-main-text: map-get($hc-colors, "text") !global;
+	$color_main-text: map-get($hc-colors, "text") !global;
 
-// 	// // Ajustements critiques pour l'accessibilité
-// 	// $color_header_text: map-get($hc-colors, "text") !global;
-// 	// $color_header_bg: map-get($hc-colors, "background") !global;
-// 	// $color_focus-outline: map-get($hc-colors, "focus") !global;
-// 	// $color_collapse_border: map-get($hc-colors, "text") !global;
+	// Liens toujours bien visibles
+	$color_link: map-get($hc-colors, "link") !global;
+	$color_link-hover: map-get($hc-colors, "focus") !global;
 
-// 	// // // // // // // // // // // //
+	// Éléments interactifs
+	$color_about_button-bg: map-get($hc-colors, "heading") !global;
+	$color_about_button-text: map-get($hc-colors, "background") !global;
+}
 
-// 	// Ajustements critiques pour l'accessibilité - appliquer directement
-// 	$color_header_text: map-get($hc-colors, "text") !global;
-// 	$color_header_bg: map-get($hc-colors, "background") !global;
-// 	$color_focus-outline: map-get($hc-colors, "focus") !global;
-// 	$color_collapse_border: map-get($hc-colors, "text") !global;
+// Mixin pour le thème deutéranopie
+@mixin generate-deuteranopia-theme() {
+	// Couleurs fondamentales avec transformation pour deutéranopie
+	$off-white: get-color("stone", 50) !global; // Garder blanc
+	$near-black: get-color("stone", 950) !global; // Garder noir
 
-// 	// Ajustements spécifiques pour les éléments importants
-// 	$color_section_title: map-get($hc-colors, "heading") !global;
-// 	$color_section_bg-even: map-get($hc-colors, "background") !global;
-// 	$color_section_bg-odd: map-get($hc-colors, "background") !global;
+	// Échelle de gris intacte
+	$gray-darkest: get-color("stone", 900) !global;
+	$gray-darker: get-color("stone", 800) !global;
+	$gray-dark: get-color("stone", 700) !global;
+	$gray-medium-dark: get-color("stone", 600) !global;
+	$gray-medium-light: get-color("stone", 500) !global;
+	$gray-light: get-color("stone", 400) !global;
+	$gray-lighter: get-color("stone", 300) !global;
+	$gray-lightest: get-color("stone", 200) !global;
 
-// 	// Assurer la lisibilité des textes sur tous les fonds
-// 	$color-main-text: map-get($hc-colors, "text") !global;
-// 	$color_main-text: map-get($hc-colors, "text") !global;
+	// Couleurs sémantiques adaptées pour deutéranopie
+	$primary-color: get-deuteranopia-color("amber", 300) !global;
+	$secondary-color: get-deuteranopia-color("amber", 950) !global;
+	$tertiary-color: get-deuteranopia-color("amber", 100) !global;
+	$link-color: get-deuteranopia-color("sky", 900) !global;
+	$link-color-hover: get-deuteranopia-color("sky", 800) !global;
+	$success-color: #0075ff !global; // Bleu spécifique pour remplacer le vert
+	$error-color: #ffcc00 !global; // Jaune-orange pour remplacer le rouge
 
-// 	// Liens toujours bien visibles
-// 	$color_link: map-get($hc-colors, "link") !global;
-// 	$color_link-hover: map-get($hc-colors, "focus") !global;
+	// Application des variables dérivées
+	@include apply-theme-variables;
 
-// 	// Éléments interactifs
-// 	$color_about_button-bg: map-get($hc-colors, "heading") !global;
-// 	$color_about_button-text: map-get($hc-colors, "background") !global;
-// }
+	// Surcharges spécifiques pour améliorer la lisibilité en deutéranopie
+	$color_header_bg: $primary-color !global;
+	$color_portfolio-tag_bg: get-deuteranopia-color("amber", 100) !global;
+	$color_about_button-bg: $link-color !global;
+}
+
+// Mixin pour le thème protanopie
+@mixin generate-protanopia-theme() {
+	// Couleurs fondamentales avec transformation pour protanopie
+	$off-white: get-color("stone", 50) !global;
+	$near-black: get-color("stone", 950) !global;
+
+	// Échelle de gris intacte
+	$gray-darkest: get-color("stone", 900) !global;
+	$gray-darker: get-color("stone", 800) !global;
+	$gray-dark: get-color("stone", 700) !global;
+	$gray-medium-dark: get-color("stone", 600) !global;
+	$gray-medium-light: get-color("stone", 500) !global;
+	$gray-light: get-color("stone", 400) !global;
+	$gray-lighter: get-color("stone", 300) !global;
+	$gray-lightest: get-color("stone", 200) !global;
+
+	// Couleurs sémantiques adaptées pour protanopie
+	$primary-color: get-protanopia-color("amber", 300) !global;
+	$secondary-color: get-protanopia-color("amber", 950) !global;
+	$tertiary-color: get-protanopia-color("amber", 100) !global;
+	$link-color: get-protanopia-color("sky", 900) !global;
+	$link-color-hover: get-protanopia-color("sky", 800) !global;
+	$success-color: #0090ff !global; // Bleu clair pour remplacer le vert
+	$error-color: #ffd700 !global; // Or pour remplacer le rouge
+
+	// Application des variables dérivées
+	@include apply-theme-variables;
+
+	// Surcharges spécifiques pour améliorer la lisibilité en protanopie
+	$color_header_bg: $primary-color !global;
+	$color_portfolio-tag_bg: get-protanopia-color("amber", 100) !global;
+
+	$color_about_button-bg: $link-color !global;
+}
+
+// Mixin pour le thème tritanopie
+@mixin generate-tritanopia-theme() {
+	// Couleurs fondamentales avec transformation pour tritanopie
+	$off-white: get-color("stone", 50) !global;
+	$near-black: get-color("stone", 950) !global;
+
+	// Échelle de gris intacte
+	$gray-darkest: get-color("stone", 900) !global;
+	$gray-darker: get-color("stone", 800) !global;
+	$gray-dark: get-color("stone", 700) !global;
+	$gray-medium-dark: get-color("stone", 600) !global;
+	$gray-medium-light: get-color("stone", 500) !global;
+	$gray-light: get-color("stone", 400) !global;
+	$gray-lighter: get-color("stone", 300) !global;
+	$gray-lightest: get-color("stone", 200) !global;
+
+	// Couleurs sémantiques adaptées pour tritanopie
+	$primary-color: get-tritanopia-color("amber", 300) !global;
+	$secondary-color: get-tritanopia-color("amber", 950) !global;
+	$tertiary-color: get-tritanopia-color("amber", 100) !global;
+	$link-color: get-tritanopia-color("sky", 900) !global;
+	$link-color-hover: get-tritanopia-color("sky", 800) !global;
+	$success-color: #ff6600 !global; // Orange pour remplacer le vert
+	$error-color: #ff3399 !global; // Rose pour remplacer le rouge
+
+	// Application des variables dérivées
+	@include apply-theme-variables;
+
+	// Surcharges spécifiques pour améliorer la lisibilité en tritanopie
+	$color_header_bg: $primary-color !global;
+	$color_portfolio-tag_bg: get-tritanopia-color("amber", 100) !global;
+	$color_about_button-bg: $link-color !global;
+}
 
 // Fonction utilitaire pour remplacer une chaîne
 @function str-replace($string, $search, $replace: "") {

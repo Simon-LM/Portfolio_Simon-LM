@@ -5,28 +5,7 @@
 @import "../themes/high-contrast";
 @import "../themes/deuteranopia";
 @import "../themes/protanopia";
-
-// Mixin pour générer les variables CSS à partir des variables SCSS
-// @mixin generate-theme-css-vars() {
-// 	--off-white: #{$off-white};
-// 	--near-black: #{$near-black};
-
-// 	--gray-darkest: #{$gray-darkest};
-// 	--gray-darker: #{$gray-darker};
-// 	--gray-dark: #{$gray-dark};
-// 	--gray-medium-dark: #{$gray-medium-dark};
-// 	--gray-medium-light: #{$gray-medium-light};
-// 	--gray-light: #{$gray-light};
-// 	--gray-lighter: #{$gray-lighter};
-// 	--gray-lightest: #{$gray-lightest};
-
-// 	--primary-color: #{$primary-color};
-// 	--secondary-color: #{$secondary-color};
-// 	--tertiary-color: #{$tertiary-color};
-// 	--link-color: #{$link-color};
-// 	--link-hover-color: #{$link-color-hover};
-// 	--success-color: #{$success-color};
-// }
+@import "../themes/tritanopia";
 
 @mixin generate-theme-css-vars() {
 	// Variables fondamentales
@@ -50,6 +29,7 @@
 	--link-color: #{$link-color};
 	--link-hover-color: #{$link-color-hover};
 	--success-color: #{$success-color};
+	--error-color: #{$error-color};
 
 	// Variables dérivées - déclarées explicitement
 	--color-main-bg: #{$color-main-bg};
@@ -128,7 +108,6 @@
 
 // Thème par défaut (light)
 :root {
-	// @import "../themes/light";
 	@include light-theme-variables();
 	@include generate-theme-css-vars();
 }
@@ -136,7 +115,6 @@
 // Application du thème sombre si l'utilisateur le préfère
 @media (prefers-color-scheme: dark) {
 	:root:not([data-theme]) {
-		// @import "../themes/dark";
 		@include dark-theme-variables();
 		@include generate-theme-css-vars();
 	}
@@ -144,31 +122,31 @@
 
 // Thèmes explicites via data-theme
 [data-theme="light"] {
-	// @import "../themes/light";
 	@include light-theme-variables();
 	@include generate-theme-css-vars();
 }
 
 [data-theme="dark"] {
-	// @import "../themes/dark";
 	@include dark-theme-variables();
 	@include generate-theme-css-vars();
 }
 
 [data-theme="high-contrast"] {
-	// @import "../themes/high-contrast";
 	@include high-contrast-theme-variables();
 	@include generate-theme-css-vars();
 }
 
 [data-theme="deuteranopia"] {
-	// @import "../themes/deuteranopia";
 	@include deuteranopia-theme-variables();
 	@include generate-theme-css-vars();
 }
 
 [data-theme="protanopia"] {
-	// @import "../themes/protanopia";
 	@include protanopia-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+[data-theme="tritanopia"] {
+	@include tritanopia-theme-variables();
 	@include generate-theme-css-vars();
 }

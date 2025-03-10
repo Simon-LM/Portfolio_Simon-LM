@@ -7,7 +7,8 @@ type ThemeOption =
 	| "dark"
 	| "high-contrast"
 	| "deuteranopia"
-	| "protanopia";
+	| "protanopia"
+	| "tritanopia";
 
 export function useTheme() {
 	// État local pour le thème actuel
@@ -63,9 +64,14 @@ export function useTheme() {
 
 		if (
 			savedTheme &&
-			["light", "dark", "high-contrast", "deuteranopia", "protanopia"].includes(
-				savedTheme
-			)
+			[
+				"light",
+				"dark",
+				"high-contrast",
+				"deuteranopia",
+				"protanopia",
+				"tritanopia",
+			].includes(savedTheme)
 		) {
 			setTheme(savedTheme);
 		} else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
@@ -99,5 +105,6 @@ export function useTheme() {
 		isHighContrast: theme === "high-contrast",
 		isDeuteranopia: theme === "deuteranopia",
 		isProtanopia: theme === "protanopia",
+		isTritanopia: theme === "tritanopia",
 	};
 }

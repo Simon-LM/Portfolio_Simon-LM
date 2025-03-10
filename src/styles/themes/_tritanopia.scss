@@ -1,0 +1,8 @@
+/** @format */
+@import "../abstracts/base-palette";
+@import "../abstracts/theme-utils";
+
+@mixin tritanopia-theme-variables() {
+	// Génération automatique du thème daltonien
+	@include generate-tritanopia-theme();
+}

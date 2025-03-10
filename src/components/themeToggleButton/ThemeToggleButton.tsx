@@ -10,7 +10,8 @@ type ThemeKey =
 	| "dark"
 	| "high-contrast"
 	| "deuteranopia"
-	| "protanopia";
+	| "protanopia"
+	| "tritanopia";
 
 const themes = {
 	light: "light" as ThemeKey,
@@ -18,6 +19,7 @@ const themes = {
 	highContrast: "high-contrast" as ThemeKey,
 	deuteranopia: "deuteranopia" as ThemeKey,
 	protanopia: "protanopia" as ThemeKey,
+	tritanopia: "tritanopia" as ThemeKey,
 };
 
 export default function ThemeToggleButton({
@@ -56,6 +58,7 @@ export default function ThemeToggleButton({
 			"high-contrast": { fr: "Contraste", en: "Contrast" },
 			deuteranopia: { fr: "Deutéranopie", en: "Deuteranopia" },
 			protanopia: { fr: "Protanopie", en: "Protanopia" },
+			tritanopia: { fr: "Tritanopie", en: "Tritanopia" },
 		};
 
 		return labels[themeKey]?.[language] || themeKey;

@@ -47,6 +47,7 @@
 	$link-color: get-color("sky", 900) !global;
 	$link-color-hover: get-color("sky", 800) !global;
 	$success-color: get-color("emerald", 600) !global;
+	$error-color: #dc2626 !global; // Rouge vif équivalent à red-600
 
 	@include apply-theme-variables;
 }

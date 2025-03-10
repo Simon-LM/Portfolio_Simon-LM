@@ -27,6 +27,7 @@
 			left: 0.625rem;
 			width: 1.25rem;
 			height: 1.25rem;
+			color: var(--near-black);
 		}
 
 		.menu-text {
@@ -44,6 +45,9 @@
 			transform: scale(1.05);
 			background: var(--color-link-hover) !important;
 			.menu-text {
+				color: var(--off-white) !important;
+			}
+			svg {
 				color: var(--off-white) !important;
 			}
 		}
