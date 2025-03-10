@@ -1,100 +1,23 @@
 /** @format */
 @import "../abstracts/base-palette";
+@import "../abstracts/theme-utils";
 
 @mixin high-contrast-theme-variables() {
-	$off-white: #000000 !global;
-	$near-black: #ffff00 !global;
+	// Utiliser les couleurs du thème light comme base
+	// @include light-theme-variables();
 
-	$gray-darkest: #ffff00 !global;
-	$gray-darker: #ffff00 !global;
-	$gray-dark: #ffff00 !global;
-	$gray-medium-dark: #ffff00 !global;
-	$gray-medium-light: #ffff00 !global;
-	$gray-light: #000000 !global;
-	$gray-lighter: #000000 !global;
-	$gray-lightest: #000000 !global;
+	// Transformation automatique vers le thème à fort contraste
+	// @include generate-high-contrast-theme();
 
-	$primary-color: #ffff00 !global;
-	$secondary-color: #ff00ff !global;
-	$tertiary-color: #00ffff !global;
-	$link-color: #ffff00 !global;
-	$link-color-hover: #ffffff !global;
-	$success-color: #00ff00 !global;
+	// Ajustements spécifiques si nécessaire
+	// Les sections doivent être clairement délimitées
+	// $color_section_bg-odd: #000000 !global;
+	// $color_section_bg-even: #000000 !global;
 
-	// Usage variables in the code
-	$color-main-bg: $off-white !global;
-	$color_main-bg: $off-white !global;
-	$color-main-text: $near-black !global;
-	$color_main-text: $near-black !global;
+	// Assurez-vous que les liens sont toujours visibles
+	// $color_link: get-high-contrast("link") !global;
+	// $color_link-hover: get-high-contrast("hover") !global;
 
-	$color-pages-title: $near-black !global;
-
-	$color_header_bg: $primary-color !global;
-	$color_header_text: $near-black !global;
-	$color_header_text-role: $gray-dark !global;
-	$color_header_blog-link_bg: $gray-dark !global;
-	$color_header_blog-link_text: $primary-color !global;
-
-	$color_lang-toggle_bg: $off-white !global;
-	$color_lang-toggle_border: $gray-dark !global;
-	$color_lang-toggle_bg-activated: $gray-dark !global;
-	$color_lang-toggle_text-activated: $off-white !global;
-	$color_lang-toggle_text-disabled: $gray-dark !global;
-	$color_lang-toggle_disabled-hover_bg: $link-color !global;
-	$color_lang-toggle_disabled-hover_text: $off-white !global;
-
-	$color_scroll-progress_line: $link-color !global;
-	$color_scroll-progress_indicator: $gray-medium-dark !global;
-	$color_scroll-progress_indicator-active: $link-color !global;
-
-	$color_collapse_title: $off-white !global;
-	$color_collapse_bg: $gray-lighter !global;
-	$color_collapse_bg-title: $gray-dark !global;
-	$color_collapse_border: $gray-dark !global;
-
-	$color_section_bg-even: $off-white !global;
-	$color_section_bg-odd: $gray-lightest !global;
-	$color_section_title: $secondary-color !global;
-	$color-hero-bg: $off-white !global;
-	$color-hero-title: $near-black !global;
-	$color-hero-text: $near-black !global;
-
-	$color_about_overlay-bg: $near-black !global;
-	$color_about_overlay-text: $off-white !global;
-	$color_about_button-bg: $link-color !global;
-	$color_about_button-border: $off-white !global;
-	$color_about_button-text: $off-white !global;
-
-	$color_skills-icon_bg: $tertiary-color !global;
-	$color_skills-icon_text: $secondary-color !global;
-
-	$color_section_card-bg: $gray-lighter !global;
-	$color_section-even_card-bg: $gray-lighter !global;
-	$color_section-odd_card-bg: $gray-light !global;
-
-	$color_portfolio-tag_bg: $tertiary-color !global;
-	$color_portfolio-tag_bg-texte: $secondary-color !global;
-
-	$color_contact_form-bg: $gray-lighter !global;
-	$color_contact_modal_bg: $gray-lightest !global;
-
-	$color_bottom-footer_bg: $gray-dark !global;
-	$color_bottom-footer_title: $tertiary-color !global;
-	$color_bottom-footer_text: $off-white !global;
-	$color_bottom-footer_link-bg: $off-white !global;
-	$color_bottom-footer_link-text: $link-color !global;
-
-	$color_sticky-footer_bg: $gray-darker !global;
-	$color_sticky-footer_text: $off-white !global;
-
-	$color_link: $link-color !global;
-	$color_link-hover: $link-color-hover !global;
-	$color_link-bg: $off-white !global;
-
-	$color_focus-outline: $link-color !global;
-	$color_focus-bg: $link-color !global;
-	$color_focus-text: $off-white !global;
-
-	$color_tooltip_text: $off-white !global;
-	$color_tooltip_bg: rgba($near-black, 0.8) !global;
+	// Élements interactifs avec bordure visible
+	// $color_collapse_border: get-high-contrast("text") !global;
 }

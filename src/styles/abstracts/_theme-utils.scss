@@ -6,67 +6,172 @@
  * - Génération automatique du thème sombre
  */
 
-// Fonction pour accéder aux couleurs Tailwind
+// Définition des variables CSS root pour tous les thèmes
+:root {
+	// Thème par défaut (light)
+	--color-off-white: #{get-color("stone", 50)};
+	--color-near-black: #{get-color("stone", 950)};
+
+	// Variables grises
+	--color-gray-darkest: #{get-color("stone", 900)};
+	--color-gray-darker: #{get-color("stone", 800)};
+	// etc.
+
+	// Couleurs sémantiques
+	--color-primary: #{get-color("amber", 300)};
+	--color-secondary: #{get-color("amber", 950)};
+	--color-tertiary: #{get-color("amber", 100)};
+	--color-link: #{get-color("sky", 900)};
+	--color-link-hover: #{get-color("sky", 800)};
+
+	// Variables d'interface utilisateur
+	--color-main-bg: var(--color-off-white);
+	--color-main-text: var(--color-near-black);
+	--color-header-bg: var(--color-primary);
+	// etc.
+}
+
+// -----------------------------------------------
+// FONCTIONS D'ACCÈS AUX COULEURS
+// -----------------------------------------------
 @function get-color($family, $weight) {
 	@return map-get(map-get($colors, $family), $weight);
 }
 
-// Fonction pour obtenir le poids inversé (pour dark mode)
-@function invert-weight($weight) {
-	@return 1000 - $weight;
+// -----------------------------------------------
+// UTILITAIRES POUR THÈME SOMBRE
+// -----------------------------------------------
+// Liste des poids disponibles dans Tailwind
+$tailwind-weights: (50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950);
+// Point médian pour déterminer si on fonce ou éclaircit
+$midpoint: 500;
+
+// Fonction pour obtenir la couleur décalée pour le thème sombre
+@function get-dark-color($family, $weight, $steps: 6) {
+	// Trouver l'index du poids actuel dans la liste des poids Tailwind
+	$current-index: index($tailwind-weights, $weight);
+
+	@if not $current-index {
+		@error "Le poids #{$weight} n'existe pas dans la palette Tailwind";
+	}
+
+	// Déterminer si la couleur doit être foncée ou éclaircie
+	// en fonction du point médian de la palette
+	$new-index: $current-index;
+
+	@if $weight < $midpoint {
+		// Couleurs claires: on augmente l'index pour foncer
+		$new-index: $current-index + $steps;
+	} @else {
+		// Couleurs foncées: on diminue l'index pour éclaircir
+		// On ne diminue pas pour 500 qui est le pivot neutre
+		@if $weight > $midpoint {
+			$new-index: $current-index - $steps;
+		}
+	}
+
+	// Limiter l'index dans les bornes de la liste
+	@if $new-index > length($tailwind-weights) {
+		$new-index: length($tailwind-weights);
+	} @else if $new-index < 1 {
+		$new-index: 1;
+	}
+
+	// Obtenir le nouveau poids
+	$new-weight: nth($tailwind-weights, $new-index);
+
+	// Retourner la couleur correspondante
+	@return get-color($family, $new-weight);
 }
 
-// Fonction pour obtenir la couleur inversée pour le thème sombre
-@function get-dark-color($family, $weight) {
-	$inverted-weight: invert-weight($weight);
-	@return get-color($family, $inverted-weight);
+// -----------------------------------------------
+// UTILITAIRES POUR THÈME À FORT CONTRASTE
+// -----------------------------------------------
+// Couleurs fixes pour le thème à fort contraste
+$hc-colors: (
+	"background": #000000,
+	// Fond noir
+	"text": #ffff00,
+	// Texte jaune vif
+	"link": #00ffff,
+	// Liens cyan
+	"focus": #ffffff,
+	// État focus en blanc
+	"heading": #bfff00,
+	// Titres vert-jaune
+	"success": #00ff00 // Validation en vert,,,
+);
+
+// Fonction pour déterminer si une couleur est sombre ou claire
+@function is-dark($color) {
+	$luminance: (
+			red($color) * 0.299 + green($color) * 0.587 + blue($color) * 0.114
+		) / 255;
+	@return $luminance < 0.5;
 }
 
-// Mixin qui génère le thème sombre à partir des conventions Tailwind
-@mixin generate-dark-theme() {
-	// Couleurs fondamentales inversées
-	$off-white: get-dark-color("stone", 50) !global;
-	$near-black: get-dark-color("stone", 950) !global;
+// Fonction intelligente qui transforme automatiquement une couleur selon son rôle
+@function transform-for-high-contrast($color, $element-type) {
+	// Détermine automatiquement le rôle de la couleur en fonction de son type d'élément
+	@if $element-type == "background" or str-index($element-type, "_bg") {
+		// Les fonds deviennent toujours noirs
+		@return map-get($hc-colors, "background");
+	} @else if $element-type == "text" or str-index($element-type, "_text") {
+		// Le texte devient toujours jaune
+		@return map-get($hc-colors, "text");
+	} @else if
+		str-index($element-type, "link") or
+		str-index($element-type, "_link")
+	{
+		// Les liens deviennent cyan
+		@return map-get($hc-colors, "link");
+	} @else if
+		str-index($element-type, "heading") or
+		str-index($element-type, "title")
+	{
+		// Les titres deviennent vert-jaune
+		@return map-get($hc-colors, "heading");
+	} @else if
+		str-index($element-type, "hover") or
+		str-index($element-type, "focus")
+	{
+		// États de focus et survol en blanc
+		@return map-get($hc-colors, "focus");
+	} @else if str-index($element-type, "success") {
+		// Éléments de succès/validation en vert
+		@return map-get($hc-colors, "success");
+	} @else {
+		// Pour les autres éléments, décision basée sur la luminance
+		@if is-dark($color) {
+			// Si la couleur est foncée, elle devient jaune
+			@return map-get($hc-colors, "text");
+		} @else {
+			// Si la couleur est claire, elle devient noire
+			@return map-get($hc-colors, "background");
+		}
+	}
+}
 
-	// Échelle de gris inversée
-	$gray-darkest: get-dark-color("stone", 900) !global;
-	$gray-darker: get-dark-color("stone", 800) !global;
-	$gray-dark: get-dark-color("stone", 700) !global;
-	$gray-medium-dark: get-dark-color("stone", 600) !global;
-	$gray-medium-light: get-dark-color("stone", 500) !global;
-	$gray-light: get-dark-color("stone", 400) !global;
-	$gray-lighter: get-dark-color("stone", 300) !global;
-	$gray-lightest: get-dark-color("stone", 200) !global;
-
-	// Couleurs sémantiques adaptées pour le thème sombre
-	// Certaines couleurs peuvent rester les mêmes pour la cohérence visuelle
-	$primary-color: get-color(
-		"amber",
-		300
-	) !global; // On garde la même couleur d'accent
-	// $secondary-color: get-color("amber", 800) !global; // Ajusté manuellement
-	$secondary-color: get-color("amber", 100) !global; // Ajusté manuellement
-	$tertiary-color: get-color("amber", 950) !global; // Ajusté manuellement
-
-	// Liens plus clairs pour contraster sur fond sombre
-	$link-color: get-color("sky", 700) !global;
-	$link-color-hover: get-color("sky", 600) !global;
-	$success-color: get-color("emerald", 600) !global;
-
-	// Génération des variables d'interface utilisateur dérivées
+// -----------------------------------------------
+// VARIABLES PARTAGÉES ENTRE THÈMES
+// -----------------------------------------------
+// Mixin qui applique toutes les variables dérivées à partir des couleurs de base
+@mixin apply-theme-variables {
+	// Couleurs d'arrière-plan et de texte principales
 	$color-main-bg: $off-white !global;
 	$color_main-bg: $off-white !global;
 	$color-main-text: $near-black !global;
 	$color_main-text: $near-black !global;
-
 	$color-pages-title: $near-black !global;
 
+	// Variables d'entête
 	$color_header_bg: $primary-color !global;
 	$color_header_text: $near-black !global;
 	$color_header_text-role: $gray-dark !global;
 	$color_header_blog-link_bg: $gray-dark !global;
 	$color_header_blog-link_text: $primary-color !global;
 
+	// Sélecteur de langue
 	$color_lang-toggle_bg: $off-white !global;
 	$color_lang-toggle_border: $gray-dark !global;
 	$color_lang-toggle_bg-activated: $gray-dark !global;
@@ -75,15 +180,18 @@
 	$color_lang-toggle_disabled-hover_bg: $link-color !global;
 	$color_lang-toggle_disabled-hover_text: $off-white !global;
 
+	// Indicateurs de défilement
 	$color_scroll-progress_line: $link-color !global;
 	$color_scroll-progress_indicator: $gray-medium-dark !global;
 	$color_scroll-progress_indicator-active: $link-color !global;
 
+	// Éléments collapse
 	$color_collapse_title: $off-white !global;
 	$color_collapse_bg: $gray-lighter !global;
 	$color_collapse_bg-title: $gray-dark !global;
 	$color_collapse_border: $gray-dark !global;
 
+	// Sections et héros
 	$color_section_bg-even: $off-white !global;
 	$color_section_bg-odd: $gray-lightest !global;
 	$color_section_title: $secondary-color !global;
@@ -91,42 +199,182 @@
 	$color-hero-title: $near-black !global;
 	$color-hero-text: $near-black !global;
 
+	// Section À propos
 	$color_about_overlay-bg: $near-black !global;
 	$color_about_overlay-text: $off-white !global;
 	$color_about_button-bg: $link-color !global;
 	$color_about_button-border: $off-white !global;
 	$color_about_button-text: $off-white !global;
 
+	// Section compétences
 	$color_skills-icon_bg: $tertiary-color !global;
 	$color_skills-icon_text: $secondary-color !global;
 
+	// Cartes et sections
 	$color_section_card-bg: $gray-lighter !global;
 	$color_section-even_card-bg: $gray-lighter !global;
 	$color_section-odd_card-bg: $gray-light !global;
 
+	// Étiquettes de portfolio
 	$color_portfolio-tag_bg: $tertiary-color !global;
 	$color_portfolio-tag_bg-texte: $secondary-color !global;
 
+	// Formulaires de contact
 	$color_contact_form-bg: $gray-lighter !global;
 	$color_contact_modal_bg: $gray-lightest !global;
 
+	// Pieds de page
 	$color_bottom-footer_bg: $gray-dark !global;
 	$color_bottom-footer_title: $tertiary-color !global;
 	$color_bottom-footer_text: $off-white !global;
 	$color_bottom-footer_link-bg: $off-white !global;
 	$color_bottom-footer_link-text: $link-color !global;
-
 	$color_sticky-footer_bg: $gray-darker !global;
 	$color_sticky-footer_text: $off-white !global;
 
+	// Liens et focus
 	$color_link: $link-color !global;
 	$color_link-hover: $link-color-hover !global;
 	$color_link-bg: $off-white !global;
-
 	$color_focus-outline: $link-color !global;
 	$color_focus-bg: $link-color !global;
 	$color_focus-text: $off-white !global;
 
+	// Infobulles
 	$color_tooltip_text: $off-white !global;
 	$color_tooltip_bg: rgba($near-black, 0.8) !global;
+}
+
+// -----------------------------------------------
+// GÉNÉRATION DES THÈMES
+// -----------------------------------------------
+// Mixin qui génère le thème sombre à partir des conventions Tailwind
+@mixin generate-dark-theme($steps: 7) {
+	// Couleurs fondamentales décalées
+	$off-white: get-dark-color("stone", 50, $steps) !global;
+	// $off-white: get-color("stone", 950) !global;
+	$near-black: get-dark-color("stone", 950, $steps) !global;
+	$near-black: get-dark-color("stone", 950, $steps + 1) !global;
+	// $near-black: get-color("stone", 50) !global;
+
+	// Échelle de gris décalée
+	$gray-darkest: get-dark-color("stone", 900, $steps) !global;
+	$gray-darker: get-dark-color("stone", 800, $steps) !global;
+	$gray-dark: get-dark-color("stone", 700, $steps) !global;
+	$gray-medium-dark: get-dark-color("stone", 600, $steps) !global;
+	$gray-medium-light: get-dark-color("stone", 500, $steps) !global;
+	$gray-light: get-dark-color("stone", 400, $steps - 2) !global;
+	$gray-lighter: get-dark-color("stone", 300, $steps - 2) !global;
+	$gray-lightest: get-dark-color("stone", 200, $steps - 1) !global;
+
+	// Couleurs sémantiques adaptées pour le thème sombre
+	$primary-color: get-color(
+		"amber",
+		300
+	) !global; // Légèrement ajusté pour meilleur contraste
+	$secondary-color: get-color(
+		"amber",
+		100
+	) !global; // Plus clair pour le thème sombre
+	$tertiary-color: get-color(
+		"amber",
+		950
+	) !global; // Plus foncé pour le thème sombre
+
+	$link-color: get-dark-color("sky", 900, $steps) !global;
+	$link-color-hover: get-dark-color("sky", 800, $steps) !global;
+	$success-color: get-color("emerald", 500) !global;
+
+	// Application des variables dérivées
+	@include apply-theme-variables;
+}
+
+// // Mixin qui génère le thème à fort contraste de manière simplifiée
+// @mixin generate-high-contrast-theme() {
+// 	// Couleurs fondamentales basées sur les rôles
+// 	$off-white: get-high-contrast("background") !global;
+// 	$near-black: get-high-contrast("text") !global;
+
+// 	// Simplification des niveaux de gris en utilisant uniquement 2 couleurs
+// 	// Les éléments de premier plan utilisent la couleur de texte
+// 	$gray-darkest: get-high-contrast("text") !global;
+// 	$gray-darker: get-high-contrast("text") !global;
+// 	$gray-dark: get-high-contrast("text") !global;
+// 	$gray-medium-dark: get-high-contrast("text") !global;
+// 	$gray-medium-light: get-high-contrast("text") !global;
+
+// 	// Les éléments de fond utilisent la couleur de fond
+// 	$gray-light: get-high-contrast("background") !global;
+// 	$gray-lighter: get-high-contrast("background") !global;
+// 	$gray-lightest: get-high-contrast("background") !global;
+
+// 	// Couleurs sémantiques simplifiées par rôle
+// 	$primary-color: get-high-contrast("accent") !global;
+// 	$secondary-color: get-high-contrast("heading") !global;
+// 	$tertiary-color: get-high-contrast("text") !global;
+// 	$link-color: get-high-contrast("link") !global;
+// 	$link-color-hover: get-high-contrast("hover") !global;
+// 	$success-color: get-high-contrast("success") !global;
+
+// 	// Application des variables dérivées
+// 	@include apply-theme-variables;
+
+// 	// // // // // // // // // // // // // // // // //
+
+// 	// // Parcourir toutes les variables définies dans la portée globale
+// 	// @each $name, $value in global-variable-exists() {
+// 	//   @if str-index($name, "color_") or str-index($name, "color-") {
+// 	// 	// Analyse du nom pour déterminer le rôle
+// 	// 	$element_type: str-replace($name, "color_", "");
+// 	// 	$element_type: str-replace($element_type, "color-", "");
+
+// 	// 	// Transformation automatique basée sur le nom de la variable
+// 	// 	global-variable-set($name, transform-for-high-contrast($value, $element_type));
+// 	//   }
+// 	// }
+
+// 	// // Ajustements critiques pour l'accessibilité
+// 	// $color_header_text: map-get($hc-colors, "text") !global;
+// 	// $color_header_bg: map-get($hc-colors, "background") !global;
+// 	// $color_focus-outline: map-get($hc-colors, "focus") !global;
+// 	// $color_collapse_border: map-get($hc-colors, "text") !global;
+
+// 	// // // // // // // // // // // //
+
+// 	// Ajustements critiques pour l'accessibilité - appliquer directement
+// 	$color_header_text: map-get($hc-colors, "text") !global;
+// 	$color_header_bg: map-get($hc-colors, "background") !global;
+// 	$color_focus-outline: map-get($hc-colors, "focus") !global;
+// 	$color_collapse_border: map-get($hc-colors, "text") !global;
+
+// 	// Ajustements spécifiques pour les éléments importants
+// 	$color_section_title: map-get($hc-colors, "heading") !global;
+// 	$color_section_bg-even: map-get($hc-colors, "background") !global;
+// 	$color_section_bg-odd: map-get($hc-colors, "background") !global;
+
+// 	// Assurer la lisibilité des textes sur tous les fonds
+// 	$color-main-text: map-get($hc-colors, "text") !global;
+// 	$color_main-text: map-get($hc-colors, "text") !global;
+
+// 	// Liens toujours bien visibles
+// 	$color_link: map-get($hc-colors, "link") !global;
+// 	$color_link-hover: map-get($hc-colors, "focus") !global;
+
+// 	// Éléments interactifs
+// 	$color_about_button-bg: map-get($hc-colors, "heading") !global;
+// 	$color_about_button-text: map-get($hc-colors, "background") !global;
+// }
+
+// Fonction utilitaire pour remplacer une chaîne
+@function str-replace($string, $search, $replace: "") {
+	$index: str-index($string, $search);
+	@if $index {
+		@return str-slice($string, 1, $index - 1) + $replace +
+			str-replace(
+				str-slice($string, $index + str-length($search)),
+				$search,
+				$replace
+			);
+	}
+	@return $string;
 }

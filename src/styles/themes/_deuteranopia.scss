@@ -1,5 +1,6 @@
 /** @format */
 @import "../abstracts/base-palette";
+@import "../abstracts/theme-utils";
 
 @mixin deuteranopia-theme-variables() {
 	$off-white: #fafaf9 !global;
