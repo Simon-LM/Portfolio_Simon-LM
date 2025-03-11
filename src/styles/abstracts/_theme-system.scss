@@ -6,6 +6,9 @@
 @import "../themes/deuteranopia";
 @import "../themes/protanopia";
 @import "../themes/tritanopia";
+@import "../themes/deuteranomaly";
+@import "../themes/protanomaly";
+@import "../themes/tritanomaly";
 
 @mixin generate-theme-css-vars() {
 	// Variables fondamentales
@@ -136,13 +139,28 @@
 	@include generate-theme-css-vars();
 }
 
+[data-theme="deuteranomaly"] {
+	@include deuteranomaly-theme-variables();
+	@include generate-theme-css-vars();
+}
+
 [data-theme="deuteranopia"] {
 	@include deuteranopia-theme-variables();
 	@include generate-theme-css-vars();
 }
 
+[data-theme="protanomaly"] {
+	@include protanomaly-theme-variables();
+	@include generate-theme-css-vars();
+}
+
 [data-theme="protanopia"] {
 	@include protanopia-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+[data-theme="tritanomaly"] {
+	@include tritanomaly-theme-variables();
 	@include generate-theme-css-vars();
 }
 

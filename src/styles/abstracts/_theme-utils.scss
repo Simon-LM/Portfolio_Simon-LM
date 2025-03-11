@@ -261,6 +261,11 @@ $tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
 			// Jaune-vert -> Vert
 			$h: 120;
 			$s: min(100%, $s * $enhance-factor);
+		} @else if $h >= 40 and $h < 60 {
+			// Jaunes purs : accentuer vers l'orange pour meilleure perception
+			$h: $h + 20;
+			$s: min(100%, $s * ($enhance-factor + 0.2));
+			$l: max(35%, min(65%, $l));
 		}
 	}
 
@@ -305,6 +310,62 @@ $tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
 @function get-tritanopia-color($family, $weight) {
 	$original-color: get-color($family, $weight);
 	@return adapt-color-for-colorblindness($original-color, "tritanopia");
+}
+
+// Fonction qui transforme une couleur pour l'adapter à un type léger de daltonisme (anomalie)
+@function adapt-color-for-color-anomaly($color, $type, $enhance-factor: 1.2) {
+	// Pour les anomalies, on amplifie les différences sans transformer complètement
+	$h: hue($color);
+	$s: saturation($color);
+	$l: lightness($color);
+
+	// Paramètres d'adaptation moins intenses que pour les -opies
+	@if $type == "deuteranomaly" or $type == "protanomaly" {
+		// Pour la confusion rouge-vert légère
+		@if $h >= 60 and $h <= 150 {
+			// Verts : augmenter légèrement le bleu pour plus de distinction
+			$h: $h + 15;
+			$s: min(100%, $s * $enhance-factor);
+		} @else if $h >= 330 or $h <= 30 {
+			// Rouges : augmenter légèrement l'orange pour plus de distinction
+			$h: $h + 10;
+			$s: min(100%, $s * $enhance-factor);
+		} @else if $h > 30 and $h < 60 {
+			// Jaunes : décaler légèrement vers l'orange ET accentuer la saturation
+			$h: $h + 7; // Léger décalage vers l'orange
+			$s: min(100%, $s * ($enhance-factor + 0.1));
+			$l: max(40%, min(60%, $l)); // Optimiser la luminosité
+		}
+	} @else if $type == "tritanomaly" {
+		// Pour la confusion bleu-jaune légère
+		@if $h >= 180 and $h <= 270 {
+			// Bleus : décaler légèrement vers le violet
+			$h: $h + 15;
+			$s: min(100%, $s * $enhance-factor);
+		} @else if $h >= 40 and $h <= 80 {
+			// Jaunes : décaler légèrement vers l'orange
+			$h: $h + 10;
+			$s: min(100%, $s * $enhance-factor);
+		}
+	}
+
+	@return hsl($h, $s, $l);
+}
+
+// Fonctions spécifiques pour chaque type d'anomalie
+@function get-deuteranomaly-color($family, $weight) {
+	$original-color: get-color($family, $weight);
+	@return adapt-color-for-color-anomaly($original-color, "deuteranomaly");
+}
+
+@function get-protanomaly-color($family, $weight) {
+	$original-color: get-color($family, $weight);
+	@return adapt-color-for-color-anomaly($original-color, "protanomaly");
+}
+
+@function get-tritanomaly-color($family, $weight) {
+	$original-color: get-color($family, $weight);
+	@return adapt-color-for-color-anomaly($original-color, "tritanomaly");
 }
 
 // -----------------------------------------------
@@ -505,6 +566,35 @@ $tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
 	$color_about_button-text: map-get($hc-colors, "background") !global;
 }
 
+// Mixin pour le thème deutéranomalie (forme légère)
+@mixin generate-deuteranomaly-theme() {
+	// Couleurs fondamentales inchangées
+	$off-white: get-color("stone", 50) !global;
+	$near-black: get-color("stone", 950) !global;
+
+	// Échelle de gris intacte
+	$gray-darkest: get-color("stone", 900) !global;
+	$gray-darker: get-color("stone", 800) !global;
+	$gray-dark: get-color("stone", 700) !global;
+	$gray-medium-dark: get-color("stone", 600) !global;
+	$gray-medium-light: get-color("stone", 500) !global;
+	$gray-light: get-color("stone", 400) !global;
+	$gray-lighter: get-color("stone", 300) !global;
+	$gray-lightest: get-color("stone", 200) !global;
+
+	// Couleurs sémantiques adaptées subtilement
+	$primary-color: get-deuteranomaly-color("amber", 300) !global;
+	$secondary-color: get-deuteranomaly-color("amber", 950) !global;
+	$tertiary-color: get-deuteranomaly-color("amber", 100) !global;
+	$link-color: get-deuteranomaly-color("sky", 900) !global;
+	$link-color-hover: get-deuteranomaly-color("sky", 800) !global;
+	$success-color: get-color("emerald", 600) !global;
+	$error-color: get-deuteranomaly-color("redd", 600) !global;
+
+	// Application des variables dérivées
+	@include apply-theme-variables;
+}
+
 // Mixin pour le thème deutéranopie
 @mixin generate-deuteranopia-theme() {
 	// Couleurs fondamentales avec transformation pour deutéranopie
@@ -537,6 +627,35 @@ $tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
 	$color_header_bg: $primary-color !global;
 	$color_portfolio-tag_bg: get-deuteranopia-color("amber", 100) !global;
 	$color_about_button-bg: $link-color !global;
+}
+
+// Mixin pour le thème protanomalie (forme légère)
+@mixin generate-protanomaly-theme() {
+	// Couleurs fondamentales inchangées
+	$off-white: get-color("stone", 50) !global;
+	$near-black: get-color("stone", 950) !global;
+
+	// Échelle de gris intacte
+	$gray-darkest: get-color("stone", 900) !global;
+	$gray-darker: get-color("stone", 800) !global;
+	$gray-dark: get-color("stone", 700) !global;
+	$gray-medium-dark: get-color("stone", 600) !global;
+	$gray-medium-light: get-color("stone", 500) !global;
+	$gray-light: get-color("stone", 400) !global;
+	$gray-lighter: get-color("stone", 300) !global;
+	$gray-lightest: get-color("stone", 200) !global;
+
+	// Couleurs sémantiques adaptées subtilement
+	$primary-color: get-protanomaly-color("amber", 300) !global;
+	$secondary-color: get-protanomaly-color("amber", 950) !global;
+	$tertiary-color: get-protanomaly-color("amber", 100) !global;
+	$link-color: get-protanomaly-color("sky", 900) !global;
+	$link-color-hover: get-protanomaly-color("sky", 800) !global;
+	$success-color: get-color("emerald", 600) !global;
+	$error-color: get-protanomaly-color("redd", 600) !global;
+
+	// Application des variables dérivées
+	@include apply-theme-variables;
 }
 
 // Mixin pour le thème protanopie
@@ -572,6 +691,35 @@ $tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
 	$color_portfolio-tag_bg: get-protanopia-color("amber", 100) !global;
 
 	$color_about_button-bg: $link-color !global;
+}
+
+// Mixin pour le thème tritanomalie (forme légère)
+@mixin generate-tritanomaly-theme() {
+	// Couleurs fondamentales inchangées
+	$off-white: get-color("stone", 50) !global;
+	$near-black: get-color("stone", 950) !global;
+
+	// Échelle de gris intacte
+	$gray-darkest: get-color("stone", 900) !global;
+	$gray-darker: get-color("stone", 800) !global;
+	$gray-dark: get-color("stone", 700) !global;
+	$gray-medium-dark: get-color("stone", 600) !global;
+	$gray-medium-light: get-color("stone", 500) !global;
+	$gray-light: get-color("stone", 400) !global;
+	$gray-lighter: get-color("stone", 300) !global;
+	$gray-lightest: get-color("stone", 200) !global;
+
+	// Couleurs sémantiques adaptées subtilement
+	$primary-color: get-tritanomaly-color("amber", 300) !global;
+	$secondary-color: get-tritanomaly-color("amber", 950) !global;
+	$tertiary-color: get-tritanomaly-color("amber", 100) !global;
+	$link-color: get-tritanomaly-color("sky", 900) !global;
+	$link-color-hover: get-tritanomaly-color("sky", 800) !global;
+	$success-color: get-color("emerald", 600) !global;
+	$error-color: get-tritanomaly-color("redd", 600) !global;
+
+	// Application des variables dérivées
+	@include apply-theme-variables;
 }
 
 // Mixin pour le thème tritanopie

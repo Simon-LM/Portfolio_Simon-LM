@@ -9,16 +9,22 @@ type ThemeKey =
 	| "light"
 	| "dark"
 	| "high-contrast"
+	| "deuteranomaly"
 	| "deuteranopia"
+	| "protanomaly"
 	| "protanopia"
+	| "tritanomaly"
 	| "tritanopia";
 
 const themes = {
 	light: "light" as ThemeKey,
 	dark: "dark" as ThemeKey,
 	highContrast: "high-contrast" as ThemeKey,
+	deuteranomaly: "deuteranomaly" as ThemeKey,
 	deuteranopia: "deuteranopia" as ThemeKey,
+	protanomaly: "protanomaly" as ThemeKey,
 	protanopia: "protanopia" as ThemeKey,
+	tritanomaly: "tritanomaly" as ThemeKey,
 	tritanopia: "tritanopia" as ThemeKey,
 };
 
@@ -56,8 +62,11 @@ export default function ThemeToggleButton({
 			light: { fr: "Clair", en: "Light" },
 			dark: { fr: "Sombre", en: "Dark" },
 			"high-contrast": { fr: "Contraste", en: "Contrast" },
+			deuteranomaly: { fr: "Deutéranomalie", en: "Deuteranomaly" },
 			deuteranopia: { fr: "Deutéranopie", en: "Deuteranopia" },
+			protanomaly: { fr: "Protanomalie", en: "Protanomaly" },
 			protanopia: { fr: "Protanopie", en: "Protanopia" },
+			tritanomaly: { fr: "Tritanomalie", en: "Tritanomaly" },
 			tritanopia: { fr: "Tritanopie", en: "Tritanopia" },
 		};
 

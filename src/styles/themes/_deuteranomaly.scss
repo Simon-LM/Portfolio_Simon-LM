@@ -1,0 +1,8 @@
+/** @format */
+@import "../abstracts/base-palette";
+@import "../abstracts/theme-utils";
+
+@mixin deuteranomaly-theme-variables() {
+	// Génération automatique du thème daltonien léger
+	@include generate-deuteranomaly-theme();
+}

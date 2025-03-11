@@ -6,8 +6,11 @@ type ThemeOption =
 	| "light"
 	| "dark"
 	| "high-contrast"
+	| "deuteranomaly"
 	| "deuteranopia"
+	| "protanomaly"
 	| "protanopia"
+	| "tritanomaly"
 	| "tritanopia";
 
 export function useTheme() {
@@ -68,8 +71,11 @@ export function useTheme() {
 				"light",
 				"dark",
 				"high-contrast",
+				"deuteranomaly",
 				"deuteranopia",
+				"protanomaly",
 				"protanopia",
+				"tritanomaly",
 				"tritanopia",
 			].includes(savedTheme)
 		) {
@@ -103,8 +109,11 @@ export function useTheme() {
 		isLight: theme === "light",
 		isDark: theme === "dark",
 		isHighContrast: theme === "high-contrast",
+		isDeuteranomaly: theme === "deuteranomaly",
 		isDeuteranopia: theme === "deuteranopia",
+		isProtanomaly: theme === "protanomaly",
 		isProtanopia: theme === "protanopia",
+		isTritanomaly: theme === "tritanomaly",
 		isTritanopia: theme === "tritanopia",
 	};
 }
