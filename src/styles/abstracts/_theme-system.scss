@@ -2,6 +2,8 @@
 
 @import "../themes/light";
 @import "../themes/dark";
+@import "../themes/anti-glare-light";
+@import "../themes/anti-glare-dark";
 @import "../themes/high-contrast";
 @import "../themes/deuteranopia";
 @import "../themes/protanopia";
@@ -9,6 +11,7 @@
 @import "../themes/deuteranomaly";
 @import "../themes/protanomaly";
 @import "../themes/tritanomaly";
+@import "../themes/achromatopsia";
 
 @mixin generate-theme-css-vars() {
 	// Variables fondamentales
@@ -166,5 +169,20 @@
 
 [data-theme="tritanopia"] {
 	@include tritanopia-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+[data-theme="achromatopsia"] {
+	@include achromatopsia-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+[data-theme="anti-glare-light"] {
+	@include anti-glare-light-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+[data-theme="anti-glare-dark"] {
+	@include anti-glare-dark-theme-variables();
 	@include generate-theme-css-vars();
 }

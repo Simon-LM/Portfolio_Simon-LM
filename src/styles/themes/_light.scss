@@ -2,52 +2,14 @@
 
 @import "../abstracts/base-palette";
 @import "../abstracts/theme-utils";
-
-// // Variables fondamentales - thème light
-// $off-white: #fafaf9;
-// $near-black: #0c0a09;
-
-// // Gray Scale with Stone Tints
-// $gray-darkest: #1c1917;
-// $gray-darker: #292524;
-// $gray-dark: #44403c;
-// $gray-medium-dark: #57534e;
-// $gray-medium-light: #78716c;
-// $gray-light: #a8a29e;
-// $gray-lighter: #d6d3d1;
-// $gray-lightest: #e7e5e4;
-
-// // Semantic Variables
-// $primary-color: #fcd34d;
-// $secondary-color: #451a03;
-// $tertiary-color: #fef3c7;
-// $link-color: #0c4a6e;
-// $link-color-hover: #075985;
-// $success-color: #059669;
+@import "../themes/theme-variables";
 
 @mixin light-theme-variables() {
-	// Couleurs fondamentales avec accès direct à la palette Tailwind
-	$off-white: get-color("stone", 50) !global;
-	$near-black: get-color("stone", 950) !global;
-
-	// Échelle de gris
-	$gray-darkest: get-color("stone", 900) !global;
-	$gray-darker: get-color("stone", 800) !global;
-	$gray-dark: get-color("stone", 700) !global;
-	$gray-medium-dark: get-color("stone", 600) !global;
-	$gray-medium-light: get-color("stone", 500) !global;
-	$gray-light: get-color("stone", 400) !global;
-	$gray-lighter: get-color("stone", 300) !global;
-	$gray-lightest: get-color("stone", 200) !global;
-
-	// Couleurs sémantiques
-	$primary-color: get-color("amber", 300) !global;
-	$secondary-color: get-color("amber", 950) !global;
-	$tertiary-color: get-color("amber", 100) !global;
-	$link-color: get-color("sky", 900) !global;
-	$link-color-hover: get-color("sky", 800) !global;
-	$success-color: get-color("emerald", 600) !global;
-	$error-color: #dc2626 !global; // Rouge vif équivalent à red-600
-
+	// Définir toutes les couleurs de base
+	@include define-base-colors();
+	// Appliquer les variables dérivées
 	@include apply-theme-variables;
+
+	// Surcharges spécifiques au thème light (si nécessaire)
+	// $color_header_bg: green !global;
 }

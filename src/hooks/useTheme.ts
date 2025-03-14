@@ -5,13 +5,16 @@ import { useState, useEffect } from "react";
 type ThemeOption =
 	| "light"
 	| "dark"
+	| "anti-glare-light"
+	| "anti-glare-dark"
 	| "high-contrast"
 	| "deuteranomaly"
 	| "deuteranopia"
 	| "protanomaly"
 	| "protanopia"
 	| "tritanomaly"
-	| "tritanopia";
+	| "tritanopia"
+	| "achromatopsia";
 
 export function useTheme() {
 	// État local pour le thème actuel
@@ -70,6 +73,8 @@ export function useTheme() {
 			[
 				"light",
 				"dark",
+				"anti-glare-light",
+				"anti-glare-dark",
 				"high-contrast",
 				"deuteranomaly",
 				"deuteranopia",
@@ -77,6 +82,7 @@ export function useTheme() {
 				"protanopia",
 				"tritanomaly",
 				"tritanopia",
+				"achromatopsia",
 			].includes(savedTheme)
 		) {
 			setTheme(savedTheme);
@@ -108,6 +114,8 @@ export function useTheme() {
 		setTheme, // Fonction pour changer de thème
 		isLight: theme === "light",
 		isDark: theme === "dark",
+		isAntiGlareLight: theme === "anti-glare-light",
+		isAntiGlareDark: theme === "anti-glare-dark",
 		isHighContrast: theme === "high-contrast",
 		isDeuteranomaly: theme === "deuteranomaly",
 		isDeuteranopia: theme === "deuteranopia",
@@ -115,5 +123,6 @@ export function useTheme() {
 		isProtanopia: theme === "protanopia",
 		isTritanomaly: theme === "tritanomaly",
 		isTritanopia: theme === "tritanopia",
+		isAchromatopsia: theme === "achromatopsia",
 	};
 }

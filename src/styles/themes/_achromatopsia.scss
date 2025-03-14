@@ -1,0 +1,8 @@
+/** @format */
+@import "../abstracts/base-palette";
+@import "../abstracts/theme-utils";
+
+@mixin achromatopsia-theme-variables() {
+	// Génération automatique du thème monochrome
+	@include generate-achromatopsia-theme();
+}

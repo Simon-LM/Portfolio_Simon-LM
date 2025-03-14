@@ -1,0 +1,19 @@
+/** @format */
+// @import "../abstracts/base-palette";
+// @import "../abstracts/theme-utils";
+
+// @mixin anti-glare-light-theme-variables() {
+// 	// Génération automatique du thème anti-éblouissement clair
+// 	@include generate-anti-glare-light-theme();
+// }
+@import "../abstracts/base-palette";
+@import "../abstracts/theme-utils";
+@import "../abstracts/anti-glare-functions";
+
+@mixin anti-glare-light-theme-variables() {
+	// D'abord appliquer complètement le thème light avec toutes ses éventuelles surcharges
+	@include light-theme-variables();
+
+	// Puis transformer toutes les variables pour réduire l'éblouissement
+	@include transform-theme-for-anti-glare("light");
+}

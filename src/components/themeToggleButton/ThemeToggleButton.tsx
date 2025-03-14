@@ -8,17 +8,22 @@ import { useTheme } from "../../hooks/useTheme";
 type ThemeKey =
 	| "light"
 	| "dark"
+	| "anti-glare-light"
+	| "anti-glare-dark"
 	| "high-contrast"
 	| "deuteranomaly"
 	| "deuteranopia"
 	| "protanomaly"
 	| "protanopia"
 	| "tritanomaly"
-	| "tritanopia";
+	| "tritanopia"
+	| "achromatopsia";
 
 const themes = {
 	light: "light" as ThemeKey,
 	dark: "dark" as ThemeKey,
+	antiGlareLight: "anti-glare-light" as ThemeKey,
+	antiGlareDark: "anti-glare-dark" as ThemeKey,
 	highContrast: "high-contrast" as ThemeKey,
 	deuteranomaly: "deuteranomaly" as ThemeKey,
 	deuteranopia: "deuteranopia" as ThemeKey,
@@ -26,6 +31,7 @@ const themes = {
 	protanopia: "protanopia" as ThemeKey,
 	tritanomaly: "tritanomaly" as ThemeKey,
 	tritanopia: "tritanopia" as ThemeKey,
+	achromatopsia: "achromatopsia" as ThemeKey,
 };
 
 export default function ThemeToggleButton({
@@ -61,6 +67,11 @@ export default function ThemeToggleButton({
 		const labels: Record<ThemeKey, { fr: string; en: string }> = {
 			light: { fr: "Clair", en: "Light" },
 			dark: { fr: "Sombre", en: "Dark" },
+			"anti-glare-light": { fr: "Anti-éblouissement", en: "Anti-glare" },
+			"anti-glare-dark": {
+				fr: "Anti-éblouissement sombre",
+				en: "Anti-glare dark",
+			},
 			"high-contrast": { fr: "Contraste", en: "Contrast" },
 			deuteranomaly: { fr: "Deutéranomalie", en: "Deuteranomaly" },
 			deuteranopia: { fr: "Deutéranopie", en: "Deuteranopia" },
@@ -68,6 +79,7 @@ export default function ThemeToggleButton({
 			protanopia: { fr: "Protanopie", en: "Protanopia" },
 			tritanomaly: { fr: "Tritanomalie", en: "Tritanomaly" },
 			tritanopia: { fr: "Tritanopie", en: "Tritanopia" },
+			achromatopsia: { fr: "Monochrome", en: "Monochrome" },
 		};
 
 		return labels[themeKey]?.[language] || themeKey;

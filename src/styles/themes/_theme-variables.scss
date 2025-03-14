@@ -1,0 +1,127 @@
+/** @format */
+
+// -----------------------------------------------
+// DÉFINITION DES COULEURS DE BASE
+// -----------------------------------------------
+@mixin define-base-colors() {
+	// Couleurs fondamentales avec accès direct à la palette Tailwind
+	$off-white: get-color("stone", 50) !global; // #fafaf9
+	$near-black: get-color("stone", 950) !global; // #0c0a09
+
+	// Échelle de gris
+	$gray-darkest: get-color("stone", 900) !global; // #1c1917
+	$gray-darker: get-color("stone", 800) !global; // #292524
+	$gray-dark: get-color("stone", 700) !global; // #44403c
+	$gray-medium-dark: get-color("stone", 600) !global; // #57534e
+	$gray-medium-light: get-color("stone", 500) !global; // #78716c
+	$gray-light: get-color("stone", 400) !global; // #a8a29e
+	$gray-lighter: get-color("stone", 300) !global; // #d6d3d1
+	$gray-lightest: get-color("stone", 200) !global; // #e7e5e4
+
+	// Couleurs sémantiques
+	$primary-color: get-color("amber", 300) !global; // #fcd34d
+	$secondary-color: get-color("amber", 950) !global; // #451a03
+	$tertiary-color: get-color("amber", 100) !global; // #fef3c7
+	$link-color: get-color("sky", 900) !global; // #0c4a6e
+	$link-color-hover: get-color("sky", 800) !global; // #075985
+	$success-color: get-color("emerald", 600) !global; // #059669
+	$error-color: get-color("redd", 600) !global; // #dc2626
+}
+
+// -----------------------------------------------
+// VARIABLES PARTAGÉES ENTRE THÈMES
+// -----------------------------------------------
+// Mixin qui applique toutes les variables dérivées à partir des couleurs de base
+@mixin apply-theme-variables {
+	// Couleurs d'arrière-plan et de texte principales
+	$color-main-bg: $off-white !global;
+	$color_main-bg: $off-white !global;
+	$color-main-text: $near-black !global;
+	$color_main-text: $near-black !global;
+	$color-pages-title: $near-black !global;
+
+	// Variables d'entête
+	$color_header_bg: $primary-color !global;
+	$color_header_text: $near-black !global;
+	$color_header_text-role: $gray-dark !global;
+	$color_header_blog-link_bg: $gray-dark !global;
+	$color_header_blog-link_text: $primary-color !global;
+
+	// Sélecteur de langue
+	$color_lang-toggle_bg: $off-white !global;
+	$color_lang-toggle_border: $gray-dark !global;
+	$color_lang-toggle_bg-activated: $gray-dark !global;
+	$color_lang-toggle_text-activated: $off-white !global;
+	$color_lang-toggle_text-disabled: $gray-dark !global;
+	$color_lang-toggle_disabled-hover_bg: $link-color !global;
+	$color_lang-toggle_disabled-hover_text: $off-white !global;
+
+	// Indicateurs de défilement
+	$color_scroll-progress_line: $link-color !global;
+	$color_scroll-progress_indicator: $gray-medium-dark !global;
+	$color_scroll-progress_indicator-active: $link-color !global;
+
+	// Éléments collapse
+	$color_collapse_title: $off-white !global;
+	$color_collapse_bg: $gray-lighter !global;
+	$color_collapse_bg-title: $gray-dark !global;
+	$color_collapse_border: $gray-dark !global;
+
+	// Sections et héros
+	$color_section_bg-even: $off-white !global;
+	$color_section_bg-odd: $gray-lightest !global;
+	$color_section_title: $secondary-color !global;
+	$color-hero-bg: $off-white !global;
+	$color-hero-title: $near-black !global;
+	$color-hero-text: $near-black !global;
+
+	// Section À propos
+	$color_about_overlay-bg: $near-black !global;
+	$color_about_overlay-text: $off-white !global;
+	$color_about_button-bg: $link-color !global;
+	$color_about_button-border: $off-white !global;
+	$color_about_button-text: $off-white !global;
+
+	// Section compétences
+	$color_skills-icon_bg: $tertiary-color !global;
+	$color_skills-icon_text: $secondary-color !global;
+
+	// Cartes et sections
+	$color_section_card-bg: $gray-lighter !global;
+	$color_section-even_card-bg: $gray-lighter !global;
+	$color_section-odd_card-bg: $gray-light !global;
+
+	// Étiquettes de portfolio
+	$color_portfolio-tag_bg: $tertiary-color !global;
+	$color_portfolio-tag_bg-texte: $secondary-color !global;
+
+	// Formulaires de contact
+	$color_contact_form-bg: $gray-lighter !global;
+	$color_contact_modal_bg: $gray-lightest !global;
+
+	// Pieds de page
+	$color_bottom-footer_bg: $gray-dark !global;
+	$color_bottom-footer_title: $tertiary-color !global;
+	$color_bottom-footer_text: $off-white !global;
+	$color_bottom-footer_link-bg: $off-white !global;
+	$color_bottom-footer_link-text: $link-color !global;
+	$color_sticky-footer_bg: $gray-darker !global;
+	$color_sticky-footer_text: $off-white !global;
+
+	// Liens et focus
+	$color_link: $link-color !global;
+	$color_link-hover: $link-color-hover !global;
+	$color_link-bg: $off-white !global;
+	$color_focus-outline: $link-color !global;
+	$color_focus-bg: $link-color !global;
+	$color_focus-text: $off-white !global;
+
+	// // États de validation et d'erreur
+	// $color_error: $error-color !global;
+	// $color_error-text: $off-white !global;
+	// $color_error-border: darken($error-color, 10%) !global;
+
+	// Infobulles
+	$color_tooltip_text: $off-white !global;
+	$color_tooltip_bg: rgba($near-black, 0.8) !global;
+}
