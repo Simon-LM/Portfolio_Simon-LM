@@ -1,109 +1,48 @@
 /** @format */
-@import "../abstracts/base-palette";
-@import "../abstracts/theme-utils";
-
 // @import "../abstracts/base-palette";
 // @import "../abstracts/theme-utils";
 
-@mixin deuteranopia-theme-variables() {
-	// Génération automatique du thème daltonien
-	@include generate-deuteranopia-theme();
-}
-
 // @mixin deuteranopia-theme-variables() {
-// 	$off-white: #fafaf9 !global;
-// 	$near-black: #0c0a09 !global;
-
-// 	$gray-darkest: #1c1917 !global;
-// 	$gray-darker: #292524 !global;
-// 	$gray-dark: #44403c !global;
-// 	$gray-medium-dark: #57534e !global;
-// 	$gray-medium-light: #78716c !global;
-// 	$gray-light: #a8a29e !global;
-// 	$gray-lighter: #d6d3d1 !global;
-// 	$gray-lightest: #e7e5e4 !global;
-
-// 	$primary-color: #ff6b81 !global; // rose au lieu de jaune
-// 	$secondary-color: #8e44ad !global; // violet
-// 	$tertiary-color: #f8f9fa !global; // blanc cassé
-// 	$link-color: #2980b9 !global; // bleu plus visible
-// 	$link-color-hover: #2980b9 !global; // même bleu
-// 	$success-color: #2ecc71 !global; // vert plus visible
-
-// 	// Usage variables in the code
-// 	$color-main-bg: $off-white !global;
-// 	$color_main-bg: $off-white !global;
-// 	$color-main-text: $near-black !global;
-// 	$color_main-text: $near-black !global;
-
-// 	$color-pages-title: $near-black !global;
-
-// 	$color_header_bg: $primary-color !global;
-// 	$color_header_text: $near-black !global;
-// 	$color_header_text-role: $gray-dark !global;
-// 	$color_header_blog-link_bg: $gray-dark !global;
-// 	$color_header_blog-link_text: $primary-color !global;
-
-// 	$color_lang-toggle_bg: $off-white !global;
-// 	$color_lang-toggle_border: $gray-dark !global;
-// 	$color_lang-toggle_bg-activated: $gray-dark !global;
-// 	$color_lang-toggle_text-activated: $off-white !global;
-// 	$color_lang-toggle_text-disabled: $gray-dark !global;
-// 	$color_lang-toggle_disabled-hover_bg: $link-color !global;
-// 	$color_lang-toggle_disabled-hover_text: $off-white !global;
-
-// 	$color_scroll-progress_line: $link-color !global;
-// 	$color_scroll-progress_indicator: $gray-medium-dark !global;
-// 	$color_scroll-progress_indicator-active: $link-color !global;
-
-// 	$color_collapse_title: $off-white !global;
-// 	$color_collapse_bg: $gray-lighter !global;
-// 	$color_collapse_bg-title: $gray-dark !global;
-// 	$color_collapse_border: $gray-dark !global;
-
-// 	$color_section_bg-even: $off-white !global;
-// 	$color_section_bg-odd: $gray-lightest !global;
-// 	$color_section_title: $secondary-color !global;
-// 	$color-hero-bg: $off-white !global;
-// 	$color-hero-title: $near-black !global;
-// 	$color-hero-text: $near-black !global;
-
-// 	$color_about_overlay-bg: $near-black !global;
-// 	$color_about_overlay-text: $off-white !global;
-// 	$color_about_button-bg: $link-color !global;
-// 	$color_about_button-border: $off-white !global;
-// 	$color_about_button-text: $off-white !global;
-
-// 	$color_skills-icon_bg: $tertiary-color !global;
-// 	$color_skills-icon_text: $secondary-color !global;
-
-// 	$color_section_card-bg: $gray-lighter !global;
-// 	$color_section-even_card-bg: $gray-lighter !global;
-// 	$color_section-odd_card-bg: $gray-light !global;
-
-// 	$color_portfolio-tag_bg: $tertiary-color !global;
-// 	$color_portfolio-tag_bg-texte: $secondary-color !global;
-
-// 	$color_contact_form-bg: $gray-lighter !global;
-// 	$color_contact_modal_bg: $gray-lightest !global;
-
-// 	$color_bottom-footer_bg: $gray-dark !global;
-// 	$color_bottom-footer_title: $tertiary-color !global;
-// 	$color_bottom-footer_text: $off-white !global;
-// 	$color_bottom-footer_link-bg: $off-white !global;
-// 	$color_bottom-footer_link-text: $link-color !global;
-
-// 	$color_sticky-footer_bg: $gray-darker !global;
-// 	$color_sticky-footer_text: $off-white !global;
-
-// 	$color_link: $link-color !global;
-// 	$color_link-hover: $link-color-hover !global;
-// 	$color_link-bg: $off-white !global;
-
-// 	$color_focus-outline: $link-color !global;
-// 	$color_focus-bg: $link-color !global;
-// 	$color_focus-text: $off-white !global;
-
-// 	$color_tooltip_text: $off-white !global;
-// 	$color_tooltip_bg: rgba($near-black, 0.8) !global;
+// 	// Génération automatique du thème daltonien
+// 	@include generate-deuteranopia-theme();
 // }
+
+// // // // // // // // // // // // //
+
+@import "../abstracts/base-palette";
+@import "../abstracts/theme-utils";
+@import "../themes/theme-variables";
+
+@mixin deuteranopia-theme-variables() {
+	// D'abord appliquer les variables du thème light
+	@include light-theme-variables();
+
+	// Configuration centralisée du thème deuteranopia
+	$deuteranopia-config: (
+		// Couleurs spéciales pour remplacer certaines teintes indistinguables
+		"special-colors":
+			(
+				"success-color": #0075ff,
+				// Bleu spécifique pour remplacer le vert
+				"error-color": #ffcc00,
+				// Jaune-orange pour remplacer le rouge
+				// Vous pouvez ajouter d'autres couleurs spéciales ici,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+			),
+		// Contrôle quelles variables sont transformées automatiquement
+		"overrides":
+			(
+				// Exemples: si vous voulez conserver certaines couleurs telles quelles
+				"primary-color": false,
+				"secondary-color": false,
+				"tertiary-color": false,
+				"link-color": false,
+				"link-color-hover": false
+			)
+	);
+
+	// Appliquer la transformation automatique avec la configuration
+	@include transform-light-to-deuteranopia($deuteranopia-config);
+
+	// Surcharges manuelles après l'automatisation si nécessaire
+	// $color_header_bg: red !global;
+}
