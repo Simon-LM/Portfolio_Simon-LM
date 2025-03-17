@@ -1,29 +1,36 @@
 /** @format */
+
 @import "../abstracts/base-palette";
 @import "../abstracts/theme-utils";
+@import "../themes/theme-variables";
 
 @mixin high-contrast-theme-variables() {
-	// Transformation automatique vers le thème à fort contraste
-	@include generate-high-contrast-theme();
+	// D'abord appliquer les variables du thème light
+	@include light-theme-variables();
 
-	// Surcharges spécifiques pour des éléments critiques
-	$color_section_bg-odd: #000000 !global;
-	$color_section_bg-even: #000000 !global;
-
-	// Bordures plus visibles pour les éléments interactifs
-	$color_collapse_border: #ffff00 !global;
-	$color_about_button-border: #ffff00 !global;
-
-	// Assurer une meilleure visibilité des liens
-	$color_link: #00ffff !global;
-	$color_link-hover: #ffffff !global;
-
-	// Surcharge pour les boutons
-	$color_about_button-bg: #bfff00 !global;
-	$color_about_button-text: #000000 !global;
-
-	// Surcharges pour l'entête
-	$color_header_bg: #000000 !global;
-	$color_header_text: #ffff00 !global;
-	$color_header_text-role: #ffff00 !global;
+	// Utiliser la transformation automatique avec les couleurs très contrastées
+	@include transform-light-to-high-contrast(
+		(
+			"colors": (
+				"background": #000000,
+				// Noir pur
+				"text": #ffff00,
+				// Jaune vif
+				"link": #00ffff,
+				// Cyan vif
+				"highlight": #bfff00,
+				// Vert-jaune
+				"action": #ffffff,
+				// Blanc pur
+				"success": #00ff00,
+				// Vert pur
+				"error": #ff0000,
+			),
+		)
+	);
+	// Surcharges manuelles après l'automatisation si nécessaire
+	$color_header_text: #000000 !global;
+	$color_header_text-role: #000000 !global;
+	$color_header_blog-link_bg: #00ffff !global;
+	$color_header_blog-link_text: #000000 !global;
 }

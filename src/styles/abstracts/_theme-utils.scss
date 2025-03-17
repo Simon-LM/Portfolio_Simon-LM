@@ -857,6 +857,103 @@ $tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
 	$color_about_button-text: map-get($hc-colors, "background") !global;
 }
 
+// Palette réduite de couleurs très vives pour le high contrast
+$hc-palette: (
+	"background": #000000,
+	// Fond noir
+	"text": #ffff00,
+	// Texte jaune vif
+	"link": #00ffff,
+	// Liens cyan
+	"highlight": #bfff00,
+	// Éléments accentués (vert-jaune)
+	"action": #ffffff,
+	// États d'action (blanc)
+	"success": #00ff00,
+	// Validation (vert pur)
+	"error": #ff0000 // Erreur (rouge pur),,,,,
+);
+
+// Fonction qui détermine la couleur high contrast basée sur la luminosité
+@function get-high-contrast-color($color, $role: null) {
+	// Si un rôle spécifique est demandé, l'utiliser
+	@if $role and map-has-key($hc-palette, $role) {
+		@return map-get($hc-palette, $role);
+	}
+
+	// Sinon, décider en fonction de la luminosité
+	@return if(
+		is-dark($color),
+		map-get($hc-palette, "text"),
+		map-get($hc-palette, "background")
+	);
+}
+
+// Mixin pour transformer automatiquement le thème light en high contrast
+@mixin transform-light-to-high-contrast($config: ()) {
+	// Configuration par défaut
+	$default-config: (
+		"colors": $hc-palette,
+		"overrides": (),
+	);
+
+	// Fusionner la configuration personnalisée
+	$config: map-merge($default-config, $config);
+	$hc-palette: map-get($config, "colors");
+	$overrides: map-get($config, "overrides");
+
+	//  Couleurs fondamentales
+	$off-white: get-high-contrast-color($off-white, "background") !global;
+	$near-black: get-high-contrast-color($near-black, "text") !global;
+
+	//  Échelle de gris - convertir selon luminosité
+	$gray-darkest: get-high-contrast-color($gray-darkest) !global;
+	$gray-darker: get-high-contrast-color($gray-darker) !global;
+	$gray-dark: get-high-contrast-color($gray-dark) !global;
+	$gray-medium-dark: get-high-contrast-color($gray-medium-dark) !global;
+	$gray-medium-light: get-high-contrast-color($gray-medium-light) !global;
+	$gray-light: get-high-contrast-color($gray-light) !global;
+	$gray-lighter: get-high-contrast-color($gray-lighter) !global;
+	$gray-lightest: get-high-contrast-color($gray-lightest) !global;
+
+	// Couleurs sémantiques avec rôles spécifiques
+	$primary-color: get-high-contrast-color($primary-color, "highlight") !global;
+	$secondary-color: get-high-contrast-color($secondary-color, "text") !global;
+	$tertiary-color: get-high-contrast-color(
+		$tertiary-color,
+		"background"
+	) !global;
+	$link-color: get-high-contrast-color($link-color, "link") !global;
+	$link-color-hover: get-high-contrast-color(
+		$link-color-hover,
+		"action"
+	) !global;
+	$success-color: get-high-contrast-color($success-color, "success") !global;
+	$error-color: get-high-contrast-color($error-color, "error") !global;
+
+	// Appliquer les surcharges spécifiques avec structure conditionnelle
+	@each $var, $value in $overrides {
+		@if $var == "primary-color" {
+			$primary-color: $value !global;
+		} @else if $var == "secondary-color" {
+			$secondary-color: $value !global;
+		} @else if $var == "tertiary-color" {
+			$tertiary-color: $value !global;
+		} @else if $var == "link-color" {
+			$link-color: $value !global;
+		} @else if $var == "link-color-hover" {
+			$link-color-hover: $value !global;
+		} @else if $var == "success-color" {
+			$success-color: $value !global;
+		} @else if $var == "error-color" {
+			$error-color: $value !global;
+		}
+	}
+
+	// Appliquer les variables dérivées
+	@include apply-theme-variables;
+}
+
 // Mixin pour le thème deutéranomalie (forme légère)
 // @mixin generate-deuteranomaly-theme() {
 // 	// Couleurs fondamentales inchangées
@@ -1016,7 +1113,7 @@ $tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
 			"success-color": #0075ff,
 			// Bleu spécifique pour remplacer le vert
 			"error-color": #ffcc00
-				// Jaune-orange pour remplacer le rouge,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+				// Jaune-orange pour remplacer le rouge,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 		),
 		"overrides": (),
 	);
@@ -1277,7 +1374,7 @@ $tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
 			"success-color": #0090ff,
 			// Bleu clair pour remplacer le vert
 			"error-color": #ffd700
-				// Or pour remplacer le rouge,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+				// Or pour remplacer le rouge,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 		),
 		"overrides": (),
 	);
@@ -1512,7 +1609,7 @@ $tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
 			"success-color": #ff6600,
 			// Orange pour remplacer le vert
 			"error-color": #ff3399
-				// Rose pour remplacer le rouge,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+				// Rose pour remplacer le rouge,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 		),
 		"overrides": (),
 	);

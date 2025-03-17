@@ -2,6 +2,7 @@
 
 .header {
 	background: var(--color-header-bg);
+	// color: var(--color-header-text);
 	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.22);
 	&__skip {
 		@include sr-only;
@@ -143,11 +144,13 @@
 			font-family: inherit;
 			font-size: clamp(1.5rem, 3vw, 3em);
 			font-weight: 700;
+			color: var(--color-header-text);
 		}
 		&-separator {
 			font-family: inherit;
 			font-size: clamp(1.5rem, 3vw, 3em);
 			font-weight: 400 !important;
+			color: var(--color-header-text);
 			margin: 0 0.5rem;
 		}
 		&-role {
