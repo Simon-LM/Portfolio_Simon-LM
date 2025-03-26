@@ -10,6 +10,39 @@ $breakpoints: (
 	"4k": 3840px,
 );
 
+// :root {
+// 	--font-specific-scale: 1;
+// 	--effective-font-size: 1;
+// }
+
+// /* Modifier les styles globaux pour utiliser --effective-font-size */
+// html,
+// body {
+// 	font-size: calc(
+// 		1rem * var(--effective-font-size, var(--font-size-factor, 1))
+// 	);
+// }
+
+:root {
+	--font-size-factor: 1;
+}
+
+html,
+body {
+	font-size: calc(1rem * var(--font-size-factor)) !important;
+}
+
+// Appliquez aussi aux éléments spécifiques pour garantir l'effet
+p,
+div,
+span,
+button,
+input,
+a,
+li {
+	font-size: calc(1em * var(--font-size-factor, 1));
+}
+
 body {
 	margin: 0;
 	display: flex;

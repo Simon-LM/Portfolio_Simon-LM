@@ -5,14 +5,15 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useLanguageStore } from "../../store/langueStore";
 import { useRouter } from "next/navigation";
 import {
 	shouldUpdateDictionary,
 	DICTIONARY_VERSION,
 } from "../../utils/dictionaryVersion";
-import ThemeToggleButton from "../themeToggleButton/ThemeToggleButton";
+// import ThemeToggleButton from "../themeToggleButton/ThemeToggleButton";
+import AccessibilityMenu from "../themeToggleButton/ThemeToggleButton";
 
 import accessibilityIconWebp from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.webp";
 import accessibilityIconAvif from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.avif";
@@ -40,6 +41,8 @@ export default function Header({ dictionary }: HeaderProps) {
 	const { language, setLanguage, version, setVersion } = useLanguageStore();
 	const router = useRouter();
 	const [mounted, setMounted] = useState(false);
+	const [accessibilityMenuOpen, setAccessibilityMenuOpen] = useState(false); // Nouvel état
+	const menuRef = useRef<HTMLDivElement>(null); // Pour détecter les clics à l'extérieur
 
 	useEffect(() => {
 		setMounted(true);
@@ -51,6 +54,28 @@ export default function Header({ dictionary }: HeaderProps) {
 			router.refresh();
 		}
 	}, [version, setVersion, router]);
+
+	// // // // //
+
+	// Fermer le menu quand on clique ailleurs
+	useEffect(() => {
+		function handleClickOutside(event: MouseEvent) {
+			if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+				setAccessibilityMenuOpen(false);
+			}
+		}
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, [menuRef]);
+
+	const toggleAccessibilityMenu = () => {
+		setAccessibilityMenuOpen(!accessibilityMenuOpen);
+	};
+
+	// // // // // // // // // //
 
 	const switchLanguage = (newLang: "fr" | "en") => {
 		setLanguage(newLang);
@@ -80,7 +105,43 @@ export default function Header({ dictionary }: HeaderProps) {
 						: "Skip to main content"}
 				</a>
 				<div className="header__utils">
-					<picture className="header__accessibility-icon">
+					{/* Conteneur du menu d'accessibilité */}
+					<div className="header__accessibility-menu" ref={menuRef}>
+						<button
+							className="header__accessibility-button"
+							onClick={toggleAccessibilityMenu}
+							aria-expanded={accessibilityMenuOpen}
+							aria-label={
+								language === "fr"
+									? "Options d'accessibilité"
+									: "Accessibility options"
+							}>
+							<picture className="header__accessibility-icon">
+								<source srcSet={accessibilityIconAvif.src} type="image/avif" />
+								<source srcSet={accessibilityIconWebp.src} type="image/webp" />
+								<Image
+									src={accessibilityIconPng}
+									alt={dictionary.header.accessibilityIcon.alt || ""}
+									title={dictionary.header.accessibilityIcon.title || ""}
+									width={24}
+									height={24}
+									loading="eager"
+									priority
+								/>
+							</picture>
+						</button>
+
+						{/* Panneau des options d'accessibilité */}
+						<div
+							className={`accessibility-panel ${
+								accessibilityMenuOpen ? "open" : ""
+							}`}>
+							{/* <ThemeToggleButton language={language} /> */}
+							<AccessibilityMenu language={language} />
+						</div>
+					</div>
+
+					{/* <picture className="header__accessibility-icon">
 						<source srcSet={accessibilityIconAvif.src} type="image/avif" />
 						<source srcSet={accessibilityIconWebp.src} type="image/webp" />
 						<Image
@@ -94,7 +155,7 @@ export default function Header({ dictionary }: HeaderProps) {
 						/>
 					</picture>
 
-					<ThemeToggleButton language={language} />
+					<ThemeToggleButton language={language} /> */}
 
 					<div className="header__lang">
 						<div className="header__lang-toggle">

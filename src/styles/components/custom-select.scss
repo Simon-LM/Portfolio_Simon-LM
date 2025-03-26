@@ -1,0 +1,127 @@
+/** @format */
+
+.custom-select {
+	&-container {
+		position: relative;
+		width: 100%;
+		margin-bottom: 0.5rem;
+	}
+
+	&-label {
+		font-size: 0.875rem;
+		font-weight: 500;
+		margin-bottom: 0.5rem;
+	}
+
+	&-button {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		padding: 0.5rem;
+		border-radius: 0.25rem;
+		border: 0.0625rem solid var(--color-button-border);
+		background-color: var(--color-panel-bg);
+		color: var(--color-main-text);
+		font-size: 0.875rem;
+		text-align: left;
+		cursor: pointer;
+
+		&:focus {
+			outline: 0.125rem solid var(--color-focus-outline);
+			outline-offset: 0.125rem;
+		}
+
+		&:hover {
+			border-color: var(--primary-color);
+		}
+	}
+
+	&-arrow {
+		font-size: 0.625rem;
+		transition: transform 0.2s ease;
+	}
+
+	&-popover {
+		position: absolute;
+		z-index: 9999;
+		width: 100%;
+		margin-top: 0.25rem;
+		background-color: var(--color-panel-bg);
+		border: 0.0625rem solid var(--color-button-border);
+		border-radius: 0.25rem;
+		box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+	}
+
+	&-listbox {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		max-height: 15rem;
+		overflow-y: auto;
+	}
+
+	&-option {
+		padding: 0.5rem;
+		cursor: pointer;
+		color: var(--color-main-text);
+		user-select: none;
+
+		&:hover,
+		&[data-focused="true"] {
+			background-color: var(--color-button-hover-bg);
+		}
+
+		&.is-selected {
+			background-color: var(--primary-color);
+			color: var(--color-button-active-text);
+		}
+
+		&.is-disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+	}
+}
+
+// High-contrast theme
+[data-theme="high-contrast"] {
+	.custom-select {
+		&-button {
+			background-color: #000000;
+			color: #ffff00;
+			border: 2px solid #ffff00;
+
+			&:focus {
+				outline-color: #ffff00;
+			}
+
+			&:hover {
+				background-color: #ffff00;
+				color: #000000;
+			}
+		}
+
+		&-popover {
+			background-color: #000000;
+			border-color: #ffff00;
+			border-width: 2px;
+		}
+
+		&-option {
+			color: #ffff00;
+
+			&:hover,
+			&[data-focused="true"] {
+				background-color: #ffff00;
+				color: #000000;
+			}
+
+			&.is-selected {
+				background-color: #ffff00;
+				color: #000000;
+				font-weight: bold;
+			}
+		}
+	}
+}

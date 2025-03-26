@@ -26,7 +26,7 @@ export default async function Home(
 		<>
 			<Header dictionary={dictionary} />
 			<NavigationSticky />
-			<ScrollProgressBar />
+			{/* <ScrollProgressBar /> */}
 			<Hero params={params} />
 			<About dictionary={dictionary.sections.about} />
 			<Skills dictionary={dictionary.sections.skills} />

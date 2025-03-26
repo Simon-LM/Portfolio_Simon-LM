@@ -1,32 +1,679 @@
 /** @format */
 
-.theme-toggle {
+.accessibility-menu {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	// width: 100%;
+	// height: 100%;
+	// gap: 1.25rem;
+	max-height: 25rem;
+	height: 30rem;
+	max-height: calc(100vh - 10rem);
 
+	gap: 1.25rem;
+	overflow-y: auto;
+	padding-inline: 0.5rem;
+
+	// background: pink;
+
+	// Style de scrollbar personnalisé
+	&::-webkit-scrollbar {
+		width: 0.375rem; // 6px
+	}
+
+	&::-webkit-scrollbar-track {
+		background: var(--color-scrollbar-track, #f1f1f1);
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: var(--color-scrollbar-thumb, #888);
+		border-radius: 0.1875rem; // 3px
+	}
+
+	&__main-title {
+		font-size: 1.25rem;
+		font-weight: 600;
+		margin: 0;
+		text-align: center;
+		color: var(--color-main-text);
+	}
+
+	// Catégorie d'accessibilité
+	&__category {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	// Titre de catégorie
+	&__category-title {
+		font-size: 1rem;
+		font-weight: 600;
+		margin: 0;
+		padding-bottom: 0.25rem;
+		border-bottom: 0.0625rem solid var(--color-divider, var(--gray-light));
+	}
+
+	// Groupe avec label
+	&__group-label {
+		font-size: 0.875rem;
+		font-weight: 500;
+		margin: 0 0 0.5rem 0;
+	}
+
+	// Conteneur de boutons
+	&__buttons-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	// Boutons standards
 	&__button {
-		padding: 0.25rem 0.5rem;
-		border-radius: 0.25rem;
+		padding: 0.5rem 0.75rem;
 		background: transparent;
-		border: 2px solid;
-		font-size: 0.85rem;
+		border-radius: 0.25rem;
+		border: 0.0625rem solid var(--color-button-border, var(--color-main-text));
+		color: var(--color-main-text);
+		font-size: 0.875rem;
+		text-align: center;
+		white-space: nowrap;
+		transition: all 0.2s ease;
+		flex: 1 0 auto;
+		min-width: 5rem;
 
 		&.active {
 			background: var(--primary-color);
-			color: var(--bg-color);
+			// color: var(--color-button-active-text);
+			color: black;
+			border-color: transparent;
 		}
 
-		&:hover,
-		&:focus {
-			outline: 2px solid var(--primary-color);
+		&:hover {
+			background-color: var(--color-button-hover-bg);
+			color: var(--color-button-hover-text);
+		}
+
+		&:focus-visible {
+			outline: 0.125rem solid var(--color-focus-outline);
+			outline-offset: 0.125rem;
 		}
 	}
 
+	&__button-full-width {
+		flex-basis: 100%;
+		margin-top: 0.5rem;
+	}
+
+	&__visual-help-group {
+		// margin-bottom: 1.25rem;
+		padding-bottom: 0.5rem;
+		// border-bottom: 0.0625rem dotted var(--color-divider, var(--gray-lighter));
+
+		&:last-child {
+			margin-bottom: 0;
+			padding-bottom: 0;
+			border-bottom: none;
+		}
+	}
+
+	&__help-description {
+		font-size: 0.75rem;
+		color: var(--color-text-secondary, var(--gray-dark));
+		margin: 0 0 0.5rem 0;
+		font-style: italic;
+	}
+
+	&__select-control {
+		margin: 0.5rem 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	&__select {
+		padding: 0.5rem;
+		border-radius: 0.25rem;
+		border: 0.0625rem solid var(--color-button-border, var(--color-main-text)); // 1px
+		background-color: var(--color-input-bg, var(--off-white));
+		color: var(--color-main-text);
+		font-size: 0.875rem; // 14px
+		width: 100%;
+		appearance: none; // Supprimer le style par défaut
+		background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+		background-repeat: no-repeat;
+		background-position: right 0.7rem top 50%;
+		background-size: 0.65rem auto;
+		padding-right: 1.75rem;
+
+		&:focus-visible {
+			outline: 0.125rem solid var(--color-focus-outline);
+			outline-offset: 0.125rem;
+		}
+	}
+
+	.color-vision-select {
+		margin-top: 0.5rem;
+	}
+
+	// Contrôle de taille de police
+	&__slider-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 0.5rem;
+	}
+
+	&__size-display {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	&__font-size-value {
+		min-width: 3rem;
+		text-align: right;
+		font-size: 0.875rem;
+		font-weight: 500;
+	}
+
+	&__reset-button {
+		width: 1.5rem;
+		height: 1.5rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 50%;
+		border: 1px solid var(--color-button-border, #ccc);
+		background-color: transparent;
+		color: var(--primary-color, #0077cc);
+		cursor: pointer;
+		padding: 0;
+		transition: all 0.2s ease;
+
+		&:hover {
+			background-color: var(--color-button-hover-bg, rgba(0, 119, 204, 0.1));
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-focus-outline, var(--primary-color));
+			outline-offset: 2px;
+		}
+	}
+
+	&__reset-icon {
+		font-size: 0.875rem;
+		line-height: 1;
+	}
+
+	&__slider-container {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		// margin-bottom: 0.5rem;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	&__slider {
+		flex: 1;
+		height: 8px;
+		max-width: calc(100% - 3rem);
+		-webkit-appearance: none;
+		appearance: none;
+		background: var(--color-border);
+		outline: none;
+		border-radius: 4px;
+
+		&::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 18px;
+			height: 18px;
+			border-radius: 50%;
+			background: var(--color-accent);
+			cursor: pointer;
+			transition: background 0.2s;
+
+			&:hover {
+				background: var(--color-accent-hover);
+			}
+		}
+
+		&::-moz-range-thumb {
+			width: 18px;
+			height: 18px;
+			border: none;
+			border-radius: 50%;
+			background: var(--color-accent);
+			cursor: pointer;
+			transition: background 0.2s;
+
+			&:hover {
+				background: var(--color-accent-hover);
+			}
+		}
+	}
+
+	&__slider-label {
+		color: var(--color-text);
+		font-size: 0.8rem;
+		flex-shrink: 0;
+		min-width: 1rem;
+		text-align: center;
+
+		&--large {
+			font-size: 1.2rem;
+			min-width: 1.5rem;
+		}
+	}
+
+	&__font-control {
+		margin: 0.5rem 0;
+	}
+
+	&__font-size-control {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-top: 0.5rem;
+	}
+
+	&__font-size-button {
+		width: 2rem;
+		height: 2rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 1.25rem;
+		font-weight: bold;
+		border-radius: 50%;
+		border: 0.0625rem solid var(--color-button-border);
+		background: transparent;
+
+		&:hover {
+			background-color: var(--color-button-hover-bg);
+		}
+
+		&:focus-visible {
+			outline: 0.125rem solid var(--color-focus-outline);
+			outline-offset: 0.125rem;
+		}
+	}
+
+	&__font-size-value {
+		width: 3rem;
+		text-align: center;
+		font-size: 0.875rem;
+	}
+
+	// Pour le skeleton loader
 	&.skeleton {
-		width: 150px;
-		height: 30px;
+		width: 9.375rem; // 150px
+		height: 1.875rem; // 30px
 		background-color: #e0e0e0;
 		border-radius: 0.25rem;
+	}
+
+	// &__category,
+	// &__select-control,
+	// &__font-control,
+	// &__buttons-row {
+	// 	max-width: 100%;
+	// 	width: 100%;
+	// 	box-sizing: border-box;
+	// }
+
+	&__reset-section {
+		margin-top: 0.25rem;
+		margin-bottom: 0.5rem;
+		padding-top: 1rem;
+		border-top: 1px dashed var(--gray-lighter);
+		text-align: center;
+	}
+
+	&__reset-all-button {
+		padding: 0.5rem 1.25rem;
+		background: transparent;
+		color: var(--color-main-text);
+		border: 1px solid var(--color-button-border);
+		border-radius: 0.25rem;
+		font-size: 0.875rem;
+		font-weight: 500;
+		transition: all 0.2s ease;
+
+		&:hover {
+			background-color: var(--constant-error-color);
+			color: white;
+			border-color: transparent;
+		}
+
+		&:focus-visible {
+			outline: 0.125rem solid var(--color-focus-outline);
+			outline-offset: 0.125rem;
+		}
+	}
+
+	&__compliance-link {
+		margin: 0.25rem 0;
+		text-align: center;
+		font-size: 0.875rem;
+	}
+
+	&__accessibility-link {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		// color: var(--primary-color);
+		padding: 0.5rem;
+		border-radius: 0.25rem;
+		// transition: all 0.2s ease;
+
+		&:hover {
+			opacity: 1;
+			background-color: var(--color-button-hover-bg);
+			color: var(--off-white);
+
+			span {
+				color: var(--off-white);
+			}
+		}
+
+		&:focus-visible {
+			outline: 0.125rem solid var(--color-focus-outline);
+			outline-offset: 0.125rem;
+			color: var(--off-white);
+			span {
+				color: var(--off-white);
+			}
+		}
+	}
+
+	&__accessibility-icon {
+		font-size: 1rem;
+	}
+
+	// // // // // // // // // // //
+
+	&__high-contrast-button {
+		background-color: #000000;
+		color: #ffff00;
+		border: 3px solid #ffff00;
+		font-family: "Atkinson Hyperlegible", sans-serif;
+		font-size: 1.1rem;
+		font-weight: 500;
+
+		&:hover {
+			background-color: #ffff00;
+			color: #000000;
+			border-color: #000000;
+		}
+
+		&.active {
+			background-color: #ffff00;
+			color: #000000;
+			box-shadow: 0 0 0 2px #000000;
+		}
+	}
+
+	// // // // // // // // // //
+
+	// // Reset complet des styles pour les éléments React-Select
+	// .react-select__control {
+	// 	// Supprimer tout style d'arrière-plan ou bordure dupliqué
+	// 	// background-image: none !important;
+	// 	// box-shadow: none !important;
+
+	// 	// S'assurer que le style correspond à celui de vos boutons
+	// 	border: 0.0625rem solid var(--color-button-border, var(--color-main-text));
+	// 	// border-radius: 0.25rem;
+	// 	// background-color: var(--color-panel-bg);
+
+	// 	&:hover {
+	// 		background: var(--color-button-hover-bg);
+	// 		color: var(--color-button-hover-text);
+	// 		// color: black !important;
+	// 	}
+	// }
+
+	// Supprimer la ligne de séparation
+	// .react-select__indicator-separator {
+	// 	display: none;
+	// }
+
+	// Lorsque React-Select est utilisé à l'intérieur d'un conteneur avec une classe .accessibility-menu__select
+	// .accessibility-menu__select > div {
+	// 	// Supprimer toutes les bordures externes potentiellement dupliquées
+	// 	// border: none;
+	// 	// background-image: none;
+
+	// 	// Supprimer les paddings inutiles
+	// 	// &.react-select__control {
+	// 	// 	// padding: 0;
+	// 	// }
+	// }
+}
+
+// React-Select styles - regroupés en bas du fichier
+.react-select-container {
+	width: 100%;
+	margin-bottom: 0.5rem;
+
+	// Control (bouton principal du select)
+	.react-select__control {
+		background-color: var(--color-panel-bg) !important;
+		border: 0.0625rem solid var(--color-button-border, var(--color-main-text)) !important;
+		border-radius: 0.25rem;
+		min-height: 38px;
+		box-shadow: none !important;
+
+		&:hover {
+			border-color: var(--primary-color) !important;
+		}
+
+		&--is-focused {
+			border-color: var(--primary-color) !important;
+			box-shadow: 0 0 0 1px var(--primary-color) !important;
+		}
+	}
+
+	// Texte à l'intérieur du control
+	.react-select__single-value {
+		color: var(--color-main-text) !important;
+	}
+
+	// Menu déroulant
+	.react-select__menu {
+		background-color: var(--color-panel-bg) !important;
+		border: 0.0625rem solid var(--color-button-border) !important;
+		z-index: 9999 !important;
+	}
+
+	// Options dans le menu
+	.react-select__option {
+		color: var(--color-main-text) !important;
+		cursor: pointer;
+
+		&--is-focused {
+			background-color: var(--color-button-hover-bg) !important;
+		}
+
+		&--is-selected {
+			background-color: var(--primary-color) !important;
+			color: var(--color-button-active-text) !important;
+		}
+	}
+
+	// Suppression du séparateur
+	.react-select__indicator-separator {
+		display: none !important;
+	}
+
+	// Flèche dropdown
+	.react-select__dropdown-indicator {
+		color: var(--color-main-text) !important;
+
+		&:hover {
+			color: var(--primary-color) !important;
+		}
+	}
+
+	// Groupes d'options
+	.react-select__group-heading {
+		color: var(--color-main-text) !important;
+		font-weight: bold;
+		font-size: 0.85em;
+		padding: 0.5rem;
+		margin-bottom: 0;
+		text-transform: uppercase;
+		background-color: var(--color-button-hover-bg);
+		opacity: 0.8;
+	}
+
+	// Input (recherche)
+	.react-select__input {
+		color: var(--color-main-text) !important;
+	}
+}
+
+// High-contrast theme styles
+[data-theme="high-contrast"] {
+	.react-select-container {
+		.react-select__control {
+			background-color: #000000 !important;
+			border-color: #ffff00 !important;
+			border-width: 2px !important;
+
+			&:hover {
+				// border-color: #ffff00 !important;
+				background: var(--color-button-hover-bg) !important;
+			}
+
+			&--is-focused {
+				border-color: #ffff00 !important;
+				box-shadow: 0 0 0 1px #ffff00 !important;
+				background: white !important;
+			}
+		}
+
+		.react-select__dropdown-indicator {
+			color: #ffff00 !important;
+
+			svg {
+				fill: #ffff00 !important;
+			}
+		}
+
+		.react-select__control:hover .react-select__single-value {
+			color: black !important;
+		}
+
+		.react-select__control:hover .react-select__dropdown-indicator svg {
+			fill: black !important;
+		}
+
+		.react-select__control--is-focused .react-select__single-value {
+			color: black !important;
+		}
+
+		.react-select__control--is-focused .react-select__dropdown-indicator svg {
+			fill: black !important;
+		}
+
+		.react-select__option {
+			// color: #ffff00 !important;
+
+			&--is-selected {
+				background-color: #ffff00 !important;
+				color: #000000 !important;
+				font-weight: bold;
+			}
+
+			&:hover {
+				background-color: white !important;
+				color: #000000 !important;
+			}
+
+			&--is-focused {
+				background-color: white !important;
+				color: #000000 !important;
+			}
+		}
+
+		.react-select__group-heading {
+			color: #ffff00 !important;
+			color: white !important;
+			background-color: #222222 !important;
+		}
+
+		// .react-select__input-container {
+		// 	color: #ffff00 !important;
+		// 	color: blue !important;
+		// }
+
+		// .react-select__indicator {
+		// 	color: #ffff00 !important;
+		// 	color: green !important;
+		// }
+
+		// .react-select__placeholder {
+		// 	color: #ffff00 !important;
+		// 	color: red !important;
+		// }
+	}
+}
+
+// // // // // // // // // // // // // // // // // //
+
+// Sélecteur pour les selects natifs uniquement, éviter de cibler les composants React-Select
+select.accessibility-menu__select:not(.react-select__control) {
+	appearance: none;
+	background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+	background-repeat: no-repeat;
+	background-position: right 0.7rem top 50%;
+	background-size: 0.65rem auto;
+	padding-right: 1.75rem;
+}
+
+// select.accessibility-menu__select {
+// 	// Garder le style de la flèche pour les selects natifs uniquement
+// 	appearance: none;
+// 	background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+// 	background-repeat: no-repeat;
+// 	background-position: right 0.7rem top 50%;
+// 	background-size: 0.65rem auto;
+// 	padding-right: 1.75rem;
+// }
+
+// // Style spécifique pour les composants React-Select
+// .react-select__control {
+// 	background-image: none !important; // Supprimer l'image de fond
+// }
+
+// // Style spécial quand le thème est déjà high-contrast
+// .theme-high-contrast .accessibility-menu__high-contrast-button {
+// 	border: 3px solid var(--color-focus-outline, #ffffff);
+
+// 	&.active {
+// 		box-shadow: 0 0 0 2px var(--color-focus-outline, #ffffff);
+// 	}
+// }
+
+// Style pour les selects en mode high-contrast
+[data-theme="high-contrast"] .accessibility-menu {
+	// Adaptation du slider en high-contrast
+	&__slider {
+		background: #ffff00;
+
+		&::-webkit-slider-thumb {
+			background: #ffff00;
+			border: 2px solid #000000;
+		}
+
+		&::-moz-range-thumb {
+			background: #ffff00;
+			border: 2px solid #000000;
+		}
 	}
 }

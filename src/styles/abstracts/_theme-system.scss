@@ -17,6 +17,8 @@
 	// Variables fondamentales
 	--off-white: #{$off-white};
 	--near-black: #{$near-black};
+	--constant-off-white: get-color("stone", 50);
+	--constant-near-black: get-color("stone", 950);
 
 	// Niveaux de gris
 	--gray-darkest: #{$gray-darkest};
@@ -34,8 +36,13 @@
 	--tertiary-color: #{$tertiary-color};
 	--link-color: #{$link-color};
 	--link-hover-color: #{$link-color-hover};
-	--success-color: #{$success-color};
-	--error-color: #{$error-color};
+
+	// --success-color: #{$success-color};
+	// --error-color: #{$error-color};
+
+	// Couleurs fonctionnelles constantes
+	--constant-error-color: #dc2626; // Rouge d'erreur fixe
+	--constant-success-color: #059669; // Vert de succès fixe
 
 	// Variables dérivées - déclarées explicitement
 	--color-main-bg: #{$color-main-bg};
@@ -110,6 +117,23 @@
 
 	--color-tooltip-text: #{$color_tooltip_text};
 	--color-tooltip-bg: #{$color_tooltip_bg};
+
+	// Variables pour le panneau d'accessibilité
+	--color-panel-bg: #{$color_panel_bg};
+	--color-panel-border: #{$color_panel_border};
+	--color-scrollbar-track: #{$color_scrollbar_track};
+	--color-scrollbar-thumb: #{$color_scrollbar_thumb};
+	// --color-button-bg: #{$off-white};
+	--color-button-border: #{$color_button_border};
+	--color-button-hover-bg: #{$link-color-hover};
+	--color-button-hover-text: #{$off-white};
+	--color-button-active-text: #{$near-black};
+	--color-button-active-outline: #{$color_button_active_outline};
+
+	// Variables pour le curseur
+	--color-border: #{$color_border};
+	--color-accent: #{$color_accent};
+	--color-accent-hover: #{$color_accent_hover};
 }
 
 // Thème par défaut (light)

@@ -124,4 +124,19 @@
 	// Infobulles
 	$color_tooltip_text: $off-white !global;
 	$color_tooltip_bg: rgba($near-black, 0.8) !global;
+
+	// Variables pour le panneau d'accessibilité
+	$color_panel_bg: $off-white !global;
+	$color_panel_border: $gray-medium-dark !global;
+	$color_scrollbar_track: $off-white !global;
+	$color_scrollbar_thumb: $gray-medium-light !global;
+	$color_button_border: $gray-medium-light !global;
+	$color_button_hover_bg: rgba($primary-color, 0.1) !global;
+	$color_button_active_text: $off-white !global;
+	$color_button_active_outline: $primary-color !global;
+
+	// Variables pour le curseur de taille de police
+	$color_border: $gray-medium-light !global;
+	$color_accent: $primary-color !global;
+	$color_accent_hover: darken($primary-color, 15%) !global;
 }

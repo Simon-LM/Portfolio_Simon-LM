@@ -871,7 +871,7 @@ $hc-palette: (
 	// États d'action (blanc)
 	"success": #00ff00,
 	// Validation (vert pur)
-	"error": #ff0000 // Erreur (rouge pur),,,,,
+	"error": #ff0000 // Erreur (rouge pur),,,,,,,,,,
 );
 
 // Fonction qui détermine la couleur high contrast basée sur la luminosité
@@ -917,12 +917,9 @@ $hc-palette: (
 	$gray-lightest: get-high-contrast-color($gray-lightest) !global;
 
 	// Couleurs sémantiques avec rôles spécifiques
-	$primary-color: get-high-contrast-color($primary-color, "highlight") !global;
-	$secondary-color: get-high-contrast-color($secondary-color, "text") !global;
-	$tertiary-color: get-high-contrast-color(
-		$tertiary-color,
-		"background"
-	) !global;
+	$primary-color: get-high-contrast-color($primary-color) !global;
+	$secondary-color: get-high-contrast-color($secondary-color) !global;
+	$tertiary-color: get-high-contrast-color($tertiary-color) !global;
 	$link-color: get-high-contrast-color($link-color, "link") !global;
 	$link-color-hover: get-high-contrast-color(
 		$link-color-hover,
@@ -1113,7 +1110,7 @@ $hc-palette: (
 			"success-color": #0075ff,
 			// Bleu spécifique pour remplacer le vert
 			"error-color": #ffcc00
-				// Jaune-orange pour remplacer le rouge,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+				// Jaune-orange pour remplacer le rouge,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 		),
 		"overrides": (),
 	);
@@ -1374,7 +1371,7 @@ $hc-palette: (
 			"success-color": #0090ff,
 			// Bleu clair pour remplacer le vert
 			"error-color": #ffd700
-				// Or pour remplacer le rouge,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+				// Or pour remplacer le rouge,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 		),
 		"overrides": (),
 	);
@@ -1609,7 +1606,7 @@ $hc-palette: (
 			"success-color": #ff6600,
 			// Orange pour remplacer le vert
 			"error-color": #ff3399
-				// Rose pour remplacer le rouge,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+				// Rose pour remplacer le rouge,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 		),
 		"overrides": (),
 	);

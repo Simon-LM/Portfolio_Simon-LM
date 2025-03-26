@@ -1,12 +1,49 @@
 /** @format */
 
+// @font-face {
+// 	font-family: "Inter";
+// 	font-style: normal;
+// 	font-weight: 100 900;
+// 	font-display: swap;
+// 	src: url("/fonts/Inter-VariableFont_opsz,wght.woff2")
+// 		format("woff2-variations");
+// }
+
+// @font-face {
+// 	font-family: "Inter";
+// 	font-style: italic;
+// 	font-weight: 100 900;
+// 	font-display: swap;
+// 	src: url("/fonts/Inter-Italic-VariableFont_opsz,wght.woff2")
+// 		format("woff2-variations");
+// }
+
+// @font-face {
+// 	font-family: "Lexend Giga";
+// 	font-style: normal;
+// 	font-weight: 100 900;
+// 	font-display: swap;
+// 	src: url("/fonts/LexendGiga-VariableFont_wght.woff2")
+// 		format("woff2-variations");
+// }
+
+// @font-face {
+// 	font-family: "Quicksand";
+// 	font-style: normal;
+// 	font-weight: 300 700;
+// 	font-display: swap;
+// 	src: url("/fonts/Quicksand-VariableFont_wght.woff2")
+// 		format("woff2-variations");
+// }
+
 @font-face {
 	font-family: "Inter";
 	font-style: normal;
 	font-weight: 100 900;
 	font-display: swap;
 	src: url("/fonts/Inter-VariableFont_opsz,wght.woff2")
-		format("woff2-variations");
+			format("woff2-variations"),
+		url("/fonts/Inter-VariableFont_opsz,wght.ttf") format("truetype-variations");
 }
 
 @font-face {
@@ -15,7 +52,9 @@
 	font-weight: 100 900;
 	font-display: swap;
 	src: url("/fonts/Inter-Italic-VariableFont_opsz,wght.woff2")
-		format("woff2-variations");
+			format("woff2-variations"),
+		url("/fonts/Inter-Italic-VariableFont_opsz,wght.ttf")
+			format("truetype-variations");
 }
 
 @font-face {
@@ -24,7 +63,17 @@
 	font-weight: 100 900;
 	font-display: swap;
 	src: url("/fonts/LexendGiga-VariableFont_wght.woff2")
-		format("woff2-variations");
+			format("woff2-variations"),
+		url("/fonts/LexendGiga-VariableFont_wght.ttf") format("truetype-variations");
+}
+@font-face {
+	font-family: "Lexend Deca";
+	font-style: normal;
+	font-weight: 100 900;
+	font-display: swap;
+	src: url("/fonts/LexendDeca-VariableFont_wght.woff2")
+			format("woff2-variations"),
+		url("/fonts/LexendDeca-VariableFont_wght.ttf") format("truetype-variations");
 }
 
 @font-face {
@@ -33,8 +82,526 @@
 	font-weight: 300 700;
 	font-display: swap;
 	src: url("/fonts/Quicksand-VariableFont_wght.woff2")
-		format("woff2-variations");
+			format("woff2-variations"),
+		url("/fonts/Quicksand-VariableFont_wght.ttf") format("truetype-variations");
 }
+
+//  Dyslexic font
+
+@font-face {
+	font-family: "OpenDyslexic";
+	src: url("/fonts/OpenDyslexic-Regular.woff2") format("woff2"),
+		url("/fonts/OpenDyslexic-Regular.otf") format("opentype");
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "OpenDyslexic";
+	src: url("/fonts/OpenDyslexic-Bold.woff2") format("woff2"),
+		url("/fonts/OpenDyslexic-Bold.otf") format("opentype");
+	font-weight: bold;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "OpenDyslexic";
+	src: url("/fonts/OpenDyslexic-Italic.woff2") format("woff2"),
+		url("/fonts/OpenDyslexic-Italic.otf") format("opentype");
+	font-weight: normal;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "OpenDyslexic";
+	src: url("/fonts/OpenDyslexic-Bold-Italic.woff2") format("woff2"),
+		url("/fonts/OpenDyslexic-Bold-Italic.otf") format("opentype");
+	font-weight: bold;
+	font-style: italic;
+	font-display: swap;
+}
+
+// Sylexiad Sans Medium - Regular
+@font-face {
+	font-family: "SylexiadSans";
+	src: url("/fonts/SylexiadSansMedium.woff2") format("woff2"),
+		url("/fonts/SylexiadSansMedium.ttf") format("truetype");
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+
+// Sylexiad Sans Medium - Italic
+@font-face {
+	font-family: "SylexiadSans";
+	src: url("/fonts/SylexiadSansMedium-Italic.woff2") format("woff2"),
+		url("/fonts/SylexiadSansMedium-Italic.ttf") format("truetype");
+	font-weight: normal;
+	font-style: italic;
+	font-display: swap;
+}
+
+// Sylexiad Sans Medium - Bold
+@font-face {
+	font-family: "SylexiadSans";
+	src: url("/fonts/SylexiadSansMedium-Bold.woff2") format("woff2"),
+		url("/fonts/SylexiadSansMedium-Bold.ttf") format("truetype");
+	font-weight: bold;
+	font-style: normal;
+	font-display: swap;
+}
+
+// Sylexiad Sans Medium - Bold Italic
+@font-face {
+	font-family: "SylexiadSans";
+	src: url("/fonts/SylexiadSansMedium-BItalic.woff2") format("woff2"),
+		url("/fonts/SylexiadSansMedium-BItalic.ttf") format("truetype");
+	font-weight: bold;
+	font-style: italic;
+	font-display: swap;
+}
+
+// SylexiadSerif - Pour dyslexie
+@font-face {
+	font-family: "SylexiadSerif";
+	src: url("/fonts/SylexiadSerifMedium.woff2") format("woff2"),
+		url("/fonts/SylexiadSerifMedium.ttf") format("truetype");
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "SylexiadSerif";
+	src: url("/fonts/SylexiadSerifMedium-Italic.woff2") format("woff2"),
+		url("/fonts/SylexiadSerifMedium-Italic.ttf") format("truetype");
+	font-weight: normal;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "SylexiadSerif";
+	src: url("/fonts/SylexiadSerifMedium-Bold.woff2") format("woff2"),
+		url("/fonts/SylexiadSerifMedium-Bold.ttf") format("truetype");
+	font-weight: bold;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "SylexiadSerif";
+	src: url("/fonts/SylexiadSerifMedium-BoldItalic.woff2") format("woff2"),
+		url("/fonts/SylexiadSerifMedium-BoldItalic.ttf") format("truetype");
+	font-weight: bold;
+	font-style: italic;
+	font-display: swap;
+}
+
+// Andika - Police SIL
+@font-face {
+	font-family: "Andika";
+	src: url("/fonts/Andika-Regular.woff2") format("woff2"),
+		url("/fonts/Andika-Regular.ttf") format("truetype");
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Andika";
+	src: url("/fonts/Andika-Bold.woff2") format("woff2"),
+		url("/fonts/Andika-Bold.ttf") format("truetype");
+	font-weight: bold;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Andika";
+	src: url("/fonts/Andika-Italic.woff2") format("woff2"),
+		url("/fonts/Andika-Italic.ttf") format("truetype");
+	font-weight: normal;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Andika";
+	src: url("/fonts/Andika-BoldItalic.woff2") format("woff2"),
+		url("/fonts/Andika-BoldItalic.ttf") format("truetype");
+	font-weight: bold;
+	font-style: italic;
+	font-display: swap;
+}
+
+// High contrast font
+
+@font-face {
+	font-family: "Atkinson Hyperlegible";
+	src: url("/fonts/AtkinsonHyperlegibleNextVF-Variable.woff2")
+			format("woff2-variations"),
+		url("/fonts/AtkinsonHyperlegibleNextVF-Variable.ttf")
+			format("truetype-variations");
+	font-weight: 100 900; // Plage de poids disponible
+	font-style: normal;
+	font-display: swap;
+}
+// Tiresias_Infont - Pour malvoyants
+@font-face {
+	font-family: "Tiresias";
+	src: url("/fonts/Tiresias_Infont.woff2") format("woff2"),
+		url("/fonts/Tiresias_Infont.ttf") format("truetype");
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Tiresias";
+	src: url("/fonts/Tiresias_Infont_Italic.woff2") format("woff2"),
+		url("/fonts/Tiresias_Infont_Italic.ttf") format("truetype");
+	font-weight: normal;
+	font-style: italic;
+	font-display: swap;
+}
+
+// RalewayDots - Pour lecture simplifiée
+@font-face {
+	font-family: "RalewayDots";
+	src: url("/fonts/RalewayDots-Regular.woff2") format("woff2"),
+		url("/fonts/RalewayDots-Regular.ttf") format("truetype");
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+
+// Ajouter la classe pour le mode contraste élevé
+html.high-contrast {
+	p,
+	span,
+	div,
+	li,
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	a,
+	input,
+	textarea,
+	button,
+	label,
+	select {
+		font-family: "Atkinson Hyperlegible", sans-serif !important;
+		letter-spacing: 0.02em;
+		line-height: 1.5;
+	}
+}
+
+// Classe pour la police dyslexique
+html.dyslexic-font {
+	// // Définir une variable CSS personnalisée pour le facteur d'échelle OpenDyslexic
+	// --dyslexic-scale: 0.9; // 90% de la taille standard
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-family: "OpenDyslexic", sans-serif !important;
+		// letter-spacing: 0.025em;
+		letter-spacing: 0.01em;
+		line-height: 1.5;
+	}
+	p,
+	span,
+	div,
+	li,
+	a,
+	input,
+	textarea,
+	button,
+	label,
+	select {
+		font-family: "OpenDyslexic", sans-serif !important;
+		// letter-spacing: 0.025em;
+		letter-spacing: 0.01em;
+		line-height: 1.5;
+		// font-size: calc(1em * 0.95);
+	}
+
+	.header {
+		&__lang-button {
+			font-family: "Inter", sans-serif !important;
+
+			padding: 0rem 0.5rem;
+
+			font-weight: 700;
+		}
+
+		&__title {
+			&-name {
+				// font-family: "Lexend Giga", sans-serif !important;
+				font-size: clamp(1.5rem, 3vw, 3em);
+				font-weight: 700;
+			}
+			&-separator {
+				// font-family: "Lexend Giga", sans-serif !important;
+				font-size: clamp(1.5rem, 3vw, 3em);
+				font-weight: 400 !important;
+			}
+			&-role {
+				// font-family: "Lexend Giga", sans-serif !important;
+				font-size: clamp(1rem, 2vw, 1.5rem);
+				font-weight: 400;
+			}
+		}
+	}
+	.navigation-sticky {
+		.menu-button {
+			.menu-text {
+				font-size: calc(1em * 0.8);
+				margin-left: -0.25em;
+			}
+		}
+	}
+}
+
+html.sylexiad-font {
+	p,
+	span,
+	div,
+	li,
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	a,
+	input,
+	textarea,
+	button,
+	label,
+	select {
+		font-family: "SylexiadSans", sans-serif !important;
+		letter-spacing: 0.02em;
+		line-height: 1.5;
+	}
+}
+
+html.sylexiad-serif-font {
+	p,
+	span,
+	div,
+	li,
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	a,
+	input,
+	textarea,
+	button,
+	label,
+	select {
+		font-family: "SylexiadSerif", serif !important;
+		letter-spacing: 0.02em;
+		line-height: 1.5;
+	}
+}
+
+html.atkinson-font {
+	p,
+	span,
+	div,
+	li,
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	a,
+	input,
+	textarea,
+	button,
+	label,
+	select {
+		font-family: "Atkinson Hyperlegible", sans-serif !important;
+		letter-spacing: 0.02em;
+		line-height: 1.5;
+	}
+}
+
+html.tiresias-font {
+	p,
+	span,
+	div,
+	li,
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	a,
+	input,
+	textarea,
+	button,
+	label,
+	select {
+		font-family: "Tiresias", sans-serif !important;
+		letter-spacing: 0.02em;
+		line-height: 1.5;
+	}
+}
+
+html.andika-font {
+	p,
+	span,
+	div,
+	li,
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	a,
+	input,
+	textarea,
+	button,
+	label,
+	select {
+		font-family: "Andika", sans-serif !important;
+		letter-spacing: 0.02em;
+		line-height: 1.5;
+	}
+}
+
+html.ralewaydots-font {
+	p,
+	span,
+	div,
+	li,
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	a,
+	input,
+	textarea,
+	button,
+	label,
+	select {
+		font-family: "RalewayDots", sans-serif !important;
+		letter-spacing: 0.04em;
+		line-height: 1.6;
+	}
+}
+
+html.dyslexia-optimized {
+	h1 {
+		font-family: "Lexend Giga", sans-serif !important;
+		font-weight: 600;
+		line-height: 1.3;
+		letter-spacing: -0.025em;
+	}
+
+	.header {
+		&__lang-button {
+			font-family: "Inter", sans-serif !important;
+
+			padding: 0rem 0.5rem;
+
+			font-weight: 700;
+		}
+
+		&__title {
+			&-name {
+				font-family: "Lexend Giga", sans-serif !important;
+				font-size: clamp(1.5rem, 3vw, 3em);
+				font-weight: 700;
+			}
+			&-separator {
+				font-family: "Lexend Giga", sans-serif !important;
+				font-size: clamp(1.5rem, 3vw, 3em);
+				font-weight: 400 !important;
+			}
+			&-role {
+				font-family: "Lexend Giga", sans-serif !important;
+				font-size: clamp(1rem, 2vw, 1.5rem);
+				font-weight: 400;
+			}
+		}
+		&__blog-link {
+			font-family: "Lexend Deca", sans-serif !important;
+		}
+	}
+
+	.navigation-sticky {
+		.menu-button {
+			.menu-text {
+				font-family: "Lexend Deca", sans-serif !important;
+			}
+		}
+	}
+
+	// H2-H6 utilisent SylexiadSans
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-family: "Lexend Deca", sans-serif !important;
+		font-weight: 600;
+		letter-spacing: -0.02em;
+	}
+
+	// Tous les autres textes utilisent SylexiadSerif
+	p,
+	div,
+	span,
+	nav,
+	li,
+	a,
+	input,
+	textarea,
+	button,
+	label,
+	select {
+		font-family: "SylexiadSans", sans-serif !important;
+		font-weight: 400;
+		line-height: 1.6;
+		letter-spacing: 0.02em;
+	}
+}
+
+// Classe pour réduire les animations
+html.reduce-motion {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.001s !important;
+		animation-delay: 0s !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.001s !important;
+		transition-delay: 0s !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+// // // // // // // // // // // // // // //
 
 h1 {
 	font-family: "Lexend Giga", sans-serif;

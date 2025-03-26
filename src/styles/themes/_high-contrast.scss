@@ -29,8 +29,16 @@
 		)
 	);
 	// Surcharges manuelles après l'automatisation si nécessaire
+	$color_header_bg: map-get($hc-palette, "highlight") !global;
 	$color_header_text: #000000 !global;
 	$color_header_text-role: #000000 !global;
 	$color_header_blog-link_bg: #00ffff !global;
 	$color_header_blog-link_text: #000000 !global;
+
+	.skills__icon-wrapper {
+		&.is-rotating {
+			animation: none;
+			animation-fill-mode: none;
+		}
+	}
 }
