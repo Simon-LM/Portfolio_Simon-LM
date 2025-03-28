@@ -193,11 +193,16 @@
 
 		&:hover {
 			background-color: var(--color-button-hover-bg, rgba(0, 119, 204, 0.1));
+			.accessibility-menu__reset-icon {
+				color: var(--off-white);
+			}
 		}
 
 		&:focus-visible {
-			outline: 2px solid var(--color-focus-outline, var(--primary-color));
-			outline-offset: 2px;
+			border-radius: 50%;
+			.accessibility-menu__reset-icon {
+				color: var(--off-white);
+			}
 		}
 	}
 
@@ -404,9 +409,10 @@
 		font-size: 1.1rem;
 		font-weight: 500;
 
-		&:hover {
+		&:hover,
+		&:focus-visible {
 			background-color: #ffff00;
-			color: #000000;
+			color: #000000 !important;
 			border-color: #000000;
 		}
 
@@ -469,13 +475,35 @@
 		box-shadow: none !important;
 
 		&:hover {
-			border-color: var(--primary-color) !important;
+			border-color: var(--link-hover-color) !important;
+			background: var(--link-hover-color) !important;
 		}
 
 		&--is-focused {
-			border-color: var(--primary-color) !important;
-			box-shadow: 0 0 0 1px var(--primary-color) !important;
+			border-color: var(--link-color) !important;
+			background: var(--link-color) !important;
+			color: var(--off-white) !important;
+
+			outline: 2px solid var(--link-color) !important;
+			outline-offset: 0.125rem !important;
+			box-shadow: none !important;
 		}
+	}
+
+	.react-select__control:hover .react-select__single-value {
+		color: white !important;
+	}
+
+	.react-select__control:hover .react-select__dropdown-indicator svg {
+		fill: white !important;
+	}
+
+	.react-select__control--is-focused .react-select__single-value {
+		color: white !important;
+	}
+
+	.react-select__control--is-focused .react-select__dropdown-indicator svg {
+		fill: white !important;
 	}
 
 	// Texte à l'intérieur du control
@@ -497,6 +525,9 @@
 
 		&--is-focused {
 			background-color: var(--color-button-hover-bg) !important;
+			// outline: 0.125rem solid var(--color-focus-outline) !important;
+			outline: 0.125rem solid white !important;
+			outline-offset: -0.25rem !important;
 		}
 
 		&--is-selected {
@@ -554,6 +585,9 @@
 				border-color: #ffff00 !important;
 				box-shadow: 0 0 0 1px #ffff00 !important;
 				background: white !important;
+
+				outline: 0.125rem solid #ffff00 !important;
+				outline-offset: 0.25rem !important;
 			}
 		}
 
@@ -598,6 +632,9 @@
 			&--is-focused {
 				background-color: white !important;
 				color: #000000 !important;
+
+				outline: 0.125rem solid #000000 !important;
+				outline-offset: -0.25rem !important;
 			}
 		}
 

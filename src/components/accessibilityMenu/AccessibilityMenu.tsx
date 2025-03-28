@@ -27,7 +27,7 @@ type GroupOptionType = {
 	options: OptionType[];
 };
 
-export default function ThemeToggleButton({ language }: Props) {
+export default function AccessibilityMenu({ language }: Props) {
 	const [mounted, setMounted] = useState(false);
 	const { theme, setTheme } = useTheme();
 	const { fontSize, increaseFontSize, decreaseFontSize } = useFontSizeStore();

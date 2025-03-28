@@ -28,12 +28,37 @@
 			),
 		)
 	);
+
+	// Uniformiser tous les états de focus avec les états hover
+	*:focus-visible {
+		outline: 3px solid #ffffff !important;
+		border-color: #ffffff !important;
+		box-shadow: none !important;
+	}
+
+	// Boutons et éléments interactifs au focus
+	button:focus-visible,
+	.button:focus-visible,
+	a:focus-visible,
+	.react-select__control:focus-visible {
+		background-color: #ffffff !important;
+		color: #000000 !important;
+		outline: 3px solid #ffffff !important;
+		outline-offset: 0.25rem;
+
+		// Assurer que tous les éléments enfants héritent du style
+		* {
+			color: #000000 !important;
+		}
+	}
+
 	// Surcharges manuelles après l'automatisation si nécessaire
+
 	$color_header_bg: map-get($hc-palette, "highlight") !global;
 	$color_header_text: #000000 !global;
 	$color_header_text-role: #000000 !global;
-	$color_header_blog-link_bg: #00ffff !global;
-	$color_header_blog-link_text: #000000 !global;
+	$color_header_blog-link_bg: #000000 !global;
+	$color_header_blog-link_text: #ffff00 !global;
 
 	.skills__icon-wrapper {
 		&.is-rotating {
