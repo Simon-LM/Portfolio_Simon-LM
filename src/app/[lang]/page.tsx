@@ -1,6 +1,6 @@
 /** @format */
 
-import ScrollProgressBar from "../../components/scrollProgressBar/ScrollProgressBar";
+// import ScrollProgressBar from "../../components/scrollProgressBar/ScrollProgressBar";
 import Hero from "./sections/Hero";
 import About from "./sections/About";
 import Skills from "./sections/Skills";

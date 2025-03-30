@@ -171,7 +171,7 @@
 						}
 					},
 					"consent": {
-						"title": "Protection anti-spam accessible",
+						"title": "Vérification Anti-spam du formulaire de contact",
 						"description": "Pour garantir l'accessibilité à tous, j'utilise reCAPTCHA v3 qui évite les tests visuels ou sonores traditionnels. Cette solution de Google analyse votre adresse IP et votre comportement de navigation pour distinguer les humains des robots. En acceptant, vous consentez à cette collecte de données par Google.",
 						"accept": "J'accepte",
 						"decline": "Je refuse",

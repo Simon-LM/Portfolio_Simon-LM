@@ -2,8 +2,9 @@
 
 "use client";
 
-import Select, { GroupBase, StylesConfig, components } from "react-select";
-import type { ActionMeta, SelectInstance } from "react-select";
+import Select, { GroupBase, StylesConfig } from "react-select";
+
+import type { SelectInstance } from "react-select";
 import { useTheme } from "../../hooks/useTheme";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -22,15 +23,10 @@ type OptionType = {
 	label: string;
 };
 
-type GroupOptionType = {
-	label: string;
-	options: OptionType[];
-};
-
 export default function AccessibilityMenu({ language }: Props) {
 	const [mounted, setMounted] = useState(false);
 	const { theme, setTheme } = useTheme();
-	const { fontSize, increaseFontSize, decreaseFontSize } = useFontSizeStore();
+	const { fontSize } = useFontSizeStore();
 	// const [isDyslexicFont, setIsDyslexicFont] = useState(false);
 	// const { isDyslexicFont, toggleDyslexicFont } = useDyslexicFontStore();
 	const { fontType, setFontType } = useDyslexicFontStore();
@@ -77,12 +73,18 @@ export default function AccessibilityMenu({ language }: Props) {
 	}, [mounted, isDyslexicMode]);
 
 	// Ajoutez un nouvel effet pour gérer la coordination entre les deux fonctionnalités
+	// useEffect(() => {
+	// 	if (fontType !== "none" && isDyslexicMode) {
+	// 		// Si on sélectionne une police dans le menu déroulant, désactiver le mode optimisé
+	// 		setIsDyslexicMode(false);
+	// 	}
+	// }, [fontType]);
 	useEffect(() => {
 		if (fontType !== "none" && isDyslexicMode) {
 			// Si on sélectionne une police dans le menu déroulant, désactiver le mode optimisé
 			setIsDyslexicMode(false);
 		}
-	}, [fontType]);
+	}, [fontType, isDyslexicMode]);
 
 	useEffect(() => {
 		setMounted(true);
@@ -170,7 +172,22 @@ export default function AccessibilityMenu({ language }: Props) {
 		}
 
 		// Appliquer le thème de daltonisme sélectionné
-		setTheme(mode as any);
+		// setTheme(mode as any);
+		setTheme(
+			mode as
+				| "light"
+				| "dark"
+				| "high-contrast"
+				| "anti-glare-light"
+				| "anti-glare-dark"
+				| "protanomaly"
+				| "protanopia"
+				| "deuteranomaly"
+				| "deuteranopia"
+				| "tritanomaly"
+				| "tritanopia"
+				| "achromatopsia"
+		);
 	};
 
 	const toggleReduceMotion = () => {
@@ -320,62 +337,6 @@ export default function AccessibilityMenu({ language }: Props) {
 		}
 	};
 
-	// // // // // // //
-
-	// const getSelectStyles = (): StylesConfig<
-	// 	OptionType,
-	// 	false,
-	// 	GroupBase<OptionType>
-	// > => {
-	// 	const isHighContrast = theme === "high-contrast";
-
-	// 	if (isHighContrast) {
-	// 		return {
-	// 			control: (base) => ({
-	// 				...base,
-	// 				backgroundColor: "#000000",
-	// 				color: "#ffff00",
-	// 				borderColor: "#ffff00",
-	// 				borderWidth: "2px",
-	// 				boxShadow: "none",
-	// 				"&:hover": {
-	// 					borderColor: "#ffff00",
-	// 				},
-	// 			}),
-	// 			singleValue: (base) => ({
-	// 				...base,
-	// 				color: "#ffff00",
-	// 			}),
-	// 			menu: (base) => ({
-	// 				...base,
-	// 				backgroundColor: "#000000",
-	// 				borderColor: "#ffff00",
-	// 			}),
-	// 			option: (base, state) => ({
-	// 				...base,
-	// 				backgroundColor: state.isFocused ? "#ffff00" : "#000000",
-	// 				color: state.isFocused ? "#000000" : "#ffff00",
-	// 				"&:hover": {
-	// 					backgroundColor: "#ffff00",
-	// 					color: "#000000",
-	// 				},
-	// 			}),
-	// 			input: (base) => ({
-	// 				...base,
-	// 				color: "#ffff00",
-	// 			}),
-	// 			placeholder: (base) => ({
-	// 				...base,
-	// 				color: "#ffff00",
-	// 			}),
-	// 			groupHeading: (base) => ({
-	// 				...base,
-	// 				color: "#ffff00",
-	// 				fontWeight: "bold",
-	// 			}),
-	// 		};
-	// 	}
-
 	const getSelectStyles = (): StylesConfig<
 		OptionType,
 		false,
@@ -417,9 +378,9 @@ export default function AccessibilityMenu({ language }: Props) {
 		if (type === "sylexiad") return labels.dyslexic.sylexiad;
 		if (type === "sylexiad-serif") return labels.dyslexic.sylexiadSerif;
 		if (type === "atkinson") return labels.dyslexic.atkinson;
-		if (type === "tiresias") return labels.dyslexic.tiresias;
+		// if (type === "tiresias") return labels.dyslexic.tiresias;
 		if (type === "andika") return labels.dyslexic.andika;
-		if (type === "ralewaydots") return labels.dyslexic.ralewayDots;
+		// if (type === "ralewaydots") return labels.dyslexic.ralewayDots;
 		return type; // Fallback
 	};
 
@@ -438,7 +399,12 @@ export default function AccessibilityMenu({ language }: Props) {
 	// // // // // // // // // // // // // // //
 
 	return (
-		<div className="accessibility-menu">
+		<div
+			className="accessibility-menu"
+			tabIndex={-1}
+			aria-label={
+				language === "fr" ? "Menu d'accessibilité" : "Accessibility menu"
+			}>
 			<h2 className="accessibility-menu__main-title">
 				{language === "fr"
 					? "Options d'accessibilité"
@@ -536,245 +502,15 @@ export default function AccessibilityMenu({ language }: Props) {
 				</div>
 
 				{/* Sous-section Daltonisme - inchangée */}
-				{/* <div className="accessibility-menu__visual-help-group">
-					<CustomSelect
-						id="color-vision-select"
-						label={labels.colorVision.group}
-						selectedKey={getColorVisionMode(theme)}
-						onChange={handleColorVisionChange}
-						options={[
-							{ value: "normal", label: labels.colorVision.normal },
-							{ value: "protanomaly", label: labels.colorVision.protanomaly },
-							{ value: "protanopia", label: labels.colorVision.protanopia },
-							{
-								value: "deuteranomaly",
-								label: labels.colorVision.deuteranomaly,
-							},
-							{ value: "deuteranopia", label: labels.colorVision.deuteranopia },
-							{ value: "tritanomaly", label: labels.colorVision.tritanomaly },
-							{ value: "tritanopia", label: labels.colorVision.tritanopia },
-							{
-								value: "achromatopsia",
-								label: labels.colorVision.achromatopsia,
-							},
-						]}
-					/>
-				</div> */}
-
-				{/* Sous-section Daltonisme - inchangée */}
 				<div className="accessibility-menu__visual-help-group">
 					<label
 						htmlFor="color-vision-select"
 						className="accessibility-menu__group-label">
 						{labels.colorVision.group}
 					</label>
-					{/* <Select
-						inputId="color-vision-select"
-						className="react-select-container"
-						classNamePrefix="react-select"
-						value={{
-							value: getColorVisionMode(theme),
-							label: getColorVisionLabel(getColorVisionMode(theme)),
-						}}
-						onChange={(option) => {
-							if (option) {
-								handleColorVisionChange((option as OptionType).value);
-							}
-						}}
-						options={[
-							{ value: "normal", label: labels.colorVision.normal },
-							{ value: "protanomaly", label: labels.colorVision.protanomaly },
-							{ value: "protanopia", label: labels.colorVision.protanopia },
-							{
-								value: "deuteranomaly",
-								label: labels.colorVision.deuteranomaly,
-							},
-							{ value: "deuteranopia", label: labels.colorVision.deuteranopia },
-							{ value: "tritanomaly", label: labels.colorVision.tritanomaly },
-							{ value: "tritanopia", label: labels.colorVision.tritanopia },
-							{
-								value: "achromatopsia",
-								label: labels.colorVision.achromatopsia,
-							},
-						]}
-						aria-label={labels.colorVision.selectLabel}
-						styles={getSelectStyles()}
-						isSearchable={false}
-						// Ajouter ces propriétés pour améliorer l'accessibilité
-						// tabSelectsValue={false}
-						openMenuOnFocus={false}
-						closeMenuOnSelect={true}
-						blurInputOnSelect={true}
-						menuShouldBlockScroll={true}
-						// Nouveau gestionnaire d'événements clavier simplifié
-						onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
-							// Si Enter ou Espace est pressé
-							if (e.key === "Enter" || e.key === " ") {
-								e.preventDefault();
-								e.stopPropagation();
-
-								// Vérifier si le menu est ouvert
-								const menuOpen =
-									document.querySelector('[role="listbox"]') !== null;
-
-								if (!menuOpen && colorVisionSelectRef.current) {
-									// Ouvrir le menu
-									colorVisionSelectRef.current.openMenu();
-								}
-							}
-
-							// Si le menu est ouvert et qu'on utilise Tab
-							const menuOpen =
-								document.querySelector('[role="listbox"]') !== null;
-							if (menuOpen) {
-								if (e.key === "Tab" && !e.shiftKey) {
-									e.preventDefault();
-									e.stopPropagation();
-
-									// Simuler flèche bas
-									const downEvent = new KeyboardEvent("keydown", {
-										key: "ArrowDown",
-										bubbles: true,
-									});
-									e.currentTarget.dispatchEvent(downEvent);
-								}
-
-								if (e.key === "Tab" && e.shiftKey) {
-									e.preventDefault();
-									e.stopPropagation();
-
-									// Simuler flèche haut
-									const upEvent = new KeyboardEvent("keydown", {
-										key: "ArrowUp",
-										bubbles: true,
-									});
-									e.currentTarget.dispatchEvent(upEvent);
-								}
-							}
-						}}
-
-						// // Gestionnaire d'événements clavier amélioré
-						// onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
-						// 	// Vérifier si le menu est ouvert (en recherchant un élément avec role="listbox")
-						// 	const menuOpen =
-						// 		document.querySelector('[role="listbox"]') !== null;
-
-						// 	// Si le menu n'est PAS ouvert
-						// 	if (!menuOpen) {
-						// 		// Ouvrir le menu avec Enter ou Espace
-						// 		if (e.key === "Enter" || e.key === " ") {
-						// 			e.preventDefault();
-						// 			e.stopPropagation();
-						// 			// Cliquer sur le select pour ouvrir le menu
-						// 			e.currentTarget.click();
-						// 		}
-
-						// 		// Laisser Tab fonctionner normalement
-						// 		if (e.key === "Tab") {
-						// 			return;
-						// 		}
-						// 	}
-						// 	// Si le menu EST ouvert
-						// 	else {
-						// 		// Permettre la navigation entre options avec Tab
-						// 		if (e.key === "Tab" && !e.shiftKey) {
-						// 			e.preventDefault();
-						// 			e.stopPropagation();
-
-						// 			// Simuler la flèche bas
-						// 			const downEvent = new KeyboardEvent("keydown", {
-						// 				key: "ArrowDown",
-						// 				bubbles: true,
-						// 			});
-						// 			e.currentTarget.dispatchEvent(downEvent);
-						// 		}
-
-						// 		// Navigation inverse avec Shift+Tab
-						// 		if (e.key === "Tab" && e.shiftKey) {
-						// 			e.preventDefault();
-						// 			e.stopPropagation();
-
-						// 			// Simuler la flèche haut
-						// 			const upEvent = new KeyboardEvent("keydown", {
-						// 				key: "ArrowUp",
-						// 				bubbles: true,
-						// 			});
-						// 			e.currentTarget.dispatchEvent(upEvent);
-						// 		}
-
-						// 		// Permettre la sélection avec Enter
-						// 		if (e.key === "Enter") {
-						// 			return; // Laisser le comportement par défaut
-						// 		}
-
-						// 		// Fermer le menu avec Escape
-						// 		if (e.key === "Escape") {
-						// 			return; // Laisser le comportement par défaut
-						// 		}
-						// 	}
-						// }}
-
-						// // Gestion personnalisée des touches pour supporter Tab/Shift+Tab
-						// onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
-						// 	// Permettre la navigation entre les options avec Tab
-						// 	if (e.key === "Tab" && !e.shiftKey) {
-						// 		e.preventDefault();
-						// 		e.stopPropagation();
-						// 		// Simuler appui sur flèche bas pour naviguer
-						// 		const downEvent = new KeyboardEvent("keydown", {
-						// 			key: "ArrowDown",
-						// 			bubbles: true,
-						// 		});
-						// 		e.target.dispatchEvent(downEvent);
-						// 	}
-
-						// 	// Permettre la navigation inverse avec Shift+Tab
-						// 	if (e.key === "Tab" && e.shiftKey) {
-						// 		e.preventDefault();
-						// 		e.stopPropagation();
-						// 		// Simuler appui sur flèche haut pour naviguer vers le haut
-						// 		const upEvent = new KeyboardEvent("keydown", {
-						// 			key: "ArrowUp",
-						// 			bubbles: true,
-						// 		});
-						// 		e.target.dispatchEvent(upEvent);
-						// 	}
-						// }}
-
-						// // Nouveau gestionnaire d'événements clavier
-						// onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
-						// 	// Obtenir l'état du menu à partir des classes CSS
-						// 	const isMenuOpen = e.currentTarget
-						// 		.closest(".react-select-container")
-						// 		?.classList.contains("react-select--menu-is-open");
-
-						// 	// Si le menu est fermé
-						// 	if (!isMenuOpen) {
-						// 		// Permettre l'ouverture avec Enter ou Espace
-						// 		if (e.key === "Enter" || e.key === " ") {
-						// 			e.preventDefault();
-						// 			e.stopPropagation();
-						// 			// Simuler un clic pour ouvrir le menu
-						// 			e.currentTarget.click();
-						// 		}
-
-						// 		// Laisser Tab fonctionner normalement pour la navigation entre éléments
-						// 		if (e.key === "Tab") {
-						// 			return; // Ne rien faire, laisser le comportement par défaut
-						// 		}
-						// 	}
-						// 	// Si le menu est déjà ouvert
-						// 	else {
-						// 		// Fermer le menu avec Echap
-						// 		if (e.key === "Escape") {
-						// 			return; // Comportement par défaut
-						// 		}
-						// 	}
-						// }}
-					/> */}
 
 					<Select
-						ref={colorVisionSelectRef} // Attacher la ref correctement
+						ref={colorVisionSelectRef}
 						inputId="color-vision-select"
 						className="react-select-container"
 						classNamePrefix="react-select"
@@ -806,9 +542,13 @@ export default function AccessibilityMenu({ language }: Props) {
 						aria-label={labels.colorVision.selectLabel}
 						styles={getSelectStyles()}
 						isSearchable={false}
+						menuPortalTarget={
+							typeof document !== "undefined" ? document.body : null
+						} // 👈 Ajouter ceci
+						menuPosition="fixed" // 👈 Ajouter ceci
+						menuShouldBlockScroll={true} // Cette option est déjà présente, c'est bien
 						openMenuOnFocus={false}
 						closeMenuOnSelect={true}
-						menuShouldBlockScroll={true}
 						// Gestionnaire simplifié qui ne bloque pas le comportement standard
 						onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
 							const menuOpen =
@@ -842,40 +582,6 @@ export default function AccessibilityMenu({ language }: Props) {
 						}}
 					/>
 				</div>
-
-				{/* Sous-section Daltonisme - inchangée */}
-				{/* <div className="accessibility-menu__visual-help-group">
-					<label
-						htmlFor="color-vision-select"
-						className="accessibility-menu__group-label">
-						{labels.colorVision.group}
-					</label>
-					<select
-						id="color-vision-select"
-						className="accessibility-menu__select color-vision-select "
-						value={getColorVisionMode(theme)}
-						onChange={(e) => handleColorVisionChange(e.target.value)}
-						aria-label={labels.colorVision.selectLabel}>
-						<option value="normal">{labels.colorVision.normal}</option>
-						<option value="protanomaly">
-							{labels.colorVision.protanomaly}
-						</option>
-						<option value="protanopia">{labels.colorVision.protanopia}</option>
-						<option value="deuteranomaly">
-							{labels.colorVision.deuteranomaly}
-						</option>
-						<option value="deuteranopia">
-							{labels.colorVision.deuteranopia}
-						</option>
-						<option value="tritanomaly">
-							{labels.colorVision.tritanomaly}
-						</option>
-						<option value="tritanopia">{labels.colorVision.tritanopia}</option>
-						<option value="achromatopsia">
-							{labels.colorVision.achromatopsia}
-						</option>
-					</select>
-				</div> */}
 			</div>
 
 			{/* Catégorie Lecture */}
@@ -975,7 +681,13 @@ export default function AccessibilityMenu({ language }: Props) {
 						}}
 						onChange={(option) => {
 							if (option) {
-								const value = (option as OptionType).value as any;
+								const value = (option as OptionType).value as
+									| "none"
+									| "opendyslexic"
+									| "sylexiad"
+									| "sylexiad-serif"
+									| "atkinson"
+									| "andika";
 								if (isDyslexicMode && value !== "none") {
 									setIsDyslexicMode(false);
 								}
@@ -1002,24 +714,23 @@ export default function AccessibilityMenu({ language }: Props) {
 								label: labels.dyslexic.group.legibility,
 								options: [
 									{ value: "atkinson", label: labels.dyslexic.atkinson },
-									{ value: "tiresias", label: labels.dyslexic.tiresias },
 								],
 							},
 							{
 								label: labels.dyslexic.group.easyReading,
-								options: [
-									{ value: "andika", label: labels.dyslexic.andika },
-									{ value: "ralewaydots", label: labels.dyslexic.ralewayDots },
-								],
+								options: [{ value: "andika", label: labels.dyslexic.andika }],
 							},
 						]}
 						aria-label={labels.dyslexic.label}
 						styles={getSelectStyles()}
 						isSearchable={false}
-						// Ajouter ces propriétés pour l'accessibilité
+						menuPortalTarget={
+							typeof document !== "undefined" ? document.body : null
+						} // 👈 Ajouter ceci
+						menuPosition="fixed" // 👈 Ajouter ceci
+						menuShouldBlockScroll={true} // Cette option est déjà présente, c'est bien
 						openMenuOnFocus={false}
 						closeMenuOnSelect={true}
-						menuShouldBlockScroll={true}
 						// Ajouter le gestionnaire d'événements clavier pour la navigation
 						onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
 							const menuOpen =

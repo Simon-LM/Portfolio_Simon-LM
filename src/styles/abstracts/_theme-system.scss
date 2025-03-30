@@ -1,5 +1,5 @@
 /** @format */
-
+// @import "abstracts/base-palette";
 @import "../themes/light";
 @import "../themes/dark";
 @import "../themes/anti-glare-light";
@@ -17,8 +17,10 @@
 	// Variables fondamentales
 	--off-white: #{$off-white};
 	--near-black: #{$near-black};
-	--constant-off-white: get-color("stone", 50);
-	--constant-near-black: get-color("stone", 950);
+	// --constant-off-white: get-color("stone", 50);
+	// --constant-near-black: get-color("stone", 950);
+	--constant-off-white: #fafaf9;
+	--constant-near-black: #0c0a09;
 
 	// Niveaux de gris
 	--gray-darkest: #{$gray-darkest};

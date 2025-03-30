@@ -92,6 +92,7 @@ export default function Header({ dictionary }: HeaderProps) {
 			</header>
 		);
 	}
+
 	// Render after hydration
 	return (
 		<header className="header">

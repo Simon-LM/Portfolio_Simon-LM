@@ -1,0 +1,78 @@
+/** @format */
+
+// Styles pour le bouton d'accessibilité
+.accessibility-control {
+	// position: relative;
+	// display: flex;
+
+	&__button {
+		// display: flex;
+		// align-items: center;
+		// justify-content: center;
+		// border: none;
+		// border-radius: 0.25rem;
+		// padding: 0.25rem;
+		// background: var(--color-button-bg, transparent);
+		// cursor: pointer;
+
+		// &:hover,
+		// &:focus-visible {
+		// 	background-color: var(--color-button-hover-bg, rgba(0, 0, 0, 0.1));
+		// }
+
+		// Style du tooltip
+		&[data-tooltip]:hover::after,
+		&[data-tooltip]:focus-visible::after {
+			content: attr(data-tooltip);
+			position: absolute;
+			top: 0.3rem;
+			left: 100%;
+			transform: translateX(-125%);
+			background: var(--color-tooltip-bg);
+			color: var(--color-tooltip-text);
+			padding: 0.25rem 0.5rem;
+			border-radius: 0.25rem;
+			white-space: nowrap;
+			font-size: 0.75rem;
+			pointer-events: none;
+			z-index: 10;
+		}
+	}
+
+	// &__icon {
+	// 	display: block;
+	// 	width: 100%;
+	// 	height: 100%;
+	// }
+}
+
+// // Styles spécifiques pour le thème high-contrast
+// [data-theme="high-contrast"] {
+// 	.accessibility-control__button {
+// 		&[data-tooltip]:hover::after,
+// 		&[data-tooltip]:focus-visible::after {
+// 			background-color: #ffff00 !important;
+// 			color: #000000 !important;
+// 			outline: 2px solid #000000;
+// 			font-weight: 600;
+// 		}
+// 	}
+// }
+
+// Styles pour les tooltips en mode high-contrast
+html[data-theme="high-contrast"] {
+	// Style global pour tous les tooltips
+	[data-tooltip]:hover::after,
+	[data-tooltip]:focus-visible::after {
+		background: #ffff00 !important;
+		color: #000000 !important;
+		outline: 2px solid #000000 !important;
+		font-weight: 600 !important;
+	}
+
+	// Flèches de tooltip (si présentes)
+	[data-tooltip]:hover::before,
+	[data-tooltip]:focus-visible::before {
+		border-color: transparent transparent #ffff00 transparent !important;
+	}
+}

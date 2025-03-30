@@ -2,10 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-// import AccessibilityMenu from "./AccessibilityMenu";
 import AccessibilityMenu from "../../components/accessibilityMenu/AccessibilityMenu";
 
-// Importer les images directement dans ce composant
 import accessibilityIconWebp from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.webp";
 import accessibilityIconAvif from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.avif";
 import accessibilityIconPng from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.png";
@@ -42,6 +40,9 @@ export default function AccessibilityControl({
 		setAccessibilityMenuOpen(!accessibilityMenuOpen);
 	};
 
+	const accessibilityText =
+		language === "fr" ? "Options d'accessibilité" : "Accessibility options";
+
 	return (
 		<div
 			className={`accessibility-control ${position} ${className}`}
@@ -50,30 +51,20 @@ export default function AccessibilityControl({
 				className="accessibility-control__button"
 				onClick={toggleAccessibilityMenu}
 				aria-expanded={accessibilityMenuOpen}
-				aria-label={
-					language === "fr"
-						? "Options d'accessibilité"
-						: "Accessibility options"
-				}>
+				aria-label={accessibilityText}
+				data-tooltip={accessibilityText} // Ajout du tooltip
+			>
 				<picture className="accessibility-control__icon">
 					<source srcSet={accessibilityIconAvif.src} type="image/avif" />
 					<source srcSet={accessibilityIconWebp.src} type="image/webp" />
 					<Image
 						src={accessibilityIconPng}
-						alt={
-							language === "fr"
-								? "Options d'accessibilité"
-								: "Accessibility options"
-						}
-						title={
-							language === "fr"
-								? "Options d'accessibilité"
-								: "Accessibility options"
-						}
+						alt=""
 						width={24}
 						height={24}
 						loading="eager"
 						priority
+						aria-hidden="true"
 					/>
 				</picture>
 			</button>

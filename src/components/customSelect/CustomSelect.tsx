@@ -2,16 +2,14 @@
 
 import React, { useRef } from "react";
 import { useSelectState } from "@react-stately/select";
-import {
-	useSelect,
-	HiddenSelect,
-	useButton,
-	mergeProps,
-} from "@react-aria/select";
+import { useSelect, HiddenSelect } from "@react-aria/select";
 import { useListBox, useOption } from "@react-aria/listbox";
 import { FocusScope } from "@react-aria/focus";
 import { useOverlay, DismissButton, Overlay } from "@react-aria/overlays";
 import { Item } from "@react-stately/collections";
+// Ajouter cet import en haut du fichier
+// import type { AriaSelectProps } from "@react-types/select";
+import type { SelectState } from "@react-stately/select";
 
 type OptionType = {
 	value: string;
@@ -27,43 +25,68 @@ type CustomSelectProps = {
 	id?: string;
 };
 
+type SelectItem = {
+	key: string;
+	label: string;
+	children?: SelectItem[];
+};
+// type ListBoxProps = {
+// 	state: any;
+// 	listboxRef: React.RefObject<HTMLUListElement | null>;  // Permettre null
+// 	popoverRef: React.RefObject<HTMLDivElement | null>;    // Permettre null
+// 	[key: string]: any;
+//   };
+type ListBoxProps = {
+	state: SelectState<unknown>; // Utiliser SelectState au lieu de ListState
+	listboxRef: React.RefObject<HTMLUListElement | null>;
+	popoverRef: React.RefObject<HTMLDivElement | null>;
+	[key: string]: unknown;
+};
+type OptionProps = {
+	item: {
+		key: string | number; // Utiliser string | number au lieu de React.Key (qui inclut bigint)
+		rendered: React.ReactNode;
+	};
+	state: SelectState<unknown>;
+};
+
 // Composant principal
 export function CustomSelect(props: CustomSelectProps) {
 	const { label } = props;
 
-	// Convertir les options pour React Stately
-	const items = React.useMemo(() => {
-		return props.options.map((option) => {
-			if ("options" in option) {
-				// C'est un groupe
-				return {
-					key: option.label,
-					label: option.label,
-					children: option.options.map((opt) => ({
-						key: opt.value,
-						label: opt.label,
-					})),
-				};
-			} else {
-				// C'est une option simple
-				return {
-					key: option.value,
-					label: option.label,
-				};
-			}
-		});
-	}, [props.options]);
+	// // Convertir les options pour React Stately
+	// const items = React.useMemo(() => {
+	// 	return props.options.map((option) => {
+	// 		if ("options" in option) {
+	// 			// C'est un groupe
+	// 			return {
+	// 				key: option.label,
+	// 				label: option.label,
+	// 				children: option.options.map((opt) => ({
+	// 					key: opt.value,
+	// 					label: opt.label,
+	// 				})),
+	// 			};
+	// 		} else {
+	// 			// C'est une option simple
+	// 			return {
+	// 				key: option.value,
+	// 				label: option.label,
+	// 			};
+	// 		}
+	// 	});
+	// }, [props.options]);
 
 	// Setup des états et refs
 	const state = useSelectState({
 		...props,
 		defaultSelectedKey: props.selectedKey,
 		onSelectionChange: (key) => props.onChange(key as string),
-		children: (item: any) => {
+		children: (item: SelectItem) => {
 			if (item.children) {
 				return (
 					<Item key={item.key} textValue={item.label}>
-						{item.children.map((child: any) => (
+						{item.children.map((child: SelectItem) => (
 							<Item key={child.key}>{child.label}</Item>
 						))}
 					</Item>
@@ -120,7 +143,7 @@ export function CustomSelect(props: CustomSelectProps) {
 }
 
 // Composant de liste déroulante
-function ListBox({ state, listboxRef, popoverRef, ...props }: any) {
+function ListBox({ state, listboxRef, popoverRef, ...props }: ListBoxProps) {
 	const { listBoxProps } = useListBox(props, state, listboxRef);
 
 	const { overlayProps } = useOverlay(
@@ -147,7 +170,7 @@ function ListBox({ state, listboxRef, popoverRef, ...props }: any) {
 }
 
 // Composant d'option
-function Option({ item, state }: { item: any; state: any }) {
+function Option({ item, state }: OptionProps) {
 	const ref = useRef<HTMLLIElement>(null);
 	const isDisabled = state.disabledKeys.has(item.key);
 	const isSelected = state.selectionManager.isSelected(item.key);

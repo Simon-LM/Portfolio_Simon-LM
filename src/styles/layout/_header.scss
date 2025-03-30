@@ -191,6 +191,31 @@
 			vertical-align: middle;
 		}
 	}
+	// // // // // //
+
+	// [data-theme="high-contrast"] {
+	// 	// Tooltips pour les boutons de langue
+	// 	.header__lang-button {
+	// 		&[data-tooltip]:hover::after,
+	// 		&[data-tooltip]:focus-visible::after {
+	// 			background-color: #ffff00 !important;
+	// 			color: #000000 !important;
+	// 			outline: 2px solid #000000 !important;
+	// 			font-weight: 600;
+	// 		}
+	// 	}
+
+	// 	// Tooltips pour le lien du blog
+	// 	.header__blog-link {
+	// 		&[data-tooltip]:hover::after,
+	// 		&[data-tooltip]:focus-visible::after {
+	// 			background-color: #ffff00 !important;
+	// 			color: #000000 !important;
+	// 			outline: 2px solid #000000 !important;
+	// 			font-weight: 600;
+	// 		}
+	// 	}
+	// }
 
 	// &__accessibility-icon {
 	// 	display: block;

@@ -173,7 +173,7 @@
 						}
 					},
 					"consent": {
-						"title": "Accessible spam protection",
+						"title": "Contact Form Anti-spam Verification",
 						"description": "To ensure accessibility for everyone, I use reCAPTCHA v3 which avoids traditional visual or audio tests. This Google solution analyzes your IP address and browsing behavior to distinguish humans from bots. By accepting, you consent to this data collection by Google.",
 						"accept": "I accept",
 						"decline": "I decline",
