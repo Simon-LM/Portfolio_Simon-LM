@@ -137,5 +137,21 @@
 	@include transform-light-to-dark($dark-config);
 
 	// Surcharges manuelles après l'automatisation si nécessaire
-	// $color_header_bg: red !global;
+
+	.header {
+		&__title {
+			&-name {
+				color: var(--constant-near-black);
+			}
+			&-separator {
+				color: var(--constant-near-black);
+			}
+			&-role {
+				color: var(--constant-near-black);
+			}
+		}
+		&__blog-link {
+			color: var(--constant-near-black) !important;
+		}
+	}
 }

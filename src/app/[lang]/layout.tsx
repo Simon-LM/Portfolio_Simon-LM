@@ -45,7 +45,8 @@ export default function LangLayout({
 				<link
 					rel="preload"
 					as="image"
-					href="/_next/static/media/Icon_Accessibility_Contrasts-Visuals.71537667.png"
+					href="/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.avif"
+					type="image/avif"
 				/>
 
 				<script

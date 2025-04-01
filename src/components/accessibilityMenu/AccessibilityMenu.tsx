@@ -728,7 +728,7 @@ export default function AccessibilityMenu({ language }: Props) {
 							typeof document !== "undefined" ? document.body : null
 						} // 👈 Ajouter ceci
 						menuPosition="fixed" // 👈 Ajouter ceci
-						menuShouldBlockScroll={true} // Cette option est déjà présente, c'est bien
+						menuShouldBlockScroll={false} // Cette option est déjà présente, c'est bien
 						openMenuOnFocus={false}
 						closeMenuOnSelect={true}
 						// Ajouter le gestionnaire d'événements clavier pour la navigation

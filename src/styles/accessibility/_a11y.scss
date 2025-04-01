@@ -61,12 +61,13 @@ textarea,
 
 .accessibility-panel {
 	position: fixed;
-	top: 45%;
-	left: calc(100% - 13rem);
+	top: clamp(10%, 22rem, 45%);
+	left: clamp(50%, calc(100% - 13rem), calc(100% - 4rem));
 	transform: translate(-50%, -50%) translateY(0);
 
 	width: 22.5rem;
-	max-width: calc(100vw - 4rem);
+	// max-width: calc(100vw - 4rem);
+	max-width: 75vw;
 	height: 30rem;
 	max-height: calc(100vh - 10rem);
 
@@ -146,6 +147,22 @@ textarea,
 		img,
 		svg {
 			filter: invert(100%);
+		}
+
+		&:hover,
+		&:focus-visible {
+			img,
+			svg {
+				filter: none;
+			}
+		}
+	}
+}
+[data-theme="anti-glare-dark"] {
+	.accessibility-control__button {
+		img,
+		svg {
+			filter: invert(100%); // Même filtre que pour le thème dark
 		}
 
 		&:hover,

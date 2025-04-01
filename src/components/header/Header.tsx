@@ -52,28 +52,6 @@ export default function Header({ dictionary }: HeaderProps) {
 		}
 	}, [version, setVersion, router]);
 
-	// // // // //
-
-	// // Fermer le menu quand on clique ailleurs
-	// useEffect(() => {
-	// 	function handleClickOutside(event: MouseEvent) {
-	// 		if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-	// 			setAccessibilityMenuOpen(false);
-	// 		}
-	// 	}
-
-	// 	document.addEventListener("mousedown", handleClickOutside);
-	// 	return () => {
-	// 		document.removeEventListener("mousedown", handleClickOutside);
-	// 	};
-	// }, [menuRef]);
-
-	// const toggleAccessibilityMenu = () => {
-	// 	setAccessibilityMenuOpen(!accessibilityMenuOpen);
-	// };
-
-	// // // // // // // // // //
-
 	const switchLanguage = (newLang: "fr" | "en") => {
 		setLanguage(newLang);
 		const currentPath = window.location.pathname.split("/").slice(2).join("/");
@@ -104,11 +82,10 @@ export default function Header({ dictionary }: HeaderProps) {
 				</a>
 				<div className="header__utils">
 					{/* Conteneur du menu d'accessibilité */}
-
-					<AccessibilityControl
+					{/* <AccessibilityControl
 						language={language as "fr" | "en"}
 						className="header__accessibility"
-					/>
+					/> */}
 
 					<div className="header__lang">
 						<div className="header__lang-toggle">
@@ -140,11 +117,16 @@ export default function Header({ dictionary }: HeaderProps) {
 							</button>
 						</div>
 					</div>
+
+					{/* Conteneur du menu d'accessibilité */}
+					<AccessibilityControl
+						language={language as "fr" | "en"}
+						className="header__accessibility"
+					/>
 				</div>
 
 				<div className="header__nav-main">
 					<div className="header__title">
-						{/* <Link href={`/${language}`}> */}
 						<span>
 							<span className="header__title-name">
 								{dictionary.header.title.name}
@@ -157,14 +139,7 @@ export default function Header({ dictionary }: HeaderProps) {
 								{dictionary.header.title.role}
 							</span>
 						</span>
-						{/* </Link> */}
 					</div>
-					{/* <Link
-						href={`/${language}/blog`}
-						className="header__blog-link"
-						aria-label="Blog LostInTab">
-						{dictionary.header.blog}
-					</Link> */}
 
 					<Link
 						href="https://www.youtube.com/@LostInTab"

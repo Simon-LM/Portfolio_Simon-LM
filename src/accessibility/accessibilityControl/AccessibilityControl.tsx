@@ -58,7 +58,7 @@ export default function AccessibilityControl({
 					<source srcSet={accessibilityIconAvif.src} type="image/avif" />
 					<source srcSet={accessibilityIconWebp.src} type="image/webp" />
 					<Image
-						src={accessibilityIconPng}
+						src={accessibilityIconPng.src}
 						alt=""
 						width={24}
 						height={24}

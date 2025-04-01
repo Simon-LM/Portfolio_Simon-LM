@@ -936,12 +936,27 @@ select.accessibility-menu__select:not(.react-select__control) {
 	position: fixed !important;
 }
 
+// // // // // // // // // //
+
+// // Désactiver le double scroll quand un menu est ouvert
+// body.react-select__menu-open {
+// 	.accessibility-menu {
+// 		overflow: hidden !important;
+// 	}
+// }
+
 // Désactiver le double scroll quand un menu est ouvert
-body.react-select__menu-open {
-	.accessibility-menu {
-		overflow: hidden !important;
-	}
-}
+// body.react-select__menu-open {
+// 	// Annuler le comportement par défaut qui bloque le scroll de la page
+// 	overflow: auto !important; // Réactiver le défilement de la page
+
+// 	// Empêcher seulement le défilement du menu d'accessibilité pour éviter le double scroll
+// 	.accessibility-panel .accessibility-menu {
+// 		overflow: hidden !important;
+// 	}
+// }
+
+// // // // // // //
 
 // Styles de base pour les options React-Select (tous thèmes)
 html body .react-select__option--is-selected {
