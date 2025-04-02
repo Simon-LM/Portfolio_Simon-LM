@@ -16,15 +16,55 @@ const metadata = {
 	},
 };
 
+// export async function generateMetadata({
+// 	params,
+// }: {
+// 	params: { lang: string };
+// }): Promise<Metadata> {
+// 	const lang = params.lang as keyof typeof metadata;
+// 	return {
+// 		title: metadata[lang].title,
+// 		description: metadata[lang].description,
+// 	};
+// }
+
 export async function generateMetadata({
 	params,
 }: {
 	params: { lang: string };
 }): Promise<Metadata> {
 	const lang = params.lang as keyof typeof metadata;
+
+	// Retourner les métadonnées complètes, pas seulement title et description
 	return {
+		// Métadonnées spécifiques à la langue
 		title: metadata[lang].title,
 		description: metadata[lang].description,
+
+		// Préserver les métadonnées importantes du layout parent
+		metadataBase: new URL("https://www.simon-lm.dev"),
+		icons: {
+			icon: "/favicon.ico",
+			shortcut: "/favicon.ico",
+			apple: [
+				{ url: "/Logo_LostInTab/apple-touch-icon.png", sizes: "180x180" },
+			],
+		},
+		themeColor: "#fcd34d",
+		appleWebApp: {
+			capable: true,
+			statusBarStyle: "default",
+			title: "Simon LM",
+		},
+
+		// Ajout d'une URL canonique spécifique à la langue
+		alternates: {
+			canonical: `/${params.lang}`,
+			languages: {
+				fr: "/fr",
+				en: "/en",
+			},
+		},
 	};
 }
 
@@ -42,6 +82,7 @@ export default function LangLayout({
 	return (
 		<html lang={lang} suppressHydrationWarning>
 			<head>
+				<meta name="theme-color" content="#fcd34d" />
 				<link
 					rel="preload"
 					as="image"

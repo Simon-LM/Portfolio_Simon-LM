@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 		shortcut: "/favicon.ico",
 		apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
 	},
-	themeColor: "#284b63",
+	themeColor: "#fcd34d",
 };
 
 export default function RootLayout({

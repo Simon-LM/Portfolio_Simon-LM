@@ -163,6 +163,8 @@ export default function Header({ dictionary }: HeaderProps) {
 							height={60}
 							className="header__blog-logo"
 							aria-hidden="true"
+							loading="eager"
+							priority
 						/>
 						{dictionary.header.blog}
 					</Link>
