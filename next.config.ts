@@ -149,6 +149,42 @@ const nextConfig: NextConfig = {
 			},
 		];
 	},
+
+	// // // // // // //
+
+	async headers() {
+		return [
+			{
+				source: "/:lang",
+				headers: [
+					{
+						key: "Cache-Control",
+						value: "public, max-age=3600, stale-while-revalidate=86400",
+					},
+				],
+			},
+			{
+				source: "/:lang/:path*",
+				headers: [
+					{
+						key: "Cache-Control",
+						value: "public, max-age=3600, stale-while-revalidate=86400",
+					},
+				],
+			},
+			{
+				source: "/icons/:path*",
+				headers: [
+					{
+						key: "Cache-Control",
+						value: "public, max-age=31536000, immutable",
+					},
+				],
+			},
+		];
+	},
+
+	// // // // // // // // // //
 };
 
 export default nextConfig;
