@@ -1,0 +1,169 @@
+/** @format */
+
+// Conteneur principal du contrôle d'accessibilité
+.dmpa-control {
+	position: fixed;
+	z-index: 9999;
+
+	// Positionnement
+	&.top-right {
+		top: 1rem;
+		right: 1rem;
+	}
+
+	&.top-left {
+		top: 1rem;
+		left: 1rem;
+	}
+
+	&.bottom-right {
+		bottom: 1rem;
+		right: 1rem;
+	}
+
+	&.bottom-left {
+		bottom: 1rem;
+		left: 1rem;
+	}
+
+	// Bouton de contrôle
+	&__button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: var(--dmpa-control-bg, #ffffff);
+		color: var(--dmpa-control-text, #0c0a09);
+		border: 1px solid var(--dmpa-control-border, #d6d3d1);
+		border-radius: 4px;
+		width: 2.5rem;
+		height: 2.5rem;
+		padding: 0;
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		cursor: pointer;
+
+		&:hover {
+			background-color: var(--dmpa-control-hover-bg, #f5f5f4);
+		}
+
+		&:active {
+			transform: translateY(1px);
+		}
+
+		html:not([data-dmpa-reduce-motion="true"]) & {
+			transition: background-color 0.2s ease, transform 0.1s ease;
+		}
+
+		@include focus-visible;
+
+		// Tooltip
+		&[data-tooltip] {
+			position: relative;
+
+			&:hover::after,
+			&:focus-visible::after {
+				content: attr(data-tooltip);
+				position: absolute;
+				z-index: 10;
+				bottom: 100%;
+				left: 50%;
+				transform: translateX(-50%) translateY(-0.5rem);
+				padding: 0.25rem 0.5rem;
+				background: var(--dmpa-tooltip-bg, #1c1917);
+				color: var(--dmpa-tooltip-text, #ffffff);
+				border-radius: 4px;
+				font-size: 0.75rem;
+				white-space: nowrap;
+				pointer-events: none;
+			}
+
+			&:hover::before,
+			&:focus-visible::before {
+				content: "";
+				position: absolute;
+				z-index: 10;
+				bottom: 100%;
+				left: 50%;
+				transform: translateX(-50%);
+				border: 0.25rem solid transparent;
+				border-top-color: var(--dmpa-tooltip-bg, #1c1917);
+			}
+		}
+	}
+
+	// Icône du bouton
+	&__icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: 100%;
+
+		svg {
+			width: 1.5rem;
+			height: 1.5rem;
+			fill: currentColor;
+		}
+
+		img {
+			width: 1.5rem;
+			height: 1.5rem;
+			object-fit: contain;
+		}
+	}
+
+	// Panel contenant le menu
+	.dmpa-panel {
+		position: absolute;
+		top: calc(100% + 0.5rem);
+		right: 0;
+		min-width: 280px;
+		transform-origin: top right;
+
+		html:not([data-dmpa-reduce-motion="true"]) & {
+			animation: dmpa-panel-fade-in 0.2s ease;
+		}
+
+		@keyframes dmpa-panel-fade-in {
+			from {
+				opacity: 0;
+				transform: translateY(-0.5rem);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+	}
+}
+
+// Styles spécifiques pour les thèmes
+[data-dmpa-theme="dark"] .dmpa-control {
+	&__button {
+		background-color: var(--dmpa-control-bg, #1c1917);
+		color: var(--dmpa-control-text, #f5f5f4);
+		border-color: var(--dmpa-control-border, #57534e);
+	}
+}
+
+[data-dmpa-theme="high-contrast"] .dmpa-control {
+	&__button {
+		background-color: #000000;
+		color: #ffff00;
+		border: 2px solid #ffff00;
+
+		&[data-tooltip] {
+			&:hover::after,
+			&:focus-visible::after {
+				background: #ffff00;
+				color: #000000;
+				border: 2px solid #000000;
+				font-weight: bold;
+			}
+
+			&:hover::before,
+			&:focus-visible::before {
+				border-top-color: #ffff00;
+			}
+		}
+	}
+}

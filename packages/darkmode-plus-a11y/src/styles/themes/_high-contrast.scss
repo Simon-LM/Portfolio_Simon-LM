@@ -1,0 +1,81 @@
+/** @format */
+
+@import "../abstracts/base-palette";
+@import "../abstracts/theme-utils";
+@import "../themes/theme-variables";
+
+@mixin high-contrast-theme-variables() {
+	// D'abord appliquer les variables du thème light
+	@include light-theme-variables();
+
+	// Utiliser la transformation automatique avec les couleurs très contrastées
+	@include transform-light-to-high-contrast(
+		(
+			"colors": (
+				"background": #000000,
+				// Noir pur
+				"text": #ffff00,
+				// Jaune vif
+				"link": #00ffff,
+				// Cyan vif
+				"highlight": #bfff00,
+				// Vert-jaune
+				"action": #ffffff,
+				// Blanc pur
+				"success": #00ff00,
+				// Vert pur
+				"error": #ff0000,
+			),
+		)
+	);
+
+	// Uniformiser tous les états de focus avec les états hover
+	*:focus-visible {
+		outline: 3px solid #ffffff !important;
+		border-color: #ffffff !important;
+		box-shadow: none !important;
+	}
+
+	// Boutons et éléments interactifs au focus
+	button:focus-visible,
+	.dmpa-button:focus-visible,
+	a:focus-visible,
+	.dmpa-react-select__control:focus-visible {
+		background-color: #ffffff !important;
+		color: #000000 !important;
+		outline: 3px solid #ffffff !important;
+		outline-offset: 0.25rem;
+
+		// // Assurer que tous les éléments enfants héritent du style
+		// * {
+		// 	color: #000000 !important;
+		// }
+	}
+
+	// Surcharges manuelles après l'automatisation si nécessaire
+
+	$color_header_bg: map-get($hc-palette, "highlight") !global;
+	$color_header_text: #000000 !global;
+	$color_header_text-role: #000000 !global;
+	$color_header_blog-link_bg: #000000 !global;
+	$color_header_blog-link_text: #ffff00 !global;
+
+	.dmpa-skills__icon-wrapper {
+		&.is-rotating {
+			animation: none;
+			animation-fill-mode: none;
+		}
+	}
+}
+
+// Application du thème high-contrast
+[data-dmpa-theme="high-contrast"] {
+	@include high-contrast-theme-variables;
+}
+
+// Support pour la préférence système de contraste élevé
+@media (prefers-contrast: more) {
+	:root:not([data-dmpa-theme]) {
+		@include high-contrast-theme-variables;
+	}
+}

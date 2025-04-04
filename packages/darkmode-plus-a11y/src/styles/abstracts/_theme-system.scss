@@ -1,0 +1,215 @@
+/** @format */
+
+// @import "abstracts/base-palette";
+@import "../themes/light";
+@import "../themes/dark";
+@import "../themes/anti-glare-light";
+@import "../themes/anti-glare-dark";
+@import "../themes/high-contrast";
+@import "../themes/deuteranopia";
+@import "../themes/protanopia";
+@import "../themes/tritanopia";
+@import "../themes/deuteranomaly";
+@import "../themes/protanomaly";
+@import "../themes/tritanomaly";
+@import "../themes/achromatopsia";
+
+@mixin generate-theme-css-vars() {
+	// Variables fondamentales
+	--off-white: #{$off-white};
+	--near-black: #{$near-black};
+	// --constant-off-white: get-color("stone", 50);
+	// --constant-near-black: get-color("stone", 950);
+	--constant-off-white: #fafaf9;
+	--constant-near-black: #0c0a09;
+
+	// Niveaux de gris
+	--gray-darkest: #{$gray-darkest};
+	--gray-darker: #{$gray-darker};
+	--gray-dark: #{$gray-dark};
+	--gray-medium-dark: #{$gray-medium-dark};
+	--gray-medium-light: #{$gray-medium-light};
+	--gray-light: #{$gray-light};
+	--gray-lighter: #{$gray-lighter};
+	--gray-lightest: #{$gray-lightest};
+
+	// Variables sémantiques
+	--primary-color: #{$primary-color};
+	--secondary-color: #{$secondary-color};
+	--tertiary-color: #{$tertiary-color};
+	--link-color: #{$link-color};
+	--link-hover-color: #{$link-color-hover};
+
+	// --success-color: #{$success-color};
+	// --error-color: #{$error-color};
+
+	// Couleurs fonctionnelles constantes
+	--constant-error-color: #dc2626; // Rouge d'erreur fixe
+	--constant-success-color: #059669; // Vert de succès fixe
+
+	// Variables dérivées - déclarées explicitement
+	--color-main-bg: #{$color-main-bg};
+	--color-main-text: #{$color-main-text};
+	--color-pages-title: #{$color-pages-title};
+
+	--color-header-bg: #{$color_header_bg};
+	--color-header-text: #{$color_header_text};
+	--color-header-text-role: #{$color_header_text-role};
+	--color-header-blog-link-bg: #{$color_header_blog-link_bg};
+	--color-header-blog-link-text: #{$color_header_blog-link_text};
+
+	--color-lang-toggle-bg: #{$color_lang-toggle_bg};
+	--color-lang-toggle-border: #{$color_lang-toggle_border};
+	--color-lang-toggle-bg-activated: #{$color_lang-toggle_bg-activated};
+	--color-lang-toggle-text-activated: #{$color_lang-toggle_text-activated};
+	--color-lang-toggle-text-disabled: #{$color_lang-toggle_text-disabled};
+	--color-lang-toggle-disabled-hover-bg: #{$color_lang-toggle_disabled-hover_bg};
+	--color-lang-toggle-disabled-hover-text: #{$color_lang-toggle_disabled-hover_text};
+
+	--color-scroll-progress-line: #{$color_scroll-progress_line};
+	--color-scroll-progress-indicator: #{$color_scroll-progress_indicator};
+	--color-scroll-progress-indicator-active: #{$color_scroll-progress_indicator-active};
+
+	--color-collapse-title: #{$color_collapse_title};
+	--color-collapse-bg: #{$color_collapse_bg};
+	--color-collapse-bg-title: #{$color_collapse_bg-title};
+	--color-collapse-border: #{$color_collapse_border};
+
+	--color-section-bg-even: #{$color_section_bg-even};
+	--color-section-bg-odd: #{$color_section_bg-odd};
+	--color-section-title: #{$color_section_title};
+	--color-hero-bg: #{$color-hero-bg};
+	--color-hero-title: #{$color-hero-title};
+	--color-hero-text: #{$color-hero-text};
+
+	--color-about-overlay-bg: #{$color_about_overlay-bg};
+	--color-about-overlay-text: #{$color_about_overlay-text};
+	--color-about-button-bg: #{$color_about_button-bg};
+	--color-about-button-border: #{$color_about_button-border};
+	--color-about-button-text: #{$color_about_button-text};
+
+	--color-skills-icon-bg: #{$color_skills-icon_bg};
+	--color-skills-icon-text: #{$color_skills-icon_text};
+
+	--color-section-card-bg: #{$color_section_card-bg};
+	--color-section-even-card-bg: #{$color_section-even_card-bg};
+	--color-section-odd-card-bg: #{$color_section-odd_card-bg};
+
+	--color-portfolio-tag-bg: #{$color_portfolio-tag_bg};
+	--color-portfolio-tag-bg-text: #{$color_portfolio-tag_bg-texte};
+
+	--color-contact-form-bg: #{$color_contact_form-bg};
+	--color-contact-modal-bg: #{$color_contact_modal_bg};
+
+	--color-bottom-footer-bg: #{$color_bottom-footer_bg};
+	--color-bottom-footer-title: #{$color_bottom-footer_title};
+	--color-bottom-footer-text: #{$color_bottom-footer_text};
+	--color-bottom-footer-link-bg: #{$color_bottom-footer_link-bg};
+	--color-bottom-footer-link-text: #{$color_bottom-footer_link-text};
+
+	--color-sticky-footer-bg: #{$color_sticky-footer_bg};
+	--color-sticky-footer-text: #{$color_sticky-footer_text};
+
+	--color-link: #{$color_link};
+	--color-link-hover: #{$color_link-hover};
+	--color-link-bg: #{$color_link-bg};
+
+	--color-focus-outline: #{$color_focus-outline};
+	--color-focus-bg: #{$color_focus-bg};
+	--color-focus-text: #{$color_focus-text};
+
+	--color-tooltip-text: #{$color_tooltip_text};
+	--color-tooltip-bg: #{$color_tooltip_bg};
+
+	// Variables pour le panneau d'accessibilité
+	--color-panel-bg: #{$color_panel_bg};
+	--color-panel-border: #{$color_panel_border};
+	--color-scrollbar-track: #{$color_scrollbar_track};
+	--color-scrollbar-thumb: #{$color_scrollbar_thumb};
+	// --color-button-bg: #{$off-white};
+	--color-button-border: #{$color_button_border};
+	--color-button-hover-bg: #{$link-color-hover};
+	--color-button-hover-text: #{$off-white};
+	--color-button-active-text: #{$near-black};
+	--color-button-active-outline: #{$color_button_active_outline};
+
+	// Variables pour le curseur
+	--color-border: #{$color_border};
+	--color-accent: #{$color_accent};
+	--color-accent-hover: #{$color_accent_hover};
+}
+
+// Thème par défaut (light)
+:root {
+	@include light-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+// Application du thème sombre si l'utilisateur le préfère
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme]) {
+		@include dark-theme-variables();
+		@include generate-theme-css-vars();
+	}
+}
+
+// Thèmes explicites via data-theme
+[data-theme="light"] {
+	@include light-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+[data-theme="dark"] {
+	@include dark-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+[data-theme="high-contrast"] {
+	@include high-contrast-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+[data-theme="deuteranomaly"] {
+	@include deuteranomaly-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+[data-theme="deuteranopia"] {
+	@include deuteranopia-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+[data-theme="protanomaly"] {
+	@include protanomaly-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+[data-theme="protanopia"] {
+	@include protanopia-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+[data-theme="tritanomaly"] {
+	@include tritanomaly-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+[data-theme="tritanopia"] {
+	@include tritanopia-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+[data-theme="achromatopsia"] {
+	@include achromatopsia-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+[data-theme="anti-glare-light"] {
+	@include anti-glare-light-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+[data-theme="anti-glare-dark"] {
+	@include anti-glare-dark-theme-variables();
+	@include generate-theme-css-vars();
+}

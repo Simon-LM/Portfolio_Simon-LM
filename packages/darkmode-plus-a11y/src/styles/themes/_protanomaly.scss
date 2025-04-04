@@ -1,0 +1,74 @@
+/** @format */
+
+@import "../abstracts/base-palette";
+@import "../abstracts/theme-utils";
+@import "../themes/theme-variables";
+
+@mixin protanomaly-theme-variables() {
+	// D'abord appliquer les variables du thème light
+	@include light-theme-variables();
+
+	// Configuration centralisée du thème protanomalie
+	$protanomaly-config: (
+		// Paramètre global pour l'intensité d'adaptation
+		"enhancer": 1.3,
+
+		// Surcharges spécifiques
+		"overrides":
+			(
+				// Couleurs sémantiques
+				"primary-color": false,
+				"secondary-color": false,
+				"tertiary-color": false,
+				"link-color": false,
+				"link-color-hover": false,
+				"success-color": true,
+				"error-color": false
+			),
+
+		// Ajustements spéciaux par variable (intensité supplémentaire)
+		"adjustments":
+			(
+				// Couleurs fondamentales
+				"off-white": 0,
+				"near-black": 0,
+
+				// Échelle de gris
+				"gray-darkest": 0,
+				"gray-darker": 0,
+				"gray-dark": 0,
+				"gray-medium-dark": 0,
+				"gray-medium-light": 0,
+				"gray-light": 0,
+				"gray-lighter": 0,
+				"gray-lightest": 0,
+
+				// Couleurs sémantiques
+				"primary-color": 0.1,
+				"secondary-color": 0,
+				"tertiary-color": 0,
+				"link-color": 0,
+				"link-color-hover": 0,
+				"success-color": 0,
+				"error-color": 0.3 // Plus d'effet pour le rouge qui est problématique
+			)
+	);
+
+	// Appliquer la transformation automatique avec la configuration
+	@include transform-light-to-protanomaly($protanomaly-config);
+
+	// Surcharges manuelles après l'automatisation si nécessaire
+	// $dmpa-panel-heading: #2288ff !global;
+}
+
+// Application du thème protanomalie
+[data-dmpa-theme="protanomaly"] {
+	@include protanomaly-theme-variables;
+}
+
+// Support pour les préférences de daltonisme via les media queries
+@media (prefers-contrast: more) {
+	html[data-dmpa-color-blindness="protanomaly"]:not([data-dmpa-theme]) {
+		@include protanomaly-theme-variables;
+	}
+}

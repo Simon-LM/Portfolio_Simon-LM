@@ -1,0 +1,132 @@
+/** @format */
+
+.dmpa-custom-select {
+	&-container {
+		position: relative;
+		width: 100%;
+		margin-bottom: 0.5rem;
+	}
+
+	&-label {
+		font-size: calc(0.875rem * var(--dmpa-font-size-factor, 1));
+		font-weight: 500;
+		margin-bottom: 0.5rem;
+	}
+
+	&-button {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		padding: 0.5rem;
+		border-radius: 0.25rem;
+		border: 0.0625rem solid var(--dmpa-button-border, #d6d3d1);
+		background-color: var(--dmpa-button-bg, #f5f5f4);
+		color: var(--dmpa-text-color, #0c0a09);
+		font-size: calc(0.875rem * var(--dmpa-font-size-factor, 1));
+		text-align: left;
+		cursor: pointer;
+
+		&:focus {
+			outline: 0.125rem solid var(--dmpa-focus-color, #0c4a6e);
+			outline-offset: 0.125rem;
+		}
+
+		&:hover {
+			border-color: var(--dmpa-primary-color, #0c4a6e);
+		}
+	}
+
+	&-arrow {
+		font-size: 0.625rem;
+		transition: transform 0.2s ease;
+
+		html[data-dmpa-reduce-motion="true"] & {
+			transition: none;
+		}
+	}
+
+	&-popover {
+		position: absolute;
+		z-index: 9999;
+		width: 100%;
+		margin-top: 0.25rem;
+		background-color: var(--dmpa-button-bg, #f5f5f4);
+		border: 0.0625rem solid var(--dmpa-button-border, #d6d3d1);
+		border-radius: 0.25rem;
+		box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+	}
+
+	&-listbox {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		max-height: 15rem;
+		overflow-y: auto;
+	}
+
+	&-option {
+		padding: 0.5rem;
+		cursor: pointer;
+		color: var(--dmpa-text-color, #0c0a09);
+		user-select: none;
+		font-size: calc(0.875rem * var(--dmpa-font-size-factor, 1));
+
+		&:hover,
+		&[data-focused="true"] {
+			background-color: var(--dmpa-button-hover-bg, #e7e5e4);
+		}
+
+		&.is-selected {
+			background-color: var(--dmpa-button-active-bg, #0c4a6e);
+			color: var(--dmpa-button-active-text, #ffffff);
+		}
+
+		&.is-disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+	}
+}
+
+// High-contrast theme
+[data-dmpa-theme="high-contrast"] {
+	.dmpa-custom-select {
+		&-button {
+			background-color: #000000;
+			color: #ffff00;
+			border: 2px solid #ffff00;
+
+			&:focus {
+				outline-color: #ffff00;
+			}
+
+			&:hover {
+				background-color: #ffff00;
+				color: #000000;
+			}
+		}
+
+		&-popover {
+			background-color: #000000;
+			border-color: #ffff00;
+			border-width: 2px;
+		}
+
+		&-option {
+			color: #ffff00;
+
+			&:hover,
+			&[data-focused="true"] {
+				background-color: #ffff00;
+				color: #000000;
+			}
+
+			&.is-selected {
+				background-color: #ffff00;
+				color: #000000;
+				font-weight: bold;
+			}
+		}
+	}
+}

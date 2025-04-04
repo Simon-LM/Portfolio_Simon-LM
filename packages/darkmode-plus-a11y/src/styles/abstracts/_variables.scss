@@ -1,0 +1,43 @@
+/** @format */
+
+// Variables pour les tailles de police
+:root {
+	--dmpa-font-size-factor: 1;
+}
+
+html[data-dmpa-font-size="normal"] {
+	--dmpa-font-size-factor: 1;
+}
+
+html[data-dmpa-font-size="large"] {
+	--dmpa-font-size-factor: 1.25;
+}
+
+html[data-dmpa-font-size="x-large"] {
+	--dmpa-font-size-factor: 1.5;
+}
+
+// Variables pour les polices dyslexiques
+html[data-dmpa-dyslexic-font="none"] {
+	--dmpa-font-family: inherit;
+}
+
+html[data-dmpa-dyslexic-font="opendyslexic"] {
+	--dmpa-font-family: "OpenDyslexic", sans-serif;
+}
+
+html[data-dmpa-dyslexic-font="sylexiad"] {
+	--dmpa-font-family: "SylexiadSans", sans-serif;
+}
+
+html[data-dmpa-dyslexic-font="sylexiad-serif"] {
+	--dmpa-font-family: "SylexiadSerif", serif;
+}
+
+html[data-dmpa-dyslexic-font="atkinson"] {
+	--dmpa-font-family: "Atkinson Hyperlegible", sans-serif;
+}
+
+html[data-dmpa-dyslexic-font="andika"] {
+	--dmpa-font-family: "Andika", sans-serif;
+}

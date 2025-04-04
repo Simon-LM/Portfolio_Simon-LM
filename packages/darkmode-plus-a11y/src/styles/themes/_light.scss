@@ -1,0 +1,31 @@
+/** @format */
+@import "../abstracts/base-palette";
+@import "../abstracts/theme-utils";
+@import "../themes/theme-variables";
+
+@mixin light-theme-variables() {
+	// Définir toutes les couleurs de base
+	@include define-base-colors();
+	// Appliquer les variables dérivées
+	@include apply-theme-variables;
+
+	// Surcharges spécifiques au thème light (si nécessaire)
+	// $color_header_bg: green !global;
+}
+
+// Application du thème light
+[data-dmpa-theme="light"] {
+	@include light-theme-variables;
+}
+
+// Valeurs par défaut si aucun thème n'est spécifié
+:root:not([data-dmpa-theme]) {
+	@include light-theme-variables;
+}
+
+// Préférences système pour le thème clair
+@media (prefers-color-scheme: light) {
+	:root:not([data-dmpa-theme]) {
+		@include light-theme-variables;
+	}
+}

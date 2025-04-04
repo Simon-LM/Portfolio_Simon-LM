@@ -1,0 +1,81 @@
+/** @format */
+
+// -----------------------------------------------
+// DÉFINITION DES COULEURS DE BASE
+// -----------------------------------------------
+@mixin define-base-colors() {
+	// Couleurs fondamentales avec accès direct à la palette Tailwind
+	$off-white: get-color("stone", 50) !global; // #fafaf9
+	$near-black: get-color("stone", 950) !global; // #0c0a09
+
+	// Échelle de gris
+	$gray-darkest: get-color("stone", 900) !global; // #1c1917
+	$gray-darker: get-color("stone", 800) !global; // #292524
+	$gray-dark: get-color("stone", 700) !global; // #44403c
+	$gray-medium-dark: get-color("stone", 600) !global; // #57534e
+	$gray-medium-light: get-color("stone", 500) !global; // #78716c
+	$gray-light: get-color("stone", 400) !global; // #a8a29e
+	$gray-lighter: get-color("stone", 300) !global; // #d6d3d1
+	$gray-lightest: get-color("stone", 200) !global; // #e7e5e4
+
+	// Couleurs sémantiques - identiques à l'original
+	$primary-color: get-color("amber", 300) !global; // #fcd34d
+	$secondary-color: get-color("amber", 950) !global; // #451a03
+	$tertiary-color: get-color("amber", 100) !global; // #fef3c7
+	$link-color: get-color("sky", 900) !global; // #0c4a6e
+	$link-color-hover: get-color("sky", 800) !global; // #075985
+	$success-color: get-color("emerald", 600) !global; // #059669
+	$error-color: get-color("redd", 600) !global; // #dc2626
+}
+
+// -----------------------------------------------
+// VARIABLES PARTAGÉES ENTRE THÈMES
+// -----------------------------------------------
+// Mixin qui applique toutes les variables dérivées à partir des couleurs de base
+@mixin apply-theme-variables {
+	// Couleurs d'arrière-plan et de texte principales
+	$color-main-bg: $off-white !global;
+	$color_main-bg: $off-white !global;
+	$color-main-text: $near-black !global;
+	$color_main-text: $near-black !global;
+
+	// Variables pour le panneau d'accessibilité (préfixées dmpa-)
+	$dmpa-panel-bg: $off-white !global;
+	$dmpa-panel-border: $gray-medium-dark !global;
+	$dmpa-panel-text: $near-black !global;
+	$dmpa-panel-heading: $secondary-color !global;
+
+	// Variables pour les boutons et contrôles
+	$dmpa-button-bg: $gray-lightest !global;
+	$dmpa-button-text: $gray-dark !global;
+	$dmpa-button-border: $gray-medium-light !global;
+	$dmpa-button-hover-bg: rgba($primary-color, 0.1) !global;
+	$dmpa-button-active-bg: $primary-color !global;
+	$dmpa-button-active-text: $off-white !global;
+	$dmpa-button-active-border: $primary-color !global;
+
+	// Liens et focus
+	$dmpa-link-color: $link-color !global;
+	$dmpa-link-hover-color: $link-color-hover !global;
+	$dmpa-focus-outline: $link-color !global;
+	$dmpa-focus-bg: $link-color !global;
+	$dmpa-focus-text: $off-white !global;
+
+	// Toggle et éléments interactifs
+	$dmpa-toggle-track-bg: $gray-lighter !global;
+	$dmpa-toggle-thumb-bg: $off-white !global;
+	$dmpa-toggle-text: $gray-dark !global;
+	$dmpa-toggle-active-bg: $primary-color !global;
+	$dmpa-toggle-active-text: $near-black !global;
+
+	// Défilement et bordures
+	$dmpa-scrollbar-track: $off-white !global;
+	$dmpa-scrollbar-thumb: $gray-medium-light !global;
+	$dmpa-border-color: $gray-medium-light !global;
+	$dmpa-accent-color: $primary-color !global;
+	$dmpa-accent-hover: darken($primary-color, 15%) !global;
+
+	// Tooltip
+	$dmpa-tooltip-text: $off-white !global;
+	$dmpa-tooltip-bg: rgba($near-black, 0.9) !global;
+}

@@ -1,0 +1,60 @@
+/** @format */
+
+@import "../abstracts/base-palette";
+@import "../abstracts/theme-utils";
+@import "../themes/theme-variables";
+
+@mixin achromatopsia-theme-variables() {
+	// D'abord appliquer les variables du thème light
+	@include light-theme-variables();
+
+	// Configuration centralisée du thème achromatopsie
+	$achromatopsia-config: (
+		// Surcharges spécifiques (couleurs complètement remplacées)
+		"special-colors":
+			(
+				"success-color": get-color("neutral", 400),
+				"error-color": get-color("neutral", 900),
+			),
+
+		// Ajustements de poids pour les variables de couleur (comme dans le thème dark)
+		"adjustments":
+			(
+				// Couleurs fondamentales
+				"off-white": 0,
+				"near-black": 0,
+				"gray-darkest": 0,
+				"gray-darker": 0,
+				"gray-dark": 0,
+				"gray-medium-dark": 0,
+				"gray-medium-light": 0,
+				"gray-light": 0,
+				"gray-lighter": 0,
+				"gray-lightest": 0,
+				// Couleurs sémantiques
+				"primary-color": 0,
+				"secondary-color": 0,
+				"tertiary-color": 0,
+				"link-color": 0,
+				"link-color-hover": 0
+			)
+	);
+
+	// Appliquer la transformation automatique avec la configuration
+	@include transform-light-to-achromatopsia($achromatopsia-config);
+
+	// Surcharges manuelles après l'automatisation si nécessaire
+	// $dmpa-panel-heading: get-color("neutral", 700) !global;
+}
+
+// Application du thème achromatopsie
+[data-dmpa-theme="achromatopsia"] {
+	@include achromatopsia-theme-variables;
+}
+
+// Support pour les préférences de daltonisme via les media queries
+@media (prefers-contrast: more) {
+	html[data-dmpa-color-blindness="achromatopsia"]:not([data-dmpa-theme]) {
+		@include achromatopsia-theme-variables;
+	}
+}

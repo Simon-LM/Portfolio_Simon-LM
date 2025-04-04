@@ -1,0 +1,139 @@
+/** @format */
+
+// Fonction transformatrice pour réduction d'éblouissement et halos
+@function transform-for-anti-glare($color, $mode: "light", $intensity: 1) {
+	// Vérifier que l'entrée est bien une couleur
+	@if type-of($color) != "color" {
+		@warn "transform-for-anti-glare: parameter $color (#{$color}) is not a valid color";
+		@return if($mode == "light", #888888, #aaaaaa);
+	}
+
+	// Extraire les composantes HSL
+	$h: hue($color);
+	$s: saturation($color);
+	$l: lightness($color);
+
+	// Réduction d'éblouissement paramètres selon le mode
+	@if $mode == "light" {
+		// Pour mode clair: réduire la luminosité des éléments très clairs
+		@if $l > 75% {
+			$l: max(65%, $l * 0.85); // Réduire l'éblouissement
+			$s: max(4%, $s); // Éviter le blanc pur
+		}
+		// Réduire légèrement la saturation pour un effet plus doux
+		$s: $s * 0.9;
+	} @else if $mode == "dark" {
+		// Pour mode sombre: éclaircir légèrement les noirs
+		@if $l < 15% {
+			$l: min(25%, $l * 1.5); // Éviter les noirs trop profonds
+		}
+		// Préserver un minimum de saturation
+		$s: max(5%, $s * 0.95);
+	}
+
+	// Retourner la couleur transformée
+	@return hsl($h, $s, $l);
+}
+
+// Mixin pour appliquer l'effet anti-éblouissement sur le body
+@mixin apply-anti-glare-filter($mode: "light") {
+	body {
+		&::before {
+			content: "";
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+
+			@if $mode == "light" {
+				backdrop-filter: #{"contrast(98%) brightness(99%)"};
+				opacity: 0.3;
+			} @else {
+				backdrop-filter: #{"contrast(95%) brightness(102%)"};
+				opacity: 0.2;
+			}
+
+			z-index: 9999;
+		}
+	}
+
+	// Transitions plus douces
+	* {
+		animation-duration: 0.5s !important;
+		transition-duration: 0.5s !important;
+	}
+}
+
+// Mixin qui transforme toutes les variables d'un thème
+@mixin transform-theme-for-anti-glare($mode: "light") {
+	// Transformation des variables fondamentales
+	$off-white: transform-for-anti-glare($off-white, $mode) !global;
+	$near-black: transform-for-anti-glare($near-black, $mode) !global;
+
+	// Transformation de l'échelle de gris
+	$gray-darkest: transform-for-anti-glare($gray-darkest, $mode) !global;
+	$gray-darker: transform-for-anti-glare($gray-darker, $mode) !global;
+	$gray-dark: transform-for-anti-glare($gray-dark, $mode) !global;
+	$gray-medium-dark: transform-for-anti-glare($gray-medium-dark, $mode) !global;
+	$gray-medium-light: transform-for-anti-glare(
+		$gray-medium-light,
+		$mode
+	) !global;
+	$gray-light: transform-for-anti-glare($gray-light, $mode) !global;
+	$gray-lighter: transform-for-anti-glare($gray-lighter, $mode) !global;
+	$gray-lightest: transform-for-anti-glare($gray-lightest, $mode) !global;
+
+	// Transformation des couleurs sémantiques
+	$primary-color: transform-for-anti-glare($primary-color, $mode) !global;
+	$secondary-color: transform-for-anti-glare($secondary-color, $mode) !global;
+	$tertiary-color: transform-for-anti-glare($tertiary-color, $mode) !global;
+	$link-color: transform-for-anti-glare($link-color, $mode) !global;
+	$link-color-hover: transform-for-anti-glare($link-color-hover, $mode) !global;
+	$success-color: transform-for-anti-glare($success-color, $mode) !global;
+	$error-color: transform-for-anti-glare($error-color, $mode) !global;
+
+	// Transformation des variables dérivées UI
+	$color_main-bg: transform-for-anti-glare($color_main-bg, $mode) !global;
+	$color_main-text: transform-for-anti-glare($color_main-text, $mode) !global;
+
+	// Simplification: Pour le package, nous utilisons seulement les variables essentielles
+	// Les variables spécifiques au site comme header, sections, etc. sont omises
+
+	// Ajustements spécifiques selon le mode
+	@if $mode == "light" {
+		// Mode clair: réduire les contrastes extrêmes
+		$dmpa-border-color: rgba(
+			red($gray-dark),
+			green($gray-dark),
+			blue($gray-dark),
+			0.7
+		) !global;
+	} @else {
+		// Mode sombre: adoucir les bordures pour éviter les halos
+		$dmpa-border-color: rgba(
+			red($gray-light),
+			green($gray-light),
+			blue($gray-light),
+			0.4
+		) !global;
+	}
+
+	// Effet anti-éblouissement
+	@include apply-anti-glare-filter($mode);
+}
+
+// Fonction utilitaire pour ajuster un angle de couleur pour éviter les fréquences problématiques
+@function safe-hue-for-keratoconus($hue) {
+	// Certaines fréquences de couleurs peuvent être plus problématiques pour le kératocône
+	// Éviter les bleus-violets qui causent souvent plus de halos
+	@if ($hue >= 220 and $hue <= 280) {
+		@if $hue < 250 {
+			@return 220; // Ramener vers le bleu
+		} @else {
+			@return 280; // Pousser vers le violet
+		}
+	}
+	@return $hue;
+}

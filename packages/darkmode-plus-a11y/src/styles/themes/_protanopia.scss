@@ -1,0 +1,51 @@
+/** @format */
+
+@import "../abstracts/base-palette";
+@import "../abstracts/theme-utils";
+@import "../themes/theme-variables";
+
+@mixin protanopia-theme-variables() {
+	// D'abord appliquer les variables du thème light
+	@include light-theme-variables();
+
+	// Configuration centralisée du thème protanopia
+	$protanopia-config: (
+		// Couleurs spéciales pour remplacer certaines teintes indistinguables
+		"special-colors":
+			(
+				"success-color": #0090ff,
+				// Bleu clair pour remplacer le vert
+				"error-color": #ffd700,
+				// Or pour remplacer le rouge
+			),
+
+		// Contrôle quelles variables sont transformées automatiquement
+		"overrides":
+			(
+				// Exemples: si vous voulez conserver certaines couleurs telles quelles
+				"primary-color": false,
+				"secondary-color": false,
+				"tertiary-color": false,
+				"link-color": false,
+				"link-color-hover": false
+			)
+	);
+
+	// Appliquer la transformation automatique avec la configuration
+	@include transform-light-to-protanopia($protanopia-config);
+
+	// Surcharges manuelles après l'automatisation si nécessaire
+	// $dmpa-panel-heading: #ffd700 !global;
+}
+
+// Application du thème protanopie
+[data-dmpa-theme="protanopia"] {
+	@include protanopia-theme-variables;
+}
+
+// Support pour les préférences de daltonisme via les media queries
+@media (prefers-contrast: more) {
+	html[data-dmpa-color-blindness="protanopia"]:not([data-dmpa-theme]) {
+		@include protanopia-theme-variables;
+	}
+}
