@@ -1,43 +1,29 @@
 /** @format */
 
 .skills {
-	// min-width: 100vh;
-	padding: 2rem;
-	padding-top: 1.5rem;
-	padding-bottom: 2.5rem;
+	@extend %section-base;
 	background-color: var(--color-section-bg-even);
 
 	&--placeholder {
-		min-height: 100vh;
-		display: flex;
-		justify-content: center;
-		align-items: center;
+		@extend %section-placeholder;
 	}
 
 	&__container {
+		@extend %section-container;
 		width: 100%;
-		margin: 0 auto;
-		@media screen and (min-width: 480px) {
-			max-width: 90%;
-		}
 	}
 
 	&__title {
-		text-align: center;
-		margin-bottom: 2rem;
-		color: var(--color-section-title);
+		@extend %section-title;
 	}
 
 	&__presentation {
+		@extend %section-subtitle;
 		margin: 0 auto 3rem;
-		text-align: center;
-		line-height: 1.6;
 	}
 
 	&__subtitle {
-		text-align: center;
-		margin-bottom: 2rem;
-		color: var(--color-section-title);
+		@extend %section-title;
 	}
 
 	&__icons-container {

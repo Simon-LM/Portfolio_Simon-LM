@@ -1,35 +1,28 @@
 /** @format */
 
 .portfolio {
-	padding: 2rem;
-	padding-top: 1.5rem;
-	padding-bottom: 2.5rem;
+	@extend %section-base;
 	background: var(--color-section-bg-odd);
 
+	&--placeholder {
+		@extend %section-placeholder;
+	}
+
 	&__container {
+		@extend %section-container;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		margin: 0 auto;
 	}
 
 	&__title {
-		text-align: center;
-		margin-bottom: 2rem;
-		color: var(--color-section-title);
+		@extend %section-title;
 	}
 
 	&__subtitle {
-		max-width: 800px;
+		@extend %section-subtitle;
+		max-width: 50rem;
 		margin: 0 auto 3rem;
-		text-align: center;
-		line-height: 1.6;
-	}
-	&--placeholder {
-		min-height: 100vh;
-		display: flex;
-		justify-content: center;
-		align-items: center;
 	}
 }

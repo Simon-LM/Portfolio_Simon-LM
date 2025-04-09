@@ -30,9 +30,10 @@ export default function AboutClient({ dictionary }: AboutProps) {
 			<div className="about__container">
 				<h2 className="about__title">{dictionary.title}</h2>
 				<p className="about__subtitle">{dictionary.subtitle}</p>
-				<div className="about__video">
+				{/* <div className="about__video">
 					<VideoPlayer videoTitle={dictionary.videoTitle} />
-				</div>
+				</div> */}
+				<VideoPlayer videoTitle={dictionary.videoTitle} />
 			</div>
 		</section>
 	);

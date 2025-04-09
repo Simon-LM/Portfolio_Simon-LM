@@ -1,37 +1,27 @@
 /** @format */
 
 .about {
-	padding: 2rem;
-	padding-top: 1rem;
-	padding-bottom: 2.5rem;
+	@extend %section-base;
 	background: var(--color-section-bg-odd);
 
 	&--placeholder {
-		min-height: 100vh;
-		display: flex;
-		justify-content: center;
-		align-items: center;
+		@extend %section-placeholder;
 	}
 
 	&__container {
-		max-width: 90%;
-		margin: 0 auto;
-		@media screen and (max-width: 480px) {
-			max-width: 100%;
-		}
+		@extend %section-container;
 	}
 
 	&__title {
-		text-align: center;
-		margin-bottom: 2rem;
+		@extend %section-title;
 	}
 
 	&__subtitle {
-		text-align: center;
-		margin-bottom: 2rem;
+		@extend %section-subtitle;
 	}
 
-	&__video {
+	// Conteneur de la vidéo active
+	&__video-container {
 		position: relative;
 		padding-bottom: 56.25%; /* 16:9 */
 		height: 0;
@@ -39,68 +29,95 @@
 		margin: 2rem auto;
 		border-radius: 1rem;
 		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	}
 
-		&-frame {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			border: none;
-		}
+	&__video-frame {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		border: none;
+	}
 
-		&-close-button {
-			position: absolute;
-			top: 10px;
-			right: 10px;
-			background-color: rgba(0, 0, 0, 0.5);
-			color: white;
-			border: none;
-			padding: 8px 16px;
-			cursor: pointer;
-			font-size: 1rem;
-			font-weight: 600;
+	&__video-close-button {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		background-color: rgba(0, 0, 0, 0.5);
+		color: white;
+		border: none;
+		padding: 8px 16px;
+		cursor: pointer;
+		font-size: 1rem;
+		font-weight: 600;
 
-			&:focus {
-				outline: 2px solid white;
-			}
+		&:focus {
+			outline: 2px solid white;
 		}
 	}
 
+	// Conteneur du wrapper
+	&__video-wrapper {
+		position: relative;
+		width: 100%;
+		max-width: 95%;
+		margin: 0 auto;
+	}
+
+	// Placeholder de la vidéo (avant acceptation)
 	&__video-placeholder {
 		position: relative;
 		width: 100%;
 		aspect-ratio: 1920/1080;
 		border-radius: 0.5rem;
-		overflow: hidden;
 	}
 
 	&__video-thumbnail {
 		object-fit: cover;
 	}
 
-	&__video-overlay {
+	// Overlay de consentement
+	&__video-consent-overlay {
 		position: absolute;
-		inset: 0;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 999;
+	}
+
+	&__video-consent-content {
+		background-color: rgba(0, 0, 0, 0.75);
+		border-radius: 0.5rem;
+		padding: 1rem;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		aspect-ratio: 1920/1080;
+		width: 100%;
 		justify-content: center;
-		background: rgba(0, 0, 0, 0.6);
+		max-width: 100%;
 		text-align: center;
-		padding: 2rem;
+		@include word-wrap;
 
 		p {
 			background: var(--color-about-overlay-bg);
 			color: var(--color-about-overlay-text);
 			font-size: 1rem;
 			font-weight: 500;
-			padding: 0.125em 0.5em;
+			padding: 0.25em 0.75em;
 			margin: 0 auto;
 			margin-bottom: 1rem;
+			border-radius: 0.25rem;
+			@include word-wrap;
 		}
 	}
 
+	// Bouton d'acceptation
 	&__video-button {
 		padding: 0.5rem 1rem;
 		background: var(--color-about-button-bg);

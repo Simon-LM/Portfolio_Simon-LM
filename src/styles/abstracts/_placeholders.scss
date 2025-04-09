@@ -12,3 +12,40 @@
 	align-items: center;
 	justify-content: center;
 }
+
+// Éléments communs pour toutes les sections
+%section-base {
+	padding: 2rem clamp(0.25rem, 2vw, 2rem);
+	padding-top: 1.5rem;
+	padding-bottom: 2.5rem;
+}
+
+%section-container {
+	max-width: 90%;
+	margin: 0 auto;
+
+	@media screen and (max-width: 480px) {
+		max-width: 100%;
+	}
+}
+
+%section-title {
+	text-align: center;
+	margin-bottom: 2rem;
+	color: var(--color-section-title);
+	@include word-wrap;
+}
+
+%section-subtitle {
+	text-align: center;
+	margin-bottom: 2rem;
+	line-height: 1.6;
+	@include word-wrap;
+}
+
+%section-placeholder {
+	min-height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
