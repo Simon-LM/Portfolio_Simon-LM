@@ -16,6 +16,7 @@ import { FaUniversalAccess } from "react-icons/fa";
 
 type Props = {
 	language: string;
+	onClose?: () => void;
 };
 
 type OptionType = {
@@ -23,7 +24,7 @@ type OptionType = {
 	label: string;
 };
 
-export default function AccessibilityMenu({ language }: Props) {
+export default function AccessibilityMenu({ language, onClose }: Props) {
 	const [mounted, setMounted] = useState(false);
 	const { theme, setTheme } = useTheme();
 	const { fontSize } = useFontSizeStore();
@@ -405,11 +406,27 @@ export default function AccessibilityMenu({ language }: Props) {
 			aria-label={
 				language === "fr" ? "Menu d'accessibilité" : "Accessibility menu"
 			}>
-			<h2 className="accessibility-menu__main-title">
+			{/* <h2 className="accessibility-menu__main-title">
 				{language === "fr"
 					? "Options d'accessibilité"
 					: "Accessibility Options"}
-			</h2>
+			</h2> */}
+
+			<div className="accessibility-menu__header">
+				<h2 className="accessibility-menu__main-title">
+					{language === "fr"
+						? "Options d'accessibilité"
+						: "Accessibility Options"}
+				</h2>
+				{onClose && (
+					<button
+						className="accessibility-menu__close-button"
+						onClick={onClose}
+						aria-label={language === "fr" ? "Fermer le menu" : "Close menu"}>
+						×
+					</button>
+				)}
+			</div>
 
 			{/* Catégorie Mode */}
 			<div className="accessibility-menu__category">
@@ -897,6 +914,16 @@ export default function AccessibilityMenu({ language }: Props) {
 					</span>
 				</Link>
 			</div>
+
+			{onClose && (
+				<div className="accessibility-menu__footer">
+					<button
+						className="accessibility-menu__close-footer-button"
+						onClick={onClose}>
+						{language === "fr" ? "Fermer" : "Close"}
+					</button>
+				</div>
+			)}
 		</div>
 	);
 }

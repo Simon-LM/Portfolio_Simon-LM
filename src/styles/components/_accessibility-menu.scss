@@ -26,6 +26,47 @@
 		border-radius: 0.1875rem; // 3px
 	}
 
+	&__header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 1rem;
+	}
+
+	&__close-button {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 2rem;
+		height: 2rem;
+		background: transparent;
+		border: none;
+		border-radius: 0.25rem;
+		font-size: 1.5rem;
+		padding: 0.25rem 0.25rem 0.5rem 0.25rem;
+		margin-top: 0.25rem;
+		color: var(--color-main-text);
+	}
+
+	&__footer {
+		margin-top: 1rem;
+		text-align: center;
+	}
+
+	&__close-footer-button {
+		padding: 0.5rem 1rem;
+		background: var(--color-button-bg);
+		color: var(--color-button-text);
+		border: 1px solid var(--color-button-border);
+		border-radius: 0.25rem;
+		font-size: 0.9rem;
+		font-weight: 500;
+		width: 100%;
+		transition: all 0.2s ease;
+		margin-bottom: 0.25rem;
+		margin-top: -0.5rem;
+	}
+
 	&__main-title {
 		font-size: 1.25rem;
 		font-weight: 600;

@@ -21,6 +21,7 @@ export default function AccessibilityControl({
 }: AccessibilityControlProps) {
 	const [accessibilityMenuOpen, setAccessibilityMenuOpen] = useState(false);
 	const menuRef = useRef<HTMLDivElement>(null);
+	const buttonRef = useRef<HTMLButtonElement>(null);
 
 	// Fermer le menu quand on clique ailleurs
 	useEffect(() => {
@@ -35,6 +36,25 @@ export default function AccessibilityControl({
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
 	}, [menuRef]);
+
+	useEffect(() => {
+		function handleEscapeKey(event: KeyboardEvent) {
+			if (event.key === "Escape" && accessibilityMenuOpen) {
+				setAccessibilityMenuOpen(false);
+				buttonRef.current?.focus(); // Remettre le focus sur le bouton
+			}
+		}
+
+		document.addEventListener("keydown", handleEscapeKey);
+		return () => {
+			document.removeEventListener("keydown", handleEscapeKey);
+		};
+	}, [accessibilityMenuOpen]);
+
+	const handleCloseMenu = () => {
+		setAccessibilityMenuOpen(false);
+		buttonRef.current?.focus();
+	};
 
 	const toggleAccessibilityMenu = () => {
 		setAccessibilityMenuOpen(!accessibilityMenuOpen);
@@ -52,8 +72,8 @@ export default function AccessibilityControl({
 				onClick={toggleAccessibilityMenu}
 				aria-expanded={accessibilityMenuOpen}
 				aria-label={accessibilityText}
-				data-tooltip={accessibilityText} // Ajout du tooltip
-			>
+				data-tooltip={accessibilityText}
+				ref={buttonRef}>
 				<picture className="accessibility-control__icon">
 					<source srcSet={accessibilityIconAvif.src} type="image/avif" />
 					<source srcSet={accessibilityIconWebp.src} type="image/webp" />
@@ -73,7 +93,7 @@ export default function AccessibilityControl({
 				className={`accessibility-panel ${
 					accessibilityMenuOpen ? "open" : ""
 				}`}>
-				<AccessibilityMenu language={language} />
+				<AccessibilityMenu language={language} onClose={handleCloseMenu} />
 				{/* <AccessibilityMenu language={language} /> */}
 			</div>
 		</div>
