@@ -779,7 +779,7 @@ select.accessibility-menu__select:not(.react-select__control) {
 	.react-select__menu {
 		background-color: var(--color-panel-bg) !important;
 		border: 0.0625rem solid var(--color-button-border) !important;
-		z-index: 9999 !important;
+		z-index: 1000 !important;
 	}
 
 	// Options dans le menu
@@ -973,7 +973,7 @@ select.accessibility-menu__select:not(.react-select__control) {
 
 // Portail des menus
 .react-select__menu-portal {
-	z-index: 10000 !important;
+	z-index: 1000 !important;
 	position: fixed !important;
 }
 

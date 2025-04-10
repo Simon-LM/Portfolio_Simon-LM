@@ -91,6 +91,7 @@
 
 		&-buttons {
 			display: flex;
+			flex-wrap: wrap;
 			justify-content: center;
 			gap: 1rem;
 		}
@@ -111,6 +112,7 @@
 				background: var(--color-link);
 				color: var(--off-white);
 				width: 100%;
+				max-width: 15rem;
 			}
 
 			&--decline {
@@ -118,6 +120,7 @@
 				background: var(--color-link);
 				color: var(--off-white);
 				width: 100%;
+				max-width: 15rem;
 			}
 		}
 

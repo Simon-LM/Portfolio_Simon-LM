@@ -58,12 +58,6 @@
 			z-index: 9999;
 		}
 	}
-
-	// Transitions plus douces
-	* {
-		animation-duration: 0.5s !important;
-		transition-duration: 0.5s !important;
-	}
 }
 
 // Mixin qui transforme toutes les variables d'un thème

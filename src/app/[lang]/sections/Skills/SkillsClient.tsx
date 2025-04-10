@@ -55,27 +55,27 @@ const IconWrapper = ({ Icon, label }: IconWrapperProps) => {
 	);
 };
 
-const containerVariants = {
-	hidden: { opacity: 0 },
-	visible: {
-		opacity: 1,
-		transition: {
-			staggerChildren: 0.3,
-		},
-	},
-};
+// const containerVariants = {
+// 	hidden: { opacity: 0 },
+// 	visible: {
+// 		opacity: 1,
+// 		transition: {
+// 			staggerChildren: 0.3,
+// 		},
+// 	},
+// };
 
-const itemVariants = {
-	hidden: { opacity: 0, x: -50 },
-	visible: {
-		opacity: 1,
-		x: 0,
-		transition: {
-			duration: 0.8,
-			ease: "easeOut",
-		},
-	},
-};
+// const itemVariants = {
+// 	hidden: { opacity: 0, x: -50 },
+// 	visible: {
+// 		opacity: 1,
+// 		x: 0,
+// 		transition: {
+// 			duration: 0.8,
+// 			ease: "easeOut",
+// 		},
+// 	},
+// };
 
 const frontendIcons = [
 	{ Icon: SiReact, label: "React.js" },
@@ -123,21 +123,109 @@ const iconVariants = {
 	},
 };
 
+// export default function Skills({ dictionary }: SkillsProps) {
+// 	return (
+// 		<motion.section
+// 			className="skills"
+// 			variants={containerVariants}
+// 			initial="hidden"
+// 			whileInView="visible"
+// 			viewport={{ once: true }}>
+// 			<div className="skills__container">
+// 				<motion.h2 className="skills__title" variants={itemVariants}>
+// 					{dictionary.title}
+// 				</motion.h2>
+// 				<motion.p className="skills__presentation" variants={itemVariants}>
+// 					{dictionary.presentation}
+// 				</motion.p>
+
+// 				<motion.div
+// 					className="skills__icons-container"
+// 					variants={techIconsVariants}
+// 					initial="hidden"
+// 					whileInView="visible"
+// 					viewport={{ once: true }}>
+// 					<motion.div className="skills__icons-group">
+// 						{/* {frontendIcons.map(({ Icon, label }) => (
+// 							<motion.div
+// 								key={label}
+// 								className="skills__icon-wrapper"
+// 								variants={iconVariants}>
+// 								<Icon className="skills__icon" />
+// 								<span className="skills__icon-label">{label}</span>
+// 							</motion.div>
+// 						))} */}
+// 						{frontendIcons.map(({ Icon, label }) => (
+// 							<IconWrapper key={label} Icon={Icon} label={label} />
+// 						))}
+// 					</motion.div>
+
+// 					<motion.div className="skills__icons-group">
+// 						{/* {styleIcons.map(({ Icon, label }) => (
+// 							<motion.div
+// 								key={label}
+// 								className="skills__icon-wrapper"
+// 								variants={iconVariants}>
+// 								<Icon className="skills__icon" />
+// 								<span className="skills__icon-label">{label}</span>
+// 							</motion.div>
+// 						))} */}
+// 						{styleIcons.map(({ Icon, label }) => (
+// 							<IconWrapper key={label} Icon={Icon} label={label} />
+// 						))}
+// 					</motion.div>
+// 				</motion.div>
+
+// 				<div className="skills__content">
+// 					<motion.div className="skills__cards" variants={containerVariants}>
+// 						{/* Frontend Card */}
+// 						<motion.div className="skills__card" variants={itemVariants}>
+// 							<h3
+// 								className="skills__card-title"
+// 								aria-label={dictionary.competences.frontend.ariaLabel}>
+// 								{dictionary.competences.frontend.title}
+// 							</h3>
+// 							<ul className="skills__card-list">
+// 								{dictionary.competences.frontend.items.map((item, index) => (
+// 									<li key={index} className="skills__card-item">
+// 										<MarkdownText text={item} />
+// 									</li>
+// 								))}
+// 							</ul>
+// 						</motion.div>
+
+// 						{/* Backend Card */}
+// 						<motion.div className="skills__card" variants={itemVariants}>
+// 							<h3
+// 								className="skills__card-title"
+// 								aria-label={dictionary.competences.backend.ariaLabel}>
+// 								{dictionary.competences.backend.title}
+// 							</h3>
+// 							<ul className="skills__card-list">
+// 								{dictionary.competences.backend.items.map((item, index) => (
+// 									<li key={index} className="skills__card-item">
+// 										<MarkdownText text={item} />
+// 									</li>
+// 								))}
+// 							</ul>
+// 						</motion.div>
+// 					</motion.div>
+
+// 					{/* <motion.p className="skills__closing" variants={itemVariants}>
+// 						{dictionary.competences.closingText}
+// 					</motion.p> */}
+// 				</div>
+// 			</div>
+// 		</motion.section>
+// 	);
+// }
+
 export default function Skills({ dictionary }: SkillsProps) {
 	return (
-		<motion.section
-			className="skills"
-			variants={containerVariants}
-			initial="hidden"
-			whileInView="visible"
-			viewport={{ once: true }}>
+		<section className="skills">
 			<div className="skills__container">
-				<motion.h2 className="skills__title" variants={itemVariants}>
-					{dictionary.title}
-				</motion.h2>
-				<motion.p className="skills__presentation" variants={itemVariants}>
-					{dictionary.presentation}
-				</motion.p>
+				<h2 className="skills__title">{dictionary.title}</h2>
+				<p className="skills__presentation">{dictionary.presentation}</p>
 
 				<motion.div
 					className="skills__icons-container"
@@ -146,30 +234,12 @@ export default function Skills({ dictionary }: SkillsProps) {
 					whileInView="visible"
 					viewport={{ once: true }}>
 					<motion.div className="skills__icons-group">
-						{/* {frontendIcons.map(({ Icon, label }) => (
-							<motion.div
-								key={label}
-								className="skills__icon-wrapper"
-								variants={iconVariants}>
-								<Icon className="skills__icon" />
-								<span className="skills__icon-label">{label}</span>
-							</motion.div>
-						))} */}
 						{frontendIcons.map(({ Icon, label }) => (
 							<IconWrapper key={label} Icon={Icon} label={label} />
 						))}
 					</motion.div>
 
 					<motion.div className="skills__icons-group">
-						{/* {styleIcons.map(({ Icon, label }) => (
-							<motion.div
-								key={label}
-								className="skills__icon-wrapper"
-								variants={iconVariants}>
-								<Icon className="skills__icon" />
-								<span className="skills__icon-label">{label}</span>
-							</motion.div>
-						))} */}
 						{styleIcons.map(({ Icon, label }) => (
 							<IconWrapper key={label} Icon={Icon} label={label} />
 						))}
@@ -177,9 +247,9 @@ export default function Skills({ dictionary }: SkillsProps) {
 				</motion.div>
 
 				<div className="skills__content">
-					<motion.div className="skills__cards" variants={containerVariants}>
+					<div className="skills__cards">
 						{/* Frontend Card */}
-						<motion.div className="skills__card" variants={itemVariants}>
+						<div className="skills__card">
 							<h3
 								className="skills__card-title"
 								aria-label={dictionary.competences.frontend.ariaLabel}>
@@ -192,10 +262,10 @@ export default function Skills({ dictionary }: SkillsProps) {
 									</li>
 								))}
 							</ul>
-						</motion.div>
+						</div>
 
 						{/* Backend Card */}
-						<motion.div className="skills__card" variants={itemVariants}>
+						<div className="skills__card">
 							<h3
 								className="skills__card-title"
 								aria-label={dictionary.competences.backend.ariaLabel}>
@@ -208,14 +278,10 @@ export default function Skills({ dictionary }: SkillsProps) {
 									</li>
 								))}
 							</ul>
-						</motion.div>
-					</motion.div>
-
-					{/* <motion.p className="skills__closing" variants={itemVariants}>
-						{dictionary.competences.closingText}
-					</motion.p> */}
+						</div>
+					</div>
 				</div>
 			</div>
-		</motion.section>
+		</section>
 	);
 }

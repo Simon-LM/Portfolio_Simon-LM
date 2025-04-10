@@ -16,4 +16,11 @@
 
 	// Puis transformer toutes les variables pour réduire l'éblouissement
 	@include transform-theme-for-anti-glare("light");
+
+	// Surcharges spécifiques après la transformation
+	.header {
+		&__lang-toggle {
+			background-color: var(--color-section-bg-even);
+		}
+	}
 }
