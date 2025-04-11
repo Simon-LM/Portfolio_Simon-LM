@@ -280,12 +280,23 @@ export const FormFields = ({
 				<Form.Field
 					className="contact__form-field contact__form-field--checkbox"
 					name="gdprConsent">
-					<div className="contact__form-gdpr-text">
+					{/* <div className="contact__form-gdpr-text">
 						<p>
 							{dictionary.form.gdpr.text}{" "}
 							<Link
 								href={`/${lang}/privacy-policy`}
 								className="contact__form-gdpr-link">
+								{dictionary.form.gdpr.privacyLink}
+							</Link>
+						</p>
+					</div> */}
+					<div className="contact__form-gdpr-text">
+						<p>
+							<span id="gdpr-explanation"> {dictionary.form.gdpr.text}</span>
+							<Link
+								href={`/${lang}/privacy-policy`}
+								className="contact__form-gdpr-link"
+								aria-describedby="gdpr-explanation">
 								{dictionary.form.gdpr.privacyLink}
 							</Link>
 						</p>

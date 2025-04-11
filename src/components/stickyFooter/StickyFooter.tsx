@@ -92,7 +92,7 @@ export default function StickyFooter() {
 				</div>
 				<div className="sticky-footer__fixed-links">
 					<Link
-						href="https://www.linkedin.com/"
+						href="https://www.linkedin.com/in/simon-lm-86b71235b"
 						className="sticky-footer__link"
 						target="_blank"
 						rel="noopener noreferrer"

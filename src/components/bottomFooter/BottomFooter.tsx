@@ -203,7 +203,7 @@ export default function BottomFooter() {
 							<span>{t.resources.rss}</span>
 						</Link>
 						<Link
-							href="https://www.linkedin.com/"
+							href="https://www.linkedin.com/in/simon-lm-86b71235b"
 							target="_blank"
 							rel="noopener noreferrer"
 							className="bottomFooter__social-link"

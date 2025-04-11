@@ -356,7 +356,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 			menu: (base) => ({
 				...base,
 				backgroundColor: "var(--color-panel-bg)",
-				zIndex: 9999,
+				// zIndex: 9999,
 			}),
 			option: (base, state) => ({
 				...base,
@@ -561,9 +561,9 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 						isSearchable={false}
 						menuPortalTarget={
 							typeof document !== "undefined" ? document.body : null
-						} // 👈 Ajouter ceci
-						menuPosition="fixed" // 👈 Ajouter ceci
-						menuShouldBlockScroll={true} // Cette option est déjà présente, c'est bien
+						}
+						menuPosition="fixed"
+						menuShouldBlockScroll={true}
 						openMenuOnFocus={false}
 						closeMenuOnSelect={true}
 						// Gestionnaire simplifié qui ne bloque pas le comportement standard
@@ -745,7 +745,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 							typeof document !== "undefined" ? document.body : null
 						} // 👈 Ajouter ceci
 						menuPosition="fixed" // 👈 Ajouter ceci
-						menuShouldBlockScroll={false} // Cette option est déjà présente, c'est bien
+						menuShouldBlockScroll={true}
 						openMenuOnFocus={false}
 						closeMenuOnSelect={true}
 						// Ajouter le gestionnaire d'événements clavier pour la navigation

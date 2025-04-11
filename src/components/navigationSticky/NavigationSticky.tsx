@@ -161,11 +161,12 @@ export default function NavigationSticky() {
 				className="menu-button"
 				// aria-label={isMenuOpen ? t.closeMenu : t.menu}
 				aria-expanded={isMenuOpen}
+				aria-label={t.navigationLabel}
 				// aria-controls="menu-list"
 				// aria-haspopup="true"
 				onClick={() => setIsMenuOpen(!isMenuOpen)}
 				onKeyDown={handleKeyDown}>
-				<RiMenu3Line role="img" aria-label={t.navigationLabel} />
+				<RiMenu3Line aria-hidden="true" />
 				<span className="menu-text" aria-hidden="true">
 					{t.menu}
 				</span>
