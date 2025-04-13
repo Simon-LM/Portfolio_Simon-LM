@@ -2,6 +2,7 @@
 
 import { Metadata } from "next";
 import "../styles/main.scss";
+import MatomoAnalytics from "../components/matomoAnalytics/MatomoAnalytics";
 
 export const metadata: Metadata = {
 	metadataBase: new URL("https://www.simon-lm.dev"),
@@ -31,6 +32,9 @@ export default function RootLayout({
 }) {
 	return (
 		<html suppressHydrationWarning>
+			<head>
+				<MatomoAnalytics />
+			</head>
 			<body>{children}</body>
 		</html>
 	);

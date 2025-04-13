@@ -9,11 +9,13 @@ import NavigationSticky from "../../../components/navigationSticky/NavigationSti
 import StickyFooter from "../../../components/stickyFooter/StickyFooter";
 import BottomFooter from "../../../components/bottomFooter/BottomFooter";
 import Link from "next/link";
+import Script from "next/script";
 
 interface PrivacySection {
 	title: string;
 	content: string;
 	items?: string[];
+	errorMessage?: string;
 }
 
 interface Dictionary {
@@ -94,6 +96,30 @@ export default function PrivacyPolicyClient({
 										<li key={index}>{item}</li>
 									))}
 								</ul>
+							)}
+
+							{key === "optOut" && (
+								<>
+									<div
+										id="matomo-opt-out"
+										className="privacy-policy__opt-out"></div>
+									<Script
+										id="matomo-opt-out-script"
+										strategy="lazyOnload"
+										src={`https://analytics.lostintab.com/index.php?module=CoreAdminHome&action=optOutJS&divId=matomo-opt-out&language=${language}&showIntro=1`}
+										onLoad={() => console.log("Matomo opt-out loaded")}
+										onError={(e) => {
+											console.error("Failed to load Matomo opt-out", e);
+											const element = document.getElementById("matomo-opt-out");
+											if (element) {
+												element.innerHTML = `<p>${
+													dictionary.sections.privacy.sections.optOut
+														.errorMessage || ""
+												}</p>`;
+											}
+										}}
+									/>
+								</>
 							)}
 						</section>
 					)

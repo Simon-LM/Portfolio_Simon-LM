@@ -205,73 +205,69 @@
 		},
 		"privacy": {
 			"title": "Privacy Policy",
-			"lastUpdate": "Last update: Junary 2025",
+			"lastUpdate": "Last update: April 2025",
 			"sections": {
 				"introduction": {
 					"title": "Introduction",
 					"content": "This privacy policy explains how we collect, use and protect your personal information on simon-lm.dev."
 				},
-				"cookies": {
-					"title": "Use of Cookies",
-					"content": "The site only uses essential technical cookies:",
+				"dataCategories": {
+					"title": "Categories of Processed Data",
+					"content": "Our site processes two distinct categories of data:",
 					"items": [
-						"Technical cookies necessary for site operation",
-						"Google reCAPTCHA v3 cookies (only after consent)",
-						"No advertising or tracking cookies",
-						"Storage duration limited to session"
+						"Form data: information you voluntarily provide via our contact form",
+						"Anonymous analytics data: anonymous statistics collected via Matomo Analytics"
 					]
 				},
-				"dataCollection": {
-					"title": "Data Collection",
-					"content": "We collect the following data:",
+				"contactForm": {
+					"title": "Contact Form Data",
+					"content": "When you use our contact form, we collect the following information:",
 					"items": [
-						"Data provided through contact form (name, email, etc.)",
-						"Navigation data for reCAPTCHA v3 (with prior consent)",
-						"IP address for spam protection (with consent)",
+						"First and last name (required)",
+						"Email address (required)",
 						"Phone number (optional)",
 						"Company name (optional)",
-						"Message content"
-					]
+						"Message and subject of your request"
+					],
+					"purpose": "This data is used solely to respond to your request and to follow up on our communications.",
+					"retention": "This data is kept for a maximum period of 36 months from our last exchange.",
+					"processing": "It is processed via the ProtonMail service, which guarantees its confidentiality and security."
 				},
-				"dataProcessing": {
-					"title": "Data Processing",
-					"content": "Your data is processed securely:",
+				"analytics": {
+					"title": "Audience Analysis (Matomo)",
+					"content": "Our site uses Matomo Analytics in cookie-less mode, a privacy-friendly audience analysis solution.",
 					"items": [
-						"ProtonMail AI for email processing",
-						"Google reCAPTCHA v3 for spam protection (with explicit consent)",
-						"Internal AI systems ensuring anonymity",
-						"No resale or sharing with third parties"
-					]
+						"Complete deactivation of cookies (cookie-less mode)",
+						"IP address anonymization",
+						"No data sharing with third parties",
+						"Limited data retention (180 days)",
+						"No cross-site tracking"
+					],
+					"data": "Anonymous information collected includes: pages visited, device type, browser, language, screen resolution, and country of origin.",
+					"purpose": "These anonymous statistics help us improve the user experience and optimize the site's accessibility."
 				},
-				"dataSecurity": {
-					"title": "Data Security",
-					"content": "We implement security measures to protect your data:",
-					"items": [
-						"Communications encryption",
-						"Restricted data access",
-						"Secure hosting in Switzerland"
-					]
-				},
-				"dataRetention": {
-					"title": "Data Retention",
-					"content": "Your data is kept for a maximum period of 36 months from our last contact. Beyond that, it is automatically deleted."
+				"optOut": {
+					"title": "Analytics Tracking Opt-Out",
+					"content": "Although our Matomo configuration already respects your privacy by operating without cookies, you can choose to completely disable tracking using the option below:",
+					"errorMessage": "Unable to load Matomo opt-out widget. Please refresh or try again later."
 				},
 				"yourRights": {
 					"title": "Your GDPR Rights",
 					"content": "Under GDPR, you have the following rights:",
 					"items": [
-						"Right to access your data",
+						"Right of access to your data",
 						"Right to rectification",
-						"Right to erasure",
-						"Right to restrict processing",
+						"Right to erasure ('right to be forgotten')",
+						"Right to restriction of processing",
 						"Right to data portability",
-						"Right to object"
+						"Right to object",
+						"Right not to be subject to automated decisions, including profiling"
 					],
 					"exercise": "To exercise these rights, contact us via the contact form."
 				},
 				"contact": {
 					"title": "DPO Contact",
-					"content": "For any questions regarding your personal data :"
+					"content": "For any questions regarding your personal data:"
 				}
 			}
 		},

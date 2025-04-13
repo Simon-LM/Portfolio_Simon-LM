@@ -1,7 +1,7 @@
 /** @format */
 
 import { Metadata } from "next";
-import "../../styles/main.scss";
+// import "../../styles/main.scss";
 
 const metadata = {
 	fr: {
@@ -15,18 +15,6 @@ const metadata = {
 			"Simon LM's portfolio - Frontend developer specialized in web accessibility...",
 	},
 };
-
-// export async function generateMetadata({
-// 	params,
-// }: {
-// 	params: { lang: string };
-// }): Promise<Metadata> {
-// 	const lang = params.lang as keyof typeof metadata;
-// 	return {
-// 		title: metadata[lang].title,
-// 		description: metadata[lang].description,
-// 	};
-// }
 
 export async function generateMetadata({
 	params,
@@ -57,7 +45,6 @@ export async function generateMetadata({
 			title: "Simon LM",
 		},
 
-		// Ajout d'une URL canonique spécifique à la langue
 		alternates: {
 			canonical: `/${params.lang}`,
 			languages: {

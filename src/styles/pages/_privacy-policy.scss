@@ -18,4 +18,18 @@
 	&__link {
 		@include page-link;
 	}
+	&__opt-out {
+		min-height: 180px;
+		margin-top: 1rem;
+		padding: 1rem;
+		border: 1px solid var(--color-border);
+		border-radius: 0.25rem;
+		background-color: var(--color-bg-light);
+
+		iframe {
+			width: 100%;
+			border: none;
+			overflow: hidden;
+		}
+	}
 }

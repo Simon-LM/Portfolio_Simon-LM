@@ -204,65 +204,51 @@
 		},
 		"privacy": {
 			"title": "Politique de Confidentialité",
-			"lastUpdate": "Dernière mise à jour : Janvier 2025",
+			"lastUpdate": "Dernière mise à jour : Avril 2025",
 			"sections": {
 				"introduction": {
 					"title": "Introduction",
 					"content": "Cette politique de confidentialité explique comment nous collectons, utilisons et protégeons vos informations personnelles sur simon-lm.dev."
 				},
-				"cookies": {
-					"title": "Utilisation des Cookies",
-					"content": "Le site utilise uniquement des cookies techniques essentiels :",
+				"dataCategories": {
+					"title": "Catégories de données traitées",
+					"content": "Notre site traite deux catégories distinctes de données :",
 					"items": [
-						"Cookies techniques nécessaires au fonctionnement du site",
-						"Cookies Google reCAPTCHA v3 (uniquement après consentement)",
-						"Aucun cookie publicitaire ou de traçage",
-						"Durée de conservation limitée à la session"
+						"Données de formulaire : informations que vous fournissez volontairement via notre formulaire de contact",
+						"Données d'analyse anonymes : statistiques anonymes collectées via Matomo Analytics"
 					]
 				},
-				"dataCollection": {
-					"title": "Collecte de Données",
-					"content": "Nous collectons les données suivantes :",
+				"contactForm": {
+					"title": "Données du formulaire de contact",
+					"content": "Lorsque vous utilisez notre formulaire de contact, nous collectons les informations suivantes :",
 					"items": [
-						"Données fournies via le formulaire de contact (nom, prénom, email, etc.)",
-						"Données de navigation pour reCAPTCHA v3 (avec consentement préalable)",
-						"Adresse IP pour la protection anti-spam (avec consentement)",
+						"Nom et prénom (obligatoires)",
+						"Adresse e-mail (obligatoire)",
 						"Numéro de téléphone (facultatif)",
 						"Nom de l'entreprise (facultatif)",
-						"Contenu de votre message"
-					]
+						"Message et objet de votre demande"
+					],
+					"purpose": "Ces données sont utilisées uniquement pour répondre à votre demande et assurer le suivi de nos échanges.",
+					"retention": "Ces données sont conservées pendant une durée maximale de 36 mois à compter de notre dernier échange.",
+					"processing": "Elles sont traitées via le service ProtonMail, qui garantit leur confidentialité et sécurité."
 				},
-				"dataUse": {
-					"title": "Utilisation des Données",
-					"content": "Vos données sont utilisées exclusivement pour :",
+				"analytics": {
+					"title": "Analyse d'audience (Matomo)",
+					"content": "Notre site utilise Matomo Analytics en mode sans cookie, une solution d'analyse d'audience respectueuse de la vie privée.",
 					"items": [
-						"Répondre à votre demande de contact",
-						"Assurer le suivi de nos échanges",
-						"Améliorer la qualité de nos services"
-					]
+						"Aucun cookie de suivi n'est déposé sur votre appareil",
+						"Les adresses IP sont complètement anonymisées",
+						"Aucune donnée personnelle identifiable n'est collectée",
+						"Aucun partage de données avec des tiers",
+						"Conservation limitée des données (180 jours)"
+					],
+					"data": "Les informations anonymes collectées incluent: les pages visitées, le type d'appareil, le navigateur, la langue, la résolution d'écran et le pays d'origine.",
+					"purpose": "Ces statistiques anonymes nous aident à améliorer l'expérience utilisateur et optimiser l'accessibilité du site."
 				},
-				"dataProcessing": {
-					"title": "Traitement des Données",
-					"content": "Vos données sont traitées de manière sécurisée :",
-					"items": [
-						"IA de ProtonMail pour le traitement des emails",
-						"Google reCAPTCHA v3 pour la protection anti-spam (avec consentement explicite)",
-						"Systèmes d'IA internes garantissant l'anonymat",
-						"Aucune revente ou partage avec des tiers"
-					]
-				},
-				"dataSecurity": {
-					"title": "Sécurité des Données",
-					"content": "Nous mettons en œuvre des mesures de sécurité pour protéger vos données :",
-					"items": [
-						"Chiffrement des communications",
-						"Accès restreint aux données",
-						"Hébergement sécurisé en Suisse"
-					]
-				},
-				"dataRetention": {
-					"title": "Conservation des Données",
-					"content": "Vos données sont conservées pendant une durée maximale de 36 mois à compter de notre dernier contact. Au-delà, elles sont automatiquement supprimées."
+				"optOut": {
+					"title": "Désactivation du suivi d'analyse",
+					"content": "Bien que notre configuration Matomo respecte déjà votre vie privée en fonctionnant sans cookie, vous pouvez choisir de désactiver complètement le suivi en utilisant l'option ci-dessous:",
+					"errorMessage": "Impossible de charger le widget de désactivation Matomo. Veuillez réactualiser la page ou essayer plus tard."
 				},
 				"yourRights": {
 					"title": "Vos Droits RGPD",
