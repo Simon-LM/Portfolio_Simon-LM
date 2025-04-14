@@ -33,6 +33,7 @@ export default function RootLayout({
 	return (
 		<html suppressHydrationWarning>
 			<head>
+				<meta name="theme-color" content="#fcd34d" />
 				<MatomoAnalytics />
 			</head>
 			<body>{children}</body>
