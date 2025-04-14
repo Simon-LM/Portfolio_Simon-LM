@@ -64,6 +64,7 @@
 					"items": [
 						"`APIs **REST** et **GraphQL** (Postman, Swagger)`",
 						"`**EmailJS**`",
+						"`**Matomo Analytics** auto-hébergé avec **Docker** sur VPS`",
 						"`Notions en PHP et Drupal`",
 						"`**Figma**, Gimp, Inkscape, Kdenlive`"
 					]
