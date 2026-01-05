@@ -20,6 +20,13 @@
 	&__presentation {
 		@extend %section-subtitle;
 		margin: 0 auto 3rem;
+
+		a {
+			&:hover {
+				background-color: var(--color-skills-presentation-link-hover-bg);
+				color: var(--color-skills-presentation-link-hover-text);
+			}
+		}
 	}
 
 	&__subtitle {

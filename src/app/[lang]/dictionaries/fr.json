@@ -23,7 +23,7 @@
 			"features": [
 				{
 					"title": "Intégration frontend conforme aux normes d'accessibilité",
-					"description": "Je transforme vos maquettes en interfaces web tout en respectant les réglementations les plus strictes en matière d'accessibilité numérique."
+					"description": "Je transforme vos maquettes en interfaces web tout en respectant les réglementations les plus strictes en matière d'accessibilité numérique (RGAA, WCAG)."
 				},
 				{
 					"title": "Audit d'accessibilité avec correctifs sur demande",
@@ -43,7 +43,7 @@
 		"skills": {
 			"title": "Compétences",
 			"subtitle": "Technologies & Expertise",
-			"presentation": "Développeur frontend spécialisé en accessibilité web, je conçois et intègre des interfaces inclusives, performantes et conformes aux normes (RGAA, WCAG). J'adopte une approche Content First, conciliant optimisation technique, responsive design et expérience utilisateur.",
+			"presentation": "Développeur frontend spécialisé en accessibilité web, je conçois et intègre des interfaces inclusives, performantes et conformes aux normes (RGAA, WCAG). J'adopte une approche Content First, conciliant optimisation technique, responsive design et expérience utilisateur.\n\n`Certifié par Access42 :` **[« Développer des sites web accessibles et conformes au RGAA » (PDF, 496 Kio)](/documents/certificat-access42-anonymized.pdf)**",
 			"competences": {
 				"heading": "Compétences clés",
 				"frontend": {
@@ -51,21 +51,24 @@
 					"ariaLabel": "Frontend et Accessibilité",
 					"items": [
 						"`React.js, **Next.js**, Vite, **TypeScript**`",
-						"`**SCSS** (7.1, module.scss, BEM), **Tailwind CSS**`",
-						"`Audits d'accessibilité (Lighthouse, Wave, **NVDA**)`",
+						"`**SCSS** (7.1, module.scss, BEM)`",
+						"`Audits a11y (Lighthouse, Wave, **NVDA**, **Pa11y**)`",
 						"`**Zustand**, Redux Toolkit`",
-						"`**Performance web** : lazy loading, images AVIF ou WebP`",
-						"`Tests automatisés (Jest, Vitest, **Pa11y**)`"
+						"`**Performance web** : lazy loading, AVIF/WebP`",
+						"`**SEO technique** (metadata, sitemap, Core Web Vitals)`",
+						"`Tests : Jest, Vitest, **Cypress** (E2E)`",
+						"`**CI/CD** (GitHub Actions) avec pipeline complet`"
 					]
 				},
 				"backend": {
-					"title": "Backend & Outils",
-					"ariaLabel": "Backend et Outils",
+					"title": "Backend & DevOps",
+					"ariaLabel": "Backend et DevOps",
 					"items": [
+						"`**PostgreSQL** (Docker) + **Vercel Serverless Functions**`",
+						"`**Matomo Analytics** auto-hébergé (Docker, VPS)`",
 						"`APIs **REST** et **GraphQL** (Postman, Swagger)`",
+						"`Administration VPS (SSH, fail2ban, iptables)`",
 						"`**EmailJS**`",
-						"`**Matomo Analytics** auto-hébergé avec **Docker** sur VPS`",
-						"`Notions en PHP et Drupal`",
 						"`**Figma**, Gimp, Inkscape, Kdenlive`"
 					]
 				},
@@ -86,15 +89,21 @@
 					"title": "ArgentBank - Application Bancaire",
 					"description": {
 						"short": "Application bancaire React avec authentification sécurisée et gestion de profil utilisateur, mettant l'accent sur l'accessibilité et les performances.",
-						"detailed": "Interface utilisateur développée avec React 18 et TypeScript, intégrant Zod pour une validation de données type-safe et Redux Toolkit pour une gestion d'état optimisée. Authentification sécurisée avec gestion automatique de session (useSessionTimeout) et validation stricte des formulaires. Focus sur l'accessibilité numérique (WCAG/RGAA) et les performances (code splitting, lazy loading). Architecture modulaire testée avec Vitest et respect des bonnes pratiques Green IT. [ Projet réalisé, lors d'une formation OpenClassrooms. ]"
+						"detailed": "`Interface utilisateur développée avec React 18 et TypeScript, intégrant Zod pour une validation de données type-safe et Redux Toolkit pour une gestion d'état optimisée. Authentification sécurisée avec gestion automatique de session (useSessionTimeout) et validation stricte des formulaires.`\n\n`**Architecture Backend :** API Vercel Serverless Functions communiquant avec PostgreSQL (Docker, VPS auto-hébergé). Gestion sécurisée des sessions et données bancaires.`\n\n`**Qualité & Tests :** Couverture de tests ~95% avec Vitest (tests unitaires) et Cypress (E2E). CI/CD complet via GitHub Actions incluant tests automatisés, audits accessibilité (Pa11y), audits performance (Lighthouse desktop + mobile). Architecture modulaire respectant les bonnes pratiques Green IT.`\n\n`**Accessibilité & Performance :** Conforme WCAG/RGAA. Lighthouse Accessibility 100%.`\n\n`[ Projet réalisé lors d'une formation OpenClassrooms. ]`"
 					},
 					"tags": [
 						"React",
 						"TypeScript",
 						"Zod",
 						"Redux",
+						"PostgreSQL",
+						"Vercel",
 						"A11y",
 						"Vitest",
+						"Cypress",
+						"CI/CD",
+						"Pa11y",
+						"Lighthouse",
 						"Green Code"
 					],
 					"links": {

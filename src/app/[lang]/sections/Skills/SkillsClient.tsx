@@ -8,11 +8,12 @@ import {
 	SiNextdotjs,
 	SiTypescript,
 	SiSass,
-	SiTailwindcss,
+	SiNodedotjs,
 } from "react-icons/si";
 import MarkdownText from "@/utils/MarkdownText";
 import { useState } from "react";
-import { IconType } from "react-icons";
+
+type IconType = React.ComponentType<{ className?: string }>;
 
 interface SkillsDictionary {
 	title: string;
@@ -85,7 +86,7 @@ const frontendIcons = [
 
 const styleIcons = [
 	{ Icon: SiSass, label: "SCSS" },
-	{ Icon: SiTailwindcss, label: "Tailwind" },
+	{ Icon: SiNodedotjs, label: "Node.js" },
 ];
 
 const techIconsVariants = {
@@ -225,7 +226,9 @@ export default function Skills({ dictionary }: SkillsProps) {
 		<section className="skills">
 			<div className="skills__container">
 				<h2 className="skills__title">{dictionary.title}</h2>
-				<p className="skills__presentation">{dictionary.presentation}</p>
+				<div className="skills__presentation">
+					<MarkdownText text={dictionary.presentation} />
+				</div>
 
 				<motion.div
 					className="skills__icons-container"

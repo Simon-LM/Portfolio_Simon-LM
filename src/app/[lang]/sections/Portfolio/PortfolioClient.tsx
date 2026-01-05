@@ -69,21 +69,21 @@ export default function PortfolioClient({ dictionary }: PortfolioProps) {
 				<div className="portfolio__grid">
 					<PortfolioCard
 						priority={true}
-						title={dictionary.projects.kasa.title}
-						description={dictionary.projects.kasa.description}
-						tags={dictionary.projects.kasa.tags}
-						imageUrl="/Portfolios/P8_Kasa/Kasa_01-1920.png"
-						imageAlt={dictionary.projects.kasa.imageAlt}
-						links={dictionary.projects.kasa.links}
-						dictionary={dictionary}
-					/>
-					<PortfolioCard
 						title={dictionary.projects.argentBank.title}
 						description={dictionary.projects.argentBank.description}
 						tags={dictionary.projects.argentBank.tags}
 						imageUrl="/Portfolios/P11_ArgentBank/ArgentBank_01-1920.png"
 						imageAlt={dictionary.projects.argentBank.imageAlt}
 						links={dictionary.projects.argentBank.links}
+						dictionary={dictionary}
+					/>
+					<PortfolioCard
+						title={dictionary.projects.kasa.title}
+						description={dictionary.projects.kasa.description}
+						tags={dictionary.projects.kasa.tags}
+						imageUrl="/Portfolios/P8_Kasa/Kasa_01-1920.png"
+						imageAlt={dictionary.projects.kasa.imageAlt}
+						links={dictionary.projects.kasa.links}
 						dictionary={dictionary}
 					/>
 					{/* <PortfolioCard

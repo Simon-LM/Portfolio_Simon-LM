@@ -6,6 +6,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Collapse from "../collapse/Collapse";
+import MarkdownText from "@/utils/MarkdownText";
 import { FaGithub, FaGlobe } from "react-icons/fa";
 
 interface PortfolioCardProps {
@@ -74,7 +75,9 @@ export default function PortfolioCard({
 					className="portfolio__card-collapse"
 					title="Plus de détails"
 					headingLevel="h4">
-					<div className="portfolio__card-details">{description.detailed}</div>
+					<div className="portfolio__card-details">
+						<MarkdownText text={description.detailed} />
+					</div>
 				</Collapse>
 
 				<div className="portfolio__card-links">

@@ -24,7 +24,7 @@
 			"features": [
 				{
 					"title": "Accessibility-Compliant Frontend Integration",
-					"description": "I transform your designs into web interfaces while adhering to the strictest digital accessibility regulations."
+					"description": "I transform your designs into web interfaces while adhering to the strictest digital accessibility regulations (WCAG, ADA)."
 				},
 				{
 					"title": "Accessibility Audit with Optional Fixes",
@@ -44,7 +44,7 @@
 		"skills": {
 			"title": "Skills",
 			"subtitle": "Technologies & Expertise",
-			"presentation": "As a frontend developer specialized in web accessibility, I design and integrate inclusive, high-performance interfaces that comply with standards (RGAA, WCAG). I adopt a Content First approach, balancing technical optimization, responsive design, and user experience.",
+			"presentation": "Frontend developer specialized in web accessibility, I design and integrate inclusive, high-performance interfaces compliant with standards (WCAG, ADA). I adopt a Content First approach, balancing technical optimization, responsive design and user experience.\n\n`Certified by Access42:` **[\"Developing Accessible Websites Compliant with RGAA\" (PDF, 496 KiB)](/documents/certificat-access42-anonymized.pdf)**",
 			"competences": {
 				"heading": "Key Skills",
 				"frontend": {
@@ -52,21 +52,24 @@
 					"ariaLabel": "Frontend and Accessibility",
 					"items": [
 						"`React.js, **Next.js**, Vite, **TypeScript**`",
-						"`**SCSS** (7.1, module.scss, BEM), **Tailwind CSS** `",
+						"`**SCSS** (7.1, module.scss, BEM)`",
+						"`Accessibility audits (Lighthouse, Wave, **NVDA**, **Pa11y**)`",
 						"`**Zustand**, Redux Toolkit`",
-						"`Accessibility audits (Lighthouse, Wave, **NVDA**)`",
-						"`**Web Performance**: lazy loading, AVIF or WebP`",
-						"`Automated Testing (Jest, Vitest, **Pa11y**)`"
+						"`**Web Performance**: lazy loading, AVIF/WebP`",
+						"`**Technical SEO** (metadata, sitemap, Core Web Vitals)`",
+						"`Testing: Jest, Vitest, **Cypress** (E2E)`",
+						"`**CI/CD** (GitHub Actions) with full pipeline`"
 					]
 				},
 				"backend": {
-					"title": "Backend & Tools",
-					"ariaLabel": "Backend and Tools",
+					"title": "Backend & DevOps",
+					"ariaLabel": "Backend and DevOps",
 					"items": [
+						"`**PostgreSQL** (Docker) + **Vercel Serverless Functions**`",
+						"`Self-hosted **Matomo Analytics** (Docker, VPS)`",
 						"`**REST** and **GraphQL** APIs (Postman, Swagger)`",
-						"`**EmailJS**",
-						"`Self-hosted **Matomo Analytics** with **Docker** on VPS`",
-						"`PHP and Drupal knowledge`",
+						"`VPS Administration (SSH, fail2ban, iptables)`",
+						"`**EmailJS**`",
 						"`**Figma**, Gimp, Inkscape, Kdenlive`"
 					]
 				},
@@ -87,15 +90,21 @@
 					"title": "ArgentBank - Banking Application",
 					"description": {
 						"short": "React banking application with secure authentication and user profile management, focusing on accessibility and performance.",
-						"detailed": "User interface built with React 18 and TypeScript, integrating Zod for type-safe data validation and Redux Toolkit for optimized state management. Secure authentication with automatic session management (useSessionTimeout) and strict form validation. Focus on digital accessibility (WCAG/RGAA) and performance (code splitting, lazy loading). Modular architecture tested with Vitest and Green IT best practices. [ Project completed during an OpenClassrooms training. ]"
+						"detailed": "`User interface developed with React 18 and TypeScript, integrating Zod for type-safe data validation and Redux Toolkit for optimized state management. Secure authentication with automatic session management (useSessionTimeout) and strict form validation.`\n\n`**Backend Architecture:** Vercel Serverless Functions API communicating with PostgreSQL (Docker, self-hosted VPS). Secure management of sessions and banking data.`\n\n`**Quality & Testing:** ~95% test coverage with Vitest (unit tests) and Cypress (E2E). Complete CI/CD via GitHub Actions including automated tests, accessibility audits (Pa11y), performance audits (Lighthouse desktop + mobile). Modular architecture following Green IT best practices.`\n\n`**Accessibility & Performance:** WCAG/RGAA compliant. Lighthouse Accessibility 100%.`\n\n`[ Project completed during an OpenClassrooms training program. ]`"
 					},
 					"tags": [
 						"React",
 						"TypeScript",
 						"Zod",
 						"Redux",
+						"PostgreSQL",
+						"Vercel",
 						"A11y",
 						"Vitest",
+						"Cypress",
+						"CI/CD",
+						"Pa11y",
+						"Lighthouse",
 						"Green Code"
 					],
 					"links": {
