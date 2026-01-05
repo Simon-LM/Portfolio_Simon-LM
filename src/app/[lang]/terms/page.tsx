@@ -11,9 +11,12 @@
 import TermsClient from "./TermsClient";
 import { getDictionary } from "../dictionaries";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default async function Terms({ params }: any) {
-	const { lang } = params;
+export default async function Terms({
+	params,
+}: {
+	params: Promise<{ lang: string }>;
+}) {
+	const { lang } = await params;
 	const dictionary = await getDictionary(lang as "en" | "fr");
 	return <TermsClient initialDictionary={dictionary} />;
 }

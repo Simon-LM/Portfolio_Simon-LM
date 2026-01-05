@@ -19,15 +19,16 @@ const metadata = {
 export async function generateMetadata({
 	params,
 }: {
-	params: { lang: string };
+	params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
-	const lang = params.lang as keyof typeof metadata;
+	const { lang } = await params;
+	const langKey = lang as keyof typeof metadata;
 
 	// Retourner les métadonnées complètes, pas seulement title et description
 	return {
 		// Métadonnées spécifiques à la langue
-		title: metadata[lang].title,
-		description: metadata[lang].description,
+		title: metadata[langKey].title,
+		description: metadata[langKey].description,
 
 		// Préserver les métadonnées importantes du layout parent
 		metadataBase: new URL("https://www.simon-lm.dev"),
@@ -46,7 +47,7 @@ export async function generateMetadata({
 		},
 
 		alternates: {
-			canonical: `/${params.lang}`,
+			canonical: `/${lang}`,
 			languages: {
 				fr: "/fr",
 				en: "/en",
@@ -59,13 +60,14 @@ export async function generateStaticParams() {
 	return [{ lang: "en" }, { lang: "fr" }];
 }
 
-export default function LangLayout({
+export default async function LangLayout({
 	children,
-	params: { lang },
+	params,
 }: {
 	children: React.ReactNode;
-	params: { lang: "fr" | "en" };
+	params: Promise<{ lang: string }>;
 }) {
+	const { lang } = await params;
 	// return (
 	// 	<html lang={lang} suppressHydrationWarning>
 	// 		<head>

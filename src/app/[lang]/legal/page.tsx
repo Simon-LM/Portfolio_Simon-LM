@@ -11,10 +11,11 @@
 import LegalClient from "./LegalClient";
 import { getDictionary } from "../dictionaries";
 
-export default async function Legal(
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	{ params }: any
-) {
+export default async function Legal({
+	params,
+}: {
+	params: Promise<{ lang: string }>;
+}) {
 	const { lang } = await params;
 	const dictionary = await getDictionary(lang as "en" | "fr");
 	return <LegalClient initialDictionary={dictionary} />;

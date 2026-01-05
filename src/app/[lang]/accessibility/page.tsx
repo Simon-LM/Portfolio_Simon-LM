@@ -14,13 +14,12 @@
 import AccessibilityClient from "./AccessibilityClient";
 import { getDictionary } from "../dictionaries";
 
-export default async function Accessibility(
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	{ params }: any
-) {
-	// const { lang } = await params;
-	const lang = params.lang;
-
+export default async function Accessibility({
+	params,
+}: {
+	params: Promise<{ lang: string }>;
+}) {
+	const { lang } = await params;
 	const dictionary = await getDictionary(lang as "en" | "fr");
 	return <AccessibilityClient initialDictionary={dictionary} />;
 }

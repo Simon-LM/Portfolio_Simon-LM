@@ -12,10 +12,11 @@ import StickyFooter from "../../components/stickyFooter/StickyFooter";
 import BottomFooter from "../../components/bottomFooter/BottomFooter";
 import { getDictionary } from "./dictionaries";
 
-export default async function Home(
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	{ params }: any
-) {
+export default async function Home({
+	params,
+}: {
+	params: Promise<{ lang: string }>;
+}) {
 	// Récupère lang depuis params
 	const { lang } = await params;
 
@@ -31,7 +32,7 @@ export default async function Home(
 			<About dictionary={dictionary.sections.about} />
 			<Skills dictionary={dictionary.sections.skills} />
 			<Portfolio dictionary={dictionary.sections.portfolio} />
-			<Contact dictionary={dictionary.sections.contact} lang={params.lang} />
+			<Contact dictionary={dictionary.sections.contact} lang={lang} />
 			<StickyFooter />
 			<BottomFooter />
 			{/* <StickyFooter /> */}

@@ -15,10 +15,11 @@
 import { getDictionary } from "../dictionaries";
 import SiteMapClient from "./SiteMapClient";
 
-export default async function SiteMap(
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	{ params }: any
-) {
+export default async function SiteMap({
+	params,
+}: {
+	params: Promise<{ lang: string }>;
+}) {
 	const { lang } = await params;
 	const dictionary = await getDictionary(lang as "en" | "fr");
 	return <SiteMapClient initialDictionary={dictionary} />;

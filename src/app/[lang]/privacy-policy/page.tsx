@@ -3,11 +3,13 @@
 import PrivacyPolicyClient from "./PrivacyPolicyClient";
 import { getDictionary } from "../dictionaries";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default async function PrivacyPolicy({ params }: any) {
-	// Ne pas faire “await params” ici
-	const { lang } = params;
-	const dictionary = await getDictionary(lang);
+export default async function PrivacyPolicy({
+	params,
+}: {
+	params: Promise<{ lang: string }>;
+}) {
+	const { lang } = await params;
+	const dictionary = await getDictionary(lang as "en" | "fr");
 	return <PrivacyPolicyClient initialDictionary={dictionary} />;
 }
 
