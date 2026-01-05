@@ -94,17 +94,11 @@
 					"tags": [
 						"React",
 						"TypeScript",
-						"Zod",
 						"Redux",
 						"PostgreSQL",
-						"Vercel",
-						"A11y",
-						"Vitest",
 						"Cypress",
 						"CI/CD",
-						"Pa11y",
-						"Lighthouse",
-						"Green Code"
+						"A11y"
 					],
 					"links": {
 						"github": "https://github.com/Simon-LM/OC_P11_ArgentBank.git",
