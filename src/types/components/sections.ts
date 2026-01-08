@@ -15,7 +15,7 @@ export interface SkillsDictionary {
 	competences: {
 		frontend: { title: string; items: string[] };
 		backend: { title: string; items: string[] };
-		tools: { title: string; items: string[] };
+		tools?: { label: string };
 		closingText: string;
 	};
 }
