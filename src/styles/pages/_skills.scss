@@ -132,6 +132,15 @@
 		}
 	}
 
+	&__tools {
+		max-width: 800px;
+		margin: 0 auto;
+		text-align: center;
+		font-size: 0.95rem;
+		color: var(--color-text-secondary);
+		font-style: italic;
+	}
+
 	&__closing {
 		max-width: 800px;
 		margin: 3rem auto 0;

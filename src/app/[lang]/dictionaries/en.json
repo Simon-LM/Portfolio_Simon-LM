@@ -24,15 +24,15 @@
 			"features": [
 				{
 					"title": "Accessibility-Compliant Frontend Integration",
-					"description": "I transform your designs into web interfaces while adhering to the strictest digital accessibility regulations (WCAG, ADA)."
+					"description": "I transform your mockups into accessible web interfaces compliant with WCAG/ADA standards. Certified by Access42, I guarantee integration that respects digital accessibility standards."
 				},
 				{
 					"title": "Accessibility Audit with Optional Fixes",
-					"description": "I assess the accessibility of your websites and web applications for people with disabilities (visual, motor, or cognitive). Upon request, I can also implement the necessary fixes."
+					"description": "I assess the accessibility of your websites and web applications for people with disabilities (visual, motor, or cognitive). I provide a detailed report with improvement recommendations. Implementation of fixes available as an option."
 				},
 				{
-					"title": "Creating Accessible and Intuitive Interfaces",
-					"description": "I leverage your brand guidelines to design streamlined interfaces adapted to the needs of people with disabilities. Once approved, I ensure frontend integration compliant with accessibility standards."
+					"title": "Accessible Website Development Without Intermediaries",
+					"description": "From architecture to deployment, I develop your accessible website from A to Z. Clean and functional design, optimized for accessibility from the start. You avoid back-and-forth between designer and developer, and maximize WCAG/ADA compliance from conception."
 				}
 			]
 		},
@@ -44,7 +44,7 @@
 		"skills": {
 			"title": "Skills",
 			"subtitle": "Technologies & Expertise",
-			"presentation": "Frontend developer specialized in web accessibility, I design and integrate inclusive, high-performance interfaces compliant with standards (WCAG, ADA). I adopt a Content First approach, balancing technical optimization, responsive design and user experience.\n\n`Certified by Access42:` **[\"Developing Accessible Websites Compliant with RGAA\" (PDF, 496 KiB)](/documents/certificat-access42-anonymized.pdf)**",
+			"presentation": "Frontend developer specialized in web accessibility, I transform mockups into inclusive, high-performance interfaces compliant with standards (WCAG, ADA). I adopt a Content First approach, balancing technical optimization, responsive design and user experience.\n\n`Certified by Access42:` **[\"Developing Accessible Websites Compliant with RGAA\" (PDF, 496 KiB)](/documents/certificat-access42-anonymized.pdf)**",
 			"competences": {
 				"heading": "Key Skills",
 				"frontend": {
@@ -54,24 +54,26 @@
 						"`React.js, **Next.js**, Vite, **TypeScript**`",
 						"`**SCSS** (7.1, module.scss, BEM)`",
 						"`Accessibility audits (Lighthouse, Wave, **NVDA**, **Pa11y**)`",
+						"`Testing: Jest, Vitest, **Cypress** (E2E)`",
 						"`**Zustand**, Redux Toolkit`",
 						"`**Web Performance**: lazy loading, AVIF/WebP`",
-						"`**Technical SEO** (metadata, sitemap, Core Web Vitals)`",
-						"`Testing: Jest, Vitest, **Cypress** (E2E)`",
-						"`**CI/CD** (GitHub Actions) with full pipeline`"
+						"`**Technical SEO** (metadata, sitemap, Core Web Vitals)`"
 					]
 				},
 				"backend": {
-					"title": "Backend & DevOps",
-					"ariaLabel": "Backend and DevOps",
+					"title": "Backend & Infrastructure",
+					"ariaLabel": "Backend and Infrastructure",
 					"items": [
+						"`**CI/CD** (GitHub Actions): automated tests, a11y audits (Pa11y, Lighthouse)`",
 						"`**PostgreSQL** (Docker) + **Vercel Serverless Functions**`",
-						"`Self-hosted **Matomo Analytics** (Docker, VPS)`",
 						"`**REST** and **GraphQL** APIs (Postman, Swagger)`",
-						"`VPS Administration (SSH, fail2ban, iptables)`",
-						"`**EmailJS**`",
-						"`**Figma**, Gimp, Inkscape, Kdenlive`"
+						"`Self-hosted **Matomo Analytics** (Docker, VPS)`",
+						"`Server administration (SSH, fail2ban, iptables)`",
+						"`**EmailJS**`"
 					]
+				},
+				"tools": {
+					"label": "Additional tools: Figma, Gimp, Inkscape, Kdenlive"
 				},
 
 				"closingText": "With these skills, I deliver robust, maintainable, and inclusive web solutions that meet real user needs."

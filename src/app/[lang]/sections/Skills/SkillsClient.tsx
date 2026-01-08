@@ -21,7 +21,7 @@ interface SkillsDictionary {
 	competences: {
 		frontend: { title: string; items: string[]; ariaLabel?: string };
 		backend: { title: string; items: string[]; ariaLabel?: string };
-		tools: { title: string; items: string[] };
+		tools?: { label: string };
 		closingText: string;
 	};
 }
@@ -283,6 +283,13 @@ export default function Skills({ dictionary }: SkillsProps) {
 							</ul>
 						</div>
 					</div>
+
+					{/* Additional Tools Line */}
+					{dictionary.competences.tools && (
+						<p className="skills__tools">
+							{dictionary.competences.tools.label}
+						</p>
+					)}
 				</div>
 			</div>
 		</section>

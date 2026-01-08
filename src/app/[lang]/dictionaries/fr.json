@@ -23,15 +23,15 @@
 			"features": [
 				{
 					"title": "Intégration frontend conforme aux normes d'accessibilité",
-					"description": "Je transforme vos maquettes en interfaces web tout en respectant les réglementations les plus strictes en matière d'accessibilité numérique (RGAA, WCAG)."
+					"description": "Je transforme vos maquettes en interfaces web accessibles et conformes RGAA/WCAG. Certifié Access42, je garantis une intégration respectant les standards d'accessibilité numérique."
 				},
 				{
-					"title": "Audit d'accessibilité avec correctifs sur demande",
-					"description": "J'évalue l'accessibilité de vos sites et applications web pour les personnes en situation de handicap (visuel, moteur ou cognitif). Sur demande, je peux également appliquer les correctifs nécessaires."
+					"title": "Audit d'accessibilité avec correctifs optionnels",
+					"description": "J'évalue l'accessibilité de vos sites et applications web pour les personnes en situation de handicap (visuel, moteur ou cognitif). Je fournis un rapport détaillé avec recommandations d'amélioration. Implémentation des correctifs disponible en option."
 				},
 				{
-					"title": "Création d'interfaces accessibles et intuitives",
-					"description": "Je m'appuie sur votre charte graphique pour concevoir des interfaces épurées, adaptées aux besoins des personnes en situation de handicap. Une fois validées, j'assure une intégration frontend conforme aux normes d'accessibilité."
+					"title": "Développement de sites accessibles sans intermédiaire",
+					"description": "De l'architecture au déploiement, je développe votre site accessible de A à Z. Design sobre et fonctionnel, optimisé pour l'accessibilité dès la conception. Vous évitez les allers-retours entre designer et développeur, et maximisez la conformité RGAA/WCAG dès la conception."
 				}
 			]
 		},
@@ -43,7 +43,7 @@
 		"skills": {
 			"title": "Compétences",
 			"subtitle": "Technologies & Expertise",
-			"presentation": "Développeur frontend spécialisé en accessibilité web, je conçois et intègre des interfaces inclusives, performantes et conformes aux normes (RGAA, WCAG). J'adopte une approche Content First, conciliant optimisation technique, responsive design et expérience utilisateur.\n\n`Certifié par Access42 :` **[« Développer des sites web accessibles et conformes au RGAA » (PDF, 496 Kio)](/documents/certificat-access42-anonymized.pdf)**",
+			"presentation": "Développeur frontend spécialisé en accessibilité web, je transforme les maquettes en interfaces inclusives, performantes et conformes aux normes (RGAA, WCAG). J'adopte une approche Content First, conciliant optimisation technique, responsive design et expérience utilisateur.\n\n`Certifié par Access42 :` **[« Développer des sites web accessibles et conformes au RGAA » (PDF, 496 Kio)](/documents/certificat-access42-anonymized.pdf)**",
 			"competences": {
 				"heading": "Compétences clés",
 				"frontend": {
@@ -53,24 +53,26 @@
 						"`React.js, **Next.js**, Vite, **TypeScript**`",
 						"`**SCSS** (7.1, module.scss, BEM)`",
 						"`Audits a11y (Lighthouse, Wave, **NVDA**, **Pa11y**)`",
+						"`Tests : Jest, Vitest, **Cypress** (E2E)`",
 						"`**Zustand**, Redux Toolkit`",
 						"`**Performance web** : lazy loading, AVIF/WebP`",
-						"`**SEO technique** (metadata, sitemap, Core Web Vitals)`",
-						"`Tests : Jest, Vitest, **Cypress** (E2E)`",
-						"`**CI/CD** (GitHub Actions) avec pipeline complet`"
+						"`**SEO technique** (metadata, sitemap, Core Web Vitals)`"
 					]
 				},
 				"backend": {
-					"title": "Backend & DevOps",
-					"ariaLabel": "Backend et DevOps",
+					"title": "Backend & Infrastructure",
+					"ariaLabel": "Backend et Infrastructure",
 					"items": [
+						"`**CI/CD** (GitHub Actions) : tests automatisés, audits a11y (Pa11y, Lighthouse)`",
 						"`**PostgreSQL** (Docker) + **Vercel Serverless Functions**`",
-						"`**Matomo Analytics** auto-hébergé (Docker, VPS)`",
 						"`APIs **REST** et **GraphQL** (Postman, Swagger)`",
-						"`Administration VPS (SSH, fail2ban, iptables)`",
-						"`**EmailJS**`",
-						"`**Figma**, Gimp, Inkscape, Kdenlive`"
+						"`**Matomo Analytics** auto-hébergé (Docker, VPS)`",
+						"`Administration serveur (SSH, fail2ban, iptables)`",
+						"`**EmailJS**`"
 					]
+				},
+				"tools": {
+					"label": "Outils complémentaires : Figma, Gimp, Inkscape, Kdenlive"
 				},
 
 				"closingText": "Grâce à ces compétences, je propose des solutions web robustes, maintenables et inclusives, répondant aux besoins concrets des utilisateurs."
