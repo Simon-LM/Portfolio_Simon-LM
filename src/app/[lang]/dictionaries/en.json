@@ -51,11 +51,12 @@
 					"title": "Frontend & Accessibility",
 					"ariaLabel": "Frontend and Accessibility",
 					"items": [
-						"`React.js, **Next.js**, Vite, **TypeScript**`",
+						"`React.js, **Next.js**, Vite, **TypeScript** & **Zod**`",
 						"`**SCSS** (7.1, module.scss, BEM)`",
 						"`Accessibility audits (Lighthouse, Wave, **NVDA**, **Pa11y**)`",
 						"`Testing: Jest, Vitest, **Cypress** (E2E)`",
 						"`**Zustand**, Redux Toolkit`",
+						"`**i18n** (multilingual internationalization, Next.js)`",
 						"`**Web Performance**: lazy loading, AVIF/WebP`",
 						"`**Technical SEO** (metadata, sitemap, Core Web Vitals)`"
 					]
@@ -65,7 +66,7 @@
 					"ariaLabel": "Backend and Infrastructure",
 					"items": [
 						"`**CI/CD** (GitHub Actions): automated tests, a11y audits (Pa11y, Lighthouse)`",
-						"`**PostgreSQL** (Docker) + **Vercel Serverless Functions**`",
+						"`**PostgreSQL** (Docker) + **Vercel Serverless Functions** + **Prisma ORM**`",
 						"`**REST** and **GraphQL** APIs (Postman, Swagger)`",
 						"`Self-hosted **Matomo Analytics** (Docker, VPS)`",
 						"`Server administration (SSH, fail2ban, iptables)`",
