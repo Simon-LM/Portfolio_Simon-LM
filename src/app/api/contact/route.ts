@@ -2,8 +2,188 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { FormData } from "../../../types";
+import {
+	SpentriaRequestBody,
+	SpentriaResponse,
+} from "../../../types/form/spentria";
 
-const MINIMUM_SCORE = 0.5;
+const SPENTRIA_TIMEOUT_MS = 10_000;
+
+function getVisitorIP(request: NextRequest): string | undefined {
+	const xff = request.headers.get("x-forwarded-for");
+	if (xff) return xff.split(",")[0].trim();
+	const realIp = request.headers.get("x-real-ip");
+	if (realIp) return realIp;
+	return undefined;
+}
+
+async function analyzeWithSpentria(
+	formData: FormData,
+	visitorIP: string | undefined
+): Promise<SpentriaResponse | null> {
+	const apiKey = process.env.SPENTRIA_API_KEY;
+	const apiUrl = process.env.SPENTRIA_API_URL;
+
+	if (!apiKey || !apiUrl) {
+		console.error("Missing Spentria configuration (SPENTRIA_API_KEY or SPENTRIA_API_URL)");
+		return null;
+	}
+
+	const body: SpentriaRequestBody = {
+		message: formData.message,
+		context:
+			"Professional portfolio contact form for a French web developer specialized in accessibility",
+		email: formData.email,
+		sender_ip: visitorIP,
+		allowed_languages: ["fr", "en"],
+		commercial_policy: "moderate",
+		subject: formData.subject,
+		firstname: formData.firstName,
+		lastname: formData.lastName,
+		phone: formData.phone,
+		custom_fields: formData.company ? { company: formData.company } : undefined,
+	};
+
+	const controller = new AbortController();
+	const timeout = setTimeout(() => controller.abort(), SPENTRIA_TIMEOUT_MS);
+
+	try {
+		const response = await fetch(apiUrl, {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${apiKey}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(body),
+			signal: controller.signal,
+		});
+
+		if (!response.ok) {
+			const errorBody = await response.text();
+			console.error("Spentria API error:", {
+				status: response.status,
+				body: errorBody,
+			});
+			return null;
+		}
+
+		return (await response.json()) as SpentriaResponse;
+	} catch (error) {
+		if (error instanceof Error && error.name === "AbortError") {
+			console.error("Spentria API timeout after", SPENTRIA_TIMEOUT_MS, "ms");
+		} else {
+			console.error("Spentria API network error:", error);
+		}
+		return null;
+	} finally {
+		clearTimeout(timeout);
+	}
+}
+
+function forwardSpamLog(
+	formData: FormData,
+	spentriaResult: SpentriaResponse,
+	visitorIP: string | undefined
+): void {
+	const endpoint = process.env.SPAM_LOG_ENDPOINT;
+	const token = process.env.SPAM_LOG_TOKEN;
+
+	if (!endpoint || !token) {
+		console.warn("Missing SPAM_LOG_ENDPOINT or SPAM_LOG_TOKEN, skipping spam log");
+		return;
+	}
+
+	const cleanIP =
+		visitorIP?.startsWith("::ffff:") ? visitorIP.replace("::ffff:", "") : visitorIP;
+
+	const payload = {
+		source: "portfolio",
+		type: "spam",
+		timestamp: new Date().toISOString(),
+		spentria_request_id: spentriaResult.request_id,
+		spentria_reason: spentriaResult.reason,
+		visitor_email: formData.email,
+		visitor_ip: cleanIP || null,
+		message_subject: formData.subject,
+		message_body: formData.message,
+	};
+
+	fetch(endpoint, {
+		method: "POST",
+		headers: {
+			Authorization: `Bearer ${token}`,
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(payload),
+	})
+		.then(async (res) => {
+			const body = await res.text();
+			if (!res.ok) {
+				console.error("Spam log endpoint returned", res.status, body);
+			} else {
+				console.log("Spam log forwarded successfully:", body);
+			}
+		})
+		.catch((error) => {
+			console.error("Failed to forward spam log:", error);
+		});
+}
+
+async function sendEmail(
+	formData: FormData,
+	subjectPrefix?: string,
+	spentriaReason?: string | null,
+	tagsSuffix?: string
+): Promise<Response> {
+	const emailjsConfig = {
+		service_id: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+		template_id: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
+		user_id: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
+	};
+
+	if (
+		!emailjsConfig.service_id ||
+		!emailjsConfig.template_id ||
+		!emailjsConfig.user_id
+	) {
+		throw new Error("Missing EmailJS configuration");
+	}
+
+	const baseSubject = subjectPrefix
+		? `${subjectPrefix} ${formData.subject}`
+		: formData.subject;
+	const subject = tagsSuffix ? `${baseSubject}${tagsSuffix}` : baseSubject;
+
+	const emailParams: Record<string, string> = {
+		firstName: formData.firstName,
+		lastName: formData.lastName,
+		reply_to: formData.email,
+		phone: formData.phone || "",
+		company: formData.company || "",
+		subject,
+		message: formData.message,
+		spentria_info: spentriaReason
+			? `⚠️ [Spentria] Raison : ${spentriaReason}`
+			: "",
+		system_date: formData.date || "",
+		system_time: formData.heure || "",
+		system_language: formData.lang || "fr",
+	};
+
+	return fetch("https://api.emailjs.com/api/v1.0/email/send", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Origin: "https://simon-lm.dev",
+		},
+		body: JSON.stringify({
+			service_id: emailjsConfig.service_id,
+			template_id: emailjsConfig.template_id,
+			user_id: emailjsConfig.user_id,
+			template_params: emailParams,
+		}),
+	});
+}
 
 export async function POST(request: NextRequest) {
 	try {
@@ -11,120 +191,65 @@ export async function POST(request: NextRequest) {
 		let body;
 		try {
 			body = await request.json();
-			console.log("Request body parsed successfully:", body);
-		} catch (error) {
-			console.error("Failed to parse request body:", error);
+		} catch {
 			return NextResponse.json(
 				{ error: "Invalid request body" },
 				{ status: 400 }
 			);
 		}
 
-		// 2. Extract reCAPTCHA token and form data
-		const { "g-recaptcha-response": token, ...formData } = body;
-		const typedFormData = formData as FormData;
+		const formData = body as FormData;
 
-		// 3. Check environment variables
-		console.log("Environment Check:", {
-			EMAILJS_SERVICE_ID: !!process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
-			EMAILJS_TEMPLATE_ID: !!process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
-			EMAILJS_PUBLIC_KEY: !!process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
-			RECAPTCHA_SECRET_KEY: !!process.env.RECAPTCHA_SECRET_KEY,
-		});
-
-		// 4. Check reCAPTCHA token presence
-		if (!token) {
-			console.error("No reCAPTCHA token provided");
-			return NextResponse.json(
-				{ error: "No reCAPTCHA token provided" },
-				{ status: 400 }
-			);
+		// 2. Honeypot check
+		if (formData.honeypot) {
+			return NextResponse.json({ success: true, message: "Email sent successfully" });
 		}
-		// 5. Verify reCAPTCHA with score
-		const recaptchaResponse = await fetch(
-			`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`,
-			{ method: "POST" }
-		);
 
-		const recaptchaResult = await recaptchaResponse.json();
-		console.log("reCAPTCHA Result:", {
-			success: recaptchaResult.success,
-			score: recaptchaResult.score,
-			action: recaptchaResult.action,
-		});
+		// 3. Analyze with Spentria
+		const visitorIP = getVisitorIP(request);
+		const spentriaResult = await analyzeWithSpentria(formData, visitorIP);
 
-		// 6. Check reCAPTCHA score
-		if (!recaptchaResult.success || recaptchaResult.score < MINIMUM_SCORE) {
-			console.error("reCAPTCHA verification failed:", {
-				success: recaptchaResult.success,
-				score: recaptchaResult.score,
+		// 4. Handle Spentria result
+		// Fail-open: if Spentria is unavailable or chain_exhausted, send email normally
+		const isFailOpen =
+			!spentriaResult || spentriaResult.reason === "chain_exhausted";
+
+		if (!isFailOpen && spentriaResult.result === "spam") {
+			// Spam: log and return fake success
+			console.warn("Spentria: spam detected", {
+				request_id: spentriaResult.request_id,
+				reason: spentriaResult.reason,
+				email: formData.email,
+				ip: visitorIP,
 			});
-			return NextResponse.json(
-				{
-					error: "reCAPTCHA verification failed",
-					details: `Score: ${recaptchaResult.score}, Required: ${MINIMUM_SCORE}`,
-				},
-				{ status: 400 }
-			);
+			forwardSpamLog(formData, spentriaResult, visitorIP);
+			return NextResponse.json({ success: true, message: "Email sent successfully" });
 		}
 
-		// 7. EmailJS Configuration
-		const emailjsConfig = {
-			service_id: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
-			template_id: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
-			user_id: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
-		};
+		// 5. Determine email handling
+		let subjectPrefix = "PORTFOLIO ||";
+		let spentriaReason: string | null | undefined;
+		let tagsSuffix = "";
 
-		if (
-			!emailjsConfig.service_id ||
-			!emailjsConfig.template_id ||
-			!emailjsConfig.user_id
-		) {
-			throw new Error("Missing EmailJS configuration");
+		if (isFailOpen) {
+			subjectPrefix = "[Non vérifié] PORTFOLIO ||";
+		} else if (spentriaResult.result === "borderline") {
+			subjectPrefix = "[Borderline_PortfolioSimonLM]";
+			spentriaReason = spentriaResult.reason;
 		}
 
-		// 8. Prepare EmailJS parameters
-		const emailParams: { [key: string]: string } = {
-			firstName: typedFormData.firstName,
-			lastName: typedFormData.lastName,
-			reply_to: typedFormData.email,
-			phone: typedFormData.phone || "",
-			company: typedFormData.company || "",
-			subject: typedFormData.subject,
-			message: typedFormData.message,
-			system_date: typedFormData.date || "",
-			system_time: typedFormData.heure || "",
-			system_language: typedFormData.lang || "fr",
-		};
+		// Append Spentria tags to subject
+		if (spentriaResult?.tags?.matched?.length) {
+			tagsSuffix = " " + spentriaResult.tags.matched
+				.map((tag) => `#${tag.name}`)
+				.join(" ");
+		}
 
-		// 9. Send email via EmailJS
-		const emailResponse = await fetch(
-			"https://api.emailjs.com/api/v1.0/email/send",
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Origin: "https://simon-lm.dev",
-				},
-				body: JSON.stringify({
-					service_id: emailjsConfig.service_id,
-					template_id: emailjsConfig.template_id,
-					user_id: emailjsConfig.user_id,
-					template_params: emailParams,
-				}),
-			}
-		);
-
-		// 10. Handle EmailJS response
-		const responseText = await emailResponse.text();
-		console.log("EmailJS Response:", {
-			status: emailResponse.status,
-			ok: emailResponse.ok,
-			text: responseText,
-			headers: Object.fromEntries(emailResponse.headers),
-		});
+		// 6. Send email (fit, borderline, or fail-open)
+		const emailResponse = await sendEmail(formData, subjectPrefix, spentriaReason, tagsSuffix);
 
 		if (!emailResponse.ok) {
+			const responseText = await emailResponse.text();
 			throw new Error(`EmailJS Error: ${responseText}`);
 		}
 

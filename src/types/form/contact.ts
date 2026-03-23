@@ -1,7 +1,5 @@
 /** @format */
 
-import { ReCaptchaConsentDictionary } from "./recaptcha";
-
 export interface FormData {
 	firstName: string;
 	lastName: string;
@@ -20,7 +18,6 @@ export interface FormData {
 export interface ContactProps {
 	dictionary: ContactDictionary;
 	lang: string;
-	hasConsent?: boolean | null;
 }
 
 export interface ContactDictionary {
@@ -52,7 +49,6 @@ export interface FormDictionary {
 	sending: string;
 	success: string;
 	error: string;
-	recaptcha: ReCaptchaConsentDictionary;
 	errors: {
 		firstName: string;
 		lastName: string;

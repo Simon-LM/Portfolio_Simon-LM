@@ -6,23 +6,22 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Toaster, toast } from "react-hot-toast";
+import Script from "next/script";
 import { generateMetadata } from "../../../../utils/metadata";
 import { ContactProps, FormData } from "../../../../types";
 import { ContactForm } from "./components/ContactForm";
-import { RecaptchaScript } from "./components/RecaptchaScript";
-import { useRecaptcha } from "./hooks/useRecaptcha";
-import { ErrorToast } from "./components/ErrorToast";
+
+declare global {
+	interface Window {
+		SpentriaLoader?: { show: () => void; hide: () => void };
+	}
+}
 
 // Minimum French phone number validation
 const phoneRegex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
 
-export default function ContactClient({
-	dictionary,
-	lang,
-	hasConsent,
-}: ContactProps) {
+export default function ContactClient({ dictionary, lang }: ContactProps) {
 	const [isLoading, setIsLoading] = useState(false);
-	const { executeRecaptcha } = useRecaptcha();
 
 	// Create Zod validation schema with translated error messages
 	const createValidationSchema = () => {
@@ -57,17 +56,12 @@ export default function ContactClient({
 		resolver: zodResolver(schema),
 	});
 
-	// Handle form submission with reCAPTCHA verification
 	const onSubmit = async (formData: FormData) => {
 		setIsLoading(true);
+		setTimeout(() => window.SpentriaLoader?.show(), 0);
 		try {
-			// Generate reCAPTCHA token
-			const token = await executeRecaptcha();
-
-			// Generate client-side metadata (language, date, time)
 			const metadata = generateMetadata(lang);
 
-			// Send form data to API with reCAPTCHA token and metadata
 			const response = await fetch("/api/contact", {
 				method: "POST",
 				headers: {
@@ -75,14 +69,12 @@ export default function ContactClient({
 				},
 				body: JSON.stringify({
 					...formData,
-					"g-recaptcha-response": token,
 					...metadata,
 				}),
 			});
 
 			const data = await response.json();
 
-			// Handle response and show appropriate toast message
 			if (response.ok) {
 				toast.success(dictionary.form.success);
 				reset();
@@ -90,58 +82,56 @@ export default function ContactClient({
 				throw new Error(data.error || "Failed to send message");
 			}
 		} catch (error) {
-			// Handle errors and display detailed reCAPTCHA error messages
 			console.error("Form submission error:", error);
-			toast.error(<ErrorToast dictionary={dictionary} />);
+			toast.error(dictionary.form.error);
 		} finally {
+			window.SpentriaLoader?.hide();
 			setIsLoading(false);
 		}
 	};
 
 	return (
-		<>
-			{/* Load reCAPTCHA script */}
-			{hasConsent && <RecaptchaScript />}
-
-			<section id="contact" className="contact">
-				<div className="contact__container">
-					{/* <h2 className="contact__title">{dictionary.title}</h2> */}
-					<ContactForm
-						onSubmit={handleSubmit(onSubmit)}
-						register={register}
-						errors={errors}
-						dictionary={dictionary}
-						isLoading={isLoading}
-						lang={lang}
-						isBlocked={!hasConsent}
-					/>
-				</div>
-				<Toaster
-					position="top-center"
-					reverseOrder={false}
-					gutter={8}
-					toastOptions={{
-						className: "contact__toast",
-						duration: 12000,
+		<section id="contact" className="contact">
+			<Script
+				src="https://spentria.lostintab.com/widget/loader.js?v=2"
+				strategy="afterInteractive"
+			/>
+			<div className="contact__container">
+				<ContactForm
+					onSubmit={handleSubmit(onSubmit)}
+					register={register}
+					errors={errors}
+					dictionary={dictionary}
+					isLoading={isLoading}
+					lang={lang}
+				/>
+			</div>
+			<div data-spentria-loader data-spentria-display="overlay"></div>
+			<Toaster
+				position="top-center"
+				reverseOrder={false}
+				gutter={8}
+				toastOptions={{
+					className: "contact__toast",
+					duration: 12000,
+					style: {
+						background: "transparent",
+						boxShadow: "none",
+					},
+					success: {
+						style: {
+							background: "$color-main-bg",
+							color: "$color-main-text",
+						},
+					},
+					error: {
 						style: {
 							background: "transparent",
-							boxShadow: "none",
+							padding: 0,
 						},
-						success: {
-							style: {
-								background: "$color-main-bg",
-								color: "$color-main-text",
-							},
-						},
-						error: {
-							style: {
-								background: "transparent",
-								padding: 0,
-							},
-						},
-					}}
-				/>
-			</section>
-		</>
+					},
+				}}
+			/>
+		</section>
 	);
 }

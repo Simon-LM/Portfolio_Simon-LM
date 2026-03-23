@@ -76,7 +76,6 @@ export interface ContactFormProps {
 	dictionary: ContactDictionary;
 	isLoading: boolean;
 	lang: string;
-	isBlocked: boolean;
 }
 
 export interface ErrorToastProps {
@@ -87,5 +86,4 @@ export interface FormFieldsProps {
 	errors: FieldErrors<FormData>;
 	dictionary: ContactDictionary;
 	lang: string;
-	isBlocked: boolean;
 }
