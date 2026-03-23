@@ -438,4 +438,80 @@ describe("POST /api/contact", () => {
 			expect(response.status).toBe(500);
 		});
 	});
+
+	describe("Proof of Work", () => {
+		it("returns powRequired with challenge when Spentria responds 429", async () => {
+			// Spentria returns 429 POW_REQUIRED
+			mockFetch.mockResolvedValueOnce({
+				ok: false,
+				status: 429,
+				json: async () => ({
+					status: "error",
+					code: "POW_REQUIRED",
+					difficulty: 16,
+					message: "Too many requests",
+				}),
+			});
+			// Challenge generate endpoint
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				json: async () => ({
+					challenge_id: "test-challenge-id",
+					nonce: "a".repeat(64),
+					difficulty: 16,
+					algorithm: "sha256",
+					expires_at: "2026-03-23T15:30:00+00:00",
+				}),
+			});
+
+			const response = await POST(createRequest(validFormData));
+			const data = await response.json();
+
+			expect(data.powRequired).toBe(true);
+			expect(data.challenge.challenge_id).toBe("test-challenge-id");
+			expect(data.challenge.nonce).toHaveLength(64);
+			expect(data.challenge.difficulty).toBe(16);
+		});
+
+		it("falls back to fail-open when challenge generation fails", async () => {
+			mockFetch
+				.mockResolvedValueOnce({
+					ok: false,
+					status: 429,
+					json: async () => ({
+						status: "error",
+						code: "POW_REQUIRED",
+						difficulty: 16,
+					}),
+				})
+				.mockResolvedValueOnce({ ok: false, status: 500 }) // challenge fails
+				.mockResolvedValueOnce(mockEmailJSResponse()); // email sent (fail-open)
+
+			const response = await POST(createRequest(validFormData));
+			const data = await response.json();
+
+			expect(data.success).toBe(true);
+			// Verify fail-open prefix
+			const emailCall = mockFetch.mock.calls[2];
+			const emailBody = JSON.parse(emailCall[1].body);
+			expect(emailBody.template_params.subject).toContain("[Non vérifié]");
+		});
+
+		it("sends proof to Spentria when client provides it", async () => {
+			mockFetch
+				.mockResolvedValueOnce(mockSpentriaResponse("fit"))
+				.mockResolvedValueOnce(mockEmailJSResponse());
+
+			const proof = {
+				challenge_id: "test-challenge-id",
+				solution: "00000abc",
+			};
+
+			await POST(createRequest({ ...validFormData, proof }));
+
+			const spentriaCall = mockFetch.mock.calls[0];
+			const spentriaBody = JSON.parse(spentriaCall[1].body);
+			expect(spentriaBody.proof).toEqual(proof);
+		});
+	});
 });

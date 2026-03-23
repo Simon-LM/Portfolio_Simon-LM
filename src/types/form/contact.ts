@@ -10,6 +10,7 @@ export interface FormData {
 	message: string;
 	gdprConsent: boolean;
 	honeypot?: string;
+	proof?: { challenge_id: string; solution: string };
 	date?: string;
 	heure?: string;
 	lang?: string;

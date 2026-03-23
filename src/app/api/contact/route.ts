@@ -17,19 +17,25 @@ function getVisitorIP(request: NextRequest): string | undefined {
 	return undefined;
 }
 
-async function analyzeWithSpentria(
+interface SpentriaPowChallenge {
+	challenge_id: string;
+	nonce: string;
+	difficulty: number;
+	algorithm: string;
+	expires_at: string;
+}
+
+interface SpentriaAnalysisResult {
+	response: SpentriaResponse | null;
+	powChallenge?: SpentriaPowChallenge;
+}
+
+function buildSpentriaBody(
 	formData: FormData,
-	visitorIP: string | undefined
-): Promise<SpentriaResponse | null> {
-	const apiKey = process.env.SPENTRIA_API_KEY;
-	const apiUrl = process.env.SPENTRIA_API_URL;
-
-	if (!apiKey || !apiUrl) {
-		console.error("Missing Spentria configuration (SPENTRIA_API_KEY or SPENTRIA_API_URL)");
-		return null;
-	}
-
-	const body: SpentriaRequestBody = {
+	visitorIP: string | undefined,
+	proof?: { challenge_id: string; solution: string }
+): SpentriaRequestBody & { proof?: { challenge_id: string; solution: string } } {
+	const body: SpentriaRequestBody & { proof?: { challenge_id: string; solution: string } } = {
 		message: formData.message,
 		context:
 			"Professional portfolio contact form for a French web developer specialized in accessibility",
@@ -43,6 +49,58 @@ async function analyzeWithSpentria(
 		phone: formData.phone,
 		custom_fields: formData.company ? { company: formData.company } : undefined,
 	};
+
+	if (proof) {
+		body.proof = proof;
+	}
+
+	return body;
+}
+
+async function fetchChallenge(difficulty: number): Promise<SpentriaPowChallenge | null> {
+	const apiKey = process.env.SPENTRIA_API_KEY;
+	const baseUrl = process.env.SPENTRIA_API_URL;
+
+	if (!apiKey || !baseUrl) return null;
+
+	const challengeUrl = baseUrl.replace("/analyze/contact", "/challenge/generate");
+
+	try {
+		const response = await fetch(challengeUrl, {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${apiKey}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ type: "contact", difficulty }),
+		});
+
+		if (!response.ok) {
+			console.error("Spentria challenge error:", response.status);
+			return null;
+		}
+
+		return (await response.json()) as SpentriaPowChallenge;
+	} catch (error) {
+		console.error("Failed to fetch Spentria challenge:", error);
+		return null;
+	}
+}
+
+async function analyzeWithSpentria(
+	formData: FormData,
+	visitorIP: string | undefined,
+	proof?: { challenge_id: string; solution: string }
+): Promise<SpentriaAnalysisResult> {
+	const apiKey = process.env.SPENTRIA_API_KEY;
+	const apiUrl = process.env.SPENTRIA_API_URL;
+
+	if (!apiKey || !apiUrl) {
+		console.error("Missing Spentria configuration (SPENTRIA_API_KEY or SPENTRIA_API_URL)");
+		return { response: null };
+	}
+
+	const body = buildSpentriaBody(formData, visitorIP, proof);
 
 	const controller = new AbortController();
 	const timeout = setTimeout(() => controller.abort(), SPENTRIA_TIMEOUT_MS);
@@ -58,23 +116,37 @@ async function analyzeWithSpentria(
 			signal: controller.signal,
 		});
 
+		if (response.status === 429) {
+			const errorData = await response.json();
+			if (errorData.code === "POW_REQUIRED") {
+				console.log("Spentria: PoW required, difficulty:", errorData.difficulty);
+				const challenge = await fetchChallenge(errorData.difficulty || 16);
+				if (challenge) {
+					console.log("Spentria: challenge obtained, id:", challenge.challenge_id);
+					return { response: null, powChallenge: challenge };
+				}
+				console.warn("Spentria: failed to obtain challenge, falling back to fail-open");
+			}
+			return { response: null };
+		}
+
 		if (!response.ok) {
 			const errorBody = await response.text();
 			console.error("Spentria API error:", {
 				status: response.status,
 				body: errorBody,
 			});
-			return null;
+			return { response: null };
 		}
 
-		return (await response.json()) as SpentriaResponse;
+		return { response: (await response.json()) as SpentriaResponse };
 	} catch (error) {
 		if (error instanceof Error && error.name === "AbortError") {
 			console.error("Spentria API timeout after", SPENTRIA_TIMEOUT_MS, "ms");
 		} else {
 			console.error("Spentria API network error:", error);
 		}
-		return null;
+		return { response: null };
 	} finally {
 		clearTimeout(timeout);
 	}
@@ -205,9 +277,23 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ success: true, message: "Email sent successfully" });
 		}
 
-		// 3. Analyze with Spentria
+		// 3. Analyze with Spentria (with optional PoW proof from client retry)
 		const visitorIP = getVisitorIP(request);
-		const spentriaResult = await analyzeWithSpentria(formData, visitorIP);
+		const proof = formData.proof as { challenge_id: string; solution: string } | undefined;
+		if (proof) {
+			console.log("Spentria: retrying with PoW proof, challenge_id:", proof.challenge_id);
+		}
+		const analysis = await analyzeWithSpentria(formData, visitorIP, proof);
+
+		// 3b. Handle PoW challenge — return challenge to client for computation
+		if (analysis.powChallenge) {
+			return NextResponse.json({
+				powRequired: true,
+				challenge: analysis.powChallenge,
+			});
+		}
+
+		const spentriaResult = analysis.response;
 
 		// 4. Handle Spentria result
 		// Fail-open: if Spentria is unavailable or chain_exhausted, send email normally
@@ -241,7 +327,7 @@ export async function POST(request: NextRequest) {
 		// Append Spentria tags to subject
 		if (spentriaResult?.tags?.matched?.length) {
 			tagsSuffix = " " + spentriaResult.tags.matched
-				.map((tag) => `#${tag.name}`)
+				.map((tag: { name: string }) => `#${tag.name}`)
 				.join(" ");
 		}
 

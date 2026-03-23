@@ -56,29 +56,69 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 		resolver: zodResolver(schema),
 	});
 
+	const solvePoW = (
+		nonce: string,
+		difficulty: number
+	): Promise<string> => {
+		return new Promise((resolve, reject) => {
+			const worker = new Worker("/workers/spentria-pow.js");
+			worker.onmessage = (e) => {
+				if (e.data.solution) {
+					worker.terminate();
+					resolve(e.data.solution);
+				}
+			};
+			worker.onerror = (err) => {
+				worker.terminate();
+				reject(err);
+			};
+			worker.postMessage({ nonce, difficulty });
+		});
+	};
+
+	const submitToApi = async (
+		formData: FormData,
+		metadata: { date: string; heure: string; langue: string },
+		proof?: { challenge_id: string; solution: string }
+	) => {
+		return fetch("/api/contact", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				...formData,
+				...metadata,
+				...(proof && { proof }),
+			}),
+		});
+	};
+
 	const onSubmit = async (formData: FormData) => {
 		setIsLoading(true);
 		setTimeout(() => window.SpentriaLoader?.show(), 0);
 		try {
 			const metadata = generateMetadata(lang);
 
-			const response = await fetch("/api/contact", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					...formData,
-					...metadata,
-				}),
-			});
+			let response = await submitToApi(formData, metadata);
+			let data = await response.json();
 
-			const data = await response.json();
+			// Handle PoW challenge
+			if (response.ok && data.powRequired) {
+				const { challenge } = data;
+				console.log("Spentria PoW: challenge received, difficulty:", challenge.difficulty);
+				const solution = await solvePoW(challenge.nonce, challenge.difficulty);
+				console.log("Spentria PoW: solved, retrying submission");
+				const proof = {
+					challenge_id: challenge.challenge_id,
+					solution,
+				};
+				response = await submitToApi(formData, metadata, proof);
+				data = await response.json();
+			}
 
-			if (response.ok) {
+			if (response.ok && data.success) {
 				toast.success(dictionary.form.success);
 				reset();
-			} else {
+			} else if (!data.powRequired) {
 				throw new Error(data.error || "Failed to send message");
 			}
 		} catch (error) {
