@@ -148,10 +148,11 @@ describe("POST /api/contact", () => {
 			expect(data.success).toBe(true);
 			expect(mockFetch).toHaveBeenCalledTimes(2);
 
-			// Verify EmailJS call has PORTFOLIO || prefix
+			// Verify EmailJS call: email_subject has prefix, subject is raw
 			const emailCall = mockFetch.mock.calls[1];
 			const emailBody = JSON.parse(emailCall[1].body);
-			expect(emailBody.template_params.subject).toBe("PORTFOLIO || Test subject");
+			expect(emailBody.template_params.email_subject).toBe("PORTFOLIO || Test subject");
+			expect(emailBody.template_params.subject).toBe("Test subject");
 			expect(emailBody.template_params.message).not.toContain("[Spentria]");
 		});
 
@@ -171,9 +172,10 @@ describe("POST /api/contact", () => {
 
 			const emailCall = mockFetch.mock.calls[1];
 			const emailBody = JSON.parse(emailCall[1].body);
-			expect(emailBody.template_params.subject).toBe(
+			expect(emailBody.template_params.email_subject).toBe(
 				"PORTFOLIO || Test subject #devis"
 			);
+			expect(emailBody.template_params.subject).toBe("Test subject");
 		});
 	});
 
@@ -195,9 +197,10 @@ describe("POST /api/contact", () => {
 
 			const emailCall = mockFetch.mock.calls[1];
 			const emailBody = JSON.parse(emailCall[1].body);
-			expect(emailBody.template_params.subject).toBe(
+			expect(emailBody.template_params.email_subject).toBe(
 				"[Borderline_PortfolioSimonLM] Test subject"
 			);
+			expect(emailBody.template_params.subject).toBe("Test subject");
 			expect(emailBody.template_params.message).not.toContain("[Spentria]");
 			expect(emailBody.template_params.spentria_info).toContain(
 				"[Spentria] Raison : Borderline: unsolicited commercial offer"
@@ -311,7 +314,8 @@ describe("POST /api/contact", () => {
 			// Verify email is sent with PORTFOLIO || prefix but WITHOUT borderline tag (fail-open)
 			const emailCall = mockFetch.mock.calls[1];
 			const emailBody = JSON.parse(emailCall[1].body);
-			expect(emailBody.template_params.subject).toBe("[Non vérifié] PORTFOLIO || Test subject");
+			expect(emailBody.template_params.email_subject).toBe("[To check] PORTFOLIO || Test subject");
+			expect(emailBody.template_params.subject).toBe("Test subject");
 		});
 	});
 
@@ -494,7 +498,8 @@ describe("POST /api/contact", () => {
 			// Verify fail-open prefix
 			const emailCall = mockFetch.mock.calls[2];
 			const emailBody = JSON.parse(emailCall[1].body);
-			expect(emailBody.template_params.subject).toContain("[Non vérifié]");
+			expect(emailBody.template_params.email_subject).toContain("[To check]");
+			expect(emailBody.template_params.subject).toBe("Test subject");
 		});
 
 		it("sends proof to Spentria when client provides it", async () => {

@@ -221,10 +221,10 @@ async function sendEmail(
 		throw new Error("Missing EmailJS configuration");
 	}
 
-	const baseSubject = subjectPrefix
+	const baseEmailSubject = subjectPrefix
 		? `${subjectPrefix} ${formData.subject}`
 		: formData.subject;
-	const subject = tagsSuffix ? `${baseSubject}${tagsSuffix}` : baseSubject;
+	const emailSubject = tagsSuffix ? `${baseEmailSubject}${tagsSuffix}` : baseEmailSubject;
 
 	const emailParams: Record<string, string> = {
 		firstName: formData.firstName,
@@ -232,7 +232,8 @@ async function sendEmail(
 		reply_to: formData.email,
 		phone: formData.phone || "",
 		company: formData.company || "",
-		subject,
+		email_subject: emailSubject,
+		subject: formData.subject,
 		message: formData.message,
 		spentria_info: spentriaReason
 			? `⚠️ [Spentria] Raison : ${spentriaReason}`
@@ -318,7 +319,7 @@ export async function POST(request: NextRequest) {
 		let tagsSuffix = "";
 
 		if (isFailOpen) {
-			subjectPrefix = "[Non vérifié] PORTFOLIO ||";
+			subjectPrefix = "[To check] PORTFOLIO ||";
 		} else if (spentriaResult.result === "borderline") {
 			subjectPrefix = "[Borderline_PortfolioSimonLM]";
 			spentriaReason = spentriaResult.reason;
