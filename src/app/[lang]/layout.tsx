@@ -2,6 +2,7 @@
 
 import { Metadata } from "next";
 import Script from "next/script";
+import { LanguageSync } from "../../components/LanguageSync";
 
 const metadata = {
 	fr: {
@@ -105,6 +106,9 @@ export default async function LangLayout({
 
 	return (
 		<>
+			{/* Sync Zustand language store with URL lang to prevent hydration mismatch */}
+			<LanguageSync lang={lang as "fr" | "en"} />
+
 			{/* Script pour définir le thème - pas besoin d'être dans head */}
 			<Script
 				id="theme-script"
