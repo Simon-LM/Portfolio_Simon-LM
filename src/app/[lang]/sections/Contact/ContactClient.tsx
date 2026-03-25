@@ -155,20 +155,9 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 					className: "contact__toast",
 					duration: 12000,
 					style: {
-						background: "transparent",
+						background: "var(--color-main-bg)",
+						color: "var(--color-main-text)",
 						boxShadow: "none",
-					},
-					success: {
-						style: {
-							background: "$color-main-bg",
-							color: "$color-main-text",
-						},
-					},
-					error: {
-						style: {
-							background: "transparent",
-							padding: 0,
-						},
 					},
 				}}
 			/>
