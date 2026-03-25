@@ -99,6 +99,9 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 			const metadata = generateMetadata(lang);
 
 			let response = await submitToApi(formData, metadata);
+			if (!response.ok && !response.headers.get("content-type")?.includes("application/json")) {
+				throw new Error("Server error");
+			}
 			let data = await response.json();
 
 			// Handle PoW challenge
@@ -112,6 +115,9 @@ export default function ContactClient({ dictionary, lang }: ContactProps) {
 					solution,
 				};
 				response = await submitToApi(formData, metadata, proof);
+				if (!response.ok && !response.headers.get("content-type")?.includes("application/json")) {
+					throw new Error("Server error");
+				}
 				data = await response.json();
 			}
 

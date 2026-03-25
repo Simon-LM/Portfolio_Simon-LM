@@ -105,6 +105,7 @@ describe("ContactClient", () => {
 		const user = userEvent.setup();
 		mockFetch.mockResolvedValueOnce({
 			ok: true,
+			headers: { get: (name: string) => name === "content-type" ? "application/json" : null },
 			json: async () => ({ success: true }),
 		});
 
@@ -132,11 +133,64 @@ describe("ContactClient", () => {
 		expect(body.firstName).toBe("Jean");
 	});
 
-	it("shows error toast on submission failure", async () => {
+	it("shows error toast on JSON error response from API", async () => {
 		const user = userEvent.setup();
 		mockFetch.mockResolvedValueOnce({
 			ok: false,
+			headers: { get: (name: string) => name === "content-type" ? "application/json" : null },
 			json: async () => ({ error: "Server error" }),
+		});
+
+		render(<ContactClient dictionary={mockDictionary} lang="fr" />);
+
+		await user.type(screen.getByLabelText("First Name"), "Jean");
+		await user.type(screen.getByLabelText("Last Name"), "Dupont");
+		await user.type(screen.getByLabelText("Email"), "jean@test.com");
+		await user.type(screen.getByLabelText("Subject"), "Test");
+		await user.type(
+			screen.getByLabelText("Message"),
+			"A test message that is long enough"
+		);
+		await user.click(screen.getByLabelText("I agree"));
+		await user.click(screen.getByRole("button", { name: "Send" }));
+
+		await waitFor(() => {
+			expect(mockToastError).toHaveBeenCalledWith("An error occurred.");
+		});
+	});
+
+	it("shows error toast on 504 timeout with HTML response (non-JSON)", async () => {
+		const user = userEvent.setup();
+		mockFetch.mockResolvedValueOnce({
+			ok: false,
+			headers: { get: (name: string) => name === "content-type" ? "text/html" : null },
+			json: async () => { throw new Error("not JSON"); },
+		});
+
+		render(<ContactClient dictionary={mockDictionary} lang="fr" />);
+
+		await user.type(screen.getByLabelText("First Name"), "Jean");
+		await user.type(screen.getByLabelText("Last Name"), "Dupont");
+		await user.type(screen.getByLabelText("Email"), "jean@test.com");
+		await user.type(screen.getByLabelText("Subject"), "Test");
+		await user.type(
+			screen.getByLabelText("Message"),
+			"A test message that is long enough"
+		);
+		await user.click(screen.getByLabelText("I agree"));
+		await user.click(screen.getByRole("button", { name: "Send" }));
+
+		await waitFor(() => {
+			expect(mockToastError).toHaveBeenCalledWith("An error occurred.");
+		});
+	});
+
+	it("shows error toast on 502 with no content-type header", async () => {
+		const user = userEvent.setup();
+		mockFetch.mockResolvedValueOnce({
+			ok: false,
+			headers: { get: () => null },
+			json: async () => { throw new Error("not JSON"); },
 		});
 
 		render(<ContactClient dictionary={mockDictionary} lang="fr" />);
