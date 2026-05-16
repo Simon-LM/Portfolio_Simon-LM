@@ -152,11 +152,11 @@ async function analyzeWithSpentria(
 	}
 }
 
-function forwardSpamLog(
+async function forwardSpamLog(
 	formData: FormData,
 	spentriaResult: SpentriaResponse,
 	visitorIP: string | undefined
-): void {
+): Promise<void> {
 	const endpoint = process.env.SPAM_LOG_ENDPOINT;
 	const token = process.env.SPAM_LOG_TOKEN;
 
@@ -180,25 +180,24 @@ function forwardSpamLog(
 		message_body: formData.message,
 	};
 
-	fetch(endpoint, {
-		method: "POST",
-		headers: {
-			Authorization: `Bearer ${token}`,
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(payload),
-	})
-		.then(async (res) => {
-			const body = await res.text();
-			if (!res.ok) {
-				console.error("Spam log endpoint returned", res.status, body);
-			} else {
-				console.log("Spam log forwarded successfully:", body);
-			}
-		})
-		.catch((error) => {
-			console.error("Failed to forward spam log:", error);
+	try {
+		const res = await fetch(endpoint, {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${token}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(payload),
 		});
+		const body = await res.text();
+		if (!res.ok) {
+			console.error("Spam log endpoint returned", res.status, body);
+		} else {
+			console.log("Spam log forwarded successfully:", body);
+		}
+	} catch (error) {
+		console.error("Failed to forward spam log:", error);
+	}
 }
 
 async function sendEmail(
@@ -309,7 +308,7 @@ export async function POST(request: NextRequest) {
 				email: formData.email,
 				ip: visitorIP,
 			});
-			forwardSpamLog(formData, spentriaResult, visitorIP);
+			await forwardSpamLog(formData, spentriaResult, visitorIP);
 			return NextResponse.json({ success: true, message: "Email sent successfully" });
 		}
 
