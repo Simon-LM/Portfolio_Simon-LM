@@ -128,8 +128,12 @@ import type { NextConfig } from "next/types";
 const nextConfig: NextConfig = {
 	reactStrictMode: true,
 	images: {
-		domains: ["vercel.com"],
+		// Migrated from deprecated `domains` to `remotePatterns`
 		remotePatterns: [
+			{
+				protocol: "https",
+				hostname: "vercel.com",
+			},
 			{
 				protocol: "https",
 				hostname: "**.vercel.app",
