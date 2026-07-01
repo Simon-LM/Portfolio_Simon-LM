@@ -80,7 +80,7 @@
 "use client";
 
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, Suspense, useState } from "react";
 import Script from "next/script";
 
 type MatomoCommandArray = Array<string | string[] | Record<string, unknown>>;
@@ -89,35 +89,27 @@ type MatomoCommandArray = Array<string | string[] | Record<string, unknown>>;
 function MatomoPageTracker({ scriptLoaded }: { scriptLoaded: boolean }) {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
-	const [isMounted, setIsMounted] = useState(false);
 
-	// Initialisation de la file d'attente _paq dès que possible
+	// Initialize _paq command queue on mount (no setState — only external side-effect)
 	useEffect(() => {
-		// Initialiser la file d'attente _paq avant tout
 		window._paq = window._paq || [];
-
-		// Configuration initiale - AVANT le chargement du script
 		window._paq.push(["disableCookies"]);
 		window._paq.push(["setTrackerUrl", "//analytics.lostintab.com/matomo.php"]);
 		window._paq.push(["setSiteId", "1"]);
 		window._paq.push(["enableLinkTracking"]);
-
-		setIsMounted(true);
 	}, []);
 
-	// Suivi des changements de page APRÈS que le script est chargé
+	// Track page changes — effects run in declaration order, so _paq is always ready
 	useEffect(() => {
-		if (!isMounted || !scriptLoaded) return;
+		if (!scriptLoaded || typeof window === "undefined" || !window._paq) return;
 
-		// Reconstruire l'URL complète pour Matomo
 		const url =
 			pathname + (searchParams.toString() ? `?${searchParams.toString()}` : "");
 
-		// Notifier Matomo du changement de page
 		window._paq.push(["setCustomUrl", url]);
 		window._paq.push(["setDocumentTitle", document.title]);
 		window._paq.push(["trackPageView"]);
-	}, [pathname, searchParams, isMounted, scriptLoaded]);
+	}, [pathname, searchParams, scriptLoaded]);
 
 	return null;
 }
@@ -128,10 +120,10 @@ export default function MatomoAnalytics() {
 
 	return (
 		<>
-			{/* Charger d'abord la configuration _paq */}
-			<Script
-				id="matomo-init"
-				strategy="beforeInteractive"
+		{/* Pre-initialize _paq queue before the main Matomo script loads */}
+		<Script
+			id="matomo-init"
+			strategy="afterInteractive"
 				dangerouslySetInnerHTML={{
 					__html: `
             window._paq = window._paq || [];

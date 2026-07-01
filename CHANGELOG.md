@@ -8,6 +8,25 @@ The format is based on Keep a Changelog.
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-07-01
+
+### Fixed
+
+- Eliminated all 11 pre-existing ESLint violations (`react-hooks/set-state-in-effect`, `react-hooks/refs`, `@next/next/no-before-interactive-script-outside-document`, unused `eslint-disable` directive).
+- `usePrefersDarkMode`: rewrote with `useSyncExternalStore` — no more `setState` in effect body, media-query subscription handled natively.
+- `useTheme`: replaced init `useEffect` calling `setTheme()` with a lazy `useState` initializer reading from `localStorage`/`matchMedia`; DOM attribute applied in effect without `setState`.
+- `Header`, `AccessibilityMenu`: replaced `useState(false)` + `useEffect(setMounted, [])` pattern with new `useIsMounted()` hook (no `setState` in effect, same two-render SSR behavior).
+- `AccessibilityMenu` (`setIsDyslexicMode`): removed redundant synchronisation effect — the Select `onChange` handler already resets `isDyslexicMode` when a font is selected.
+- `AccessibilityMenu` (`setReduceMotion`): replaced init effect with lazy `useState` initializer; DOM class now synced via a dedicated `useEffect([reduceMotion])`.
+- `MatomoAnalytics`: removed `isMounted` state and `setIsMounted(true)` in effect; page tracking now guarded by `window._paq` check. Changed inline init script from `beforeInteractive` to `afterInteractive`.
+- `LazyContact`: removed `shouldLoad` state and its associated `useEffect`; replaced `showContact || shouldLoad` condition with `showContact || inView` (using `triggerOnce: true`).
+- `LanguageSync`: added targeted `eslint-disable-next-line react-hooks/refs` comment explaining the intentional per-instance initialisation guard.
+- `route.test.ts`: removed orphaned `eslint-disable` directive for `@typescript-eslint/no-require-imports`.
+
+### Added
+
+- New `src/hooks/useIsMounted.ts` hook using `useSyncExternalStore` as a drop-in SSR-safe replacement for the `useState(false)` + `useEffect(setMounted)` pattern.
+
 ## [0.1.2] - 2026-07-01
 
 ### Fixed

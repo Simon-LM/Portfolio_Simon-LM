@@ -8,7 +8,10 @@ import { useLanguageStore } from "../store/langueStore";
 export function LanguageSync({ lang }: { lang: "fr" | "en" }) {
 	const hasInitialized = useRef(false);
 
-	// Sync synchronously on first render — before children read the store
+	// Sync synchronously on first render — before children read the store.
+	// Accessing ref.current during render is intentional here: this is a
+	// per-instance initialization guard, not a value used for rendering.
+	// eslint-disable-next-line react-hooks/refs
 	if (!hasInitialized.current) {
 		hasInitialized.current = true;
 		useLanguageStore.setState({ language: lang });

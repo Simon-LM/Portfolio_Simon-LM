@@ -17,7 +17,6 @@ interface LazyContactProps {
 }
 
 export const LazyContact = ({ dictionary, lang }: LazyContactProps) => {
-	const [shouldLoad, setShouldLoad] = useState(false);
 	const { ref, inView } = useInView({ triggerOnce: true });
 	const [showContact, setShowContact] = useState(false);
 
@@ -25,7 +24,7 @@ export const LazyContact = ({ dictionary, lang }: LazyContactProps) => {
 		const portfolioSection = document.getElementById("portfolio");
 
 		const handlePortfolioFocus = () => {
-			setShouldLoad(true);
+			// showContact triggers loading via focus; inView handles the scroll case
 			setShowContact(true);
 		};
 
@@ -45,15 +44,9 @@ export const LazyContact = ({ dictionary, lang }: LazyContactProps) => {
 		};
 	}, []);
 
-	useEffect(() => {
-		if (inView) {
-			setShouldLoad(true);
-		}
-	}, [inView]);
-
 	return (
 		<section id="contact" className="contact" ref={ref}>
-			{(showContact || shouldLoad) && (
+			{(showContact || inView) && (
 				<div className="contact__container">
 					<h2 id="contactTitle" tabIndex={0} className="contact__title">
 						{dictionary.title}

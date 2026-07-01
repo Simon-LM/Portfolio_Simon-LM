@@ -5,7 +5,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useLanguageStore } from "../../store/langueStore";
 import { useRouter } from "next/navigation";
 import {
@@ -16,6 +16,7 @@ import {
 import AccessibilityControl from "../../accessibility/accessibilityControl/AccessibilityControl";
 
 import LogoLostInTab from "../../../public/Logo_LostInTab/LOGO_LostInTab_circle_60-60_2024.png";
+import { useIsMounted } from "../../hooks/useIsMounted";
 
 // Types and Interfaces
 interface HeaderProps {
@@ -37,13 +38,7 @@ interface HeaderProps {
 export default function Header({ dictionary }: HeaderProps) {
 	const { language, setLanguage, version, setVersion } = useLanguageStore();
 	const router = useRouter();
-	const [mounted, setMounted] = useState(false);
-	// const [accessibilityMenuOpen, setAccessibilityMenuOpen] = useState(false); // Nouvel état
-	// const menuRef = useRef<HTMLDivElement>(null); // Pour détecter les clics à l'extérieur
-
-	useEffect(() => {
-		setMounted(true);
-	}, []);
+	const mounted = useIsMounted();
 
 	useEffect(() => {
 		if (shouldUpdateDictionary(version)) {

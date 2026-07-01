@@ -16,9 +16,34 @@ type ThemeOption =
 	| "tritanopia"
 	| "achromatopsia";
 
+const VALID_THEMES: ThemeOption[] = [
+	"light",
+	"dark",
+	"anti-glare-light",
+	"anti-glare-dark",
+	"high-contrast",
+	"deuteranomaly",
+	"deuteranopia",
+	"protanomaly",
+	"protanopia",
+	"tritanomaly",
+	"tritanopia",
+	"achromatopsia",
+];
+
+// Read initial theme from localStorage or system preference.
+// Called as a lazy useState initializer — runs on server (returns "light") and on client.
+function getInitialTheme(): ThemeOption {
+	if (typeof window === "undefined") return "light"; // SSR default
+	const savedTheme = localStorage.getItem("theme") as ThemeOption | null;
+	if (savedTheme && VALID_THEMES.includes(savedTheme)) return savedTheme;
+	if (window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
+	return "light";
+}
+
 export function useTheme() {
-	// État local pour le thème actuel
-	const [theme, setThemeState] = useState<ThemeOption>("light");
+	// Lazy initializer reads from localStorage/matchMedia — no setState in any effect
+	const [theme, setThemeState] = useState<ThemeOption>(getInitialTheme);
 
 	// Fonction pour définir le thème
 	const setTheme = (newTheme: ThemeOption) => {
@@ -63,34 +88,13 @@ export function useTheme() {
 		}
 	};
 
-	// Initialisation au montage du composant
+	// Apply initial theme to DOM and subscribe to external data-theme mutations.
+	// No setState in the effect body — setThemeState is called only in the observer callback.
 	useEffect(() => {
-		// Récupérer le thème du localStorage ou utiliser les préférences système
-		const savedTheme = localStorage.getItem("theme") as ThemeOption | null;
+		if (typeof document === "undefined") return;
 
-		if (
-			savedTheme &&
-			[
-				"light",
-				"dark",
-				"anti-glare-light",
-				"anti-glare-dark",
-				"high-contrast",
-				"deuteranomaly",
-				"deuteranopia",
-				"protanomaly",
-				"protanopia",
-				"tritanomaly",
-				"tritanopia",
-				"achromatopsia",
-			].includes(savedTheme)
-		) {
-			setTheme(savedTheme);
-		} else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-			setTheme("dark");
-		} else {
-			setTheme("light");
-		}
+		// Apply the theme determined by the lazy initializer to the DOM attribute
+		document.documentElement.setAttribute("data-theme", getInitialTheme());
 
 		// Observer les changements d'attribut data-theme (utile si modifié ailleurs)
 		const observer = new MutationObserver((mutations) => {
@@ -99,7 +103,9 @@ export function useTheme() {
 					const newTheme = document.documentElement.getAttribute(
 						"data-theme"
 					) as ThemeOption;
-					if (newTheme) setThemeState(newTheme);
+					// setState is called inside a callback, not in the effect body — allowed
+					if (newTheme && VALID_THEMES.includes(newTheme))
+						setThemeState(newTheme);
 				}
 			});
 		});

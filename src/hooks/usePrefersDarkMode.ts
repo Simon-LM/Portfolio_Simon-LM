@@ -1,32 +1,31 @@
 /** @format */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
+
+// Subscribe to prefers-color-scheme media query changes
+function subscribe(callback: () => void): () => void {
+	if (typeof window === "undefined") return () => {};
+	const mq = window.matchMedia("(prefers-color-scheme: dark)");
+	mq.addEventListener("change", callback);
+	return () => mq.removeEventListener("change", callback);
+}
+
+// Returns current dark-mode preference from the browser
+function getSnapshot(): boolean {
+	return window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+
+// Server-side default: assume light mode (avoids hydration mismatch)
+function getServerSnapshot(): boolean {
+	return false;
+}
 
 /**
- * Hook qui détecte la préférence système pour le mode sombre
- * @returns boolean - true si l'utilisateur préfère le mode sombre
+ * Hook that detects the system dark-mode preference.
+ * Uses useSyncExternalStore to correctly handle SSR and live media-query updates.
+ * @returns boolean - true if the user prefers dark mode
  */
 export function usePrefersDarkMode(): boolean {
-	const [prefersDarkMode, setPrefersDarkMode] = useState<boolean>(false);
-
-	useEffect(() => {
-		// Vérifier la préférence initiale
-		const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-		setPrefersDarkMode(mediaQuery.matches);
-
-		// Écouter les changements de préférence
-		const handleChange = (event: MediaQueryListEvent) => {
-			setPrefersDarkMode(event.matches);
-		};
-
-		mediaQuery.addEventListener("change", handleChange);
-
-		// Cleanup
-		return () => {
-			mediaQuery.removeEventListener("change", handleChange);
-		};
-	}, []);
-
-	return prefersDarkMode;
+	return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }

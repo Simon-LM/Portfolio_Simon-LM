@@ -85,7 +85,6 @@ const validFormData = {
 	lang: "fr",
 };
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { NextRequest } = require("next/server");
 
 function createRequest(

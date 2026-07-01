@@ -12,7 +12,7 @@ import { usePrefersDarkMode } from "../../hooks/usePrefersDarkMode";
 import { useFontSizeStore } from "@/store/fontSizeStore";
 import { useDyslexicFontStore } from "@/store/dyslexicFontStore";
 import { FaUniversalAccess } from "react-icons/fa";
-// import CustomSelect from "../customSelect/CustomSelect";
+import { useIsMounted } from "../../hooks/useIsMounted";;
 
 type Props = {
 	language: string;
@@ -25,14 +25,21 @@ type OptionType = {
 };
 
 export default function AccessibilityMenu({ language, onClose }: Props) {
-	const [mounted, setMounted] = useState(false);
+	// useIsMounted replaces useState(false) + useEffect(setMounted, []) — no setState in effect
+	const mounted = useIsMounted();
 	const { theme, setTheme } = useTheme();
 	const { fontSize } = useFontSizeStore();
 	// const [isDyslexicFont, setIsDyslexicFont] = useState(false);
 	// const { isDyslexicFont, toggleDyslexicFont } = useDyslexicFontStore();
 	const { fontType, setFontType } = useDyslexicFontStore();
 	const [isDyslexicMode, setIsDyslexicMode] = useState(false);
-	const [reduceMotion, setReduceMotion] = useState(false);
+	// reduceMotion is lazily initialised from localStorage / matchMedia — no setState in any effect
+	const [reduceMotion, setReduceMotion] = useState<boolean>(() => {
+		if (typeof window === "undefined") return false;
+		const saved = localStorage.getItem("reduce-motion");
+		if (saved !== null) return saved === "true";
+		return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	});
 	const prefersDarkMode = usePrefersDarkMode();
 	const lastBaseTheme = useRef<"light" | "dark">(
 		prefersDarkMode ? "dark" : "light"
@@ -74,22 +81,8 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 	}, [mounted, isDyslexicMode]);
 
 	// Ajoutez un nouvel effet pour gérer la coordination entre les deux fonctionnalités
-	// useEffect(() => {
-	// 	if (fontType !== "none" && isDyslexicMode) {
-	// 		// Si on sélectionne une police dans le menu déroulant, désactiver le mode optimisé
-	// 		setIsDyslexicMode(false);
-	// 	}
-	// }, [fontType]);
-	useEffect(() => {
-		if (fontType !== "none" && isDyslexicMode) {
-			// Si on sélectionne une police dans le menu déroulant, désactiver le mode optimisé
-			setIsDyslexicMode(false);
-		}
-	}, [fontType, isDyslexicMode]);
-
-	useEffect(() => {
-		setMounted(true);
-	}, []);
+	// Removed: the Select onChange handler already calls setIsDyslexicMode(false)
+	// when a non-'none' font is selected, making this effect redundant.
 
 	// Mettre à jour la référence du dernier thème de base
 	useEffect(() => {
@@ -196,37 +189,22 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 		setReduceMotion(newValue);
 
 		if (typeof document !== "undefined") {
-			if (newValue) {
-				document.documentElement.classList.add("reduce-motion");
-			} else {
-				document.documentElement.classList.remove("reduce-motion");
-			}
-
-			// Sauvegarder la préférence
+			// Sauvegarder la préférence (DOM class is synced by the useEffect below)
 			localStorage.setItem("reduce-motion", newValue.toString());
 		}
 	};
 
+	// Sync reduce-motion DOM class from state (correct effect direction: state → external system)
+	// reduceMotion is lazily initialised — this also applies the initial value on first render
 	useEffect(() => {
-		if (mounted && typeof document !== "undefined") {
-			// Récupérer la préférence sauvegardée ou la préférence système
-			const savedPreference = localStorage.getItem("reduce-motion");
-			const prefersReducedMotion = window.matchMedia(
-				"(prefers-reduced-motion: reduce)"
-			).matches;
-
-			// Utiliser la préférence sauvegardée si disponible, sinon la préférence système
-			const shouldReduceMotion = savedPreference
-				? savedPreference === "true"
-				: prefersReducedMotion;
-
-			setReduceMotion(shouldReduceMotion);
-
-			if (shouldReduceMotion) {
+		if (typeof document !== "undefined") {
+			if (reduceMotion) {
 				document.documentElement.classList.add("reduce-motion");
+			} else {
+				document.documentElement.classList.remove("reduce-motion");
 			}
 		}
-	}, [mounted]);
+	}, [reduceMotion]);
 
 	// Labels selon la langue
 	const labels = {
