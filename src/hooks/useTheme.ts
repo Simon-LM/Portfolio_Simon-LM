@@ -70,13 +70,13 @@ export function useTheme() {
 					"Variable CSS test (section-bg-odd):",
 					getComputedStyle(document.documentElement)
 						.getPropertyValue("--color-section-bg-odd")
-						.trim()
+						.trim(),
 				);
 				console.log(
 					"Variable CSS test (main-bg):",
 					getComputedStyle(document.documentElement)
 						.getPropertyValue("--color-main-bg")
-						.trim()
+						.trim(),
 				);
 			}, 10);
 
@@ -101,7 +101,7 @@ export function useTheme() {
 			mutations.forEach((mutation) => {
 				if (mutation.attributeName === "data-theme") {
 					const newTheme = document.documentElement.getAttribute(
-						"data-theme"
+						"data-theme",
 					) as ThemeOption;
 					// setState is called inside a callback, not in the effect body — allowed
 					if (newTheme && VALID_THEMES.includes(newTheme))

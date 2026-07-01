@@ -42,7 +42,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 	});
 	const prefersDarkMode = usePrefersDarkMode();
 	const lastBaseTheme = useRef<"light" | "dark">(
-		prefersDarkMode ? "dark" : "light"
+		prefersDarkMode ? "dark" : "light",
 	);
 	// const colorVisionSelectRef = useRef<any>(null);
 	// const fontTypeSelectRef = useRef<any>(null);
@@ -96,7 +96,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 			// Applique la taille initiale au chargement
 			document.documentElement.style.setProperty(
 				"--font-size-factor",
-				`${fontSize / 100}`
+				`${fontSize / 100}`,
 			);
 		}
 	}, [mounted, fontSize]);
@@ -121,7 +121,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 	// Fonction pour activer le mode anti-éblouissement
 	const activateAntiGlare = () => {
 		setTheme(
-			lastBaseTheme.current === "dark" ? "anti-glare-dark" : "anti-glare-light"
+			lastBaseTheme.current === "dark" ? "anti-glare-dark" : "anti-glare-light",
 		);
 	};
 
@@ -180,7 +180,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 				| "deuteranopia"
 				| "tritanomaly"
 				| "tritanopia"
-				| "achromatopsia"
+				| "achromatopsia",
 		);
 	};
 

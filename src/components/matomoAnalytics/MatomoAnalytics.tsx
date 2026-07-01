@@ -120,10 +120,10 @@ export default function MatomoAnalytics() {
 
 	return (
 		<>
-		{/* Pre-initialize _paq queue before the main Matomo script loads */}
-		<Script
-			id="matomo-init"
-			strategy="afterInteractive"
+			{/* Pre-initialize _paq queue before the main Matomo script loads */}
+			<Script
+				id="matomo-init"
+				strategy="afterInteractive"
 				dangerouslySetInnerHTML={{
 					__html: `
             window._paq = window._paq || [];

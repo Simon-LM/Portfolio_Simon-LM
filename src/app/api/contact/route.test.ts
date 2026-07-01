@@ -89,7 +89,7 @@ const { NextRequest } = require("next/server");
 
 function createRequest(
 	body: Record<string, unknown>,
-	headers?: Record<string, string>
+	headers?: Record<string, string>,
 ) {
 	return new NextRequest("http://localhost/api/contact", {
 		method: "POST",
@@ -104,7 +104,7 @@ function createRequest(
 function mockSpentriaResponse(
 	result: "fit" | "borderline" | "spam",
 	reason: string | null = null,
-	tags?: { matched: { name: string; confidence: number }[] }
+	tags?: { matched: { name: string; confidence: number }[] },
 ) {
 	return {
 		ok: true,
@@ -150,7 +150,9 @@ describe("POST /api/contact", () => {
 			// Verify EmailJS call: email_subject has prefix, subject is raw
 			const emailCall = mockFetch.mock.calls[1];
 			const emailBody = JSON.parse(emailCall[1].body);
-			expect(emailBody.template_params.email_subject).toBe("PORTFOLIO || Test subject");
+			expect(emailBody.template_params.email_subject).toBe(
+				"PORTFOLIO || Test subject",
+			);
 			expect(emailBody.template_params.subject).toBe("Test subject");
 			expect(emailBody.template_params.message).not.toContain("[Spentria]");
 		});
@@ -160,7 +162,7 @@ describe("POST /api/contact", () => {
 				.mockResolvedValueOnce(
 					mockSpentriaResponse("fit", null, {
 						matched: [{ name: "devis", confidence: 0.92 }],
-					})
+					}),
 				)
 				.mockResolvedValueOnce(mockEmailJSResponse());
 
@@ -172,7 +174,7 @@ describe("POST /api/contact", () => {
 			const emailCall = mockFetch.mock.calls[1];
 			const emailBody = JSON.parse(emailCall[1].body);
 			expect(emailBody.template_params.email_subject).toBe(
-				"PORTFOLIO || Test subject #devis"
+				"PORTFOLIO || Test subject #devis",
 			);
 			expect(emailBody.template_params.subject).toBe("Test subject");
 		});
@@ -184,8 +186,8 @@ describe("POST /api/contact", () => {
 				.mockResolvedValueOnce(
 					mockSpentriaResponse(
 						"borderline",
-						"Borderline: unsolicited commercial offer"
-					)
+						"Borderline: unsolicited commercial offer",
+					),
 				)
 				.mockResolvedValueOnce(mockEmailJSResponse());
 
@@ -197,19 +199,21 @@ describe("POST /api/contact", () => {
 			const emailCall = mockFetch.mock.calls[1];
 			const emailBody = JSON.parse(emailCall[1].body);
 			expect(emailBody.template_params.email_subject).toBe(
-				"[Borderline_PortfolioSimonLM] Test subject"
+				"[Borderline_PortfolioSimonLM] Test subject",
 			);
 			expect(emailBody.template_params.subject).toBe("Test subject");
 			expect(emailBody.template_params.message).not.toContain("[Spentria]");
 			expect(emailBody.template_params.spentria_info).toContain(
-				"[Spentria] Raison : Borderline: unsolicited commercial offer"
+				"[Spentria] Raison : Borderline: unsolicited commercial offer",
 			);
 		});
 	});
 
 	describe("Spentria result: spam", () => {
 		it("returns fake success and does NOT send email", async () => {
-			mockFetch.mockResolvedValueOnce(mockSpentriaResponse("spam", "Obvious spam"));
+			mockFetch.mockResolvedValueOnce(
+				mockSpentriaResponse("spam", "Obvious spam"),
+			);
 
 			const response = await POST(createRequest(validFormData));
 			const data = await response.json();
@@ -221,7 +225,8 @@ describe("POST /api/contact", () => {
 		});
 
 		it("forwards spam log to personal server with correct payload", async () => {
-			process.env.SPAM_LOG_ENDPOINT = "https://db.lostintab.com/api/v1/logs/spam";
+			process.env.SPAM_LOG_ENDPOINT =
+				"https://db.lostintab.com/api/v1/logs/spam";
 			process.env.SPAM_LOG_TOKEN = "test-token";
 
 			mockFetch
@@ -231,7 +236,7 @@ describe("POST /api/contact", () => {
 			await POST(
 				createRequest(validFormData, {
 					"x-forwarded-for": "1.2.3.4",
-				})
+				}),
 			);
 
 			const logCall = mockFetch.mock.calls[1];
@@ -287,7 +292,7 @@ describe("POST /api/contact", () => {
 		it("sends email normally when Spentria times out", async () => {
 			mockFetch
 				.mockRejectedValueOnce(
-					Object.assign(new Error("Aborted"), { name: "AbortError" })
+					Object.assign(new Error("Aborted"), { name: "AbortError" }),
 				)
 				.mockResolvedValueOnce(mockEmailJSResponse());
 
@@ -301,7 +306,7 @@ describe("POST /api/contact", () => {
 		it("sends email normally on chain_exhausted", async () => {
 			mockFetch
 				.mockResolvedValueOnce(
-					mockSpentriaResponse("borderline", "chain_exhausted")
+					mockSpentriaResponse("borderline", "chain_exhausted"),
 				)
 				.mockResolvedValueOnce(mockEmailJSResponse());
 
@@ -313,7 +318,9 @@ describe("POST /api/contact", () => {
 			// Verify email is sent with PORTFOLIO || prefix but WITHOUT borderline tag (fail-open)
 			const emailCall = mockFetch.mock.calls[1];
 			const emailBody = JSON.parse(emailCall[1].body);
-			expect(emailBody.template_params.email_subject).toBe("[To check] PORTFOLIO || Test subject");
+			expect(emailBody.template_params.email_subject).toBe(
+				"[To check] PORTFOLIO || Test subject",
+			);
 			expect(emailBody.template_params.subject).toBe("Test subject");
 		});
 	});
@@ -335,7 +342,7 @@ describe("POST /api/contact", () => {
 	describe("Honeypot", () => {
 		it("returns fake success without calling any API when honeypot is filled", async () => {
 			const response = await POST(
-				createRequest({ ...validFormData, honeypot: "bot-filled-this" })
+				createRequest({ ...validFormData, honeypot: "bot-filled-this" }),
 			);
 			const data = await response.json();
 
@@ -353,7 +360,7 @@ describe("POST /api/contact", () => {
 			await POST(
 				createRequest(validFormData, {
 					"x-forwarded-for": "92.67.89.10, 10.0.0.1",
-				})
+				}),
 			);
 
 			const spentriaCall = mockFetch.mock.calls[0];
@@ -366,9 +373,7 @@ describe("POST /api/contact", () => {
 				.mockResolvedValueOnce(mockSpentriaResponse("fit"))
 				.mockResolvedValueOnce(mockEmailJSResponse());
 
-			await POST(
-				createRequest(validFormData, { "x-real-ip": "185.12.34.56" })
-			);
+			await POST(createRequest(validFormData, { "x-real-ip": "185.12.34.56" }));
 
 			const spentriaCall = mockFetch.mock.calls[0];
 			const spentriaBody = JSON.parse(spentriaCall[1].body);

@@ -36,10 +36,7 @@ export const LazyContact = ({ dictionary, lang }: LazyContactProps) => {
 		return () => {
 			if (portfolioSection) {
 				portfolioSection.removeEventListener("focus", handlePortfolioFocus);
-				portfolioSection.removeEventListener(
-					"focusin",
-					handlePortfolioFocus
-				);
+				portfolioSection.removeEventListener("focusin", handlePortfolioFocus);
 			}
 		};
 	}, []);

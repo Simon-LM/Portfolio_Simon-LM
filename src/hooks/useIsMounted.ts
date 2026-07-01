@@ -15,6 +15,6 @@ export function useIsMounted(): boolean {
 	return useSyncExternalStore(
 		() => () => {}, // subscribe: value is constant after mount, no-op
 		() => true, // getSnapshot: always true on the client
-		() => false // getServerSnapshot: always false on the server
+		() => false, // getServerSnapshot: always false on the server
 	);
 }
