@@ -7,6 +7,13 @@ version. This is a continuously-deployed personal site — every merge to
 `main` ships on the next deploy, so there are no discrete "releases" for
 version numbers to track.
 
+## 2026-07-02
+
+### Fixed
+
+- `favicon.ico` requests returned `500` instead of a real icon or a clean `404`. Root cause: `src/app/favicon.ico` (the Next.js App Router convention file) was deleted in this project's very first commit and never replaced, while `layout.tsx`'s metadata still references `/favicon.ico`. With no static file to intercept the request, it fell through to the `[lang]` dynamic route, which treated `"favicon.ico"` as a language code and crashed on `metadata[langKey].title` (undefined). Restored the original file (recovered from git history) to `public/favicon.ico`, where it's served as a static asset and never reaches the `[lang]` route. Note: this is the generic Next.js scaffold icon, not a branded one — a real favicon is still a follow-up.
+- Dev server accessed via a LAN IP (e.g. `http://192.168.0.174:3000`) rendered `Header` and `AccessibilityMenu` stuck on their skeleton fallback (`useIsMounted()` never resolving to `true`), even though `localhost` and production worked fine. Cause: Next.js's dev server rejects the HMR WebSocket handshake for origins it doesn't recognize (`ws://192.168.x.x/_next/webpack-hmr` → `ERR_INVALID_HTTP_RESPONSE`), which disrupted hydration completion for `useSyncExternalStore`-based components. Added `allowedDevOrigins: ["192.168.0.174"]` to `next.config.ts` (dev-only, no effect on `next build`/production).
+
 ## 2026-07-01
 
 ### Fixed

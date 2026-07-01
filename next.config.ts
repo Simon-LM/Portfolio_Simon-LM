@@ -127,6 +127,11 @@ import type { NextConfig } from "next/types";
 
 const nextConfig: NextConfig = {
 	reactStrictMode: true,
+	// Dev-server only: without this, Next.js rejects the HMR WebSocket handshake
+	// when the dev server is reached via a LAN IP instead of localhost, which
+	// leaves useSyncExternalStore-based "mounted" hooks stuck at false (skeleton
+	// UI never resolves). No effect on `next build` / production.
+	allowedDevOrigins: ["192.168.0.174"],
 	images: {
 		// Migrated from deprecated `domains` to `remotePatterns`
 		remotePatterns: [
