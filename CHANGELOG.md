@@ -11,6 +11,7 @@ version numbers to track.
 
 ### Fixed
 
+- `themeColor` was set in `metadata` (`layout.tsx`) and `generateMetadata` (`[lang]/layout.tsx`) — unsupported there since Next.js 14, silently ignored by Next.js 16. The tag that actually rendered was a hand-written `<meta name="theme-color">` added as a workaround. Moved `themeColor` to a single `export const viewport: Viewport` in the root layout and removed the now-redundant manual tag and the two dead `metadata` fields. Verified the generated HTML emits the exact same `<meta name="theme-color" content="#fcd34d"/>` as before.
 - Anti-FOUC theme-init script (`layout.tsx`) recognised only 5 of the 12 themes (`light`, `dark`, `high-contrast`, `deuteranopia`, `protanopia`) — a saved `anti-glare-*`, `*-anomaly`, or `achromatopsia` theme flashed the wrong theme on load before React corrected it. Synced the script's list with `useTheme`'s `VALID_THEMES` (also fixed in the commented-out legacy version of the script).
 - Eliminated all 11 pre-existing ESLint violations (`react-hooks/set-state-in-effect`, `react-hooks/refs`, `@next/next/no-before-interactive-script-outside-document`, unused `eslint-disable` directive).
 - `usePrefersDarkMode`: rewrote with `useSyncExternalStore` — no more `setState` in effect body, media-query subscription handled natively.

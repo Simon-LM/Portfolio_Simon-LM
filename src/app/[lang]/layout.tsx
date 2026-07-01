@@ -40,7 +40,6 @@ export async function generateMetadata({
 				{ url: "/Logo_LostInTab/apple-touch-icon.png", sizes: "180x180" },
 			],
 		},
-		themeColor: "#fcd34d",
 		appleWebApp: {
 			capable: true,
 			statusBarStyle: "default",

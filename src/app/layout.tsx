@@ -1,6 +1,6 @@
 /** @format */
 
-import { Metadata } from "next";
+import { Metadata, Viewport } from "next";
 import "../styles/main.scss";
 import MatomoAnalytics from "../components/matomoAnalytics/MatomoAnalytics";
 
@@ -22,6 +22,9 @@ export const metadata: Metadata = {
 		shortcut: "/favicon.ico",
 		apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
 	},
+};
+
+export const viewport: Viewport = {
 	themeColor: "#fcd34d",
 };
 
@@ -33,7 +36,6 @@ export default function RootLayout({
 	return (
 		<html suppressHydrationWarning>
 			<head>
-				<meta name="theme-color" content="#fcd34d" />
 				<MatomoAnalytics />
 			</head>
 			<body>{children}</body>
