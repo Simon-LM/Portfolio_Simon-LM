@@ -12,7 +12,7 @@ import { usePrefersDarkMode } from "../../hooks/usePrefersDarkMode";
 import { useFontSizeStore } from "@/store/fontSizeStore";
 import { useDyslexicFontStore } from "@/store/dyslexicFontStore";
 import { FaUniversalAccess } from "react-icons/fa";
-import { useIsMounted } from "../../hooks/useIsMounted";;
+import { useIsMounted } from "../../hooks/useIsMounted";
 
 type Props = {
 	language: string;

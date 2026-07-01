@@ -2,16 +2,16 @@
 
 # Changelog
 
-All notable changes to this project will be documented in this file.
+Notable changes to this project, grouped by date rather than semantic
+version. This is a continuously-deployed personal site — every merge to
+`main` ships on the next deploy, so there are no discrete "releases" for
+version numbers to track.
 
-The format is based on Keep a Changelog.
-
-## [Unreleased]
-
-## [0.1.3] - 2026-07-01
+## 2026-07-01
 
 ### Fixed
 
+- Anti-FOUC theme-init script (`layout.tsx`) recognised only 5 of the 12 themes (`light`, `dark`, `high-contrast`, `deuteranopia`, `protanopia`) — a saved `anti-glare-*`, `*-anomaly`, or `achromatopsia` theme flashed the wrong theme on load before React corrected it. Synced the script's list with `useTheme`'s `VALID_THEMES` (also fixed in the commented-out legacy version of the script).
 - Eliminated all 11 pre-existing ESLint violations (`react-hooks/set-state-in-effect`, `react-hooks/refs`, `@next/next/no-before-interactive-script-outside-document`, unused `eslint-disable` directive).
 - `usePrefersDarkMode`: rewrote with `useSyncExternalStore` — no more `setState` in effect body, media-query subscription handled natively.
 - `useTheme`: replaced init `useEffect` calling `setTheme()` with a lazy `useState` initializer reading from `localStorage`/`matchMedia`; DOM attribute applied in effect without `setState`.
@@ -22,27 +22,22 @@ The format is based on Keep a Changelog.
 - `LazyContact`: removed `shouldLoad` state and its associated `useEffect`; replaced `showContact || shouldLoad` condition with `showContact || inView` (using `triggerOnce: true`).
 - `LanguageSync`: added targeted `eslint-disable-next-line react-hooks/refs` comment explaining the intentional per-instance initialisation guard.
 - `route.test.ts`: removed orphaned `eslint-disable` directive for `@typescript-eslint/no-require-imports`.
-
-### Added
-
-- New `src/hooks/useIsMounted.ts` hook using `useSyncExternalStore` as a drop-in SSR-safe replacement for the `useState(false)` + `useEffect(setMounted)` pattern.
-
-## [0.1.2] - 2026-07-01
-
-### Fixed
-
 - Migrated `images.domains` to `images.remotePatterns` in `next.config.ts` (deprecated API removed in Next.js 16).
 - Replaced `next lint` script with `eslint src` (`next lint` command removed in Next.js 16).
 - Rewrote `eslint.config.mjs` to use `eslint-config-next` v16 flat config natively (removed `FlatCompat` bridge).
 - Fixed corrupted `pnpm-lock.yaml` entry: `minimatch@3` was resolving `brace-expansion@4.x` instead of `^1.x` — corrected via `pnpm.overrides`.
 - Added `.npmrc` with `public-hoist-pattern` to hoist `@babel/runtime` so `babel-jest` can resolve it in Jest tests.
 
+### Added
+
+- New `src/hooks/useIsMounted.ts` hook using `useSyncExternalStore` as a drop-in SSR-safe replacement for the `useState(false)` + `useEffect(setMounted)` pattern.
+
 ### Changed
 
 - Updated `eslint-config-next` from `15.1.4` to `^16.0.0` to match Next.js 16.
 - Updated `eslint` from `9.20.1` to `^9.20.1` (resolved to `9.39.4`).
 
-## [0.1.1] - 2026-03-25
+## 2026-03-25
 
 ### Changed
 
