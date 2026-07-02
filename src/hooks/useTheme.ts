@@ -48,40 +48,7 @@ export function useTheme() {
 	// Fonction pour définir le thème
 	const setTheme = (newTheme: ThemeOption) => {
 		if (typeof document !== "undefined") {
-			// ===== DÉBUT DES MODIFICATIONS =====
-
-			// 1. Appliquer le nouveau thème à l'élément racine
 			document.documentElement.setAttribute("data-theme", newTheme);
-
-			// 2. Forcer un reflow pour rafraîchir les styles
-			void document.documentElement.offsetWidth;
-			void document.documentElement.offsetHeight;
-
-			// 3. Ajouter temporairement puis supprimer une classe pour forcer un recalcul complet
-			document.documentElement.classList.add("theme-switching");
-
-			// 4. Timeout pour permettre au navigateur de traiter les changements
-			setTimeout(() => {
-				document.documentElement.classList.remove("theme-switching");
-
-				// 5. Log pour débogage
-				console.log("Thème appliqué:", newTheme);
-				console.log(
-					"Variable CSS test (section-bg-odd):",
-					getComputedStyle(document.documentElement)
-						.getPropertyValue("--color-section-bg-odd")
-						.trim(),
-				);
-				console.log(
-					"Variable CSS test (main-bg):",
-					getComputedStyle(document.documentElement)
-						.getPropertyValue("--color-main-bg")
-						.trim(),
-				);
-			}, 10);
-
-			// ===== FIN DES MODIFICATIONS =====
-
 			localStorage.setItem("theme", newTheme);
 			setThemeState(newTheme);
 		}

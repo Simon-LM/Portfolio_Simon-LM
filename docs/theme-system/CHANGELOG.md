@@ -15,6 +15,17 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-03
 
+### Changed
+
+- Phase 2 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
+  `setTheme()` (`src/hooks/useTheme.ts`) réduit à ses trois lignes utiles
+  (poser `data-theme`, écrire `localStorage`, `setThemeState`). Suppression
+  des artefacts de débogage : double reflow forcé
+  (`offsetWidth`/`offsetHeight`), classe temporaire `theme-switching` (non
+  consommée par aucun style — vérifié par grep) avec son `setTimeout`, et les
+  `console.log` de diagnostic. Aucun changement de CSS compilé ni de
+  comportement observable.
+
 ### Removed
 
 - Phase 1 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
