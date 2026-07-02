@@ -88,6 +88,7 @@ Alias d'import : `@/*` → `src/*`.
 - Le champ `"name"` de `package.json` est resté `my-next-project` (nom du scaffold) ; le dépôt s'appelle **Portfolio_Simon-LM**. Sans incidence sur le build.
 - Le formulaire de contact migre de **reCAPTCHA v3** vers **Spentria** (solution anti-spam de Simon).
 - Branche de travail notable : `feature/darkmode-plus-a11y-package`.
+- Le **système de thèmes de couleurs accessibles** (12 thèmes générés à la compilation Sass, destiné à devenir un paquet réutilisable) est documenté dans `docs/theme-system/README.md` ; toute modification de cette fonctionnalité doit être consignée dans `docs/theme-system/CHANGELOG.md`.
 
 ---
 
