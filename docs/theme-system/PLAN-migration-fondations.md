@@ -45,6 +45,14 @@ l'ajout de fonctionnalités et l'extraction en paquet réutilisable.
    « modified » / « new » : le git diff s'en charge.
 7. En cas de doute sur une instruction : s'arrêter et poser la question,
    plutôt qu'interpréter.
+8. **Chaque rapport de phase doit inclure la sortie brute des commandes de
+   vérification** (le `diff`, pas un résumé). Un diff « propre » affirmé sans
+   sa sortie ne vaut rien. Si un diff montre du réordonnancement de lignes,
+   le prouver inoffensif par une comparaison insensible à l'ordre
+   (`sort` des deux fichiers puis `comm -3`) : aucune *valeur* ne doit
+   changer.
+9. Les en-têtes `/** @format */` (pragma Prettier) ne sont **pas** des
+   commentaires historiques : les conserver dans tous les fichiers.
 
 ## Protocole de vérification (utilisé par toutes les phases)
 
@@ -202,6 +210,10 @@ avant `gray-lighter` avant `gray-light` (préfixes communs).
    `_achromatopsia.scss` : renommer selon la table 3.1 et **ajouter**
    `"gray-100": 0` dans les maps `adjustments` (nouveau cran ; il n'est
    consommé par aucune variable dérivée, seul `--gray-100` en dépend).
+   Dans `_deuteranomaly.scss`, `_protanomaly.scss` et `_tritanomaly.scss` :
+   les clés `"gray-…"` présentes dans les maps `adjustments` sont des
+   **entrées mortes** (les moteurs d'anomalies ne transforment pas les
+   gris) — les supprimer plutôt que les renommer.
 4. **Émission CSS** (`_theme-system.scss`, `generate-theme-css-vars()`) :
    remplacer les 8 lignes `--gray-darkest` … `--gray-lightest` par les 11
    lignes `--gray-50: #{$gray-50};` … `--gray-950: #{$gray-950};`.
@@ -231,7 +243,22 @@ diff /tmp/theme-migration/phase2-normalized.css /tmp/theme-migration/phase3.css
 **Diff attendu** : uniquement des **ajouts** — les lignes `--gray-50`,
 `--gray-100`, `--gray-950` dans chacun des 13 blocs de thème (`:root`, le
 bloc `prefers-color-scheme`, les 12 `[data-theme]`). Aucune valeur existante
-modifiée.
+modifiée. ⚠️ Les valeurs ajoutées doivent être les valeurs **transformées
+par chaque thème**, pas les valeurs light : si `--gray-50` vaut `#fafaf9`
+dans le bloc `dark`, `high-contrast` ou `achromatopsia`, c'est que le moteur
+correspondant ne transforme pas les nouveaux crans (erreur classique).
+
+**Contrôle ciblé supplémentaire** (une exécution précédente a échoué
+exactement ici) — vérifier dans le CSS compilé :
+
+- bloc `[data-theme="high-contrast"]` : `--color-main-bg: #000000` et
+  `--color-main-text: #ffff00`, inchangés ;
+- bloc `[data-theme="achromatopsia"]` : les valeurs restent sur la famille
+  `neutral` (`#fafafa`, `#0a0a0a`…), pas `stone` (`#fafaf9`, `#0c0a09`) ;
+- dans chaque bloc, cohérence `--off-white` == `--gray-50` et
+  `--near-black` == `--gray-950` (les alias sont resynchronisés **après**
+  transformation).
+
 **Commit** : `refactor(theme): phase 3 — numeric gray rail (11 steps, adds gray-100)`.
 
 ## Phase 4 — Kebab-case et corrections de nommage (couche 3)
@@ -622,3 +649,9 @@ contient bien les 12 thèmes.
   i18n, SEO…).
 - Renommage de la famille `redd` de la palette (le double d évite la
   collision avec le mot-clé CSS `red` — choix conservé).
+- Correction de `src/styles/pages/_contact.scss` ligne ~143 :
+  `rgba(var(--color-gray-dark), 0.1)` référence une custom property qui n'a
+  **jamais** existé (et la syntaxe `rgba(var(--hex), a)` serait invalide de
+  toute façon) — déclaration morte antérieure à cette migration. **Ne pas
+  corriger** ; la mentionner dans le rapport final (décision à prendre
+  séparément).
