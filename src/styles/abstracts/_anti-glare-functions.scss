@@ -199,17 +199,3 @@
 	// Effet anti-éblouissement
 	@include apply-anti-glare-filter($mode);
 }
-
-// Fonction utilitaire pour ajuster un angle de couleur pour éviter les fréquences problématiques
-@function safe-hue-for-keratoconus($hue) {
-	// Certaines fréquences de couleurs peuvent être plus problématiques pour le kératocône
-	// Éviter les bleus-violets qui causent souvent plus de halos
-	@if ($hue >= 220 and $hue <= 280) {
-		@if $hue < 250 {
-			@return 220; // Ramener vers le bleu
-		} @else {
-			@return 280; // Pousser vers le violet
-		}
-	}
-	@return $hue;
-}

@@ -1,5 +1,4 @@
 /** @format */
-// @import "abstracts/base-palette";
 @import "../themes/light";
 @import "../themes/dark";
 @import "../themes/anti-glare-light";
@@ -17,8 +16,6 @@
 	// Variables fondamentales
 	--off-white: #{$off-white};
 	--near-black: #{$near-black};
-	// --constant-off-white: get-color("stone", 50);
-	// --constant-near-black: get-color("stone", 950);
 	--constant-off-white: #fafaf9;
 	--constant-near-black: #0c0a09;
 
@@ -38,9 +35,6 @@
 	--tertiary-color: #{$tertiary-color};
 	--link-color: #{$link-color};
 	--link-hover-color: #{$link-color-hover};
-
-	// --success-color: #{$success-color};
-	// --error-color: #{$error-color};
 
 	// Couleurs fonctionnelles constantes
 	--constant-error-color: #dc2626; // Rouge d'erreur fixe
@@ -127,7 +121,6 @@
 	--color-panel-border: #{$color_panel_border};
 	--color-scrollbar-track: #{$color_scrollbar_track};
 	--color-scrollbar-thumb: #{$color_scrollbar_thumb};
-	// --color-button-bg: #{$off-white};
 	--color-button-border: #{$color_button_border};
 	--color-button-hover-bg: #{$link-color-hover};
 	--color-button-hover-text: #{$off-white};

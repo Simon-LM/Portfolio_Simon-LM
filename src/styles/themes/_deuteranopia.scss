@@ -1,14 +1,4 @@
 /** @format */
-// @import "../abstracts/base-palette";
-// @import "../abstracts/theme-utils";
-
-// @mixin deuteranopia-theme-variables() {
-// 	// Génération automatique du thème daltonien
-// 	@include generate-deuteranopia-theme();
-// }
-
-// // // // // // // // // // // // //
-
 @import "../abstracts/base-palette";
 @import "../abstracts/theme-utils";
 @import "../themes/theme-variables";
@@ -26,7 +16,7 @@
 				// Bleu spécifique pour remplacer le vert
 				"error-color": #ffcc00,
 				// Jaune-orange pour remplacer le rouge
-				// Vous pouvez ajouter d'autres couleurs spéciales ici,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+				// Vous pouvez ajouter d'autres couleurs spéciales ici
 			),
 		// Contrôle quelles variables sont transformées automatiquement
 		"overrides":
@@ -44,5 +34,4 @@
 	@include transform-light-to-deuteranopia($deuteranopia-config);
 
 	// Surcharges manuelles après l'automatisation si nécessaire
-	// $color_header_bg: red !global;
 }

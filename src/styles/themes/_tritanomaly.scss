@@ -1,14 +1,4 @@
 /** @format */
-// @import "../abstracts/base-palette";
-// @import "../abstracts/theme-utils";
-
-// @mixin tritanomaly-theme-variables() {
-// 	// Génération automatique du thème daltonien léger
-// 	@include generate-tritanomaly-theme();
-// }
-
-// // // // // // // // // // // // //
-
 @import "../abstracts/base-palette";
 @import "../abstracts/theme-utils";
 @import "../themes/theme-variables";
@@ -68,5 +58,4 @@
 	@include transform-light-to-tritanomaly($tritanomaly-config);
 
 	// Surcharges manuelles après l'automatisation si nécessaire
-	// $color_header_bg: green !global;
 }

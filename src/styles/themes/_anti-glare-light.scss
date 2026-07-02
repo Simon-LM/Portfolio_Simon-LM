@@ -1,11 +1,4 @@
 /** @format */
-// @import "../abstracts/base-palette";
-// @import "../abstracts/theme-utils";
-
-// @mixin anti-glare-light-theme-variables() {
-// 	// Génération automatique du thème anti-éblouissement clair
-// 	@include generate-anti-glare-light-theme();
-// }
 @import "../abstracts/base-palette";
 @import "../abstracts/theme-utils";
 @import "../abstracts/anti-glare-functions";

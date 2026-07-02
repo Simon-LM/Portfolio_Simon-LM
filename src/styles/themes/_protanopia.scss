@@ -1,14 +1,4 @@
 /** @format */
-// @import "../abstracts/base-palette";
-// @import "../abstracts/theme-utils";
-
-// @mixin protanopia-theme-variables() {
-// 	// Génération automatique du thème daltonien
-// 	@include generate-protanopia-theme();
-// }
-
-// // // // // // // // // // //
-
 @import "../abstracts/base-palette";
 @import "../abstracts/theme-utils";
 @import "../themes/theme-variables";
@@ -26,7 +16,7 @@
 				// Bleu clair pour remplacer le vert
 				"error-color": #ffd700,
 				// Or pour remplacer le rouge
-				// Vous pouvez ajouter d'autres couleurs spéciales ici,,,,,
+				// Vous pouvez ajouter d'autres couleurs spéciales ici
 			),
 
 		// Contrôle quelles variables sont transformées automatiquement
@@ -45,5 +35,4 @@
 	@include transform-light-to-protanopia($protanopia-config);
 
 	// Surcharges manuelles après l'automatisation si nécessaire
-	// $color_header_bg: red !global;
 }

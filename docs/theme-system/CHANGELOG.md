@@ -13,6 +13,41 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-03
+
+### Removed
+
+- Phase 1 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
+  purge du code mort identifié en README § 3 et § 5.1, sans aucun changement
+  du CSS compilé (diff byte-identique à la baseline).
+  - Fichiers supprimés : `src/styles/abstracts/_variables.scss`,
+    `src/styles/abstracts/_dark-functions.scss` (non importés).
+  - `_theme-utils.scss` : `transform-for-dark()` (référençait des maps
+    disparues), les anciens mixins `generate-*-theme()` jamais inclus
+    (high-contrast, deuteranopia, protanopia, tritanopia, achromatopsia) et
+    leurs getters devenus orphelins (`get-deuteranopia-color`,
+    `get-protanopia-color`, `get-tritanopia-color`, `get-deuteranomaly-color`,
+    `get-protanomaly-color`, `get-tritanomaly-color`, `get-achromatic-color`),
+    `transform-for-high-contrast()`, `$hc-colors` (doublon de `$hc-palette`),
+    `str-replace()`. Dans `adapt-color-for-colorblindness()` : sélection de
+    matrice LMS calculée mais jamais consommée ; suppression de cette
+    affectation morte et des maps `$protanopia-matrix`/`$deuteranopia-matrix`/
+    `$tritanopia-matrix`, ainsi que `rgb-to-lms()`/`lms-to-rgb()` (non
+    appelées).
+  - `_anti-glare-functions.scss` : `safe-hue-for-keratoconus()` (jamais
+    appelée).
+  - Blocs de code commenté historiques (anciennes versions superseded) dans
+    `_theme-utils.scss`, tous les fichiers `themes/_*.scss`, `main.scss`,
+    `_theme-system.scss`, `_theme-variables.scss`, `layout.tsx`,
+    `useTheme.ts`, `AccessibilityMenu.tsx`. Virgules parasites en fin de
+    commentaire (`,,,,,,,,,,`) dans `_theme-utils.scss` et les thèmes
+    daltoniens complets.
+  - Non touché volontairement : deux lignes commentées dans
+    `getFontTypeLabel()` (`AccessibilityMenu.tsx`, types de police
+    "tiresias"/"ralewaydots" encore actifs dans l'UI) — sujet distinct de la
+    police dyslexique, hors périmètre de cette migration ; signalé pour
+    décision séparée.
+
 ## 2026-07-02
 
 ### Docs

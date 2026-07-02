@@ -82,7 +82,6 @@ export function useTheme() {
 
 			// ===== FIN DES MODIFICATIONS =====
 
-			// document.documentElement.setAttribute("data-theme", newTheme);
 			localStorage.setItem("theme", newTheme);
 			setThemeState(newTheme);
 		}

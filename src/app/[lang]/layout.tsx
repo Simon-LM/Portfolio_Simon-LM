@@ -68,40 +68,6 @@ export default async function LangLayout({
 	params: Promise<{ lang: string }>;
 }) {
 	const { lang } = await params;
-	// return (
-	// 	<html lang={lang} suppressHydrationWarning>
-	// 		<head>
-	// 			<meta name="theme-color" content="#fcd34d" />
-	// 			<link
-	// 				rel="preload"
-	// 				as="image"
-	// 				href="/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.avif"
-	// 				type="image/avif"
-	// 			/>
-
-	// 			<script
-	// 				suppressHydrationWarning
-	// 				dangerouslySetInnerHTML={{
-	// 					__html: `
-	//                         (function() {
-	//                             try {
-	//                                 var savedTheme = localStorage.getItem('theme');
-	//                                 if (savedTheme && ['light', 'dark', 'anti-glare-light', 'anti-glare-dark', 'high-contrast', 'deuteranomaly', 'deuteranopia', 'protanomaly', 'protanopia', 'tritanomaly', 'tritanopia', 'achromatopsia'].includes(savedTheme)) {
-	//                                     document.documentElement.setAttribute('data-theme', savedTheme);
-	//                                 } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-	//                                     document.documentElement.setAttribute('data-theme', 'dark');
-	//                                 } else {
-	//                                     document.documentElement.setAttribute('data-theme', 'light');
-	//                                 }
-	//                             } catch (e) {}
-	//                         })();
-	//                     `,
-	// 				}}
-	// 			/>
-	// 		</head>
-	// 		<body>{children}</body>
-	// 	</html>
-	// );
 
 	return (
 		<>
