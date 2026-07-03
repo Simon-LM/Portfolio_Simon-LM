@@ -86,9 +86,38 @@ Voir le chapitre dédié en fin de document. Livré d'abord dans le portfolio
 
 ### E2 — Revue des moteurs anti-glare / daltoniens (in situ)
 
-Corriger les constats listés plus haut ; toute modification de valeurs est
-validée par les tests de contraste (E1) + validation visuelle de Simon.
-Sortie : moteurs stables, prêts à être figés dans une API.
+Plan d'exécution : [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md)
+(corrections mécaniques : passe unique anti-glare à couverture totale,
+`enhance-factor` configurable, scories). Toute modification de valeurs est
+validée par les tests de contraste (E1, idéalement livrés avant) + validation
+visuelle de Simon. Sortie : moteurs stables, prêts à être figés dans une API.
+
+**Propositions d'évolution du mécanisme — en attente d'arbitrage de Simon**
+(motivées par l'usage open source multi-palettes, pas par le portfolio) :
+
+1. **Espace OKLCH plutôt que HSL** pour les transformations anti-glare et
+   daltoniennes : la « lightness » HSL n'est pas perceptuelle (un jaune et
+   un bleu de même L n'ont pas la même luminosité perçue). En OKLCH, on
+   peut **faire tourner la teinte à luminance constante** — donc adapter
+   les couleurs pour le daltonisme **sans jamais dégrader les ratios de
+   contraste WCAG**. Dart Sass ≥ 1.79 le supporte nativement.
+2. **Ancres de teintes sûres** plutôt que fenêtres à réassignation brutale :
+   les fenêtres actuelles écrasent toutes les teintes d'une zone sur une
+   seule valeur (tous les verts → 180°), ce qui **détruit les distinctions**
+   d'une palette générique riche au lieu de les renforcer. Remplacer par un
+   petit jeu d'ancres par type de CVD (logique des palettes Okabe-Ito/Tol :
+   bleu ~250°, orange ~65° pour les confusions rouge-vert) vers lesquelles
+   chaque primitive est *projetée* en préservant L (OKLCH) et en écartant
+   les primitives entre elles.
+3. **Tests de distinguabilité par simulation CVD** dans le système E1 : en
+   plus des ratios WCAG, simuler chaque déficience (matrices
+   Brettel/Viénot — celles supprimées comme code mort en fondations avaient
+   leur place *ici*, côté tests) sur les couleurs finales des thèmes, et
+   vérifier que les paires porteuses de sens (`success`/`danger`,
+   `accent`/`link`…) restent au-dessus d'un seuil de différence perçue
+   (ΔE). C'est ce qui rend le mécanisme *démontrable* pour n'importe quelle
+   palette de consommateur : la génération peut rester heuristique si la
+   vérification est systématique.
 
 ### E3 — Monorepo et extraction de la face SCSS
 

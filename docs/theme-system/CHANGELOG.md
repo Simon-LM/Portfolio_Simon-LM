@@ -15,6 +15,19 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-03
 
+### Docs (plan de correction des moteurs)
+
+- Création de [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) (chantier E2,
+  pour IA exécutante) : phase 1 sans changement visuel (`if()` mal formé,
+  `$intensity` inutilisé, `$hue_shift` morte, `enhance-factor` configurable
+  avec défaut 2.5, borne de fenêtre de teinte) ; phase 2 anti-glare en
+  **passe unique à couverture totale** (corrige la double atténuation de
+  ~25 tokens et l'absence d'atténuation de ~45 autres) ; phase 3
+  suppression de l'overlay `backdrop-filter` (décision visuelle Simon).
+  Les évolutions de mécanisme (OKLCH, ancres de teintes, tests de
+  distinguabilité par simulation CVD) sont consignées dans le guide E2
+  comme propositions en attente d'arbitrage.
+
 ### Docs (guide d'extraction + revue des moteurs)
 
 - Création de [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) :
