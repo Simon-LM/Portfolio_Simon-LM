@@ -90,98 +90,98 @@
 	$error-color: transform-for-anti-glare($error-color, $mode) !global;
 
 	// Transformation des variables dérivées UI
-	$color_main-bg: transform-for-anti-glare($color_main-bg, $mode) !global;
-	$color_main-text: transform-for-anti-glare($color_main-text, $mode) !global;
-	$color_header_bg: transform-for-anti-glare($color_header_bg, $mode) !global;
-	$color_header_text: transform-for-anti-glare(
-		$color_header_text,
+	$color-main-bg: transform-for-anti-glare($color-main-bg, $mode) !global;
+	$color-main-text: transform-for-anti-glare($color-main-text, $mode) !global;
+	$color-header-bg: transform-for-anti-glare($color-header-bg, $mode) !global;
+	$color-header-text: transform-for-anti-glare(
+		$color-header-text,
 		$mode
 	) !global;
-	$color_header_text-role: transform-for-anti-glare(
-		$color_header_text-role,
+	$color-header-text-role: transform-for-anti-glare(
+		$color-header-text-role,
 		$mode
 	) !global;
-	$color_header_blog-link_bg: transform-for-anti-glare(
-		$color_header_blog-link_bg,
+	$color-header-blog-link-bg: transform-for-anti-glare(
+		$color-header-blog-link-bg,
 		$mode
 	) !global;
-	$color_header_blog-link_text: transform-for-anti-glare(
-		$color_header_blog-link_text,
+	$color-header-blog-link-text: transform-for-anti-glare(
+		$color-header-blog-link-text,
 		$mode
 	) !global;
 
 	// Variables d'interface utilisateur - sections
-	$color_section_bg-even: transform-for-anti-glare(
-		$color_section_bg-even,
+	$color-section-bg-even: transform-for-anti-glare(
+		$color-section-bg-even,
 		$mode
 	) !global;
-	$color_section_bg-odd: transform-for-anti-glare(
-		$color_section_bg-odd,
+	$color-section-bg-odd: transform-for-anti-glare(
+		$color-section-bg-odd,
 		$mode
 	) !global;
-	$color_section_title: transform-for-anti-glare(
-		$color_section_title,
+	$color-section-title: transform-for-anti-glare(
+		$color-section-title,
 		$mode
 	) !global;
 
 	// Variables pour les éléments interactifs
-	$color_about_button-bg: transform-for-anti-glare(
-		$color_about_button-bg,
+	$color-about-button-bg: transform-for-anti-glare(
+		$color-about-button-bg,
 		$mode
 	) !global;
-	$color_about_button-text: transform-for-anti-glare(
-		$color_about_button-text,
+	$color-about-button-text: transform-for-anti-glare(
+		$color-about-button-text,
 		$mode
 	) !global;
-	$color_focus-outline: transform-for-anti-glare(
-		$color_focus-outline,
+	$color-focus-outline: transform-for-anti-glare(
+		$color-focus-outline,
 		$mode
 	) !global;
 
 	// Cartes et conteneurs
-	$color_section_card-bg: transform-for-anti-glare(
-		$color_section_card-bg,
+	$color-section-card-bg: transform-for-anti-glare(
+		$color-section-card-bg,
 		$mode
 	) !global;
-	$color_section-even_card-bg: transform-for-anti-glare(
-		$color_section-even_card-bg,
+	$color-section-even-card-bg: transform-for-anti-glare(
+		$color-section-even-card-bg,
 		$mode
 	) !global;
-	$color_section-odd_card-bg: transform-for-anti-glare(
-		$color_section-odd_card-bg,
+	$color-section-odd-card-bg: transform-for-anti-glare(
+		$color-section-odd-card-bg,
 		$mode
 	) !global;
-	$color_portfolio-tag_bg: transform-for-anti-glare(
-		$color_portfolio-tag_bg,
+	$color-portfolio-tag-bg: transform-for-anti-glare(
+		$color-portfolio-tag-bg,
 		$mode
 	) !global;
-	$color_portfolio-tag_bg-texte: transform-for-anti-glare(
-		$color_portfolio-tag_bg-texte,
+	$color-portfolio-tag-text: transform-for-anti-glare(
+		$color-portfolio-tag-text,
 		$mode
 	) !global;
 
 	// Footer et autres éléments spécifiques
-	$color_bottom-footer_bg: transform-for-anti-glare(
-		$color_bottom-footer_bg,
+	$color-bottom-footer-bg: transform-for-anti-glare(
+		$color-bottom-footer-bg,
 		$mode
 	) !global;
-	$color_bottom-footer_text: transform-for-anti-glare(
-		$color_bottom-footer_text,
+	$color-bottom-footer-text: transform-for-anti-glare(
+		$color-bottom-footer-text,
 		$mode
 	) !global;
-	$color_sticky-footer_bg: transform-for-anti-glare(
-		$color_sticky-footer_bg,
+	$color-sticky-footer-bg: transform-for-anti-glare(
+		$color-sticky-footer-bg,
 		$mode
 	) !global;
-	$color_sticky-footer_text: transform-for-anti-glare(
-		$color_sticky-footer_text,
+	$color-sticky-footer-text: transform-for-anti-glare(
+		$color-sticky-footer-text,
 		$mode
 	) !global;
 
 	// Ajustements spécifiques selon le mode
 	@if $mode == "light" {
 		// Mode clair: réduire les contrastes extrêmes
-		$color_collapse_border: rgba(
+		$color-collapse-border: rgba(
 			red($gray-700),
 			green($gray-700),
 			blue($gray-700),
@@ -189,7 +189,7 @@
 		) !global;
 	} @else {
 		// Mode sombre: adoucir les bordures pour éviter les halos
-		$color_collapse_border: rgba(
+		$color-collapse-border: rgba(
 			red($gray-400),
 			green($gray-400),
 			blue($gray-400),

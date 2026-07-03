@@ -49,11 +49,11 @@
 
 	// Surcharges manuelles après l'automatisation si nécessaire
 
-	$color_header_bg: map-get($hc-palette, "highlight") !global;
-	$color_header_text: #000000 !global;
-	$color_header_text-role: #000000 !global;
-	$color_header_blog-link_bg: #000000 !global;
-	$color_header_blog-link_text: #ffff00 !global;
+	$color-header-bg: map-get($hc-palette, "highlight") !global;
+	$color-header-text: #000000 !global;
+	$color-header-text-role: #000000 !global;
+	$color-header-blog-link-bg: #000000 !global;
+	$color-header-blog-link-text: #ffff00 !global;
 
 	.skills__icon-wrapper {
 		&.is-rotating {

@@ -39,105 +39,103 @@
 @mixin apply-theme-variables {
 	// Couleurs d'arrière-plan et de texte principales
 	$color-main-bg: $off-white !global;
-	$color_main-bg: $off-white !global;
 	$color-main-text: $near-black !global;
-	$color_main-text: $near-black !global;
 	$color-pages-title: $near-black !global;
 
 	// Variables d'entête
-	$color_header_bg: $primary-color !global;
-	$color_header_text: $near-black !global;
-	$color_header_text-role: $gray-700 !global;
-	$color_header_blog-link_bg: $gray-700 !global;
-	$color_header_blog-link_text: $primary-color !global;
+	$color-header-bg: $primary-color !global;
+	$color-header-text: $near-black !global;
+	$color-header-text-role: $gray-700 !global;
+	$color-header-blog-link-bg: $gray-700 !global;
+	$color-header-blog-link-text: $primary-color !global;
 
 	// Sélecteur de langue
-	$color_lang-toggle_bg: $off-white !global;
-	$color_lang-toggle_border: $gray-700 !global;
-	$color_lang-toggle_bg-activated: $gray-700 !global;
-	$color_lang-toggle_text-activated: $off-white !global;
-	$color_lang-toggle_text-disabled: $gray-700 !global;
-	$color_lang-toggle_disabled-hover_bg: $link-color !global;
-	$color_lang-toggle_disabled-hover_text: $off-white !global;
+	$color-lang-toggle-bg: $off-white !global;
+	$color-lang-toggle-border: $gray-700 !global;
+	$color-lang-toggle-bg-activated: $gray-700 !global;
+	$color-lang-toggle-text-activated: $off-white !global;
+	$color-lang-toggle-text-disabled: $gray-700 !global;
+	$color-lang-toggle-disabled-hover-bg: $link-color !global;
+	$color-lang-toggle-disabled-hover-text: $off-white !global;
 
 	// Indicateurs de défilement
-	$color_scroll-progress_line: $link-color !global;
-	$color_scroll-progress_indicator: $gray-600 !global;
-	$color_scroll-progress_indicator-active: $link-color !global;
+	$color-scroll-progress-line: $link-color !global;
+	$color-scroll-progress-indicator: $gray-600 !global;
+	$color-scroll-progress-indicator-active: $link-color !global;
 
 	// Éléments collapse
-	$color_collapse_title: $off-white !global;
-	$color_collapse_bg: $gray-300 !global;
-	$color_collapse_bg-title: $gray-700 !global;
-	$color_collapse_border: $gray-700 !global;
+	$color-collapse-title: $off-white !global;
+	$color-collapse-bg: $gray-300 !global;
+	$color-collapse-bg-title: $gray-700 !global;
+	$color-collapse-border: $gray-700 !global;
 
 	// Sections et héros
-	$color_section_bg-even: $off-white !global;
-	$color_section_bg-odd: $gray-200 !global;
-	$color_section_title: $secondary-color !global;
+	$color-section-bg-even: $off-white !global;
+	$color-section-bg-odd: $gray-200 !global;
+	$color-section-title: $secondary-color !global;
 	$color-hero-bg: $off-white !global;
 	$color-hero-title: $near-black !global;
 	$color-hero-text: $near-black !global;
 
 	// Section À propos
-	$color_about_overlay-bg: $near-black !global;
-	$color_about_overlay-text: $off-white !global;
-	$color_about_button-bg: $link-color !global;
-	$color_about_button-border: $off-white !global;
-	$color_about_button-text: $off-white !global;
+	$color-about-overlay-bg: $near-black !global;
+	$color-about-overlay-text: $off-white !global;
+	$color-about-button-bg: $link-color !global;
+	$color-about-button-border: $off-white !global;
+	$color-about-button-text: $off-white !global;
 
 	// Section compétences
-	$color_skills-icon_bg: $tertiary-color !global;
-	$color_skills-icon_text: $secondary-color !global;
-	$color_skills-presentation-link-hover_bg: $link-color !global;
-	$color_skills-presentation-link-hover_text: $off-white !global;
+	$color-skills-icon-bg: $tertiary-color !global;
+	$color-skills-icon-text: $secondary-color !global;
+	$color-skills-presentation-link-hover-bg: $link-color !global;
+	$color-skills-presentation-link-hover-text: $off-white !global;
 
 	// Cartes et sections
-	$color_section_card-bg: $gray-300 !global;
-	$color_section-even_card-bg: $gray-300 !global;
-	$color_section-odd_card-bg: $gray-400 !global;
+	$color-section-card-bg: $gray-300 !global;
+	$color-section-even-card-bg: $gray-300 !global;
+	$color-section-odd-card-bg: $gray-400 !global;
 
 	// Étiquettes de portfolio
-	$color_portfolio-tag_bg: $tertiary-color !global;
-	$color_portfolio-tag_bg-texte: $secondary-color !global;
+	$color-portfolio-tag-bg: $tertiary-color !global;
+	$color-portfolio-tag-text: $secondary-color !global;
 
 	// Formulaires de contact
-	$color_contact_form-bg: $gray-300 !global;
-	$color_contact_modal_bg: $gray-200 !global;
+	$color-contact-form-bg: $gray-300 !global;
+	$color-contact-modal-bg: $gray-200 !global;
 
 	// Pieds de page
-	$color_bottom-footer_bg: $gray-700 !global;
-	$color_bottom-footer_title: $tertiary-color !global;
-	$color_bottom-footer_text: $off-white !global;
-	$color_bottom-footer_link-bg: $off-white !global;
-	$color_bottom-footer_link-text: $link-color !global;
-	$color_sticky-footer_bg: $gray-800 !global;
-	$color_sticky-footer_text: $off-white !global;
+	$color-bottom-footer-bg: $gray-700 !global;
+	$color-bottom-footer-title: $tertiary-color !global;
+	$color-bottom-footer-text: $off-white !global;
+	$color-bottom-footer-link-bg: $off-white !global;
+	$color-bottom-footer-link-text: $link-color !global;
+	$color-sticky-footer-bg: $gray-800 !global;
+	$color-sticky-footer-text: $off-white !global;
 
 	// Liens et focus
-	$color_link: $link-color !global;
-	$color_link-hover: $link-color-hover !global;
-	$color_link-bg: $off-white !global;
-	$color_focus-outline: $link-color !global;
-	$color_focus-bg: $link-color !global;
-	$color_focus-text: $off-white !global;
+	$color-link: $link-color !global;
+	$color-link-hover: $link-color-hover !global;
+	$color-link-bg: $off-white !global;
+	$color-focus-outline: $link-color !global;
+	$color-focus-bg: $link-color !global;
+	$color-focus-text: $off-white !global;
 
 	// Infobulles
-	$color_tooltip_text: $off-white !global;
-	$color_tooltip_bg: rgba($near-black, 0.9) !global;
+	$color-tooltip-text: $off-white !global;
+	$color-tooltip-bg: rgba($near-black, 0.9) !global;
 
 	// Variables pour le panneau d'accessibilité
-	$color_panel_bg: $off-white !global;
-	$color_panel_border: $gray-600 !global;
-	$color_scrollbar_track: $off-white !global;
-	$color_scrollbar_thumb: $gray-500 !global;
-	$color_button_border: $gray-500 !global;
-	$color_button_hover_bg: rgba($primary-color, 0.1) !global;
-	$color_button_active_text: $off-white !global;
-	$color_button_active_outline: $primary-color !global;
+	$color-panel-bg: $off-white !global;
+	$color-panel-border: $gray-600 !global;
+	$color-scrollbar-track: $off-white !global;
+	$color-scrollbar-thumb: $gray-500 !global;
+	$color-button-border: $gray-500 !global;
+	$color-button-hover-bg: rgba($primary-color, 0.1) !global;
+	$color-button-active-text: $off-white !global;
+	$color-button-active-outline: $primary-color !global;
 
 	// Variables pour le curseur de taille de police
-	$color_border: $gray-500 !global;
-	$color_accent: $primary-color !global;
-	$color_accent_hover: darken($primary-color, 15%) !global;
+	$color-border: $gray-500 !global;
+	$color-accent: $primary-color !global;
+	$color-accent-hover: darken($primary-color, 15%) !global;
 }

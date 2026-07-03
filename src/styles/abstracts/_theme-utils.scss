@@ -1321,12 +1321,12 @@ $hc-palette: (
 	@if not map-has-key($special-colors, "link-color") {
 		$adjustment: map-get($adjustments, "link-color") or 0;
 		$link-color: get-adjusted-gray($link-color, $adjustment) !global;
-		$color_focus-outline: get-adjusted-gray(
-			$color_focus-outline,
+		$color-focus-outline: get-adjusted-gray(
+			$color-focus-outline,
 			$adjustment
 		) !global;
-		$color_focus-bg: get-adjusted-gray($color_focus-bg, $adjustment) !global;
-		$color_link: get-adjusted-gray($color_link, $adjustment) !global;
+		$color-focus-bg: get-adjusted-gray($color-focus-bg, $adjustment) !global;
+		$color-link: get-adjusted-gray($color-link, $adjustment) !global;
 	}
 
 	@if not map-has-key($special-colors, "link-color-hover") {
@@ -1335,8 +1335,8 @@ $hc-palette: (
 			$link-color-hover,
 			$adjustment
 		) !global;
-		$color_link-hover: get-adjusted-gray(
-			$color_link-hover,
+		$color-link-hover: get-adjusted-gray(
+			$color-link-hover,
 			$adjustment
 		) !global;
 	}

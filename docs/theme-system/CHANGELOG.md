@@ -15,6 +15,31 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-03
 
+### Fixed
+
+- Phase 4 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
+  typo `bg-texte` corrigée — `$color_portfolio-tag_bg-texte` devient
+  `$color-portfolio-tag-text`, et la custom property émise
+  `--color-portfolio-tag-bg-text` devient `--color-portfolio-tag-text`. Le
+  consommateur (`_portfolioCard.scss`) référençait déjà le nom correct
+  (`var(--color-portfolio-tag-text)`) : la couleur du texte des tags
+  portfolio, jusqu'ici non résolue (variable inexistante → héritage du
+  parent), s'applique désormais réellement. Seul écart visuel non prévu par
+  le plan initial, distinct du changement d'accent-hover de la phase 6 — à
+  valider visuellement (phase 8).
+
+### Changed
+
+- Phase 4 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
+  uniformisation kebab-case de la couche 3 (README § 5.1/§ 6, ~66 variables
+  `$color_...` → `$color-...`, dont `$color_button_hover_bg`). Sans effet sur
+  le CSS compilé (Sass traite `-`/`_` comme interchangeables) — diff vide
+  après normalisation, hormis la correction de typo ci-dessous. Suppression
+  de deux doubles assignations devenues visibles après uniformisation
+  (`$color-main-bg`/`$color_main-bg`, `$color-main-text`/`$color_main-text`
+  — même variable assignée deux fois dans `apply-theme-variables()`) : une
+  seule conservée par variable.
+
 ### Added
 
 - Phase 3 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
