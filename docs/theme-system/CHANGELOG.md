@@ -15,6 +15,23 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-03
 
+### Docs (évolutions des moteurs actées)
+
+- Décisions de Simon sur les propositions d'évolution des moteurs :
+  **OKLCH acté** pour l'anti-éblouissement (ajouté au
+  [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) comme phase 3, avec
+  procédure de calibration sur le rail gris ; overlay et finalisation
+  renumérotés en phases 4 et 5) **et** pour le daltonien. Refonte
+  daltonienne actée dans son principe et reformulée sous les contraintes de
+  conception de Simon (guide E2) : le système est **ancré aux palettes
+  Tailwind** (les consommateurs personnalisent en adoptant la géométrie 11
+  poids) et l'adaptation **ne doit pas enlaidir** — d'où le mécanisme
+  retenu : **remap de familles Tailwind à poids constant** (ex.
+  deutéranopie : `emerald → sky`, `redd → amber`), OKLCH en repli hors
+  palette, vérifié par les tests de distinguabilité par simulation CVD
+  (chantier E1). La refonte daltonienne est séquencée après E1 et recevra
+  son propre plan.
+
 ### Docs (plan de correction des moteurs)
 
 - Création de [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) (chantier E2,

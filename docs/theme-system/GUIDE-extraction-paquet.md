@@ -92,23 +92,39 @@ Plan d'exécution : [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md)
 validée par les tests de contraste (E1, idéalement livrés avant) + validation
 visuelle de Simon. Sortie : moteurs stables, prêts à être figés dans une API.
 
-**Propositions d'évolution du mécanisme — en attente d'arbitrage de Simon**
-(motivées par l'usage open source multi-palettes, pas par le portfolio) :
+**Évolutions du mécanisme — actées par Simon le 2026-07-03**, avec ses
+contraintes de conception, qui priment :
 
-1. **Espace OKLCH plutôt que HSL** pour les transformations anti-glare et
-   daltoniennes : la « lightness » HSL n'est pas perceptuelle (un jaune et
-   un bleu de même L n'ont pas la même luminosité perçue). En OKLCH, on
-   peut **faire tourner la teinte à luminance constante** — donc adapter
-   les couleurs pour le daltonisme **sans jamais dégrader les ratios de
-   contraste WCAG**. Dart Sass ≥ 1.79 le supporte nativement.
-2. **Ancres de teintes sûres** plutôt que fenêtres à réassignation brutale :
-   les fenêtres actuelles écrasent toutes les teintes d'une zone sur une
-   seule valeur (tous les verts → 180°), ce qui **détruit les distinctions**
-   d'une palette générique riche au lieu de les renforcer. Remplacer par un
-   petit jeu d'ancres par type de CVD (logique des palettes Okabe-Ito/Tol :
-   bleu ~250°, orange ~65° pour les confusions rouge-vert) vers lesquelles
-   chaque primitive est *projetée* en préservant L (OKLCH) et en écartant
-   les primitives entre elles.
+- **Contrainte n° 1 — le système est ancré aux palettes Tailwind.** La
+  cohérence visuelle du composant repose sur des palettes à géométrie
+  Tailwind (11 poids bien espacés, familles bien séparées). Les
+  consommateurs qui personnalisent **doivent adopter ce mécanisme de
+  palettes** (contrat déjà inscrit au README § 6.1). Les couleurs « trop
+  proches » sont donc évitées *par construction*, en amont des moteurs.
+- **Contrainte n° 2 — l'adaptation ne doit pas enlaidir.** L'objectif des
+  thèmes daltoniens est d'améliorer les contrastes perçus **sans rendre le
+  site moche** : rester autant que possible *dans* les palettes (le
+  regroupement de teintes du mécanisme historique était en partie voulu,
+  pour alléger visuellement).
+
+Évolutions actées, reformulées sous ces contraintes :
+
+1. **OKLCH plutôt que HSL** pour les transformations (anti-glare : intégré
+   au [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md), phase 3 ;
+   daltonien : dans la refonte ci-dessous). La « lightness » HSL n'est pas
+   perceptuelle ; OKLCH permet d'adapter la teinte **à luminance
+   constante**, donc sans dégrader les ratios de contraste WCAG.
+2. **Remap de familles Tailwind à poids constant** plutôt qu'ancres de
+   teintes libres : pour chaque type de CVD, une table configurable
+   `famille → famille` (ex. deutéranopie : `emerald → sky`,
+   `redd → amber`), le **poids étant conservé**. C'est la synthèse des
+   contraintes et du besoin de distinguabilité : on reste dans les
+   palettes (beau par construction, cohérent avec la philosophie du rail),
+   la luminance Tailwind à poids égal est quasi constante (contrastes
+   préservés), et les distinctions internes d'une famille survivent (deux
+   verts de poids différents deviennent deux bleus de poids différents —
+   là où les fenêtres de teinte les écrasaient sur une seule valeur).
+   L'OKLCH ne sert qu'en **repli** pour les couleurs hors palette.
 3. **Tests de distinguabilité par simulation CVD** dans le système E1 : en
    plus des ratios WCAG, simuler chaque déficience (matrices
    Brettel/Viénot — celles supprimées comme code mort en fondations avaient
@@ -118,6 +134,12 @@ visuelle de Simon. Sortie : moteurs stables, prêts à être figés dans une API
    (ΔE). C'est ce qui rend le mécanisme *démontrable* pour n'importe quelle
    palette de consommateur : la génération peut rester heuristique si la
    vérification est systématique.
+
+**Séquencement** : les corrections mécaniques et l'OKLCH anti-glare sont
+couverts par [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md), exécutable
+dès maintenant ; la refonte daltonienne (points 2 et 3) attend le chantier
+E1 (les tests de distinguabilité en sont le filet de sécurité) et recevra
+son propre plan.
 
 ### E3 — Monorepo et extraction de la face SCSS
 

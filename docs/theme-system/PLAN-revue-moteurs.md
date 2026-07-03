@@ -18,10 +18,12 @@ Branche : `refactor/theme-engines`. Fichiers concernés :
 `src/styles/themes/_anti-glare-light.scss`, `_anti-glare-dark.scss`,
 `_deuteranopia.scss`, `_protanopia.scss`, `_tritanopia.scss`.
 
-**Périmètre strict** : corrections listées ici uniquement. Les évolutions de
-*mécanisme* (espace OKLCH, ancres de teintes, tests de distinguabilité par
-simulation) sont des propositions **en attente d'arbitrage de Simon** —
-listées dans le guide E2, ne pas les implémenter.
+**Périmètre strict** : corrections listées ici uniquement. Le passage du
+moteur **anti-éblouissement en OKLCH est acté** (Simon, 2026-07-03) et fait
+partie de ce plan (phase 3). La refonte du mécanisme **daltonien**
+(remap de familles Tailwind, tests de distinguabilité par simulation) est
+actée dans son principe mais **séquencée après le chantier E1** (tests de
+contrastes) — ne pas l'implémenter ici, voir le guide E2.
 
 ---
 
@@ -112,7 +114,35 @@ Dans `transform-theme-for-anti-glare` :
 
 **Commit** : `refactor(theme): engines phase 2 — single-pass anti-glare, full token coverage`.
 
-## Phase 3 — Overlay `backdrop-filter` (décision visuelle)
+## Phase 3 — `transform-for-anti-glare` en OKLCH (amélioration actée)
+
+Motivation : la « lightness » HSL n'est pas perceptuelle — l'atténuation
+actuelle n'assombrit pas également un jaune et un bleu de même L. En OKLCH
+(supporté nativement par le Sass du projet), la réduction d'éblouissement
+devient perceptuellement uniforme. Décision actée par Simon le 2026-07-03.
+
+Réécrire le corps de `transform-for-anti-glare` :
+
+1. Lire les canaux perceptuels :
+   `color.channel($color, "lightness", $space: oklch)` (en %) et
+   `color.channel($color, "chroma", $space: oklch)`.
+2. Mode `light` : si `L > 92%` → `L: max(85%, L - 5%)` et
+   `C: max(0.005, C)` (éviter le blanc pur) ; puis `C: C * 0.9` global.
+   Mode `dark` : si `L < 22%` → `L: min(30%, L + 6%)` ; puis
+   `C: max(0.01, C * 0.95)`.
+3. Reconstruire en RVB pour garder une émission CSS stable :
+   `color.to-space(color.change($color, $lightness: …, $chroma: …, $space: oklch), rgb)`.
+
+⚠️ Les constantes du point 2 sont un **point de départ de calibration**,
+pas une vérité : les ajuster pour que le rail gris d'`anti-glare-light`
+reste proche du rendu actuel (comparer les `--gray-*` avant/après), puis
+**validation visuelle de Simon** — c'est lui qui tranche les seuils.
+
+**Diff CSS attendu** : confiné aux blocs `anti-glare-*`. Rapport : tableau
+avant/après des 11 `--gray-*` et des 8 primitives dans les deux thèmes.
+**Commit** : `refactor(theme): engines phase 3 — perceptual OKLCH anti-glare transform`.
+
+## Phase 4 — Overlay `backdrop-filter` (décision visuelle)
 
 L'overlay plein écran `body::before` (`backdrop-filter: contrast(98%)
 brightness(99%)`, `opacity: 0.3`, `z-index: 9999`) impose un coût GPU
@@ -127,24 +157,25 @@ permanent pour un effet mesuré quasi nul, et son interaction
 
 **Diff CSS attendu** : disparition des deux règles `body::before` des blocs
 anti-glare, rien d'autre.
-**Commit** : `refactor(theme): engines phase 3 — drop full-screen backdrop-filter overlay`.
+**Commit** : `refactor(theme): engines phase 4 — drop full-screen backdrop-filter overlay`.
 
-## Phase 4 — Finalisation
+## Phase 5 — Finalisation
 
 `pnpm build`, `pnpm lint`, `pnpm test` ; entrées changelog complètes ;
-rapport final avec sorties brutes des diffs des trois phases et la liste
-des valeurs modifiées en phase 2 (pour la validation visuelle de Simon) ;
-mise à jour du README § 5 (constats résolus) et du guide (E2 : corrections
-faites, propositions de mécanisme toujours en attente d'arbitrage).
+rapport final avec sorties brutes des diffs de toutes les phases et la
+liste des valeurs modifiées en phases 2 et 3 (pour la validation visuelle
+de Simon) ; mise à jour du README § 5 (constats résolus) et du guide (E2 :
+corrections faites ; refonte daltonienne toujours séquencée après E1).
 
 ---
 
 ## Hors périmètre (ne PAS faire)
 
-- Migration des transformations vers OKLCH, ancres de teintes daltoniennes,
-  tests de distinguabilité par simulation CVD — propositions en attente
-  d'arbitrage (guide E2).
+- Refonte du mécanisme **daltonien** (remap de familles Tailwind à poids
+  constant, tests de distinguabilité par simulation CVD) : actée dans son
+  principe mais séquencée **après le chantier E1** — plan dédié à venir
+  (guide E2).
 - Toute retouche du moteur high-contrast (décision Simon : on n'y revient
   que plus tard).
 - Retouche des fenêtres de teinte au-delà de la correction de borne de la
-  phase 1.
+  phase 1 (elles seront remplacées par la refonte ci-dessus).
