@@ -120,11 +120,30 @@ contraintes de conception, qui priment :
    `redd → amber`), le **poids étant conservé**. C'est la synthèse des
    contraintes et du besoin de distinguabilité : on reste dans les
    palettes (beau par construction, cohérent avec la philosophie du rail),
-   la luminance Tailwind à poids égal est quasi constante (contrastes
-   préservés), et les distinctions internes d'une famille survivent (deux
+   la luminance Tailwind à poids égal est *proche* d'une famille à l'autre
+   (mais pas constante — voir les garde-fous ci-dessous), et les
+   distinctions internes d'une famille survivent (deux
    verts de poids différents deviennent deux bleus de poids différents —
    là où les fenêtres de teinte les écrasaient sur une seule valeur).
    L'OKLCH ne sert qu'en **repli** pour les couleurs hors palette.
+
+   ⚠️ Le remap à poids constant ne garantit **pas** les ratios à lui seul :
+   la luminance Tailwind n'est *pas* constante entre familles à poids égal
+   (mesuré le 2026-07-03 : à poids 600, luminance 0.167 pour `redd` →
+   0.280 pour `amber` ; `redd-600→amber-600` sur fond clair fait chuter le
+   ratio de 4.62:1 à **3.05:1**). Deux garde-fous font partie du
+   mécanisme : (a) **décalage de poids par entrée de table**, comme les
+   `adjustments` du dark (ex. `redd → amber(+1)` : amber-700 → 4.81:1) ;
+   (b) **tables par défaut conscientes des collisions** — ne pas remapper
+   vers une famille déjà occupée par un autre rôle à poids voisin (ex.
+   deutéranopie `emerald → sky` rend success bleu comme `link` : à
+   arbitrer par décalage de poids ou par le choix d'une autre famille
+   cible). La garantie finale ne vient **jamais** du générateur : elle
+   vient de la vérification E1 (ratios WCAG + distinguabilité simulée).
+   À noter : les `special-colors` actuelles ont le même problème en
+   latence (deutéranopie : erreur `#ffcc00` = **1.45:1** sur fond clair —
+   inoffensif aujourd'hui car `--danger` n'est consommé nulle part, mais
+   premier piège du paquet publié).
 3. **Tests de distinguabilité par simulation CVD** dans le système E1 : en
    plus des ratios WCAG, simuler chaque déficience (matrices
    Brettel/Viénot — celles supprimées comme code mort en fondations avaient
@@ -158,8 +177,8 @@ Tout ce qui est configurable porte `!default`. Oracle : CSS identique.
 
 ### E4 — Extraction du runtime React
 
-Le cœur préférences (persistance localStorage + application DOM + anti-FOUC
-+ sécurité SSR) devient générique : `usePreference(key, applyFn)` ;
+Le cœur préférences (persistance localStorage, application DOM, anti-FOUC,
+sécurité SSR) devient générique : `usePreference(key, applyFn)` ;
 `useTheme` en est une instance. La liste des thèmes vit dans le paquet ;
 le portfolio importe depuis le paquet (supprime `src/config/themes.ts`).
 Le script anti-FOUC est *généré* par le paquet à partir de la même liste.

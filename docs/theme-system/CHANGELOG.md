@@ -15,6 +15,21 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-03
 
+### Docs (garde-fous du remap daltonien — mesures)
+
+- Question de Simon : le remap de familles peut-il casser le ratio 4.5:1 ou
+  entrer en collision avec un fond ? Réponse mesurée : **oui, sans
+  garde-fous**. La luminance Tailwind n'est pas constante entre familles à
+  poids égal (à 600 : 0.167 `redd` → 0.280 `amber` ;
+  `redd-600→amber-600` sur fond clair : 4.62:1 → 3.05:1). Garde-fous
+  intégrés au mécanisme (guide E2) : décalage de poids par entrée de table
+  (`redd→amber(+1)` → 4.81:1) et tables par défaut conscientes des
+  collisions ; la garantie finale reste portée par la vérification E1.
+  Découverte annexe : la `special-color` erreur de la deutéranopie
+  actuelle (`#ffcc00`) vaut **1.45:1** sur fond clair — latent (aucun
+  composant ne consomme `--danger` aujourd'hui), mais piège certain du
+  paquet publié ; confirme le séquencement E1 d'abord.
+
 ### Docs (évolutions des moteurs actées)
 
 - Décisions de Simon sur les propositions d'évolution des moteurs :
