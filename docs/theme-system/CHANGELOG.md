@@ -15,6 +15,58 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-04
 
+### Docs (chantier E1 — tests de contrastes, phase 5 — finalisation)
+
+- Phase 5 (dernière) de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) :
+  vérification finale et documentation. `pnpm build`/`lint`/`test` verts ;
+  CSS compilé toujours strictement byte-identique à la baseline de phase 0
+  (`diff` vide sur `sass --no-source-map --style=expanded`).
+- README mis à jour : carte des documents (E1 marqué exécuté, ajout de la
+  ligne CONTRAST-REPORT.md), § 6.4 (le second chantier hors périmètre de la
+  migration fondations — les tests de contraste — est maintenant fait).
+  Guide E1→E7 mis à jour (E1 marqué fait avec résumé du résultat).
+- **Rapport final pour arbitrage de Simon** — 7 paires waivées, triées par
+  gravité (ratio mesuré le plus bas d'abord) :
+
+  1. `site/button-active-outline-on-panel-bg` — **1.00:1 en high-contrast**
+     (le contour actif du bouton est littéralement invisible : `--accent`
+     et `--bg-base` résolvent tous deux à `#000000` dans ce thème) ; 1.02
+     à 1.38:1 dans les 9 autres thèmes waivés. **Recommandation** :
+     ajustement de rôle — `--color-button-active-outline` pourrait être
+     recâblé sur `--accent-strong` (déjà défini, amber-500) plutôt que
+     `--accent` ; à valider par Simon, hors périmètre de ce chantier
+     additif.
+  2. `role/fg-on-accent-on-accent` — 1.15:1 en `dark`, 1.18:1 en
+     `anti-glare-dark`. **Recommandation** : révision du modèle de rôles
+     (chantier E2, revue des moteurs) — `--fg-on-accent` s'inverse avec
+     les autres rôles de texte alors que `--accent` reste volontairement
+     fixe entre thèmes clair/sombre.
+  3. `site/header-text-on-header-bg` — même cause et mêmes ratios que
+     `role/fg-on-accent-on-accent` (paire identique). Même recommandation.
+  4. `role/danger-on-bg-base` — 1.34:1 en `protanopia`, 1.45:1 en
+     `deuteranopia`, 3.25–3.46:1 dans 4 autres thèmes. **Recommandation** :
+     [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) — les
+     couleurs de substitution des moteurs daltoniens sont choisies pour la
+     distinguabilité perceptuelle, pas le contraste ; `--danger` n'étant
+     consommé par aucun composant à ce jour, aucune urgence utilisateur.
+  5. `site/header-text-role-on-header-bg` — 1.38:1 en `dark`, 1.42:1 en
+     `anti-glare-dark`. **Recommandation** : chantier E2 (même famille que
+     #2/#3 — `--fg-muted`/`--accent` sur fond accent en thème sombre).
+  6. `site/header-blog-link-text-on-bg` — mêmes ratios que #5 (mêmes deux
+     couleurs, fg/bg échangés). Même recommandation.
+  7. `role/success-on-bg-base` — 2.42:1 en `achromatopsia`, 2.81–4.03:1
+     dans 8 autres thèmes. **Recommandation** : ajustement de rôle
+     (`emerald-600` → un cran plus soutenu) si `--success` venait à être
+     consommé par un composant ; aucune urgence, actuellement inutilisé.
+
+  Détail complet (raisons factuelles, valeurs hex/HSL vérifiées, ratios par
+  thème) : [contrast-pairs.ts](../../src/accessibility/contrast/contrast-pairs.ts)
+  et [CONTRAST-REPORT.md](./CONTRAST-REPORT.md).
+- Rappel : chantier strictement additif du début à la fin — aucune couleur,
+  rôle ou thème n'a été modifié dans `src/styles/`. Les 7 points ci-dessus
+  sont des **propositions** pour un futur chantier corrective ; leur
+  traitement (et son ordonnancement vs E2/E3) reste à l'arbitrage de Simon.
+
 ### Added (chantier E1 — tests de contrastes, phase 4)
 
 - Phase 4 de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) :
