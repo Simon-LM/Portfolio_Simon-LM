@@ -7,6 +7,30 @@ version. This is a continuously-deployed personal site — every merge to
 `main` ships on the next deploy, so there are no discrete "releases" for
 version numbers to track.
 
+## 2026-07-03
+
+### Changed
+
+- Theme system foundations migration (branch `refactor/theme-foundations`,
+  8 phases, one commit each): purged dead code and legacy commented-out
+  code across the theme SCSS files; cleaned debug artifacts (forced reflow,
+  `theme-switching` class, `console.log`) out of `useTheme`'s `setTheme()`;
+  renamed the gray scale from descriptive names to an 11-step numeric rail
+  (`$gray-50`…`$gray-950`, filling a previously missing step); unified
+  variable naming to kebab-case and fixed a `bg-texte` typo; migrated all of
+  `src/styles/` off the deprecated `@import`/`darken`/`lighten`/etc Sass API
+  to the `@use` module system (zero deprecation warnings); introduced a
+  role-token layer (`bg-*`, `fg-*`, `border-*`, `focus-ring`, …) between the
+  color primitives and the ~70 component-level tokens; added
+  `src/config/themes.ts` as the single source of truth for the 12-theme
+  list (previously duplicated three ways). Each phase's compiled-CSS diff
+  was verified against an explicit expectation before proceeding; the only
+  intentional visual change is `--color-accent-hover` moving from a
+  computed `darken()` to the `amber-500` rail step. Full detail, phase by
+  phase, in [docs/theme-system/CHANGELOG.md](docs/theme-system/CHANGELOG.md)
+  and the executed plan,
+  [docs/theme-system/PLAN-migration-fondations.md](docs/theme-system/PLAN-migration-fondations.md).
+
 ## 2026-07-02
 
 ### Fixed

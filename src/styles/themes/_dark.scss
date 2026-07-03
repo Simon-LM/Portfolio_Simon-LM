@@ -1,91 +1,8 @@
 /** @format */
-// @import "../abstracts/base-palette";
-// @import "../abstracts/theme-utils";
-// // @import "../themes/theme-variables";
-
-// @mixin dark-theme-variables() {
-// 	// Génération automatique du thème sombre basée sur l'inversion des poids Tailwind
-
-// 	$secondary-color: get-color(
-// 		"amber",
-// 		100
-// 	) !global; // Plus clair pour le thème sombre
-// 	$tertiary-color: get-color(
-// 		"amber",
-// 		950
-// 	) !global; // Plus foncé pour le thème sombre
-
-// 	@include generate-dark-theme();
-
-// 	// $color_header_bg: green !global;
-// }
-
-// // // // // // // // // // // // // // // // // //
-
-// @import "../abstracts/base-palette";
-// @import "../abstracts/theme-utils";
-// @import "../themes/theme-variables";
-// @import "../themes/theme-mappings";
-
-// @mixin dark-theme-variables() {
-// 	// D'abord appliquer les variables du thème light
-// 	@include light-theme-variables();
-
-// 	// Appliquer explicitement les surcharges pour amber (comme dans l'original)
-// 	$secondary-color: get-color(
-// 		"amber",
-// 		100
-// 	) !global; // Plus clair pour le thème sombre
-// 	$tertiary-color: get-color(
-// 		"amber",
-// 		950
-// 	) !global; // Plus foncé pour le thème sombre
-
-// 	// Utiliser generate-dark-theme pour conserver l'apparence exacte
-// 	@include generate-dark-theme();
-
-// 	// // Puis transformer automatiquement toutes ces variables
-// 	// @include transform-theme-for-dark();
-
-// 	// Pas besoin d'appeler apply-theme-variables à nouveau
-// 	// car les variables dérivées sont automatiquement mises à jour
-
-// 	// Surcharges manuelles après l'automatisation si nécessaire
-// 	// $color_header_bg: red !global;
-// }
-
-// // // // // // // // // // // // // // // // //
-
-// @import "../abstracts/base-palette";
-// @import "../abstracts/theme-utils";
-// @import "../themes/theme-variables";
-
-// @mixin dark-theme-variables() {
-// 	// D'abord appliquer les variables du thème light
-// 	@include light-theme-variables();
-
-// 	// Appliquer explicitement les surcharges pour amber (comme dans l'original)
-// 	$secondary-color: get-color(
-// 		"amber",
-// 		100
-// 	) !global; // Plus clair pour le thème sombre
-// 	$tertiary-color: get-color(
-// 		"amber",
-// 		950
-// 	) !global; // Plus foncé pour le thème sombre
-
-// 	// Transformer automatiquement toutes les autres variables
-// 	@include transform-light-to-dark();
-
-// 	// Surcharges manuelles après l'automatisation si nécessaire
-// 	// $color_header_bg: red !global;
-// }
-
-// // // // // // // // // // // // // // // // // // // // // // //
-
-@import "../abstracts/base-palette";
-@import "../abstracts/theme-utils";
-@import "../themes/theme-variables";
+@use "../abstracts/base-palette" as *;
+@use "../abstracts/theme-utils" as *;
+@use "../themes/theme-variables" as *;
+@use "light" as *;
 
 @mixin dark-theme-variables() {
 	// D'abord appliquer les variables du thème light
@@ -99,39 +16,38 @@
 		// Surcharges spécifiques
 		"overrides":
 			(
-				"primary-color": true,
-				"secondary-color": true,
-				"tertiary-color": true,
+				"accent": true,
+				"accent-ink": true,
+				"accent-soft": true,
 			),
 
 		// Ajustements spéciaux par variable (écarts par rapport à $steps)
 		"adjustments":
 			(
-				// Valeurs fondamentales
-				"off-white": 0,
-				"near-black": 1,
-
-				// Échelle de gris complète avec ajustements explicites
-				"gray-darkest": 0,
-				"gray-darker": 0,
-				"gray-dark": 0,
-				"gray-medium-dark": 0,
-				"gray-medium-light": 0,
-				"gray-light": -2,
-				"gray-lighter": -2,
-				"gray-lightest": -1,
+				// Rail numérique complet (11 crans)
+				"gray-50": 0,
+				"gray-100": 0,
+				"gray-200": -1,
+				"gray-300": -2,
+				"gray-400": -2,
+				"gray-500": 0,
+				"gray-600": 0,
+				"gray-700": 0,
+				"gray-800": 0,
+				"gray-900": 0,
+				"gray-950": 1,
 
 				// Couleurs fonctionnelles
-				"link-color": 0,
-				"link-color-hover": 0,
-				"success-color": 0,
-				"error-color": 0
+				"link": 0,
+				"link-hover": 0,
+				"success": 0,
+				"danger": 0
 			)
 	);
 
 	// Appliquer les surcharges explicites en premier
-	$secondary-color: get-color("amber", 100) !global;
-	$tertiary-color: get-color("amber", 950) !global;
+	$accent-ink: get-color("amber", 100) !global;
+	$accent-soft: get-color("amber", 950) !global;
 
 	// Appliquer la transformation automatique avec la configuration
 	@include transform-light-to-dark($dark-config);

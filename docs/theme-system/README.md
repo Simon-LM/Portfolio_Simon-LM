@@ -27,23 +27,26 @@ teinte HSL, conversion en luminance…) appliquée aux couleurs du thème de
 référence.
 
 Le CSS compilé contient un bloc `[data-theme="…"]` par thème, chacun
-définissant ~80 custom properties CSS. Au runtime, le JavaScript ne fait que
-poser un attribut `data-theme` sur `<html>` : le changement de thème est un
-pur re-render CSS, sans recalcul.
+définissant ~94 custom properties CSS (rail, primitives, rôles, variables
+dérivées de couche 3). Au runtime, le JavaScript ne fait que poser un
+attribut `data-theme` sur `<html>` : le changement de thème est un pur
+re-render CSS, sans recalcul.
 
 ```
 COMPILATION (Sass)                          RUNTIME (navigateur)
-┌────────────────────────────┐              ┌─────────────────────────────┐
-│ palette Tailwind ($colors) │              │ script anti-FOUC            │
-│   ↓ get-color()            │              │  (localStorage → data-theme)│
-│ 17 couleurs de base (light)│              │        ↓                    │
-│   ↓ apply-theme-variables  │              │ useTheme() (React)          │
-│ ~70 variables dérivées     │              │  setTheme → data-theme +    │
-│   ↓ transform-light-to-X() │              │  localStorage               │
-│ 12 jeux de valeurs         │              │        ↓                    │
-│   ↓ generate-theme-css-vars│              │ [data-theme="X"] matche     │
-│ 12 blocs [data-theme]      │──── CSS ────▶│  → var(--color-*) résolues  │
-└────────────────────────────┘              └─────────────────────────────┘
+┌─────────────────────────────┐             ┌─────────────────────────────┐
+│ palette Tailwind ($colors)  │             │ script anti-FOUC            │
+│   ↓ get-color()             │             │  (localStorage → data-theme)│
+│ rail (11) + primitives (8)  │             │        ↓                    │
+│   ↓ transform-light-to-X()  │             │ useTheme() (React)          │
+│ rail + primitives transformés│            │  setTheme → data-theme +    │
+│   ↓ apply-roles()           │             │  localStorage               │
+│ ~15 rôles (couche 2)        │             │        ↓                    │
+│   ↓ apply-theme-variables() │             │ [data-theme="X"] matche     │
+│ ~70 variables de couche 3   │             │  → var(--*) résolues        │
+│   ↓ generate-theme-css-vars │             │                             │
+│ 12 blocs [data-theme]       │──── CSS ───▶│                             │
+└─────────────────────────────┘             └─────────────────────────────┘
 ```
 
 ## 2. Les 12 thèmes
@@ -69,18 +72,19 @@ COMPILATION (Sass)                          RUNTIME (navigateur)
 
 | Fichier                                                                                       | Rôle                                                                                                                                                                              |
 | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/styles/abstracts/_base-palette.scss`                                                     | Palettes Tailwind (`$colors`) : neutral, stone, slate, amber, sky, redd, emerald — 11 poids chacune (50→950)                                                                      |
-| `src/styles/themes/_theme-variables.scss`                                                     | `define-base-colors()` (17 couleurs de base du light) + `apply-theme-variables()` (~70 variables dérivées par composant)                                                          |
-| `src/styles/abstracts/_theme-utils.scss`                                                      | Le cœur (~1900 lignes) : fonctions d'accès (`get-color`), analyse inverse (`analyze-tailwind-color`), et tous les moteurs de transformation par thème                             |
-| `src/styles/abstracts/_anti-glare-functions.scss`                                             | Transformation anti-éblouissement (HSL) + overlay `body::before` en `backdrop-filter`                                                                                             |
-| `src/styles/themes/_light.scss`, `_dark.scss`, `_high-contrast.scss`, `_deuteranopia.scss`, … | Un fichier par thème : mixin `X-theme-variables()` = reset light → transformation configurée → surcharges manuelles                                                               |
-| `src/styles/abstracts/_theme-system.scss`                                                     | Point d'assemblage : `generate-theme-css-vars()` (snapshot des globales Sass → custom properties) + les 12 blocs `[data-theme]`, `:root` et `@media (prefers-color-scheme: dark)` |
-| `src/styles/main.scss`                                                                        | Point d'entrée : importe `base-palette`, `theme-utils`, `theme-system` avant tout le reste                                                                                        |
+| `src/styles/abstracts/_base-palette.scss`                                                     | Palettes Tailwind (`$colors`) : neutral, stone, slate, amber, sky, redd, emerald — 11 poids chacune (50→950) ; `get-color()` ; `adjust-lightness-clamped()` (remplacement borné de `darken`/`lighten`)  |
+| `src/styles/themes/_theme-variables.scss`                                                     | État mutable du module (rail 11 crans, primitives, ~15 rôles, ~70 tokens de couche 3, déclarés à la racine — requis par `@use`) + `define-base-colors()`, `apply-roles()`, `apply-theme-variables()`   |
+| `src/styles/abstracts/_theme-utils.scss`                                                      | Le cœur (~1500 lignes) : `get-dark-color`, `analyze-tailwind-color`, et tous les moteurs de transformation par thème (`transform-light-to-*`)                                                          |
+| `src/styles/abstracts/_anti-glare-functions.scss`                                             | Transformation anti-éblouissement (HSL) + overlay `body::before` en `backdrop-filter`                                                                                                                  |
+| `src/styles/themes/_light.scss`, `_dark.scss`, `_high-contrast.scss`, `_deuteranopia.scss`, … | Un fichier par thème : mixin `X-theme-variables()` = reset light → transformation configurée → surcharges manuelles                                                                                    |
+| `src/styles/abstracts/_theme-system.scss`                                                     | Point d'assemblage : `generate-theme-css-vars()` (snapshot des globales Sass → custom properties) + les 12 blocs `[data-theme]`, `:root` et `@media (prefers-color-scheme: dark)`                      |
+| `src/styles/main.scss`                                                                        | Point d'entrée : `@use` chaque partial (migré depuis `@import` en phase 5), dans l'ordre d'émission CSS d'origine                                                                                       |
 
 ### Côté React (runtime)
 
 | Fichier                                                  | Rôle                                                                                                                                                                   |
 | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/config/themes.ts`                                   | Source unique de la liste des 12 thèmes (`THEMES` + type `ThemeOption` dérivé) ; consommé par `useTheme.ts`, `layout.tsx` et `AccessibilityMenu.tsx`                  |
 | `src/app/[lang]/layout.tsx`                              | Script inline `beforeInteractive` anti-FOUC : lit `localStorage.theme` (fallback `prefers-color-scheme`) et pose `data-theme` avant le premier paint                   |
 | `src/hooks/useTheme.ts`                                  | État React du thème : init paresseuse depuis localStorage/matchMedia, `setTheme()` (attribut + localStorage), `MutationObserver` de resynchronisation                  |
 | `src/components/accessibilityMenu/AccessibilityMenu.tsx` | UI de sélection : 3 axes (Mode light/dark, Confort high-contrast/anti-glare, Vision daltonisme), mémorisation du dernier thème de base (`lastBaseTheme`), reset global |
@@ -88,38 +92,46 @@ COMPILATION (Sass)                          RUNTIME (navigateur)
 
 ### Fichiers hérités (code mort, non importés)
 
+*(résolu — voir [CHANGELOG](./CHANGELOG.md) du 2026-07-03, phase 1)*
+
 | Fichier                                         | État                                                                                                                           |
 | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `src/styles/abstracts/_variables.scss`          | Ancienne définition statique des variables dérivées ; plus importé depuis `main.scss` (duplique `apply-theme-variables()`)     |
-| `src/styles/abstracts/_dark-functions.scss`     | Vide (en-tête de commentaire uniquement)                                                                                       |
-| `transform-for-dark()` dans `_theme-utils.scss` | Référence des maps `$dark-adjustments` / `$tailwind-origins` qui n'existent plus ; jamais appelée (planterait si elle l'était) |
+| `src/styles/abstracts/_variables.scss`          | **Purgé le 2026-07-03.** Ancienne définition statique des variables dérivées ; plus importé depuis `main.scss`.                |
+| `src/styles/abstracts/_dark-functions.scss`     | **Purgé le 2026-07-03.** Vide (en-tête de commentaire uniquement).                                                             |
+| `transform-for-dark()` dans `_theme-utils.scss` | **Purgé le 2026-07-03**, avec plusieurs autres fonctions/mixins jamais appelés (voir CHANGELOG pour la liste complète).        |
 
 ## 4. La chaîne en détail
 
 ### 4.1 Couches de variables (compilation)
 
+État depuis la migration des fondations (voir § 6 pour l'architecture cible
+et le [CHANGELOG](./CHANGELOG.md) du 2026-07-03 pour le détail des phases) :
+le modèle à trois couches décrit en § 6.1 est maintenant en place.
+
 1. **Palette brute** — `$colors` : map Sass `famille → poids → hex`,
-   accessible via `get-color("amber", 300)`.
-2. **Couleurs de base** — 17 variables Sass globales, en trois niveaux
-   sémantiques :
-   - fondamentales : `$off-white`, `$near-black` ;
-   - échelle de gris : `$gray-darkest` … `$gray-lightest` (8 niveaux) ;
-   - sémantiques : `$primary-color`, `$secondary-color`, `$tertiary-color`,
-     `$link-color`, `$link-color-hover`, `$success-color`, `$error-color`.
-
-   Toutes sont tirées de la palette via `get-color()` — point crucial : les
-   transformations retrouvent ensuite ces métadonnées (famille + poids) par
-   recherche inverse.
-
-3. **Variables dérivées** — `apply-theme-variables()` : ~70 variables
-   (`$color_header_bg`, `$color_portfolio-tag_bg`, …) calculées à partir des
-   17 couleurs de base. C'est la couche qui mappe la sémantique du design
-   vers les éléments concrets de l'UI. Ré-invoquer ce mixin après mutation
-   des couleurs de base recalcule toute la cascade.
-4. **Custom properties CSS** — `generate-theme-css-vars()` photographie
-   l'état courant des globales Sass en `--color-*`. S'y ajoutent des
-   constantes inter-thèmes : `--constant-off-white`, `--constant-near-black`,
-   `--constant-error-color`, `--constant-success-color`.
+   accessible via `get-color("amber", 300)` (`_base-palette.scss`).
+2. **Couche 1 — le rail** — 11 crans numériques `$gray-50` … `$gray-950`
+   (famille `stone`), plus les alias `$off-white`/`$near-black` (= `$gray-50`
+   / `$gray-950`, resynchronisés après chaque transformation) ; primitives
+   sémantiques `$accent`, `$accent-strong`, `$accent-ink`, `$accent-soft`,
+   `$link`, `$link-hover`, `$success`, `$danger`. Toutes tirées de la palette
+   via `get-color()` — les transformations retrouvent ensuite ces métadonnées
+   (famille + poids) par recherche inverse (`analyze-tailwind-color`).
+3. **Couche 2 — les rôles** — `apply-roles()` dérive ~15 tokens
+   (`$bg-base`, `$bg-subtle`, `$fg-base`, `$fg-on-emphasis`, `$border-base`,
+   `$focus-ring`, …) du rail et des primitives. Appelé par chaque moteur
+   entre la transformation et `apply-theme-variables()`.
+4. **Couche 3 — variables dérivées** — `apply-theme-variables()` : ~70
+   variables (`$color-header-bg`, `$color-portfolio-tag-bg`, …) calculées à
+   partir des rôles (pas directement du rail). C'est la couche qui mappe la
+   sémantique du design vers les éléments concrets de l'UI, propre au
+   portfolio (hors périmètre du futur paquet — voir § 6.1). Ré-invoquer ce
+   mixin après mutation des couches 1/2 recalcule toute la cascade.
+5. **Custom properties CSS** — `generate-theme-css-vars()` photographie
+   l'état courant des globales Sass en `--*` (rail, primitives, rôles,
+   variables dérivées). S'y ajoutent des constantes inter-thèmes :
+   `--constant-off-white`, `--constant-near-black`, `--constant-error-color`,
+   `--constant-success-color`.
 
 ### 4.2 Le patron d'un fichier de thème
 
@@ -140,6 +152,7 @@ Chaque `_X.scss` de `src/styles/themes/` suit le même schéma en 3 temps :
     "overrides": (…),       // variables excluded from transformation
   );
   @include transform-light-to-x($x-config);
+  // ^ internally: transform rail + primitives → apply-roles() → apply-theme-variables()
 
   // 3. Manual overrides (Sass globals with !global, or even nested CSS
   //    rules that compile inside the [data-theme="x"] block)
@@ -168,8 +181,9 @@ Cas particulier : les thèmes anti-glare se **composent** —
   par des `special-colors` fixes (ex. deutéranopie : vert → `#0075ff`,
   rouge → `#ffcc00`) ; les autres passent par
   `adapt-color-for-colorblindness()` qui déplace les teintes HSL vers des
-  zones perceptibles (matrices LMS présentes mais le chemin effectif est le
-  déplacement HSL).
+  zones perceptibles (les matrices de simulation LMS jamais consommées par
+  le chemin effectif ont été purgées en phase 1 de la migration des
+  fondations — voir CHANGELOG).
 - **Daltonismes légers** (`transform-light-to-{…}anomaly`) :
   `adapt-color-for-color-anomaly()` amplifie seulement les différences —
   décalage de teinte et boost de saturation proportionnels au facteur
@@ -205,9 +219,10 @@ sémantique.
 ### 4.6 Le runtime React
 
 1. **Anti-FOUC** : script inline `beforeInteractive`
-   (`src/app/[lang]/layout.tsx`) — la liste des thèmes valides y est
-   dupliquée en dur (à garder synchronisée avec `VALID_THEMES`, cf. bug
-   corrigé le 2026-07-01).
+   (`src/app/[lang]/layout.tsx`) — injecte désormais `THEMES` depuis
+   `src/config/themes.ts` (source unique, voir § 3 ; résolu en phase 7 de la
+   migration des fondations, cf. bug de désynchronisation corrigé le
+   2026-07-01 avant que la source unique n'existe).
 2. **`useTheme()`** : source de vérité côté React. Init paresseuse
    (localStorage → matchMedia → `"light"`), `setTheme()` écrit l'attribut et
    localStorage, un `MutationObserver` resynchronise l'état si `data-theme`
@@ -227,6 +242,7 @@ Constats factuels issus de l'analyse du code, sans hiérarchie :
    référence des maps disparues ; de nombreuses anciennes versions vivent en
    commentaires dans les fichiers de thèmes (parfois plus longues que le code
    actif, ex. `_dark.scss` : 85 lignes de commentaires pour 70 de code).
+   *(résolu — voir CHANGELOG du 2026-07-03, phase 1)*
 2. **Mutation séquentielle de globales Sass** : le pipeline fonctionne parce
    que chaque bloc de thème repart d'un reset `light-theme-variables()`.
    L'ordre d'exécution est porteur de sens — fragile si on réorganise les
@@ -238,14 +254,26 @@ Constats factuels issus de l'analyse du code, sans hiérarchie :
 4. **La liste des variables existe en plusieurs exemplaires** à garder
    synchronisés manuellement : `apply-theme-variables()`,
    `generate-theme-css-vars()`, et chaque mixin de transformation.
+   *(résolu partiellement — voir CHANGELOG du 2026-07-03, phase 6 : les
+   moteurs ne transforment plus que le rail + ~19 primitives/rôles au lieu
+   des ~70 variables de couche 3 directement ; la couche 3 elle-même reste
+   listée séparément dans `apply-theme-variables()` et
+   `generate-theme-css-vars()` — un registre central unifiant les trois
+   reste une piste future, § 7)*
 5. **La liste des thèmes existe en 3 exemplaires** : `VALID_THEMES`
    (useTheme), le script inline anti-FOUC, et les blocs `[data-theme]` SCSS
    (+ le type `ThemeOption` et les handlers de l'AccessibilityMenu).
+   *(résolu — voir CHANGELOG du 2026-07-03, phase 7 : source unique
+   `src/config/themes.ts` pour le runtime ; les blocs SCSS restent à
+   synchroniser manuellement jusqu'à l'extraction en paquet)*
 6. **API Sass dépréciée** : `@import` (au lieu de `@use`/`@forward`),
    `darken()`/`lighten()`, division `/` — tout cela disparaît dans les
    versions récentes de Dart Sass. Bloquant pour un packaging pérenne.
+   *(résolu — voir CHANGELOG du 2026-07-03, phase 5 : migration complète,
+   compilation sans avertissement de dépréciation)*
 7. **Artefacts de débogage dans `setTheme()`** : reflow forcé, classe
    `theme-switching` ajoutée/retirée, `console.log` en production.
+   *(résolu — voir CHANGELOG du 2026-07-03, phase 2)*
 8. **Nommage : une convention voulue mais invérifiable.** Le mélange
    underscore/tiret des variables dérivées suit une convention délibérée de
    Simon : underscore = séparateur de niveaux (façon BEM :
@@ -260,6 +288,9 @@ Constats factuels issus de l'analyse du code, sans hiérarchie :
    futur registre (maps), pas par la typographie des noms. Divers : typo
    `bg-texte`, famille `redd` (double d pour éviter la collision avec le
    mot-clé CSS `red`).
+   *(résolu partiellement — voir CHANGELOG du 2026-07-03, phase 4 :
+   kebab-case généralisé, doublons dédupliqués, typo `bg-texte` corrigée ;
+   le registre central portant la hiérarchie reste une piste future, § 7)*
 9. **Poids CSS** : 12 blocs × ~80 custom properties + règles imbriquées
    dupliquées dans certains thèmes ; tout est embarqué même si l'utilisateur
    n'utilise qu'un thème.
@@ -273,6 +304,10 @@ Constats factuels issus de l'analyse du code, sans hiérarchie :
     constantes `--constant-error-color`/`--constant-success-color` codées en
     dur — les adaptations daltoniennes de `$success-color`/`$error-color`
     calculées en Sass ne sont donc jamais visibles côté CSS.
+    *(résolu partiellement — voir CHANGELOG du 2026-07-03, phase 6 :
+    `--success`/`--danger` (renommés, § 6.1) sont désormais émises avec les
+    valeurs thématisées ; les constantes `--constant-success-color`/
+    `--constant-error-color` sont conservées telles quelles, à dessein)*
 
 ## 6. Architecture cible du composant exportable (décisions actées)
 
@@ -280,7 +315,10 @@ Constats factuels issus de l'analyse du code, sans hiérarchie :
 Simon. Ces décisions orientent toutes les migrations à venir. Statut : le
 modèle à trois couches, le périmètre du paquet et la trajectoire sont
 **actés** ; le vocabulaire précis de la couche 2 est **accepté comme base**,
-affinable avant son introduction.
+affinable avant son introduction. Complété le **2026-07-03** par deux
+décisions actées : élargissement du périmètre au **système de préférences
+d'accessibilité complet** (§ 6.5) et **distribution hybride** npm +
+scaffolding (§ 6.3).
 
 ### 6.1 Le modèle à trois couches
 
@@ -292,16 +330,15 @@ Couche 1 — RAIL        $gray-50 … $gray-950 (+ familles Tailwind)
 Couche 2 — RÔLES       ~23 tokens : bg-*, fg-*, border-*, accent*, link*,
   (API du paquet)      focus-ring, success, danger — noms parlants, stables
         │              à travers les 12 thèmes
-Couche 3 — COMPOSANTS  ~70 $color_* : câblage fin propre au projet,
+Couche 3 — COMPOSANTS  ~70 $color-* : câblage fin propre au projet,
   (hors paquet)        jamais transformé par les moteurs
 ```
 
-**Couche 1 — le rail (primitives).**
+**Couche 1 — le rail (primitives).** *(migré le 2026-07-03, voir
+[CHANGELOG](./CHANGELOG.md) phase 3)*
 
 - 11 crans numériques `$gray-50` … `$gray-950`, le poids Tailwind de
-  référence du thème light dans le nom. Aujourd'hui le cran 100 manque et
-  les noms sont descriptifs (`gray-medium-light`…) — c'est l'objet de la
-  première migration.
+  référence du thème light dans le nom.
 - Les noms sont **volontairement non parlants** : ce sont des coordonnées
   sur lesquelles les moteurs font de l'arithmétique de décalage. Personne
   (humain ou IA) n'est censé les choisir au quotidien — on choisit un rôle
@@ -317,7 +354,8 @@ Couche 3 — COMPOSANTS  ~70 $color_* : câblage fin propre au projet,
   adjectifs _s'inversent_ en dark (`gray-lightest` y contient un gris
   foncé) alors qu'un numéro de slot reste honnête.
 
-**Couche 2 — les rôles (l'API publique du paquet).**
+**Couche 2 — les rôles (l'API publique du paquet).** *(migré le 2026-07-03,
+voir [CHANGELOG](./CHANGELOG.md) phase 6)*
 
 - Les **noms** des rôles appartiennent au paquet (ils sont le contrat sur
   lequel s'appuient moteurs, garanties de contraste et thème high-contrast) ;
@@ -392,16 +430,20 @@ WCAG dans les 12 thèmes ; styler un nouveau composant = choisir un `bg`, un
 | Liste des thèmes — source unique dont dérivent type TS, `VALID_THEMES`, script anti-FOUC et blocs SCSS | Sous-ensemble de thèmes émis (à la carte, pour un CSS léger) |
 | Palettes Tailwind embarquées (maps statiques)                                                          | Palettes maison éventuelles (contrat : 11 poids)             |
 | Émetteur des blocs `[data-theme]`                                                                      | Couche 3 (tokens de composants)                              |
-| Runtime : `useTheme`, script anti-FOUC généré, `<AccessibilityMenu>` en opt-in                         | Rôles additionnels éventuels (extension, pas renommage)      |
-| Vérificateur de contrastes WCAG sur les paires de rôles                                                | —                                                            |
+| Runtime : cœur des préférences (persistance, application DOM, anti-FOUC), `useTheme`                  | Rôles additionnels éventuels (extension, pas renommage)      |
+| UI **scaffoldée** : déclencheur (icône) + carte d'accessibilité complète, copiées dans le projet (§ 6.3) | Personnalisation libre de l'UI copiée (libellés, styles, modules) |
+| Polices d'accessibilité **embarquées** (module opt-in — licences à vérifier avant publication, § 6.5) | Polices de base du site (inchangées)                         |
+| Vérificateur de contrastes WCAG sur les paires de rôles                                                | Respect des contrats hôte (§ 6.5 : tailles en `rem`, animations soumises à `reduce-motion`) |
 | Exemples de couche 3 commentés                                                                         | —                                                            |
 
 Esquisse de structure et de consommation :
 
 ```
-@lostintab/a11y-themes            (nom à décider)
+@lostintab/a11y-prefs             (nom à décider)
 ├── scss/       palettes, rail, rôles, moteurs, émetteur [data-theme]
-├── react/      useTheme, script anti-FOUC, <AccessibilityMenu> (opt-in)
+├── react/      cœur des préférences, useTheme, script anti-FOUC
+├── fonts/      polices d'accessibilité embarquées (@font-face, opt-in)
+├── cli/        init (scaffolding de l'UI + config), init --diff
 ├── testing/    vérificateur de contrastes WCAG
 └── examples/   couche 3 commentée (recettes du portfolio)
 ```
@@ -428,29 +470,50 @@ Esquisse de structure et de consommation :
 Prérequis technique : la migration `@import` → `@use`/`@forward` — le modèle
 de configuration `@use … with ()` n'existe pas avec `@import`.
 
-### 6.3 Distribution : options et trajectoire
+### 6.3 Distribution : modèle hybride (acté le 2026-07-03)
 
-Options envisagées :
+**Décision** : distribution **hybride**, découpée selon la nature de chaque
+partie — c'est l'anatomie de shadcn/ui lui-même (couche stylée copiée chez le
+dev, primitives critiques via npm/Radix) :
 
-1. **Workspace pnpm dans ce dépôt** (`packages/`) — point de départ obligé :
-   zéro infrastructure, le portfolio devient le premier consommateur et le
-   banc d'essai de l'API.
-2. **Publication npm** (publique ou privée) quand l'API est stable — la
-   cible, cohérente avec l'objectif multi-domaines : un correctif de
-   contraste dans le paquet se déploie partout par bump de version.
-3. **Copie dans le projet** (modèle shadcn/ui) — écarté comme modèle
-   principal (perte de la centralisation des correctifs, contraire à la
-   logique de garanties d'accessibilité partagées) ; option de secours pour
-   un projet très divergent.
+| Partie | Nature | Canal |
+| --- | --- | --- |
+| Les **moteurs** (transformations, cœur des préférences, anti-FOUC, garanties et tests de contraste) | doit rester correct, correctifs centralisés | **npm** — un fix d'accessibilité se déploie partout par bump de version |
+| L'**UI** (déclencheur + carte) + config + exemples de couche 3 | chaque projet la restyle, la traduit, la réorganise | **copiée dans le projet** via une CLI de scaffolding — le dev la possède |
+
+Expérience dev cible :
+
+```bash
+pnpm add @lostintab/a11y-prefs        # moteurs (mis à jour par versions)
+pnpm dlx @lostintab/a11y-prefs init   # copie l'UI + theme.config.scss +
+                                      # exemples dans le projet
+pnpm dlx @lostintab/a11y-prefs init --diff   # voir les évolutions de l'UI
+                                             # de référence, à reporter ou non
+```
+
+Points ayant motivé la décision (discussion du 2026-07-03) : un paquet npm
+livre de toute façon le SCSS/TS **en source lisible** (pas une boîte noire) ;
+`pnpm patch` reste l'échappatoire pour modifier proprement la partie moteur ;
+la copie intégrale (shadcn pur) a été écartée comme modèle *unique* car elle
+prive les sites des correctifs d'accessibilité centralisés.
+
+Historique des options étudiées avant décision : (1) workspace pnpm seul,
+(2) npm seul, (3) copie shadcn seule. Le workspace pnpm reste le **point de
+départ** de l'extraction (étape 3 de la trajectoire) ; le modèle hybride
+décrit la forme **publiée** (étape 4).
 
 Trajectoire décidée (faire mûrir l'API dans un vrai site avant de la
 graver — extraire d'abord serait l'anti-pattern) :
 
-1. **Migration du rail** (couche 1) dans le portfolio — plan dédié pour une
-   IA exécutante.
-2. **Introduction de la couche 2** in situ — validation des rôles contre un
-   site réel.
-3. **Extraction en workspace pnpm** — le portfolio consomme le paquet.
+1. ✅ **Migration du rail** (couche 1) dans le portfolio — **faite le
+   2026-07-03**, voir [PLAN-migration-fondations.md](./PLAN-migration-fondations.md)
+   (phase 3) et le [CHANGELOG](./CHANGELOG.md).
+2. ✅ **Introduction de la couche 2** in situ — **faite le 2026-07-03**
+   (même plan, phase 6) ; validation des rôles contre le site réel encore à
+   faire dans la durée (usage quotidien), mais le câblage complet des ~70
+   tokens de couche 3 vers les rôles est en place.
+3. **Extraction en workspace pnpm** — le portfolio consomme le paquet. *(pas
+   commencé — chantier suivant, cf. mémoire de suivi du projet)*
 4. **Publication npm** quand un deuxième projet arrive.
 
 ### 6.4 Quelles décisions bloquent quelles étapes
@@ -459,11 +522,48 @@ graver — extraire d'abord serait l'anti-pattern) :
 base des rôles (acceptée, vocabulaire affinable jusqu'à l'étape 2),
 convention kebab-case + hiérarchie portée par le registre (actée).
 
-Reportable **sans risque** : le canal de distribution (workspace vs npm vs
-copie). Il n'influence pas le code des couches, seulement l'endroit où il
-vivra au moment de l'extraction (étape 3) — les migrations des étapes 1 et 2
-sont des refactorings internes au portfolio, valides quel que soit le mode
-d'export retenu.
+Étapes 1 et 2 de la trajectoire (§ 6.3) exécutées le 2026-07-03. Avant
+l'étape 3 (extraction), deux chantiers explicitement hors périmètre de
+cette migration restent à faire in situ (cf. « Hors périmètre » du plan) :
+réécriture déclarative du moteur high-contrast sur les rôles, et tests
+automatiques de contraste WCAG sur les paires de rôles.
+
+Le canal de distribution, initialement identifié comme reportable, a été
+**acté le 2026-07-03** (modèle hybride, § 6.3). Restent reportables sans
+risque : le nom définitif du paquet, et le choix registre npm public vs
+privé.
+
+### 6.5 Élargissement : du système de thèmes au système de préférences d'accessibilité (acté le 2026-07-03)
+
+Le composant exportable ne couvre pas seulement les thèmes de couleurs :
+c'est l'**ensemble du menu d'accessibilité actuel** (retour à la vision
+d'origine de `darkmode-plus-a11y`). Le livrable visible : le site hôte
+installe le **déclencheur** (l'icône d'accessibilité) et obtient au clic une
+**carte d'accessibilité complète et fonctionnelle**, personnalisable puisque
+scaffoldée dans son projet (§ 6.3).
+
+Toutes les fonctionnalités partagent le même patron, qui constitue le cœur
+du paquet :
+
+```
+préférence utilisateur → persistance (localStorage) → application au DOM
+(attribut, classe ou variable CSS sur <html>) → le CSS du site y répond
+```
+
+Modules (chacun **opt-in** — un projet peut ne prendre que les thèmes) :
+
+| Module | Mécanisme DOM | Difficulté | Point d'attention |
+| --- | --- | --- | --- |
+| Thèmes de couleurs | `data-theme` | fait (fondations 2026-07-03) | — |
+| Taille de texte (zoom) | `--font-size-factor` | facile | **contrat hôte** : tailles en `rem`/`em` sensibles au facteur |
+| Réduction des animations | classe `reduce-motion` | facile | **contrat hôte** : les animations doivent s'y soumettre (mixin fourni) |
+| Polices d'accessibilité | classes de police | moyen | polices **embarquées dans le paquet** (décision Simon 2026-07-03) ; **vérifier les licences avant publication** : OpenDyslexic, Andika, Raleway Dots = OFL (ok) ; Sylexiad, Tiresias, Atkinson Hyperlegible = à vérifier. N'affecte pas les polices de base du site hôte |
+| Mode dyslexie optimisé | classe `dyslexia-optimized` | moyen | dépend du module polices |
+| UI (déclencheur + carte) | — | moyen | scaffoldée, pas dans npm (§ 6.3) |
+
+Conséquence sur le nom et le concept : « système de thèmes » devient un
+module — le paquet est un **système de préférences d'accessibilité**
+(`a11y-prefs` comme nom de travail).
 
 ## 7. Pistes d'amélioration envisagées
 
@@ -474,16 +574,19 @@ Chaque chantier entamé devra être tracé dans le
 
 ### Assainissement (préalable au packaging)
 
+*(faite — voir [PLAN-migration-fondations.md](./PLAN-migration-fondations.md)
+et le [CHANGELOG](./CHANGELOG.md) du 2026-07-03, phases 1 à 7)*
+
 - **Purger le code mort** : `_variables.scss`, `_dark-functions.scss`,
   `transform-for-dark()`, et les blocs commentés historiques (l'historique
-  git suffit).
+  git suffit). *(fait, phase 1)*
 - **Nettoyer `setTheme()`** : retirer reflow forcé, classe `theme-switching`
-  et `console.log` (ou les conditionner à un mode debug).
+  et `console.log` (ou les conditionner à un mode debug). *(fait, phase 2)*
 - **Unifier le nommage** des variables (une seule convention, supprimer les
-  doublons underscore/tiret).
+  doublons underscore/tiret). *(fait, phase 4)*
 - **Migrer vers l'API Sass moderne** : `@use`/`@forward`, `math.div`,
   `color.adjust`/`color.scale`. Condition nécessaire pour publier un paquet
-  utilisable durablement.
+  utilisable durablement. *(fait, phase 5)*
 
 ### Architecture
 
@@ -494,9 +597,12 @@ Chaque chantier entamé devra être tracé dans le
   et les transformations. Élimine les duplications n° 3 et 4, et supprime le
   besoin de `analyze-tailwind-color()` (recherche inverse) puisque les
   métadonnées famille/poids seraient portées par le registre.
-- **Source de vérité unique pour la liste des thèmes** : un JSON (ou map)
-  unique dont dériveraient le type TS `ThemeOption`, `VALID_THEMES`, le
-  script anti-FOUC et, via une boucle SCSS, les blocs `[data-theme]`.
+- **Source de vérité unique pour la liste des thèmes** : *(fait côté
+  runtime, phase 7 — `src/config/themes.ts` dont dérivent `ThemeOption`,
+  le script anti-FOUC et l'AccessibilityMenu)*. Reste : dériver aussi les
+  blocs `[data-theme]` SCSS de la même source (nécessiterait une boucle
+  Sass ou une génération de code — pas de mécanisme simple sous `@use`
+  sans un pas de build dédié).
 - **Modéliser les 3 axes de l'UI dans l'état** : le menu présente
   Mode/Confort/Vision comme indépendants mais le modèle est un thème plat —
   d'où la ref `lastBaseTheme` et l'impossibilité de combiner (ex. dark +

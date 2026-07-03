@@ -1,8 +1,10 @@
 /** @format */
 
-@import "../abstracts/base-palette";
-@import "../abstracts/theme-utils";
-@import "../themes/theme-variables";
+@use "sass:map";
+@use "../abstracts/base-palette" as *;
+@use "../abstracts/theme-utils" as *;
+@use "../themes/theme-variables" as *;
+@use "light" as *;
 
 @mixin high-contrast-theme-variables() {
 	// D'abord appliquer les variables du thème light
@@ -45,20 +47,15 @@
 		color: #000000 !important;
 		outline: 3px solid #ffffff !important;
 		outline-offset: 0.25rem;
-
-		// // Assurer que tous les éléments enfants héritent du style
-		// * {
-		// 	color: #000000 !important;
-		// }
 	}
 
 	// Surcharges manuelles après l'automatisation si nécessaire
 
-	$color_header_bg: map-get($hc-palette, "highlight") !global;
-	$color_header_text: #000000 !global;
-	$color_header_text-role: #000000 !global;
-	$color_header_blog-link_bg: #000000 !global;
-	$color_header_blog-link_text: #ffff00 !global;
+	$color-header-bg: map.get($hc-palette, "highlight") !global;
+	$color-header-text: #000000 !global;
+	$color-header-text-role: #000000 !global;
+	$color-header-blog-link-bg: #000000 !global;
+	$color-header-blog-link-text: #ffff00 !global;
 
 	.skills__icon-wrapper {
 		&.is-rotating {

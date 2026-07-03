@@ -88,7 +88,7 @@
 		font-weight: 600;
 		margin: 0;
 		padding-bottom: 0.25rem;
-		border-bottom: 0.0625rem solid var(--color-divider, var(--gray-light));
+		border-bottom: 0.0625rem solid var(--color-divider, var(--gray-400));
 	}
 
 	// Groupe avec label
@@ -120,7 +120,7 @@
 		min-width: 5rem;
 
 		&.active {
-			background: var(--primary-color);
+			background: var(--accent);
 			// color: var(--color-button-active-text);
 			color: black;
 			border-color: transparent;
@@ -145,7 +145,7 @@
 	&__visual-help-group {
 		// margin-bottom: 1.25rem;
 		padding-bottom: 0.5rem;
-		// border-bottom: 0.0625rem dotted var(--color-divider, var(--gray-lighter));
+		// border-bottom: 0.0625rem dotted var(--color-divider, var(--gray-300));
 
 		&:last-child {
 			margin-bottom: 0;
@@ -156,7 +156,7 @@
 
 	&__help-description {
 		font-size: 0.75rem;
-		color: var(--color-text-secondary, var(--gray-dark));
+		color: var(--color-text-secondary, var(--gray-700));
 		margin: 0 0 0.5rem 0;
 		font-style: italic;
 	}
@@ -223,7 +223,7 @@
 		border-radius: 50%;
 		border: 1px solid var(--color-button-border, #ccc);
 		background-color: transparent;
-		color: var(--primary-color, #0077cc);
+		color: var(--accent, #0077cc);
 		cursor: pointer;
 		padding: 0;
 		transition: all 0.2s ease;
@@ -361,7 +361,7 @@
 		margin-top: 0.25rem;
 		margin-bottom: 0.5rem;
 		padding-top: 1rem;
-		border-top: 1px dashed var(--gray-lighter);
+		border-top: 1px dashed var(--gray-300);
 		text-align: center;
 	}
 
@@ -398,7 +398,7 @@
 		align-items: center;
 		justify-content: center;
 		gap: 0.5rem;
-		// color: var(--primary-color);
+		// color: var(--accent);
 		padding: 0.5rem;
 		border-radius: 0.25rem;
 		// transition: all 0.2s ease;
@@ -466,16 +466,16 @@
 // 		box-shadow: none !important;
 
 // 		&:hover {
-// 			border-color: var(--link-hover-color) !important;
-// 			background: var(--link-hover-color) !important;
+// 			border-color: var(--link-hover) !important;
+// 			background: var(--link-hover) !important;
 // 		}
 
 // 		&--is-focused {
-// 			border-color: var(--link-color) !important;
-// 			background: var(--link-color) !important;
+// 			border-color: var(--link) !important;
+// 			background: var(--link) !important;
 // 			color: var(--off-white) !important;
 
-// 			outline: 2px solid var(--link-color) !important;
+// 			outline: 2px solid var(--link) !important;
 // 			outline-offset: 0.125rem !important;
 // 			box-shadow: none !important;
 // 		}
@@ -521,7 +521,7 @@
 // 		}
 
 // 		// &--is-selected {
-// 		// 	background-color: var(--primary-color) !important;
+// 		// 	background-color: var(--accent) !important;
 // 		// 	// color: var(--color-button-active-text) !important;
 // 		// }
 // 	}
@@ -536,7 +536,7 @@
 // 		color: var(--color-main-text) !important;
 
 // 		&:hover {
-// 			color: var(--primary-color) !important;
+// 			color: var(--accent) !important;
 // 		}
 // 	}
 
@@ -705,7 +705,7 @@ select.accessibility-menu__select:not(.react-select__control) {
 // 	}
 
 // 	&--is-selected {
-// 		background-color: var(--primary-color) !important;
+// 		background-color: var(--accent) !important;
 // 		color: black !important;
 
 // 		[data-theme="high-contrast"] & {
@@ -738,15 +738,15 @@ select.accessibility-menu__select:not(.react-select__control) {
 		box-shadow: none !important;
 
 		&:hover {
-			border-color: var(--link-hover-color) !important;
-			background: var(--link-hover-color) !important;
+			border-color: var(--link-hover) !important;
+			background: var(--link-hover) !important;
 		}
 
 		&--is-focused {
-			border-color: var(--link-color) !important;
-			background: var(--link-color) !important;
+			border-color: var(--link) !important;
+			background: var(--link) !important;
 			color: var(--off-white) !important;
-			outline: 2px solid var(--link-color) !important;
+			outline: 2px solid var(--link) !important;
 			outline-offset: 0.125rem !important;
 			box-shadow: none !important;
 		}
@@ -794,7 +794,7 @@ select.accessibility-menu__select:not(.react-select__control) {
 		}
 
 		// &--is-selected {
-		// 	background-color: var(--primary-color);
+		// 	background-color: var(--accent);
 		// 	color: black;
 		// }
 
@@ -814,7 +814,7 @@ select.accessibility-menu__select:not(.react-select__control) {
 		color: var(--color-main-text) !important;
 
 		&:hover {
-			color: var(--primary-color) !important;
+			color: var(--accent) !important;
 		}
 	}
 
@@ -1001,7 +1001,7 @@ select.accessibility-menu__select:not(.react-select__control) {
 
 // Styles de base pour les options React-Select (tous thèmes)
 html body .react-select__option--is-selected {
-	background-color: var(--primary-color) !important;
+	background-color: var(--accent) !important;
 	color: var(--constant-near-black) !important;
 }
 

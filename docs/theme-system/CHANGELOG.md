@@ -13,6 +13,302 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-03
+
+### Docs (architecture cible — décisions)
+
+- Deux décisions actées avec Simon, inscrites au README § 6 :
+  **élargissement** du composant exportable au système de préférences
+  d'accessibilité complet (nouveau § 6.5 : déclencheur + carte livrés
+  fonctionnels, modules opt-in zoom/polices/animations/dyslexie, polices
+  d'accessibilité embarquées — licences à vérifier avant publication,
+  contrats hôte `rem`/`reduce-motion`) et **distribution hybride** (§ 6.3
+  réécrit : moteurs via npm pour les correctifs centralisés, UI scaffoldée
+  dans le projet via une CLI `init`, à la manière shadcn/Radix). Nom de
+  travail : `a11y-prefs`. Périmètre § 6.2 et § 6.4 mis à jour en
+  conséquence.
+
+### Fixed (post-revue)
+
+- Résolution de la déclaration morte `var(--color-gray-dark)` (custom
+  property jamais définie ; de plus, `rgba(var(--x), a)` est invalide en
+  CSS) : les ombres portées des cartes portfolio, des cartes compétences et
+  du formulaire de contact, ainsi qu'une bordure du sélecteur de langue, ne
+  s'affichaient pas. Nouveau token `--color-shadow`
+  (`rgba($border-strong, 0.1)`, calculé en Sass par thème, sur le modèle de
+  `--color-tooltip-bg`) consommé par les 3 `box-shadow` ; la bordure passe
+  sur `var(--border-strong)`. **Changement visuel voulu** : ces ombres et
+  cette bordure (re)deviennent visibles, dans les 12 thèmes.
+
+### Docs (phase 8 — finalisation)
+
+- Phase 8 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
+  vérification globale (`pnpm build`/`lint`/`test` verts ; contrôle visuel
+  des 12 thèmes via un script CDP headless — captures d'écran + zéro erreur
+  console ; `pnpm test:a11y` non exécutable dans cet environnement, Chromium
+  de pa11y-ci absent — non lié à la migration). Mise à jour de
+  [README.md](./README.md) : § 3 (fichiers purgés marqués, `src/config/themes.ts`
+  ajouté), § 4 (chaîne à trois couches, noms à jour), § 5 (constats n° 1, 5,
+  6, 7 marqués résolus, n° 4, 8, 11 résolus partiellement), § 6 (étapes 1 et
+  2 de la trajectoire marquées faites), § 7 (section « Assainissement »
+  marquée faite). Entrée de synthèse ajoutée au
+  [CHANGELOG](../../CHANGELOG.md) global.
+  - **Écarts constatés par rapport au plan initial**, tous identifiés et
+    tranchés en cours d'exécution (voir entrées phases 3, 4, 5, 6
+    ci-dessous pour le détail) : deux régressions de valeur détectées et
+    corrigées pendant la migration Sass (phase 5 : clamping de
+    `color.adjust`, arrondi de `color.channel`) ; une régression de valeur
+    détectée et corrigée pendant l'introduction des rôles (phase 6 :
+    tokens de bouton non réappliqués par le moteur anti-éblouissement) ;
+    un deuxième changement visuel non prévu par le plan, mineur et
+    documenté (phase 4 : la couleur du texte des tags portfolio, jusque-là
+    non résolue à cause de la typo `bg-texte`, s'applique réellement pour
+    la première fois) ; un écart de comptage sans conséquence dans le texte
+    du plan (phase 3 : 14 blocs de thème réels contre 13 annoncés).
+  - **Point laissé en suspens**, signalé explicitement par le plan comme
+    hors périmètre : `src/styles/pages/_contact.scss` ligne ~143 (et deux
+    occurrences supplémentaires trouvées en cours de route,
+    `_skills.scss:108` et `_language-selector.scss:15`) référencent
+    `rgba(var(--color-gray-dark), 0.1)`, une custom property qui n'a jamais
+    existé — déclaration morte antérieure à cette migration, non corrigée
+    (décision à prendre séparément par Simon).
+
+### Added (phase 7 — single source of truth, runtime)
+
+- Phase 7 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
+  élimination de la triple duplication de la liste des 12 thèmes (README
+  § 5 constat n° 5). Nouveau `src/config/themes.ts` exportant `THEMES`
+  (`as const`) et le type `ThemeOption` dérivé.
+  - `useTheme.ts` : suppression du type `ThemeOption` local et de
+    `VALID_THEMES`, import depuis `@/config/themes` (cast
+    `readonly string[]` pour `.includes()` sur un tableau `as const`).
+  - `layout.tsx` : le script anti-FOUC injecte désormais
+    `${JSON.stringify(THEMES)}` au lieu de la liste codée en dur — vérifié
+    dans le HTML généré par `pnpm build` (les 12 thèmes sont bien présents
+    dans le script inline).
+  - `AccessibilityMenu.tsx` : le cast union inline de 12 littéraux dans
+    `handleColorVisionChange` remplacé par `ThemeOption`.
+  - Ajout d'un commentaire de synchronisation dans `_theme-system.scss`
+    pointant vers `src/config/themes.ts` (les blocs `[data-theme]` SCSS
+    restent à synchroniser manuellement jusqu'à l'extraction en paquet).
+  - Aucun changement de CSS compilé (diff vide) ; `pnpm build`, `pnpm lint`,
+    `pnpm test` verts.
+
+### Changed (phase 6 — layer 2, role tokens)
+
+- Phase 6 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
+  introduction de la couche 2 (rôles), voir README § 6.1. **Seule phase du
+  plan avec un changement visuel autorisé** (voir plus bas).
+  - Renommage des primitives sémantiques : `$primary-color` → `$accent`,
+    `$secondary-color` → `$accent-ink`, `$tertiary-color` → `$accent-soft`,
+    `$link-color` → `$link`, `$link-color-hover` → `$link-hover`,
+    `$success-color` → `$success`, `$error-color` → `$danger` (Sass et clés
+    de configuration). Nouvelle primitive `$accent-strong` (amber-500),
+    transformée dans chaque moteur à l'identique de `$accent`.
+  - Nouveau mixin `apply-roles()` dans `_theme-variables.scss` : dérive 15
+    tokens de rôle (`$bg-*`, `$fg-*`, `$border-*`, `$focus-ring`) depuis le
+    rail et les primitives, appelé par chaque moteur (et
+    `light-theme-variables()`) entre la transformation et
+    `apply-theme-variables()`.
+  - Recâblage complet des ~70 tokens de couche 3 pour dériver des rôles
+    plutôt que directement du rail/des primitives (table complète en
+    README § 6.3). Corrigé au passage : `--color-button-hover-bg`,
+    `--color-button-hover-text` et `--color-button-active-text` avaient
+    chacun une incohérence préexistante (l'émission CSS lisait directement
+    `$link-hover`/`$off-white`/`$near-black`, en ignorant la variable Sass
+    censée porter cette valeur) — alignées sur la valeur *effective*, donc
+    aucun changement de valeur émise en thème statique.
+  - `generate-theme-css-vars()` : renommage des 5 propriétés de primitives
+    (`--primary-color` → `--accent`, etc.), ajout de 8 propriétés de
+    primitives/feedback (`--accent-strong`, `--success`, `--danger`, …) et
+    15 propriétés de rôles (`--bg-base` … `--focus-ring`). 12 consommateurs
+    composants mis à jour (`var(--primary-color)` → `var(--accent)` ×7 dont
+    un avec valeur de repli, `var(--link-color)` → `var(--link)` ×3,
+    `var(--link-hover-color)` → `var(--link-hover)` ×2 ; le reste des
+    occurrences comptées par le plan était dans des commentaires, mis à
+    jour par cohérence).
+  - **Régression détectée et corrigée pendant la migration** : le moteur
+    anti-éblouissement (`transform-theme-for-anti-glare`) transforme
+    chaque token de couche 3 individuellement et ne recalculait pas
+    `$color-button-hover-bg`/`-text`/`$color-button-active-text` après
+    coup — en les faisant dériver des rôles (couche 2) au lieu de les lire
+    depuis les primitives directement, ces trois tokens seraient restés
+    sur leur valeur *avant* réduction d'éblouissement dans les thèmes
+    `anti-glare-light`/`anti-glare-dark`. Corrigé en les rederivant des
+    rôles resynchronisés (déjà anti-éblouis) juste après `apply-roles()`
+    dans ce moteur.
+  - **Changement visuel** (seul de toute la migration) :
+    `--color-accent-hover` passe de `darken(amber-300, 15%)` à
+    `amber-500` (`#f59e0b`) — remplacement d'un `darken()` arbitraire par
+    un cran du rail, et son équivalent transformé dans les 11 autres
+    thèmes. Vérifié : diff du CSS compilé strictement additif partout
+    ailleurs (rôles + primitives + `accent-strong`/`success`/`danger`
+    ajoutés dans les 14 blocs), confirmé par tri + `comm -3`. Contrôle
+    visuel à faire en phase 8.
+
+### Changed (phase 5 — Sass modules)
+
+- Phase 5 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
+  migration complète `@import` → `@use`/`@forward` sur l'ensemble de
+  `src/styles/` (système de thèmes **et** les autres partials chargés par
+  `main.scss`, puisque `@use` exige que chaque fichier déclare explicitement
+  ses dépendances — l'ancien flattening global de `@import` masquait ces
+  dépendances). Compilation finale **sans aucun avertissement de
+  dépréciation** (`@import`, `darken`/`lighten`, `red`/`green`/`blue`,
+  `hue`/`saturation`/`lightness`, `map-get`/`map-has-key`/`map-merge`,
+  `index`/`nth`/`length`, division `/`, syntaxe `if()`).
+  - Préalable anti-cycle : `get-color()`, `$tailwind-weights`, `$midpoint`
+    déplacés de `_theme-utils.scss` vers `_base-palette.scss`.
+  - `_theme-variables.scss` : toutes les variables mutées par
+    `define-base-colors()`/`apply-theme-variables()` (rail 11 crans,
+    couleurs sémantiques, ~70 tokens de couche 3) désormais déclarées à la
+    racine du module — obligatoire pour que les réaffectations `!global`
+    des moteurs restent valides sous `@use`.
+  - Cycle détecté et corrigé entre `_mixins.scss` et `_placeholders.scss`
+    (extend/include mutuels) : le mixin `word-wrap` (4 déclarations) a été
+    intégré directement dans les deux placeholders qui l'utilisaient plutôt
+    que d'y être inclus, cassant le cycle sans changer le CSS produit.
+  - **Deux régressions détectées et corrigées** pendant la migration (le
+    diff du CSS compilé les a révélées — protocole de vérification
+    fonctionnel) :
+    1. `color.adjust($c, $lightness: -15%)` ne reproduit **pas** le
+       comportement borné de `darken()` : sur une couleur déjà à 0 % de
+       luminosité (ex. `$primary-color` viré au noir pur par un thème),
+       `darken()` plafonne à 0 % alors que `color.adjust()` produit une
+       lightness négative invalide (`hsl(0, 0%, -15%)`). Nouvelle fonction
+       `adjust-lightness-clamped()` dans `_base-palette.scss` qui borne
+       explicitement le résultat entre 0 % et 100 %, utilisée partout où
+       `darken()`/`lighten()` étaient appelés.
+    2. `color.channel($c, "red"/"green"/"blue", $space: rgb)` ne borne pas
+       le résultat à un entier, contrairement aux anciennes fonctions
+       globales `red()`/`green()`/`blue()` — écart constaté sur des couleurs
+       reconstruites via `hsl()` (ex. `rgba(67.6, 64, 60.4, 0.7)` au lieu de
+       `rgba(68, 64, 60, 0.7)`). Tous les appels concernés enveloppés dans
+       `math.round()`.
+  - **Écarts résiduels dans le diff CSS, expliqués et prouvés inoffensifs**
+    (aucune valeur ne change, uniquement confirmé par tri + `comm -3`) :
+    - Les en-têtes de commentaires `/** @format */` et le bloc de
+      documentation de `_theme-utils.scss` n'apparaissent plus qu'**une
+      seule fois** dans le CSS compilé (contre jusqu'à 13× avant) : `@use`
+      ne charge chaque module qu'une fois, alors que `@import` réinjectait
+      tout le fichier à chaque `@import`, y compris ses commentaires de
+      tête. Sans effet sur le runtime (ce sont des commentaires).
+    - Réordonnancement de 3 listes de sélecteurs issues de `@extend`
+      (`.sticky-footer__link:hover, …`, `.sticky-footer__fixed-links, …`,
+      `.skills__title, .skills__subtitle, …`) : même ensemble de
+      sélecteurs, même règle, ordre différent — conséquence du nouveau
+      graphe de chargement des modules. Sans effet (mêmes déclarations,
+      pas de conflit de spécificité entre ces sélecteurs).
+
+### Fixed
+
+- Phase 4 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
+  typo `bg-texte` corrigée — `$color_portfolio-tag_bg-texte` devient
+  `$color-portfolio-tag-text`, et la custom property émise
+  `--color-portfolio-tag-bg-text` devient `--color-portfolio-tag-text`. Le
+  consommateur (`_portfolioCard.scss`) référençait déjà le nom correct
+  (`var(--color-portfolio-tag-text)`) : la couleur du texte des tags
+  portfolio, jusqu'ici non résolue (variable inexistante → héritage du
+  parent), s'applique désormais réellement. Seul écart visuel non prévu par
+  le plan initial, distinct du changement d'accent-hover de la phase 6 — à
+  valider visuellement (phase 8).
+
+### Changed
+
+- Phase 4 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
+  uniformisation kebab-case de la couche 3 (README § 5.1/§ 6, ~66 variables
+  `$color_...` → `$color-...`, dont `$color_button_hover_bg`). Sans effet sur
+  le CSS compilé (Sass traite `-`/`_` comme interchangeables) — diff vide
+  après normalisation, hormis la correction de typo ci-dessous. Suppression
+  de deux doubles assignations devenues visibles après uniformisation
+  (`$color-main-bg`/`$color_main-bg`, `$color-main-text`/`$color_main-text`
+  — même variable assignée deux fois dans `apply-theme-variables()`) : une
+  seule conservée par variable.
+
+### Added
+
+- Phase 3 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
+  couche 1 (rail numérique) complète — voir README § 6.1. Renommage de
+  l'échelle de gris descriptive (`$gray-darkest`…`$gray-lightest`, 8 crans)
+  en coordonnées Tailwind (`$gray-50`…`$gray-950`, 11 crans), avec ajout du
+  cran manquant `gray-100`. `$off-white`/`$near-black` deviennent de simples
+  alias resynchronisés (`$off-white: $gray-50`, `$near-black: $gray-950`)
+  après chaque transformation de thème, au lieu d'être transformés
+  indépendamment de l'échelle de gris.
+  - Moteurs mis à jour pour transformer les 11 crans (au lieu de 8 + 2
+    alias séparés) : `transform-light-to-dark`,
+    `transform-light-to-high-contrast`, `transform-light-to-achromatopsia`
+    (`_theme-utils.scss`), `transform-theme-for-anti-glare`
+    (`_anti-glare-functions.scss`). Les moteurs daltoniens (-opies/-anomalies)
+    ne transforment pas les gris — inchangés, par conception.
+  - Clés de configuration renommées dans `_dark.scss` et `_achromatopsia.scss`
+    (+ ajout de `"gray-100": 0`, cran non consommé par les variables
+    dérivées). Dans `_deuteranomaly.scss`, `_protanomaly.scss`,
+    `_tritanomaly.scss` : suppression des clés `"gray-*"` qui étaient des
+    entrées mortes (jamais consommées par ces moteurs).
+  - `generate-theme-css-vars()` émet désormais `--gray-50`…`--gray-950` (11
+    lignes, ordre `950`→`50` conservé pour un diff d'ajout pur) au lieu de
+    `--gray-darkest`…`--gray-lightest` (8 lignes) ; `--off-white`/
+    `--near-black` inchangées (émises depuis les alias).
+  - 5 consommateurs composants mis à jour (`_contact.scss`,
+    `_accessibility-menu.scss`) : `var(--gray-medium-light)` → `var(--gray-500)`,
+    `var(--gray-light)` → `var(--gray-400)`, `var(--gray-dark)` →
+    `var(--gray-700)`, `var(--gray-lighter)` → `var(--gray-300)` (×2, dont un
+    dans une ligne commentée).
+  - Vérification : diff du CSS compilé strictement additif (39 nouvelles
+    lignes `--gray-50`/`--gray-100`/`--gray-950` sur 14 blocs — `:root`, le
+    bloc `prefers-color-scheme`, et les 12 `[data-theme]` ; note : le plan
+    en annonçait 13, l'arithmétique exacte est 1 + 1 + 12 = 14), prouvé par
+    tri + `comm -3` (42 lignes de différence au total, dont 3 par bloc,
+    toutes des ajouts). Contrôles ciblés passés : `high-contrast` conserve
+    `--color-main-bg: #000000` / `--color-main-text: #ffff00` ;
+    `achromatopsia` reste sur la famille `neutral` et non `stone` ; dans
+    chaque bloc `--off-white == --gray-50` et `--near-black == --gray-950`.
+
+### Changed
+
+- Phase 2 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
+  `setTheme()` (`src/hooks/useTheme.ts`) réduit à ses trois lignes utiles
+  (poser `data-theme`, écrire `localStorage`, `setThemeState`). Suppression
+  des artefacts de débogage : double reflow forcé
+  (`offsetWidth`/`offsetHeight`), classe temporaire `theme-switching` (non
+  consommée par aucun style — vérifié par grep) avec son `setTimeout`, et les
+  `console.log` de diagnostic. Aucun changement de CSS compilé ni de
+  comportement observable.
+
+### Removed
+
+- Phase 1 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
+  purge du code mort identifié en README § 3 et § 5.1, sans aucun changement
+  du CSS compilé (diff byte-identique à la baseline).
+  - Fichiers supprimés : `src/styles/abstracts/_variables.scss`,
+    `src/styles/abstracts/_dark-functions.scss` (non importés).
+  - `_theme-utils.scss` : `transform-for-dark()` (référençait des maps
+    disparues), les anciens mixins `generate-*-theme()` jamais inclus
+    (high-contrast, deuteranopia, protanopia, tritanopia, achromatopsia) et
+    leurs getters devenus orphelins (`get-deuteranopia-color`,
+    `get-protanopia-color`, `get-tritanopia-color`, `get-deuteranomaly-color`,
+    `get-protanomaly-color`, `get-tritanomaly-color`, `get-achromatic-color`),
+    `transform-for-high-contrast()`, `$hc-colors` (doublon de `$hc-palette`),
+    `str-replace()`. Dans `adapt-color-for-colorblindness()` : sélection de
+    matrice LMS calculée mais jamais consommée ; suppression de cette
+    affectation morte et des maps `$protanopia-matrix`/`$deuteranopia-matrix`/
+    `$tritanopia-matrix`, ainsi que `rgb-to-lms()`/`lms-to-rgb()` (non
+    appelées).
+  - `_anti-glare-functions.scss` : `safe-hue-for-keratoconus()` (jamais
+    appelée).
+  - Blocs de code commenté historiques (anciennes versions superseded) dans
+    `_theme-utils.scss`, tous les fichiers `themes/_*.scss`, `main.scss`,
+    `_theme-system.scss`, `_theme-variables.scss`, `layout.tsx`,
+    `useTheme.ts`, `AccessibilityMenu.tsx`. Virgules parasites en fin de
+    commentaire (`,,,,,,,,,,`) dans `_theme-utils.scss` et les thèmes
+    daltoniens complets.
+  - Non touché volontairement : deux lignes commentées dans
+    `getFontTypeLabel()` (`AccessibilityMenu.tsx`, types de police
+    "tiresias"/"ralewaydots" encore actifs dans l'UI) — sujet distinct de la
+    police dyslexique, hors périmètre de cette migration ; signalé pour
+    décision séparée.
+
 ## 2026-07-02
 
 ### Docs

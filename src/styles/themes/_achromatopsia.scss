@@ -1,17 +1,8 @@
 /** @format */
-// @import "../abstracts/base-palette";
-// @import "../abstracts/theme-utils";
-
-// @mixin achromatopsia-theme-variables() {
-// 	// Génération automatique du thème monochrome
-// 	@include generate-achromatopsia-theme();
-// }
-
-// // // // // // // // // // // //
-
-@import "../abstracts/base-palette";
-@import "../abstracts/theme-utils";
-@import "../themes/theme-variables";
+@use "../abstracts/base-palette" as *;
+@use "../abstracts/theme-utils" as *;
+@use "../themes/theme-variables" as *;
+@use "light" as *;
 
 @mixin achromatopsia-theme-variables() {
 	// D'abord appliquer les variables du thème light
@@ -22,30 +13,31 @@
 		// Surcharges spécifiques (couleurs complètement remplacées)
 		"special-colors":
 			(
-				"success-color": get-color("neutral", 400),
-				"error-color": get-color("neutral", 900),
+				"success": get-color("neutral", 400),
+				"danger": get-color("neutral", 900),
 			),
 
 		// Ajustements de poids pour les variables de couleur (comme dans le thème dark)
 		"adjustments":
 			(
-				// Couleurs fondamentales
-				"off-white": 0,
-				"near-black": 0,
-				"gray-darkest": 0,
-				"gray-darker": 0,
-				"gray-dark": 0,
-				"gray-medium-dark": 0,
-				"gray-medium-light": 0,
-				"gray-light": 0,
-				"gray-lighter": 0,
-				"gray-lightest": 0,
+				// Rail numérique complet (11 crans)
+				"gray-50": 0,
+				"gray-100": 0,
+				"gray-200": 0,
+				"gray-300": 0,
+				"gray-400": 0,
+				"gray-500": 0,
+				"gray-600": 0,
+				"gray-700": 0,
+				"gray-800": 0,
+				"gray-900": 0,
+				"gray-950": 0,
 				// Couleurs sémantiques
-				"primary-color": 0,
-				"secondary-color": 0,
-				"tertiary-color": 0,
-				"link-color": 0,
-				"link-color-hover": 0
+				"accent": 0,
+				"accent-ink": 0,
+				"accent-soft": 0,
+				"link": 0,
+				"link-hover": 0
 			)
 	);
 
@@ -53,5 +45,4 @@
 	@include transform-light-to-achromatopsia($achromatopsia-config);
 
 	// Surcharges manuelles après l'automatisation si nécessaire
-	// $color_header_bg: get-color("neutral", 700) !global;
 }

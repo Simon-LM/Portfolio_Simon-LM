@@ -1,17 +1,8 @@
 /** @format */
-// @import "../abstracts/base-palette";
-// @import "../abstracts/theme-utils";
-
-// @mixin tritanopia-theme-variables() {
-// 	// Génération automatique du thème daltonien
-// 	@include generate-tritanopia-theme();
-// }
-
-// // // // // // // // // // // // //
-
-@import "../abstracts/base-palette";
-@import "../abstracts/theme-utils";
-@import "../themes/theme-variables";
+@use "../abstracts/base-palette" as *;
+@use "../abstracts/theme-utils" as *;
+@use "../themes/theme-variables" as *;
+@use "light" as *;
 
 @mixin tritanopia-theme-variables() {
 	// D'abord appliquer les variables du thème light
@@ -22,22 +13,22 @@
 		// Couleurs spéciales pour remplacer certaines teintes indistinguables
 		"special-colors":
 			(
-				"success-color": #ff6600,
+				"success": #ff6600,
 				// Orange pour remplacer le vert
-				"error-color": #ff3399,
+				"danger": #ff3399,
 				// Rose pour remplacer le rouge
-				// Vous pouvez ajouter d'autres couleurs spéciales ici,,,,,,,
+				// Vous pouvez ajouter d'autres couleurs spéciales ici
 			),
 
 		// Contrôle quelles variables sont transformées automatiquement
 		"overrides":
 			(
 				// Exemples: si vous voulez conserver certaines couleurs telles quelles
-				"primary-color": false,
-				"secondary-color": false,
-				"tertiary-color": false,
-				"link-color": false,
-				"link-color-hover": false
+				"accent": false,
+				"accent-ink": false,
+				"accent-soft": false,
+				"link": false,
+				"link-hover": false
 			)
 	);
 
@@ -45,5 +36,4 @@
 	@include transform-light-to-tritanopia($tritanopia-config);
 
 	// Surcharges manuelles après l'automatisation si nécessaire
-	// $color_header_bg: red !global;
 }

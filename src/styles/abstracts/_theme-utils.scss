@@ -1,6 +1,11 @@
 /** @format */
 
-@import "../themes/theme-variables";
+@use "sass:map";
+@use "sass:list";
+@use "sass:math";
+@use "sass:color";
+@use "base-palette" as *;
+@use "../themes/theme-variables" as *;
 /**
  * Utilitaires pour la gestion des thèmes
  * - Accès simplifié aux couleurs Tailwind
@@ -8,53 +13,16 @@
  */
 
 // Note: Les fonctions anti-éblouissement ont été déplacées dans _anti-glare-functions.scss
-
-// // // // // // // // // // //
-// Définition des variables CSS root pour tous les thèmes
-// :root {
-// 	// Thème par défaut (light)
-// 	--color-off-white: #{get-color("stone", 50)};
-// 	--color-near-black: #{get-color("stone", 950)};
-
-// 	// Variables grises
-// 	--color-gray-darkest: #{get-color("stone", 900)};
-// 	--color-gray-darker: #{get-color("stone", 800)};
-// 	// etc.
-
-// 	// Couleurs sémantiques
-// 	--color-primary: #{get-color("amber", 300)};
-// 	--color-secondary: #{get-color("amber", 950)};
-// 	--color-tertiary: #{get-color("amber", 100)};
-// 	--color-link: #{get-color("sky", 900)};
-// 	--color-link-hover: #{get-color("sky", 800)};
-
-// 	// Variables d'interface utilisateur
-// 	--color-main-bg: var(--color-off-white);
-// 	--color-main-text: var(--color-near-black);
-// 	--color-header-bg: var(--color-primary);
-// 	// etc.
-// }
-// // // // // // // // // // // // // // //
-
-// -----------------------------------------------
-// FONCTIONS D'ACCÈS AUX COULEURS
-// -----------------------------------------------
-@function get-color($family, $weight) {
-	@return map-get(map-get($colors, $family), $weight);
-}
+// Note: get-color(), $tailwind-weights et $midpoint ont été déplacées dans _base-palette.scss
 
 // -----------------------------------------------
 // UTILITAIRES POUR THÈME SOMBRE
 // -----------------------------------------------
-// Liste des poids disponibles dans Tailwind
-$tailwind-weights: (50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950);
-// Point médian pour déterminer si on fonce ou éclaircit
-$midpoint: 500;
 
 // Fonction pour obtenir la couleur décalée pour le thème sombre
 @function get-dark-color($family, $weight, $steps: 6) {
 	// Trouver l'index du poids actuel dans la liste des poids Tailwind
-	$current-index: index($tailwind-weights, $weight);
+	$current-index: list.index($tailwind-weights, $weight);
 
 	@if not $current-index {
 		@error "Le poids #{$weight} n'existe pas dans la palette Tailwind";
@@ -76,14 +44,14 @@ $midpoint: 500;
 	}
 
 	// Limiter l'index dans les bornes de la liste
-	@if $new-index > length($tailwind-weights) {
-		$new-index: length($tailwind-weights);
+	@if $new-index > list.length($tailwind-weights) {
+		$new-index: list.length($tailwind-weights);
 	} @else if $new-index < 1 {
 		$new-index: 1;
 	}
 
 	// Obtenir le nouveau poids
-	$new-weight: nth($tailwind-weights, $new-index);
+	$new-weight: list.nth($tailwind-weights, $new-index);
 
 	// Retourner la couleur correspondante
 	@return get-color($family, $new-weight);
@@ -113,219 +81,59 @@ $midpoint: 500;
 	@return ("family": null, "weight": null, "found": false);
 }
 
-// // Fonction qui transforme automatiquement une couleur en version dark
-// @function auto-dark-transform($color, $steps: 7, $adjustment: 0) {
-// 	// Analyser la couleur pour trouver sa famille et son poids Tailwind
-// 	$analysis: analyze-tailwind-color($color);
-
-// 	// Si une correspondance Tailwind est trouvée, utiliser get-dark-color
-// 	@if map-get($analysis, "found") {
-// 		$family: map-get($analysis, "family");
-// 		$weight: map-get($analysis, "weight");
-// 		@return get-dark-color($family, $weight, $steps + $adjustment);
-// 	}
-
-// 	// Si aucune correspondance n'est trouvée, appliquer un algorithme générique
-// 	// pour assombrir ou éclaircir selon la luminosité de la couleur
-// 	$lightness: lightness($color);
-
-// 	@if $lightness > 50 {
-// 		// Pour les couleurs claires, les assombrir
-// 		@return darken($color, 40% + $adjustment * 5%);
-// 	} @else {
-// 		// Pour les couleurs foncées, les éclaircir
-// 		@return lighten($color, 30% + $adjustment * 5%);
-// 	}
-// }
-
 // Fonction qui transforme une couleur en version dark en tenant compte de la configuration
 @function auto-dark-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
-	$steps: map-get($config, "steps");
-	$adjustments: map-get($config, "adjustments");
+	$steps: map.get($config, "steps");
+	$adjustments: map.get($config, "adjustments");
 
 	// Calculer l'ajustement spécifique pour cette variable
 	$adjustment: 0;
-	@if $adjustments and map-has-key($adjustments, $var-name) {
-		$adjustment: map-get($adjustments, $var-name);
+	@if $adjustments and map.has-key($adjustments, $var-name) {
+		$adjustment: map.get($adjustments, $var-name);
 	}
 
 	// Analyser la couleur pour trouver sa famille et son poids Tailwind
 	$analysis: analyze-tailwind-color($color);
 
 	// Si une correspondance Tailwind est trouvée, utiliser get-dark-color
-	@if map-get($analysis, "found") {
-		$family: map-get($analysis, "family");
-		$weight: map-get($analysis, "weight");
+	@if map.get($analysis, "found") {
+		$family: map.get($analysis, "family");
+		$weight: map.get($analysis, "weight");
 		@return get-dark-color($family, $weight, $steps + $adjustment);
 	}
 
 	// Si aucune correspondance n'est trouvée, appliquer un algorithme générique
-	$lightness: lightness($color);
+	$lightness: color.channel($color, "lightness", $space: hsl);
 
 	@if $lightness > 50 {
 		// Pour les couleurs claires, les assombrir
-		@return darken($color, 40% + $adjustment * 5%);
+		@return adjust-lightness-clamped($color, -(40% + $adjustment * 5%));
 	} @else {
 		// Pour les couleurs foncées, les éclaircir
-		@return lighten($color, 30% + $adjustment * 5%);
-	}
-}
-
-// Fonction qui transforme une couleur pour le thème dark
-// en utilisant ses métadonnées d'origine plutôt que des valeurs hardcodées
-@function transform-for-dark($var-name, $var-value, $steps: 7) {
-	// Vérifier s'il y a une surcharge complète pour cette variable
-	@if map-has-key(map-get($dark-adjustments, "overrides"), $var-name) {
-		$override: map-get(map-get($dark-adjustments, "overrides"), $var-name);
-		@if $override == null {
-			@return $var-value; // Conserver la valeur actuelle
-		} @else {
-			$family: map-get($override, "family");
-			$weight: map-get($override, "weight");
-			@return get-color($family, $weight);
-		}
-	}
-	// Sinon, appliquer la transformation standard
-	@else {
-		// Récupérer les métadonnées d'origine
-		$origin: map-get($tailwind-origins, $var-name);
-		$family: map-get($origin, "family");
-		$weight: map-get($origin, "weight");
-
-		// Appliquer les ajustements spéciaux si nécessaire
-		$step-adjust: 0;
-		@if map-has-key($dark-adjustments, $var-name) {
-			$step-adjust: map-get($dark-adjustments, $var-name);
-		}
-
-		// Appliquer la transformation avec la valeur de steps ajustée
-		@return get-dark-color($family, $weight, $steps + $step-adjust);
+		@return adjust-lightness-clamped($color, 30% + $adjustment * 5%);
 	}
 }
 
 // -----------------------------------------------
 // UTILITAIRES POUR THÈME À FORT CONTRASTE
 // -----------------------------------------------
-// Couleurs fixes pour le thème à fort contraste
-$hc-colors: (
-	"background": #000000,
-	// Fond noir
-	"text": #ffff00,
-	// Texte jaune vif
-	"link": #00ffff,
-	// Liens cyan
-	"focus": #ffffff,
-	// État focus en blanc
-	"heading": #bfff00,
-	// Titres vert-jaune
-	"success": #00ff00,
-	// Validation en vert,
-	"error": #ff0000,
-);
 
 // Fonction pour déterminer si une couleur est sombre ou claire
 @function is-dark($color) {
-	$luminance: (
-			red($color) * 0.299 + green($color) * 0.587 + blue($color) * 0.114
-		) / 255;
+	$luminance: math.div(
+		math.round(color.channel($color, "red", $space: rgb)) * 0.299 + math.round(color.channel($color, "green", $space: rgb)) * 0.587 + math.round(color.channel($color, "blue", $space: rgb)) * 0.114,
+		255
+	);
 	@return $luminance < 0.5;
-}
-
-// Fonction intelligente qui transforme automatiquement une couleur selon son rôle
-@function transform-for-high-contrast($color, $element-type) {
-	// Détermine automatiquement le rôle de la couleur en fonction de son type d'élément
-	@if $element-type == "background" or str-index($element-type, "_bg") {
-		// Les fonds deviennent toujours noirs
-		@return map-get($hc-colors, "background");
-	} @else if $element-type == "text" or str-index($element-type, "_text") {
-		// Le texte devient toujours jaune
-		@return map-get($hc-colors, "text");
-	} @else if
-		str-index($element-type, "link") or
-		str-index($element-type, "_link")
-	{
-		// Les liens deviennent cyan
-		@return map-get($hc-colors, "link");
-	} @else if
-		str-index($element-type, "heading") or
-		str-index($element-type, "title")
-	{
-		// Les titres deviennent vert-jaune
-		@return map-get($hc-colors, "heading");
-	} @else if
-		str-index($element-type, "hover") or
-		str-index($element-type, "focus")
-	{
-		// États de focus et survol en blanc
-		@return map-get($hc-colors, "focus");
-	} @else if str-index($element-type, "success") {
-		// Éléments de succès/validation en vert
-		@return map-get($hc-colors, "success");
-	} @else {
-		// Pour les autres éléments, décision basée sur la luminance
-		@if is-dark($color) {
-			// Si la couleur est foncée, elle devient jaune
-			@return map-get($hc-colors, "text");
-		} @else {
-			// Si la couleur est claire, elle devient noire
-			@return map-get($hc-colors, "background");
-		}
-	}
 }
 
 // -----------------------------------------------
 // UTILITAIRES POUR THÈMES DALTONIENS
 // -----------------------------------------------
 
-// Matrices de simulation du daltonisme
-// Ces matrices sont utilisées pour simuler comment une personne daltonienne percevrait une couleur
-$protanopia-matrix: (0.567, 0.433, 0, 0.558, 0.442, 0, 0, 0.242, 0.758);
-
-$deuteranopia-matrix: (0.625, 0.375, 0, 0.7, 0.3, 0, 0, 0.3, 0.7);
-
-$tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
-
-// Fonction pour convertir RGB en LMS (espace de cônes)
-@function rgb-to-lms($color) {
-	$r: red($color) / 255;
-	$g: green($color) / 255;
-	$b: blue($color) / 255;
-
-	$l: (0.3904 * $r) + (0.5498 * $g) + (0.0598 * $b);
-	$m: (0.0456 * $r) + (0.7416 * $g) + (0.2128 * $b);
-	$s: (0 * $r) + (0 * $g) + (1 * $b);
-
-	@return ($l, $m, $s);
-}
-
-// Fonction pour convertir LMS en RGB
-@function lms-to-rgb($lms) {
-	$l: nth($lms, 1);
-	$m: nth($lms, 2);
-	$s: nth($lms, 3);
-
-	$r: (2.85 * $l) - (1.62 * $m) - (0.23 * $s);
-	$g: (-0.25 * $l) + (1.18 * $m) + (0.06 * $s);
-	$b: (0 * $l) + (0 * $m) + (1 * $s);
-
-	$r: max(0, min(1, $r)) * 255;
-	$g: max(0, min(1, $g)) * 255;
-	$b: max(0, min(1, $b)) * 255;
-
-	@return rgb($r, $g, $b);
-}
-
 // Fonction qui transforme une couleur pour l'adapter à un type spécifique de daltonisme
 @function adapt-color-for-colorblindness($color, $type, $enhance-factor: 1.5) {
-	// Sélection de la matrice appropriée
-	$matrix: $protanopia-matrix;
-	@if $type == "deuteranopia" {
-		$matrix: $deuteranopia-matrix;
-	} @else if $type == "tritanopia" {
-		$matrix: $tritanopia-matrix;
-	}
-
 	// Pour les couleurs essentielles, utiliser des teintes spécifiques
 	// fortement contrastées pour chaque type de daltonisme
 	@if $type == "deuteranopia" {
@@ -356,9 +164,9 @@ $tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
 
 	// Pour les autres couleurs, appliquer un algorithme de transformation
 	// qui augmente la saturation dans les canaux que la personne distingue le mieux
-	$h: hue($color);
-	$s: saturation($color);
-	$l: lightness($color);
+	$h: color.channel($color, "hue", $space: hsl);
+	$s: color.channel($color, "saturation", $space: hsl);
+	$l: color.channel($color, "lightness", $space: hsl);
 
 	@if $type == "deuteranopia" or $type == "protanopia" {
 		// Pour la confusion rouge-vert, déplacer vers bleu ou jaune
@@ -394,18 +202,20 @@ $tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
 
 // Fonctions auxiliaires
 @function brightness($color) {
-	@return (red($color) * 0.299 + green($color) * 0.587 + blue($color) * 0.114) /
-		255;
+	@return math.div(
+		math.round(color.channel($color, "red", $space: rgb)) * 0.299 + math.round(color.channel($color, "green", $space: rgb)) * 0.587 + math.round(color.channel($color, "blue", $space: rgb)) * 0.114,
+		255
+	);
 }
 
 @function is-similar-to($color1, $color2, $threshold: 60) {
-	$r1: red($color1);
-	$g1: green($color1);
-	$b1: blue($color1);
+	$r1: math.round(color.channel($color1, "red", $space: rgb));
+	$g1: math.round(color.channel($color1, "green", $space: rgb));
+	$b1: math.round(color.channel($color1, "blue", $space: rgb));
 
-	$r2: red($color2);
-	$g2: green($color2);
-	$b2: blue($color2);
+	$r2: math.round(color.channel($color2, "red", $space: rgb));
+	$g2: math.round(color.channel($color2, "green", $space: rgb));
+	$b2: math.round(color.channel($color2, "blue", $space: rgb));
 
 	$r_diff: abs($r1 - $r2);
 	$g_diff: abs($g1 - $g2);
@@ -416,58 +226,42 @@ $tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
 	@return $total_diff < $threshold;
 }
 
-// Fonction spécifique pour chaque type de daltonisme
-@function get-deuteranopia-color($family, $weight) {
-	$original-color: get-color($family, $weight);
-	@return adapt-color-for-colorblindness($original-color, "deuteranopia");
-}
-
 // Fonction qui transforme une couleur en version deuteranopia
 @function auto-deuteranopia-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
-	$special-colors: map-get($config, "special-colors");
+	$special-colors: map.get($config, "special-colors");
 
 	// Si la variable a une couleur spéciale définie, l'utiliser
-	@if $special-colors and map-has-key($special-colors, $var-name) {
-		@return map-get($special-colors, $var-name);
+	@if $special-colors and map.has-key($special-colors, $var-name) {
+		@return map.get($special-colors, $var-name);
 	}
 
 	// Autrement, appliquer la transformation standard
 	@return adapt-color-for-colorblindness($color, "deuteranopia", 2.5);
 }
 
-@function get-protanopia-color($family, $weight) {
-	$original-color: get-color($family, $weight);
-	@return adapt-color-for-colorblindness($original-color, "protanopia");
-}
-
 // Fonction qui transforme une couleur en version protanopia
 @function auto-protanopia-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
-	$special-colors: map-get($config, "special-colors");
+	$special-colors: map.get($config, "special-colors");
 
 	// Si la variable a une couleur spéciale définie, l'utiliser
-	@if $special-colors and map-has-key($special-colors, $var-name) {
-		@return map-get($special-colors, $var-name);
+	@if $special-colors and map.has-key($special-colors, $var-name) {
+		@return map.get($special-colors, $var-name);
 	}
 
 	// Autrement, appliquer la transformation standard
 	@return adapt-color-for-colorblindness($color, "protanopia", 2.5);
 }
 
-@function get-tritanopia-color($family, $weight) {
-	$original-color: get-color($family, $weight);
-	@return adapt-color-for-colorblindness($original-color, "tritanopia");
-}
-
 // Fonction qui transforme une couleur en version tritanopia
 @function auto-tritanopia-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
-	$special-colors: map-get($config, "special-colors");
+	$special-colors: map.get($config, "special-colors");
 
 	// Si la variable a une couleur spéciale définie, l'utiliser
-	@if $special-colors and map-has-key($special-colors, $var-name) {
-		@return map-get($special-colors, $var-name);
+	@if $special-colors and map.has-key($special-colors, $var-name) {
+		@return map.get($special-colors, $var-name);
 	}
 
 	// Autrement, appliquer la transformation standard
@@ -475,51 +269,11 @@ $tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
 }
 
 // Fonction qui transforme une couleur pour l'adapter à un type léger de daltonisme (anomalie)
-// @function adapt-color-for-color-anomaly($color, $type, $enhance-factor: 1.2) {
-// 	// Pour les anomalies, on amplifie les différences sans transformer complètement
-// 	$h: hue($color);
-// 	$s: saturation($color);
-// 	$l: lightness($color);
-
-// 	// Paramètres d'adaptation moins intenses que pour les -opies
-// 	@if $type == "deuteranomaly" or $type == "protanomaly" {
-// 		// Pour la confusion rouge-vert légère
-// 		@if $h >= 60 and $h <= 150 {
-// 			// Verts : augmenter légèrement le bleu pour plus de distinction
-// 			$h: $h + 15;
-// 			$s: min(100%, $s * $enhance-factor);
-// 		} @else if $h >= 330 or $h <= 30 {
-// 			// Rouges : augmenter légèrement l'orange pour plus de distinction
-// 			$h: $h + 10;
-// 			$s: min(100%, $s * $enhance-factor);
-// 		} @else if $h > 30 and $h < 60 {
-// 			// Jaunes : décaler légèrement vers l'orange ET accentuer la saturation
-// 			$h: $h + 7; // Léger décalage vers l'orange
-// 			$s: min(100%, $s * ($enhance-factor + 0.1));
-// 			$l: max(40%, min(60%, $l)); // Optimiser la luminosité
-// 		}
-// 	} @else if $type == "tritanomaly" {
-// 		// Pour la confusion bleu-jaune légère
-// 		@if $h >= 180 and $h <= 270 {
-// 			// Bleus : décaler légèrement vers le violet
-// 			$h: $h + 15;
-// 			$s: min(100%, $s * $enhance-factor);
-// 		} @else if $h >= 40 and $h <= 80 {
-// 			// Jaunes : décaler légèrement vers l'orange
-// 			$h: $h + 10;
-// 			$s: min(100%, $s * $enhance-factor);
-// 		}
-// 	}
-
-// 	@return hsl($h, $s, $l);
-// }
-
-// Remplacer la fonction existante par celle-ci
 @function adapt-color-for-color-anomaly($color, $type, $enhance-factor: 1.2) {
 	// Pour les anomalies, on amplifie les différences sans transformer complètement
-	$h: hue($color);
-	$s: saturation($color);
-	$l: lightness($color);
+	$h: color.channel($color, "hue", $space: hsl);
+	$s: color.channel($color, "saturation", $space: hsl);
+	$l: color.channel($color, "lightness", $space: hsl);
 
 	// Calculer l'impact du facteur d'intensification
 	$hue_shift: ($enhance-factor - 1) * 30; // Amplifier l'effet sur la teinte
@@ -558,31 +312,25 @@ $tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
 	@return hsl($h, $s, $l);
 }
 
-// Fonction getter pour simplifier l'accès
-@function get-achromatic-color($family, $weight) {
-	$original-color: get-color($family, $weight);
-	@return adapt-color-for-achromatopsia($original-color);
-}
-
 // Fonction qui transforme une couleur en version deutéranomalie en tenant compte de la configuration
 @function auto-deuteranomaly-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
-	$enhancer: map-get($config, "enhancer");
-	$adjustments: map-get($config, "adjustments");
+	$enhancer: map.get($config, "enhancer");
+	$adjustments: map.get($config, "adjustments");
 
 	// Calculer l'ajustement spécifique pour cette variable
 	$adjustment: 0;
-	@if $adjustments and map-has-key($adjustments, $var-name) {
-		$adjustment: map-get($adjustments, $var-name);
+	@if $adjustments and map.has-key($adjustments, $var-name) {
+		$adjustment: map.get($adjustments, $var-name);
 	}
 
 	// Analyser la couleur pour trouver sa famille et son poids Tailwind
 	$analysis: analyze-tailwind-color($color);
 
 	// Si une correspondance Tailwind est trouvée, utiliser get-deuteranomaly-color
-	@if map-get($analysis, "found") {
-		$family: map-get($analysis, "family");
-		$weight: map-get($analysis, "weight");
+	@if map.get($analysis, "found") {
+		$family: map.get($analysis, "family");
+		$weight: map.get($analysis, "weight");
 		@return adapt-color-for-color-anomaly(
 			$color,
 			"deuteranomaly",
@@ -601,13 +349,13 @@ $tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
 // Fonction qui transforme une couleur en version protanomalie
 @function auto-protanomaly-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
-	$enhancer: map-get($config, "enhancer");
-	$adjustments: map-get($config, "adjustments");
+	$enhancer: map.get($config, "enhancer");
+	$adjustments: map.get($config, "adjustments");
 
 	// Calculer l'ajustement spécifique pour cette variable
 	$adjustment: 0;
-	@if $adjustments and map-has-key($adjustments, $var-name) {
-		$adjustment: map-get($adjustments, $var-name);
+	@if $adjustments and map.has-key($adjustments, $var-name) {
+		$adjustment: map.get($adjustments, $var-name);
 	}
 
 	// Analyser la couleur pour trouver sa famille et son poids Tailwind
@@ -624,13 +372,13 @@ $tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
 // Fonction qui transforme une couleur en version tritanomalie
 @function auto-tritanomaly-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
-	$enhancer: map-get($config, "enhancer");
-	$adjustments: map-get($config, "adjustments");
+	$enhancer: map.get($config, "enhancer");
+	$adjustments: map.get($config, "adjustments");
 
 	// Calculer l'ajustement spécifique pour cette variable
 	$adjustment: 0;
-	@if $adjustments and map-has-key($adjustments, $var-name) {
-		$adjustment: map-get($adjustments, $var-name);
+	@if $adjustments and map.has-key($adjustments, $var-name) {
+		$adjustment: map.get($adjustments, $var-name);
 	}
 
 	// Analyser la couleur pour trouver sa famille et son poids Tailwind
@@ -644,28 +392,13 @@ $tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
 	);
 }
 
-// Fonctions spécifiques pour chaque type d'anomalie
-@function get-deuteranomaly-color($family, $weight) {
-	$original-color: get-color($family, $weight);
-	@return adapt-color-for-color-anomaly($original-color, "deuteranomaly");
-}
-
-@function get-protanomaly-color($family, $weight) {
-	$original-color: get-color($family, $weight);
-	@return adapt-color-for-color-anomaly($original-color, "protanomaly");
-}
-
-@function get-tritanomaly-color($family, $weight) {
-	$original-color: get-color($family, $weight);
-	@return adapt-color-for-color-anomaly($original-color, "tritanomaly");
-}
-
 // Fonction qui transforme les couleurs pour l'achromatopsie (monochrome)
 @function adapt-color-for-achromatopsia($color, $enhance-factor: 1.4) {
 	// Convertir la couleur en niveaux de gris basés sur la luminosité
-	$luminance: (
-			red($color) * 0.299 + green($color) * 0.587 + blue($color) * 0.114
-		) / 255;
+	$luminance: math.div(
+		math.round(color.channel($color, "red", $space: rgb)) * 0.299 + math.round(color.channel($color, "green", $space: rgb)) * 0.587 + math.round(color.channel($color, "blue", $space: rgb)) * 0.114,
+		255
+	);
 
 	// Accentuer le contraste pour les gris moyens
 	@if $luminance > 0.4 and $luminance < 0.6 {
@@ -696,165 +429,109 @@ $tritanopia-matrix: (0.95, 0.05, 0, 0, 0.433, 0.567, 0, 0.475, 0.525);
 	);
 
 	// Fusionner avec la configuration par défaut
-	$config: map-merge($default-config, $config);
+	$config: map.merge($default-config, $config);
 
 	// Traiter chaque variable du thème avec sa configuration
-	$off-white: auto-dark-transform($off-white, "off-white", $config) !global;
-	$near-black: auto-dark-transform($near-black, "near-black", $config) !global;
-	$gray-darkest: auto-dark-transform(
-		$gray-darkest,
-		"gray-darkest",
-		$config
-	) !global;
-	$gray-darker: auto-dark-transform(
-		$gray-darker,
-		"gray-darker",
-		$config
-	) !global;
-	$gray-dark: auto-dark-transform($gray-dark, "gray-dark", $config) !global;
-	$gray-medium-dark: auto-dark-transform(
-		$gray-medium-dark,
-		"gray-medium-dark",
-		$config
-	) !global;
-	$gray-medium-light: auto-dark-transform(
-		$gray-medium-light,
-		"gray-medium-light",
-		$config
-	) !global;
-	$gray-light: auto-dark-transform($gray-light, "gray-light", $config) !global;
-	$gray-lighter: auto-dark-transform(
-		$gray-lighter,
-		"gray-lighter",
-		$config
-	) !global;
-	$gray-lightest: auto-dark-transform(
-		$gray-lightest,
-		"gray-lightest",
-		$config
-	) !global;
+	$gray-50: auto-dark-transform($gray-50, "gray-50", $config) !global;
+	$gray-100: auto-dark-transform($gray-100, "gray-100", $config) !global;
+	$gray-200: auto-dark-transform($gray-200, "gray-200", $config) !global;
+	$gray-300: auto-dark-transform($gray-300, "gray-300", $config) !global;
+	$gray-400: auto-dark-transform($gray-400, "gray-400", $config) !global;
+	$gray-500: auto-dark-transform($gray-500, "gray-500", $config) !global;
+	$gray-600: auto-dark-transform($gray-600, "gray-600", $config) !global;
+	$gray-700: auto-dark-transform($gray-700, "gray-700", $config) !global;
+	$gray-800: auto-dark-transform($gray-800, "gray-800", $config) !global;
+	$gray-900: auto-dark-transform($gray-900, "gray-900", $config) !global;
+	$gray-950: auto-dark-transform($gray-950, "gray-950", $config) !global;
+
+	// Re-sync rail-endpoint aliases after transformation, before they are
+	// consumed by apply-theme-variables
+	$off-white: $gray-50 !global;
+	$near-black: $gray-950 !global;
 
 	// Ne pas transformer les couleurs déjà surchargées
-	$overrides: map-get($config, "overrides");
+	$overrides: map.get($config, "overrides");
 
 	// Traiter les couleurs sémantiques qui ne sont pas surchargées ou quand override est f
 	@if not(
 		$overrides and
-			map-has-key($overrides, "primary-color") and
-			map-get($overrides, "primary-color") ==
+			map.has-key($overrides, "accent") and
+			map.get($overrides, "accent") ==
 			true
 	)
 	{
-		$primary-color: auto-dark-transform(
-			$primary-color,
-			"primary-color",
+		$accent: auto-dark-transform(
+			$accent,
+			"accent",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "secondary-color") and
-			map-get($overrides, "secondary-color") ==
+			map.has-key($overrides, "accent-strong") and
+			map.get($overrides, "accent-strong") ==
 			true
 	)
 	{
-		$secondary-color: auto-dark-transform(
-			$secondary-color,
-			"secondary-color",
+		$accent-strong: auto-dark-transform(
+			$accent-strong,
+			"accent-strong",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "tertiary-color") and
-			map-get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "accent-ink") and
+			map.get($overrides, "accent-ink") ==
 			true
 	)
 	{
-		$tertiary-color: auto-dark-transform(
-			$tertiary-color,
-			"tertiary-color",
+		$accent-ink: auto-dark-transform(
+			$accent-ink,
+			"accent-ink",
+			$config
+		) !global;
+	}
+
+	@if not(
+		$overrides and
+			map.has-key($overrides, "accent-soft") and
+			map.get($overrides, "accent-soft") ==
+			true
+	)
+	{
+		$accent-soft: auto-dark-transform(
+			$accent-soft,
+			"accent-soft",
 			$config
 		) !global;
 	}
 
 	// Liens et autres couleurs fonctionnelles
-	$link-color: auto-dark-transform($link-color, "link-color", $config) !global;
-	$link-color-hover: auto-dark-transform(
-		$link-color-hover,
-		"link-color-hover",
+	$link: auto-dark-transform($link, "link", $config) !global;
+	$link-hover: auto-dark-transform(
+		$link-hover,
+		"link-hover",
 		$config
 	) !global;
-	$success-color: auto-dark-transform(
-		$success-color,
-		"success-color",
+	$success: auto-dark-transform(
+		$success,
+		"success",
 		$config
 	) !global;
-	$error-color: auto-dark-transform(
-		$error-color,
-		"error-color",
+	$danger: auto-dark-transform(
+		$danger,
+		"danger",
 		$config
 	) !global;
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
+	@include apply-roles();
 
 	// Appliquer les variables dérivées
 	@include apply-theme-variables;
-}
-
-// Mixin qui génère le thème à fort contraste
-@mixin generate-high-contrast-theme() {
-	// Couleurs fondamentales basées sur les rôles
-	$off-white: map-get($hc-colors, "background") !global;
-	$near-black: map-get($hc-colors, "text") !global;
-
-	// Simplification des niveaux de gris en utilisant uniquement 2 couleurs
-	// Les éléments de premier plan utilisent la couleur de texte
-	$gray-darkest: map-get($hc-colors, "text") !global;
-	$gray-darker: map-get($hc-colors, "text") !global;
-	$gray-dark: map-get($hc-colors, "text") !global;
-	$gray-medium-dark: map-get($hc-colors, "text") !global;
-	$gray-medium-light: map-get($hc-colors, "text") !global;
-
-	// Les éléments de fond utilisent la couleur de fond
-	$gray-light: map-get($hc-colors, "background") !global;
-	$gray-lighter: map-get($hc-colors, "background") !global;
-	$gray-lightest: map-get($hc-colors, "background") !global;
-
-	// Couleurs sémantiques simplifiées par rôle
-	$primary-color: map-get($hc-colors, "heading") !global;
-	$secondary-color: map-get($hc-colors, "text") !global;
-	$tertiary-color: map-get($hc-colors, "background") !global;
-	$link-color: map-get($hc-colors, "link") !global;
-	$link-color-hover: map-get($hc-colors, "focus") !global;
-	$success-color: map-get($hc-colors, "success") !global;
-	$error-color: map-get($hc-colors, "error") !global;
-
-	// Application des variables dérivées
-	@include apply-theme-variables;
-
-	// Ajustements critiques pour l'accessibilité - appliquer directement
-	$color_header_text: map-get($hc-colors, "text") !global;
-	$color_header_bg: map-get($hc-colors, "background") !global;
-	$color_focus-outline: map-get($hc-colors, "focus") !global;
-	$color_collapse_border: map-get($hc-colors, "text") !global;
-
-	// Ajustements spécifiques pour les éléments importants
-	$color_section_title: map-get($hc-colors, "heading") !global;
-	$color_section_bg-even: map-get($hc-colors, "background") !global;
-	$color_section_bg-odd: map-get($hc-colors, "background") !global;
-
-	// Assurer la lisibilité des textes sur tous les fonds
-	$color-main-text: map-get($hc-colors, "text") !global;
-	$color_main-text: map-get($hc-colors, "text") !global;
-
-	// Liens toujours bien visibles
-	$color_link: map-get($hc-colors, "link") !global;
-	$color_link-hover: map-get($hc-colors, "focus") !global;
-
-	// Éléments interactifs
-	$color_about_button-bg: map-get($hc-colors, "heading") !global;
-	$color_about_button-text: map-get($hc-colors, "background") !global;
 }
 
 // Palette réduite de couleurs très vives pour le high contrast
@@ -871,21 +548,20 @@ $hc-palette: (
 	// États d'action (blanc)
 	"success": #00ff00,
 	// Validation (vert pur)
-	"error": #ff0000 // Erreur (rouge pur),,,,,,,,,,
+	"error": #ff0000 // Erreur (rouge pur)
 );
 
 // Fonction qui détermine la couleur high contrast basée sur la luminosité
 @function get-high-contrast-color($color, $role: null) {
 	// Si un rôle spécifique est demandé, l'utiliser
-	@if $role and map-has-key($hc-palette, $role) {
-		@return map-get($hc-palette, $role);
+	@if $role and map.has-key($hc-palette, $role) {
+		@return map.get($hc-palette, $role);
 	}
 
 	// Sinon, décider en fonction de la luminosité
 	@return if(
-		is-dark($color),
-		map-get($hc-palette, "text"),
-		map-get($hc-palette, "background")
+		sass(is-dark($color)): map.get($hc-palette, "text");
+		else: map.get($hc-palette, "background")
 	);
 }
 
@@ -898,87 +574,70 @@ $hc-palette: (
 	);
 
 	// Fusionner la configuration personnalisée
-	$config: map-merge($default-config, $config);
-	$hc-palette: map-get($config, "colors");
-	$overrides: map-get($config, "overrides");
+	$config: map.merge($default-config, $config);
+	$hc-palette: map.get($config, "colors");
+	$overrides: map.get($config, "overrides");
 
-	//  Couleurs fondamentales
-	$off-white: get-high-contrast-color($off-white, "background") !global;
-	$near-black: get-high-contrast-color($near-black, "text") !global;
+	//  Couleurs fondamentales (rail endpoints)
+	$gray-50: get-high-contrast-color($gray-50, "background") !global;
+	$gray-950: get-high-contrast-color($gray-950, "text") !global;
 
 	//  Échelle de gris - convertir selon luminosité
-	$gray-darkest: get-high-contrast-color($gray-darkest) !global;
-	$gray-darker: get-high-contrast-color($gray-darker) !global;
-	$gray-dark: get-high-contrast-color($gray-dark) !global;
-	$gray-medium-dark: get-high-contrast-color($gray-medium-dark) !global;
-	$gray-medium-light: get-high-contrast-color($gray-medium-light) !global;
-	$gray-light: get-high-contrast-color($gray-light) !global;
-	$gray-lighter: get-high-contrast-color($gray-lighter) !global;
-	$gray-lightest: get-high-contrast-color($gray-lightest) !global;
+	$gray-100: get-high-contrast-color($gray-100) !global;
+	$gray-200: get-high-contrast-color($gray-200) !global;
+	$gray-300: get-high-contrast-color($gray-300) !global;
+	$gray-400: get-high-contrast-color($gray-400) !global;
+	$gray-500: get-high-contrast-color($gray-500) !global;
+	$gray-600: get-high-contrast-color($gray-600) !global;
+	$gray-700: get-high-contrast-color($gray-700) !global;
+	$gray-800: get-high-contrast-color($gray-800) !global;
+	$gray-900: get-high-contrast-color($gray-900) !global;
+
+	// Re-sync rail-endpoint aliases after transformation, before they are
+	// consumed by apply-theme-variables
+	$off-white: $gray-50 !global;
+	$near-black: $gray-950 !global;
 
 	// Couleurs sémantiques avec rôles spécifiques
-	$primary-color: get-high-contrast-color($primary-color) !global;
-	$secondary-color: get-high-contrast-color($secondary-color) !global;
-	$tertiary-color: get-high-contrast-color($tertiary-color) !global;
-	$link-color: get-high-contrast-color($link-color, "link") !global;
-	$link-color-hover: get-high-contrast-color(
-		$link-color-hover,
+	$accent: get-high-contrast-color($accent) !global;
+	$accent-strong: get-high-contrast-color($accent-strong) !global;
+	$accent-ink: get-high-contrast-color($accent-ink) !global;
+	$accent-soft: get-high-contrast-color($accent-soft) !global;
+	$link: get-high-contrast-color($link, "link") !global;
+	$link-hover: get-high-contrast-color(
+		$link-hover,
 		"action"
 	) !global;
-	$success-color: get-high-contrast-color($success-color, "success") !global;
-	$error-color: get-high-contrast-color($error-color, "error") !global;
+	$success: get-high-contrast-color($success, "success") !global;
+	$danger: get-high-contrast-color($danger, "error") !global;
 
 	// Appliquer les surcharges spécifiques avec structure conditionnelle
 	@each $var, $value in $overrides {
-		@if $var == "primary-color" {
-			$primary-color: $value !global;
-		} @else if $var == "secondary-color" {
-			$secondary-color: $value !global;
-		} @else if $var == "tertiary-color" {
-			$tertiary-color: $value !global;
-		} @else if $var == "link-color" {
-			$link-color: $value !global;
-		} @else if $var == "link-color-hover" {
-			$link-color-hover: $value !global;
-		} @else if $var == "success-color" {
-			$success-color: $value !global;
-		} @else if $var == "error-color" {
-			$error-color: $value !global;
+		@if $var == "accent" {
+			$accent: $value !global;
+		} @else if $var == "accent-strong" {
+			$accent-strong: $value !global;
+		} @else if $var == "accent-ink" {
+			$accent-ink: $value !global;
+		} @else if $var == "accent-soft" {
+			$accent-soft: $value !global;
+		} @else if $var == "link" {
+			$link: $value !global;
+		} @else if $var == "link-hover" {
+			$link-hover: $value !global;
+		} @else if $var == "success" {
+			$success: $value !global;
+		} @else if $var == "danger" {
+			$danger: $value !global;
 		}
 	}
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
+	@include apply-roles();
 
 	// Appliquer les variables dérivées
 	@include apply-theme-variables;
 }
-
-// Mixin pour le thème deutéranomalie (forme légère)
-// @mixin generate-deuteranomaly-theme() {
-// 	// Couleurs fondamentales inchangées
-// 	$off-white: get-color("stone", 50) !global;
-// 	$near-black: get-color("stone", 950) !global;
-
-// 	// Échelle de gris intacte
-// 	$gray-darkest: get-color("stone", 900) !global;
-// 	$gray-darker: get-color("stone", 800) !global;
-// 	$gray-dark: get-color("stone", 700) !global;
-// 	$gray-medium-dark: get-color("stone", 600) !global;
-// 	$gray-medium-light: get-color("stone", 500) !global;
-// 	$gray-light: get-color("stone", 400) !global;
-// 	$gray-lighter: get-color("stone", 300) !global;
-// 	$gray-lightest: get-color("stone", 200) !global;
-
-// 	// Couleurs sémantiques adaptées subtilement
-// 	$primary-color: get-deuteranomaly-color("amber", 300) !global;
-// 	$secondary-color: get-deuteranomaly-color("amber", 950) !global;
-// 	$tertiary-color: get-deuteranomaly-color("amber", 100) !global;
-// 	$link-color: get-deuteranomaly-color("sky", 900) !global;
-// 	$link-color-hover: get-deuteranomaly-color("sky", 800) !global;
-// 	$success-color: get-color("emerald", 600) !global;
-// 	$error-color: get-deuteranomaly-color("redd", 600) !global;
-
-// 	// Application des variables dérivées
-// 	@include apply-theme-variables;
-// }
 
 // Mixin qui transforme automatiquement toutes les variables du thème light en thème deutéranomalie
 @mixin transform-light-to-deuteranomaly($config: ()) {
@@ -990,116 +649,99 @@ $hc-palette: (
 	);
 
 	// Fusionner avec la configuration par défaut
-	$config: map-merge($default-config, $config);
+	$config: map.merge($default-config, $config);
 
 	// Traiter chaque variable du thème avec sa configuration
 	// On ne transforme pas les couleurs fondamentales et l'échelle de gris
 	// car elles restent identiques dans la deutéranomalie
 
 	// Ne pas transformer les couleurs déjà surchargées
-	$overrides: map-get($config, "overrides");
+	$overrides: map.get($config, "overrides");
 
 	// Traiter les couleurs sémantiques qui ne sont pas surchargées ou quand override est false
 	@if not(
 		$overrides and
-			map-has-key($overrides, "primary-color") and
-			map-get($overrides, "primary-color") ==
+			map.has-key($overrides, "accent") and
+			map.get($overrides, "accent") ==
 			true
 	)
 	{
-		$primary-color: auto-deuteranomaly-transform(
-			$primary-color,
-			"primary-color",
+		$accent: auto-deuteranomaly-transform(
+			$accent,
+			"accent",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "secondary-color") and
-			map-get($overrides, "secondary-color") ==
+			map.has-key($overrides, "accent-strong") and
+			map.get($overrides, "accent-strong") ==
 			true
 	)
 	{
-		$secondary-color: auto-deuteranomaly-transform(
-			$secondary-color,
-			"secondary-color",
+		$accent-strong: auto-deuteranomaly-transform(
+			$accent-strong,
+			"accent-strong",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "tertiary-color") and
-			map-get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "accent-ink") and
+			map.get($overrides, "accent-ink") ==
 			true
 	)
 	{
-		$tertiary-color: auto-deuteranomaly-transform(
-			$tertiary-color,
-			"tertiary-color",
+		$accent-ink: auto-deuteranomaly-transform(
+			$accent-ink,
+			"accent-ink",
+			$config
+		) !global;
+	}
+
+	@if not(
+		$overrides and
+			map.has-key($overrides, "accent-soft") and
+			map.get($overrides, "accent-soft") ==
+			true
+	)
+	{
+		$accent-soft: auto-deuteranomaly-transform(
+			$accent-soft,
+			"accent-soft",
 			$config
 		) !global;
 	}
 
 	// Liens et autres couleurs fonctionnelles
-	$link-color: auto-deuteranomaly-transform(
-		$link-color,
-		"link-color",
+	$link: auto-deuteranomaly-transform(
+		$link,
+		"link",
 		$config
 	) !global;
-	$link-color-hover: auto-deuteranomaly-transform(
-		$link-color-hover,
-		"link-color-hover",
+	$link-hover: auto-deuteranomaly-transform(
+		$link-hover,
+		"link-hover",
 		$config
 	) !global;
-	$success-color: auto-deuteranomaly-transform(
-		$success-color,
-		"success-color",
+	$success: auto-deuteranomaly-transform(
+		$success,
+		"success",
 		$config
 	) !global;
-	$error-color: auto-deuteranomaly-transform(
-		$error-color,
-		"error-color",
+	$danger: auto-deuteranomaly-transform(
+		$danger,
+		"danger",
 		$config
 	) !global;
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
+	@include apply-roles();
 
 	// Appliquer les variables dérivées
 	@include apply-theme-variables;
-}
-
-// Mixin pour le thème deutéranopie
-@mixin generate-deuteranopia-theme() {
-	// Couleurs fondamentales avec transformation pour deutéranopie
-	$off-white: get-color("stone", 50) !global; // Garder blanc
-	$near-black: get-color("stone", 950) !global; // Garder noir
-
-	// Échelle de gris intacte
-	$gray-darkest: get-color("stone", 900) !global;
-	$gray-darker: get-color("stone", 800) !global;
-	$gray-dark: get-color("stone", 700) !global;
-	$gray-medium-dark: get-color("stone", 600) !global;
-	$gray-medium-light: get-color("stone", 500) !global;
-	$gray-light: get-color("stone", 400) !global;
-	$gray-lighter: get-color("stone", 300) !global;
-	$gray-lightest: get-color("stone", 200) !global;
-
-	// Couleurs sémantiques adaptées pour deutéranopie
-	$primary-color: get-deuteranopia-color("amber", 300) !global;
-	$secondary-color: get-deuteranopia-color("amber", 950) !global;
-	$tertiary-color: get-deuteranopia-color("amber", 100) !global;
-	$link-color: get-deuteranopia-color("sky", 900) !global;
-	$link-color-hover: get-deuteranopia-color("sky", 800) !global;
-	$success-color: #0075ff !global; // Bleu spécifique pour remplacer le vert
-	$error-color: #ffcc00 !global; // Jaune-orange pour remplacer le rouge
-
-	// Application des variables dérivées
-	@include apply-theme-variables;
-
-	// Surcharges spécifiques pour améliorer la lisibilité en deutéranopie
-	$color_header_bg: $primary-color !global;
-	$color_portfolio-tag_bg: get-deuteranopia-color("amber", 100) !global;
-	$color_about_button-bg: $link-color !global;
 }
 
 // Mixin qui transforme automatiquement toutes les variables du thème light en thème deuteranopia
@@ -1107,30 +749,30 @@ $hc-palette: (
 	// Utiliser la configuration par défaut si aucune n'est fournie
 	$default-config: (
 		"special-colors": (
-			"success-color": #0075ff,
+			"success": #0075ff,
 			// Bleu spécifique pour remplacer le vert
-			"error-color": #ffcc00
-				// Jaune-orange pour remplacer le rouge,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+			"danger": #ffcc00
+				// Jaune-orange pour remplacer le rouge
 		),
 		"overrides": (),
 	);
 
 	// Fusionner avec la configuration par défaut
-	$config: map-merge($default-config, $config);
+	$config: map.merge($default-config, $config);
 
 	// Récupérer les listes de valeurs spéciales et overrides
-	$special-colors: map-get($config, "special-colors");
-	$overrides: map-get($config, "overrides");
+	$special-colors: map.get($config, "special-colors");
+	$overrides: map.get($config, "overrides");
 
 	// Appliquer directement les couleurs spéciales
 	@each $var-name, $color-value in $special-colors {
-		@if $var-name == "success-color" {
-			$success-color: $color-value !global;
-		} @else if $var-name == "error-color" {
-			$error-color: $color-value !global;
+		@if $var-name == "success" {
+			$success: $color-value !global;
+		} @else if $var-name == "danger" {
+			$danger: $color-value !global;
 		}
 		// Ajouter aux overrides pour éviter la transformation
-		$overrides: map-merge(
+		$overrides: map.merge(
 			$overrides,
 			(
 				$var-name: true,
@@ -1139,7 +781,7 @@ $hc-palette: (
 	}
 
 	// Mettre à jour les overrides dans la config
-	$config: map-merge(
+	$config: map.merge(
 		$config,
 		(
 			"overrides": $overrides,
@@ -1149,100 +791,88 @@ $hc-palette: (
 	// Traiter les couleurs sémantiques
 	@if not(
 		$overrides and
-			map-has-key($overrides, "primary-color") and
-			map-get($overrides, "primary-color") ==
+			map.has-key($overrides, "accent") and
+			map.get($overrides, "accent") ==
 			true
 	)
 	{
-		$primary-color: auto-deuteranopia-transform(
-			$primary-color,
-			"primary-color",
+		$accent: auto-deuteranopia-transform(
+			$accent,
+			"accent",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "secondary-color") and
-			map-get($overrides, "secondary-color") ==
+			map.has-key($overrides, "accent-strong") and
+			map.get($overrides, "accent-strong") ==
 			true
 	)
 	{
-		$secondary-color: auto-deuteranopia-transform(
-			$secondary-color,
-			"secondary-color",
+		$accent-strong: auto-deuteranopia-transform(
+			$accent-strong,
+			"accent-strong",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "tertiary-color") and
-			map-get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "accent-ink") and
+			map.get($overrides, "accent-ink") ==
 			true
 	)
 	{
-		$tertiary-color: auto-deuteranopia-transform(
-			$tertiary-color,
-			"tertiary-color",
+		$accent-ink: auto-deuteranopia-transform(
+			$accent-ink,
+			"accent-ink",
+			$config
+		) !global;
+	}
+
+	@if not(
+		$overrides and
+			map.has-key($overrides, "accent-soft") and
+			map.get($overrides, "accent-soft") ==
+			true
+	)
+	{
+		$accent-soft: auto-deuteranopia-transform(
+			$accent-soft,
+			"accent-soft",
 			$config
 		) !global;
 	}
 
 	// Liens et autres couleurs fonctionnelles
-	$link-color: auto-deuteranopia-transform(
-		$link-color,
-		"link-color",
+	$link: auto-deuteranopia-transform(
+		$link,
+		"link",
 		$config
 	) !global;
-	$link-color-hover: auto-deuteranopia-transform(
-		$link-color-hover,
-		"link-color-hover",
+	$link-hover: auto-deuteranopia-transform(
+		$link-hover,
+		"link-hover",
 		$config
 	) !global;
-	$success-color: auto-deuteranopia-transform(
-		$success-color,
-		"success-color",
+	$success: auto-deuteranopia-transform(
+		$success,
+		"success",
 		$config
 	) !global;
-	$error-color: auto-deuteranopia-transform(
-		$error-color,
-		"error-color",
+	$danger: auto-deuteranopia-transform(
+		$danger,
+		"danger",
 		$config
 	) !global;
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
+	@include apply-roles();
 
 	// Appliquer les variables dérivées
 	@include apply-theme-variables;
 }
-
-// // Mixin pour le thème protanomalie (forme légère)
-// @mixin generate-protanomaly-theme() {
-// 	// Couleurs fondamentales inchangées
-// 	$off-white: get-color("stone", 50) !global;
-// 	$near-black: get-color("stone", 950) !global;
-
-// 	// Échelle de gris intacte
-// 	$gray-darkest: get-color("stone", 900) !global;
-// 	$gray-darker: get-color("stone", 800) !global;
-// 	$gray-dark: get-color("stone", 700) !global;
-// 	$gray-medium-dark: get-color("stone", 600) !global;
-// 	$gray-medium-light: get-color("stone", 500) !global;
-// 	$gray-light: get-color("stone", 400) !global;
-// 	$gray-lighter: get-color("stone", 300) !global;
-// 	$gray-lightest: get-color("stone", 200) !global;
-
-// 	// Couleurs sémantiques adaptées subtilement
-// 	$primary-color: get-protanomaly-color("amber", 300) !global;
-// 	$secondary-color: get-protanomaly-color("amber", 950) !global;
-// 	$tertiary-color: get-protanomaly-color("amber", 100) !global;
-// 	$link-color: get-protanomaly-color("sky", 900) !global;
-// 	$link-color-hover: get-protanomaly-color("sky", 800) !global;
-// 	$success-color: get-color("emerald", 600) !global;
-// 	$error-color: get-protanomaly-color("redd", 600) !global;
-
-// 	// Application des variables dérivées
-// 	@include apply-theme-variables;
-// }
 
 // Mixin qui transforme automatiquement toutes les variables du thème light en thème protanomalie
 @mixin transform-light-to-protanomaly($config: ()) {
@@ -1254,113 +884,95 @@ $hc-palette: (
 	);
 
 	// Fusionner avec la configuration par défaut
-	$config: map-merge($default-config, $config);
+	$config: map.merge($default-config, $config);
 
 	// Ne pas transformer les couleurs déjà surchargées
-	$overrides: map-get($config, "overrides");
+	$overrides: map.get($config, "overrides");
 
 	// Traiter les couleurs sémantiques qui ne sont pas surchargées ou quand override est false
 	@if not(
 		$overrides and
-			map-has-key($overrides, "primary-color") and
-			map-get($overrides, "primary-color") ==
+			map.has-key($overrides, "accent") and
+			map.get($overrides, "accent") ==
 			true
 	)
 	{
-		$primary-color: auto-protanomaly-transform(
-			$primary-color,
-			"primary-color",
+		$accent: auto-protanomaly-transform(
+			$accent,
+			"accent",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "secondary-color") and
-			map-get($overrides, "secondary-color") ==
+			map.has-key($overrides, "accent-strong") and
+			map.get($overrides, "accent-strong") ==
 			true
 	)
 	{
-		$secondary-color: auto-protanomaly-transform(
-			$secondary-color,
-			"secondary-color",
+		$accent-strong: auto-protanomaly-transform(
+			$accent-strong,
+			"accent-strong",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "tertiary-color") and
-			map-get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "accent-ink") and
+			map.get($overrides, "accent-ink") ==
 			true
 	)
 	{
-		$tertiary-color: auto-protanomaly-transform(
-			$tertiary-color,
-			"tertiary-color",
+		$accent-ink: auto-protanomaly-transform(
+			$accent-ink,
+			"accent-ink",
+			$config
+		) !global;
+	}
+
+	@if not(
+		$overrides and
+			map.has-key($overrides, "accent-soft") and
+			map.get($overrides, "accent-soft") ==
+			true
+	)
+	{
+		$accent-soft: auto-protanomaly-transform(
+			$accent-soft,
+			"accent-soft",
 			$config
 		) !global;
 	}
 
 	// Liens et autres couleurs fonctionnelles
-	$link-color: auto-protanomaly-transform(
-		$link-color,
-		"link-color",
+	$link: auto-protanomaly-transform(
+		$link,
+		"link",
 		$config
 	) !global;
-	$link-color-hover: auto-protanomaly-transform(
-		$link-color-hover,
-		"link-color-hover",
+	$link-hover: auto-protanomaly-transform(
+		$link-hover,
+		"link-hover",
 		$config
 	) !global;
-	$success-color: auto-protanomaly-transform(
-		$success-color,
-		"success-color",
+	$success: auto-protanomaly-transform(
+		$success,
+		"success",
 		$config
 	) !global;
-	$error-color: auto-protanomaly-transform(
-		$error-color,
-		"error-color",
+	$danger: auto-protanomaly-transform(
+		$danger,
+		"danger",
 		$config
 	) !global;
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
+	@include apply-roles();
 
 	// Appliquer les variables dérivées
 	@include apply-theme-variables;
-}
-
-// Mixin pour le thème protanopie
-@mixin generate-protanopia-theme() {
-	// Couleurs fondamentales avec transformation pour protanopie
-	$off-white: get-color("stone", 50) !global;
-	$near-black: get-color("stone", 950) !global;
-
-	// Échelle de gris intacte
-	$gray-darkest: get-color("stone", 900) !global;
-	$gray-darker: get-color("stone", 800) !global;
-	$gray-dark: get-color("stone", 700) !global;
-	$gray-medium-dark: get-color("stone", 600) !global;
-	$gray-medium-light: get-color("stone", 500) !global;
-	$gray-light: get-color("stone", 400) !global;
-	$gray-lighter: get-color("stone", 300) !global;
-	$gray-lightest: get-color("stone", 200) !global;
-
-	// Couleurs sémantiques adaptées pour protanopie
-	$primary-color: get-protanopia-color("amber", 300) !global;
-	$secondary-color: get-protanopia-color("amber", 950) !global;
-	$tertiary-color: get-protanopia-color("amber", 100) !global;
-	$link-color: get-protanopia-color("sky", 900) !global;
-	$link-color-hover: get-protanopia-color("sky", 800) !global;
-	$success-color: #0090ff !global; // Bleu clair pour remplacer le vert
-	$error-color: #ffd700 !global; // Or pour remplacer le rouge
-
-	// Application des variables dérivées
-	@include apply-theme-variables;
-
-	// Surcharges spécifiques pour améliorer la lisibilité en protanopie
-	$color_header_bg: $primary-color !global;
-	$color_portfolio-tag_bg: get-protanopia-color("amber", 100) !global;
-
-	$color_about_button-bg: $link-color !global;
 }
 
 // Mixin qui transforme automatiquement toutes les variables du thème light en thème protanopia
@@ -1368,117 +980,105 @@ $hc-palette: (
 	// Utiliser la configuration par défaut si aucune n'est fournie
 	$default-config: (
 		"special-colors": (
-			"success-color": #0090ff,
+			"success": #0090ff,
 			// Bleu clair pour remplacer le vert
-			"error-color": #ffd700
-				// Or pour remplacer le rouge,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+			"danger": #ffd700
+				// Or pour remplacer le rouge
 		),
 		"overrides": (),
 	);
 
 	// Fusionner avec la configuration par défaut
-	$config: map-merge($default-config, $config);
+	$config: map.merge($default-config, $config);
 
 	// Ne pas transformer les couleurs déjà surchargées
-	$overrides: map-get($config, "overrides");
+	$overrides: map.get($config, "overrides");
 
 	// Traiter les couleurs sémantiques
 	@if not(
 		$overrides and
-			map-has-key($overrides, "primary-color") and
-			map-get($overrides, "primary-color") ==
+			map.has-key($overrides, "accent") and
+			map.get($overrides, "accent") ==
 			true
 	)
 	{
-		$primary-color: auto-protanopia-transform(
-			$primary-color,
-			"primary-color",
+		$accent: auto-protanopia-transform(
+			$accent,
+			"accent",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "secondary-color") and
-			map-get($overrides, "secondary-color") ==
+			map.has-key($overrides, "accent-strong") and
+			map.get($overrides, "accent-strong") ==
 			true
 	)
 	{
-		$secondary-color: auto-protanopia-transform(
-			$secondary-color,
-			"secondary-color",
+		$accent-strong: auto-protanopia-transform(
+			$accent-strong,
+			"accent-strong",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "tertiary-color") and
-			map-get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "accent-ink") and
+			map.get($overrides, "accent-ink") ==
 			true
 	)
 	{
-		$tertiary-color: auto-protanopia-transform(
-			$tertiary-color,
-			"tertiary-color",
+		$accent-ink: auto-protanopia-transform(
+			$accent-ink,
+			"accent-ink",
+			$config
+		) !global;
+	}
+
+	@if not(
+		$overrides and
+			map.has-key($overrides, "accent-soft") and
+			map.get($overrides, "accent-soft") ==
+			true
+	)
+	{
+		$accent-soft: auto-protanopia-transform(
+			$accent-soft,
+			"accent-soft",
 			$config
 		) !global;
 	}
 
 	// Liens et autres couleurs fonctionnelles
-	$link-color: auto-protanopia-transform(
-		$link-color,
-		"link-color",
+	$link: auto-protanopia-transform(
+		$link,
+		"link",
 		$config
 	) !global;
-	$link-color-hover: auto-protanopia-transform(
-		$link-color-hover,
-		"link-color-hover",
+	$link-hover: auto-protanopia-transform(
+		$link-hover,
+		"link-hover",
 		$config
 	) !global;
-	$success-color: auto-protanopia-transform(
-		$success-color,
-		"success-color",
+	$success: auto-protanopia-transform(
+		$success,
+		"success",
 		$config
 	) !global;
-	$error-color: auto-protanopia-transform(
-		$error-color,
-		"error-color",
+	$danger: auto-protanopia-transform(
+		$danger,
+		"danger",
 		$config
 	) !global;
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
+	@include apply-roles();
 
 	// Appliquer les variables dérivées
 	@include apply-theme-variables;
 }
-
-// // Mixin pour le thème tritanomalie (forme légère)
-// @mixin generate-tritanomaly-theme() {
-// 	// Couleurs fondamentales inchangées
-// 	$off-white: get-color("stone", 50) !global;
-// 	$near-black: get-color("stone", 950) !global;
-
-// 	// Échelle de gris intacte
-// 	$gray-darkest: get-color("stone", 900) !global;
-// 	$gray-darker: get-color("stone", 800) !global;
-// 	$gray-dark: get-color("stone", 700) !global;
-// 	$gray-medium-dark: get-color("stone", 600) !global;
-// 	$gray-medium-light: get-color("stone", 500) !global;
-// 	$gray-light: get-color("stone", 400) !global;
-// 	$gray-lighter: get-color("stone", 300) !global;
-// 	$gray-lightest: get-color("stone", 200) !global;
-
-// 	// Couleurs sémantiques adaptées subtilement
-// 	$primary-color: get-tritanomaly-color("amber", 300) !global;
-// 	$secondary-color: get-tritanomaly-color("amber", 950) !global;
-// 	$tertiary-color: get-tritanomaly-color("amber", 100) !global;
-// 	$link-color: get-tritanomaly-color("sky", 900) !global;
-// 	$link-color-hover: get-tritanomaly-color("sky", 800) !global;
-// 	$success-color: get-color("emerald", 600) !global;
-// 	$error-color: get-tritanomaly-color("redd", 600) !global;
-
-// 	// Application des variables dérivées
-// 	@include apply-theme-variables;
-// }
 
 // Mixin qui transforme automatiquement toutes les variables du thème light en thème tritanomalie
 @mixin transform-light-to-tritanomaly($config: ()) {
@@ -1490,112 +1090,95 @@ $hc-palette: (
 	);
 
 	// Fusionner avec la configuration par défaut
-	$config: map-merge($default-config, $config);
+	$config: map.merge($default-config, $config);
 
 	// Ne pas transformer les couleurs déjà surchargées
-	$overrides: map-get($config, "overrides");
+	$overrides: map.get($config, "overrides");
 
 	// Traiter les couleurs sémantiques qui ne sont pas surchargées ou quand override est false
 	@if not(
 		$overrides and
-			map-has-key($overrides, "primary-color") and
-			map-get($overrides, "primary-color") ==
+			map.has-key($overrides, "accent") and
+			map.get($overrides, "accent") ==
 			true
 	)
 	{
-		$primary-color: auto-tritanomaly-transform(
-			$primary-color,
-			"primary-color",
+		$accent: auto-tritanomaly-transform(
+			$accent,
+			"accent",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "secondary-color") and
-			map-get($overrides, "secondary-color") ==
+			map.has-key($overrides, "accent-strong") and
+			map.get($overrides, "accent-strong") ==
 			true
 	)
 	{
-		$secondary-color: auto-tritanomaly-transform(
-			$secondary-color,
-			"secondary-color",
+		$accent-strong: auto-tritanomaly-transform(
+			$accent-strong,
+			"accent-strong",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "tertiary-color") and
-			map-get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "accent-ink") and
+			map.get($overrides, "accent-ink") ==
 			true
 	)
 	{
-		$tertiary-color: auto-tritanomaly-transform(
-			$tertiary-color,
-			"tertiary-color",
+		$accent-ink: auto-tritanomaly-transform(
+			$accent-ink,
+			"accent-ink",
+			$config
+		) !global;
+	}
+
+	@if not(
+		$overrides and
+			map.has-key($overrides, "accent-soft") and
+			map.get($overrides, "accent-soft") ==
+			true
+	)
+	{
+		$accent-soft: auto-tritanomaly-transform(
+			$accent-soft,
+			"accent-soft",
 			$config
 		) !global;
 	}
 
 	// Liens et autres couleurs fonctionnelles
-	$link-color: auto-tritanomaly-transform(
-		$link-color,
-		"link-color",
+	$link: auto-tritanomaly-transform(
+		$link,
+		"link",
 		$config
 	) !global;
-	$link-color-hover: auto-tritanomaly-transform(
-		$link-color-hover,
-		"link-color-hover",
+	$link-hover: auto-tritanomaly-transform(
+		$link-hover,
+		"link-hover",
 		$config
 	) !global;
-	$success-color: auto-tritanomaly-transform(
-		$success-color,
-		"success-color",
+	$success: auto-tritanomaly-transform(
+		$success,
+		"success",
 		$config
 	) !global;
-	$error-color: auto-tritanomaly-transform(
-		$error-color,
-		"error-color",
+	$danger: auto-tritanomaly-transform(
+		$danger,
+		"danger",
 		$config
 	) !global;
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
+	@include apply-roles();
 
 	// Appliquer les variables dérivées
 	@include apply-theme-variables;
-}
-
-// Mixin pour le thème tritanopie
-@mixin generate-tritanopia-theme() {
-	// Couleurs fondamentales avec transformation pour tritanopie
-	$off-white: get-color("stone", 50) !global;
-	$near-black: get-color("stone", 950) !global;
-
-	// Échelle de gris intacte
-	$gray-darkest: get-color("stone", 900) !global;
-	$gray-darker: get-color("stone", 800) !global;
-	$gray-dark: get-color("stone", 700) !global;
-	$gray-medium-dark: get-color("stone", 600) !global;
-	$gray-medium-light: get-color("stone", 500) !global;
-	$gray-light: get-color("stone", 400) !global;
-	$gray-lighter: get-color("stone", 300) !global;
-	$gray-lightest: get-color("stone", 200) !global;
-
-	// Couleurs sémantiques adaptées pour tritanopie
-	$primary-color: get-tritanopia-color("amber", 300) !global;
-	$secondary-color: get-tritanopia-color("amber", 950) !global;
-	$tertiary-color: get-tritanopia-color("amber", 100) !global;
-	$link-color: get-tritanopia-color("sky", 900) !global;
-	$link-color-hover: get-tritanopia-color("sky", 800) !global;
-	$success-color: #ff6600 !global; // Orange pour remplacer le vert
-	$error-color: #ff3399 !global; // Rose pour remplacer le rouge
-
-	// Application des variables dérivées
-	@include apply-theme-variables;
-
-	// Surcharges spécifiques pour améliorer la lisibilité en tritanopie
-	$color_header_bg: $primary-color !global;
-	$color_portfolio-tag_bg: get-tritanopia-color("amber", 100) !global;
-	$color_about_button-bg: $link-color !global;
 }
 
 // Mixin qui transforme automatiquement toutes les variables du thème light en thème tritanopia
@@ -1603,139 +1186,104 @@ $hc-palette: (
 	// Utiliser la configuration par défaut si aucune n'est fournie
 	$default-config: (
 		"special-colors": (
-			"success-color": #ff6600,
+			"success": #ff6600,
 			// Orange pour remplacer le vert
-			"error-color": #ff3399
-				// Rose pour remplacer le rouge,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+			"danger": #ff3399
+				// Rose pour remplacer le rouge
 		),
 		"overrides": (),
 	);
 
 	// Fusionner avec la configuration par défaut
-	$config: map-merge($default-config, $config);
+	$config: map.merge($default-config, $config);
 
 	// Ne pas transformer les couleurs déjà surchargées
-	$overrides: map-get($config, "overrides");
+	$overrides: map.get($config, "overrides");
 
 	// Traiter les couleurs sémantiques
 	@if not(
 		$overrides and
-			map-has-key($overrides, "primary-color") and
-			map-get($overrides, "primary-color") ==
+			map.has-key($overrides, "accent") and
+			map.get($overrides, "accent") ==
 			true
 	)
 	{
-		$primary-color: auto-tritanopia-transform(
-			$primary-color,
-			"primary-color",
+		$accent: auto-tritanopia-transform(
+			$accent,
+			"accent",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "secondary-color") and
-			map-get($overrides, "secondary-color") ==
+			map.has-key($overrides, "accent-strong") and
+			map.get($overrides, "accent-strong") ==
 			true
 	)
 	{
-		$secondary-color: auto-tritanopia-transform(
-			$secondary-color,
-			"secondary-color",
+		$accent-strong: auto-tritanopia-transform(
+			$accent-strong,
+			"accent-strong",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "tertiary-color") and
-			map-get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "accent-ink") and
+			map.get($overrides, "accent-ink") ==
 			true
 	)
 	{
-		$tertiary-color: auto-tritanopia-transform(
-			$tertiary-color,
-			"tertiary-color",
+		$accent-ink: auto-tritanopia-transform(
+			$accent-ink,
+			"accent-ink",
+			$config
+		) !global;
+	}
+
+	@if not(
+		$overrides and
+			map.has-key($overrides, "accent-soft") and
+			map.get($overrides, "accent-soft") ==
+			true
+	)
+	{
+		$accent-soft: auto-tritanopia-transform(
+			$accent-soft,
+			"accent-soft",
 			$config
 		) !global;
 	}
 
 	// Liens et autres couleurs fonctionnelles
-	$link-color: auto-tritanopia-transform(
-		$link-color,
-		"link-color",
+	$link: auto-tritanopia-transform(
+		$link,
+		"link",
 		$config
 	) !global;
-	$link-color-hover: auto-tritanopia-transform(
-		$link-color-hover,
-		"link-color-hover",
+	$link-hover: auto-tritanopia-transform(
+		$link-hover,
+		"link-hover",
 		$config
 	) !global;
-	$success-color: auto-tritanopia-transform(
-		$success-color,
-		"success-color",
+	$success: auto-tritanopia-transform(
+		$success,
+		"success",
 		$config
 	) !global;
-	$error-color: auto-tritanopia-transform(
-		$error-color,
-		"error-color",
+	$danger: auto-tritanopia-transform(
+		$danger,
+		"danger",
 		$config
 	) !global;
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
+	@include apply-roles();
 
 	// Appliquer les variables dérivées
 	@include apply-theme-variables;
-}
-
-// Mixin pour le thème achromatopsie
-@mixin generate-achromatopsia-theme() {
-	// Couleurs fondamentales avec contraste maximal
-	$off-white: get-color("neutral", 50) !global;
-	$near-black: get-color("neutral", 950) !global;
-
-	// Échelle de gris optimisée pour la lisibilité
-	$gray-darkest: get-color("neutral", 900) !global;
-	$gray-darker: get-color("neutral", 800) !global;
-	$gray-dark: get-color("neutral", 700) !global;
-	$gray-medium-dark: get-color("neutral", 600) !global;
-	$gray-medium-light: get-color("neutral", 500) !global;
-	$gray-light: get-color("neutral", 400) !global;
-	$gray-lighter: get-color("neutral", 300) !global;
-	$gray-lightest: get-color("neutral", 200) !global;
-
-	// Couleurs sémantiques adaptées au monochrome
-	$primary-color: get-color(
-		"neutral",
-		300
-	) !global; // Gris clair (remplace amber-300)
-	$secondary-color: get-color(
-		"neutral",
-		800
-	) !global; // Gris très foncé (remplace amber-950)
-	$tertiary-color: get-color(
-		"neutral",
-		100
-	) !global; // Gris très clair (remplace amber-100)
-	$link-color: get-color("neutral", 700) !global; // Gris foncé pour les liens
-	$link-color-hover: get-color(
-		"neutral",
-		900
-	) !global; // Presque noir pour hover
-	$success-color: get-color("neutral", 400) !global; // Gris moyen pour succès
-	$error-color: get-color("neutral", 900) !global; // Noir pour erreur
-
-	// Application des variables dérivées
-	@include apply-theme-variables;
-
-	// Surcharges spécifiques à l'achromatopsie pour garantir les contrastes
-	$color_portfolio-tag_bg: get-color("neutral", 200) !global;
-	$color_portfolio-tag_bg-texte: get-color("neutral", 900) !global;
-
-	// Optimiser les contrastes pour les éléments interactifs
-	$color_about_button-bg: get-color("neutral", 800) !global;
-	$color_about_button-text: get-color("neutral", 50) !global;
-
-	// Bordures plus définies
-	$color_collapse_border: get-color("neutral", 900) !global;
 }
 
 @function get-adjusted-gray-level($color, $adjustment: 0) {
@@ -1743,9 +1291,10 @@ $hc-palette: (
 	$tw-weights: (50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950);
 
 	// Calculer la luminosité de la couleur (valeur entre 0 et 1)
-	$luminance: (
-			red($color) * 0.299 + green($color) * 0.587 + blue($color) * 0.114
-		) / 255;
+	$luminance: math.div(
+		math.round(color.channel($color, "red", $space: rgb)) * 0.299 + math.round(color.channel($color, "green", $space: rgb)) * 0.587 + math.round(color.channel($color, "blue", $space: rgb)) * 0.114,
+		255
+	);
 
 	// Déterminer l'index de base approximatif dans la palette Tailwind
 	$base-index: 1; // Par défaut (50)
@@ -1781,7 +1330,7 @@ $hc-palette: (
 	$adjusted-index: max(1, min(11, $adjusted-index));
 
 	// Retourner la valeur du poids correspondant
-	@return nth($tw-weights, $adjusted-index);
+	@return list.nth($tw-weights, $adjusted-index);
 }
 
 // Fonction qui obtient la couleur grise ajustée
@@ -1796,15 +1345,15 @@ $hc-palette: (
 	$analysis: analyze-tailwind-color($color);
 
 	// Si c'est une couleur Tailwind trouvée
-	@if map-get($analysis, "found") {
-		$family: map-get($analysis, "family");
-		$weight: map-get($analysis, "weight");
+	@if map.get($analysis, "found") {
+		$family: map.get($analysis, "family");
+		$weight: map.get($analysis, "weight");
 
 		// Liste des familles de gris à convertir
 		$gray-families: ("slate", "gray", "zinc", "stone");
 
 		// Si la couleur est d'une famille de gris (mais pas déjà neutral), la convertir
-		@if index($gray-families, $family) {
+		@if list.index($gray-families, $family) {
 			@return get-color("neutral", $weight);
 		}
 	}
@@ -1820,109 +1369,111 @@ $hc-palette: (
 		// "contrast": 1.4,
 		"special-colors":
 			(
-				"success-color": get-color("neutral", 400),
-				"error-color": get-color("neutral", 900),
+				"success": get-color("neutral", 400),
+				"danger": get-color("neutral", 900),
 			),
 		"adjustments": (
-			"off-white": 0,
-			"near-black": 0,
-			"gray-darkest": 0,
-			"gray-darker": 0,
-			"gray-dark": 0,
-			"gray-medium-dark": 0,
-			"gray-medium-light": 0,
-			"gray-light": 0,
-			"gray-lighter": 0,
-			"gray-lightest": 0,
-			"primary-color": 0,
-			"secondary-color": 0,
-			"tertiary-color": 0,
-			"link-color": 0,
-			"link-color-hover": 0,
+			"gray-50": 0,
+			"gray-100": 0,
+			"gray-200": 0,
+			"gray-300": 0,
+			"gray-400": 0,
+			"gray-500": 0,
+			"gray-600": 0,
+			"gray-700": 0,
+			"gray-800": 0,
+			"gray-900": 0,
+			"gray-950": 0,
+			"accent": 0,
+			"accent-strong": 0,
+			"accent-ink": 0,
+			"accent-soft": 0,
+			"link": 0,
+			"link-hover": 0,
 		)
 	);
 
 	// Fusionner avec la configuration par défaut
-	$config: map-merge($default-config, $config);
+	$config: map.merge($default-config, $config);
 
 	// Récupérer les configurations
-	$special-colors: map-get($config, "special-colors");
-	$adjustments: map-get($config, "adjustments");
+	$special-colors: map.get($config, "special-colors");
+	$adjustments: map.get($config, "adjustments");
 
 	// Convertir d'abord toutes les variables de gris en neutral
-	$off-white: convert-to-neutral-gray($off-white) !global;
-	$near-black: convert-to-neutral-gray($near-black) !global;
-	$gray-darkest: convert-to-neutral-gray($gray-darkest) !global;
-	$gray-darker: convert-to-neutral-gray($gray-darker) !global;
-	$gray-dark: convert-to-neutral-gray($gray-dark) !global;
-	$gray-medium-dark: convert-to-neutral-gray($gray-medium-dark) !global;
-	$gray-medium-light: convert-to-neutral-gray($gray-medium-light) !global;
-	$gray-light: convert-to-neutral-gray($gray-light) !global;
-	$gray-lighter: convert-to-neutral-gray($gray-lighter) !global;
-	$gray-lightest: convert-to-neutral-gray($gray-lightest) !global;
+	$gray-50: convert-to-neutral-gray($gray-50) !global;
+	$gray-100: convert-to-neutral-gray($gray-100) !global;
+	$gray-200: convert-to-neutral-gray($gray-200) !global;
+	$gray-300: convert-to-neutral-gray($gray-300) !global;
+	$gray-400: convert-to-neutral-gray($gray-400) !global;
+	$gray-500: convert-to-neutral-gray($gray-500) !global;
+	$gray-600: convert-to-neutral-gray($gray-600) !global;
+	$gray-700: convert-to-neutral-gray($gray-700) !global;
+	$gray-800: convert-to-neutral-gray($gray-800) !global;
+	$gray-900: convert-to-neutral-gray($gray-900) !global;
+	$gray-950: convert-to-neutral-gray($gray-950) !global;
+
+	// Re-sync rail-endpoint aliases after transformation, before they are
+	// consumed by apply-theme-variables
+	$off-white: $gray-50 !global;
+	$near-black: $gray-950 !global;
 
 	// Appliquer les couleurs spéciales
 	@each $var-name, $color-value in $special-colors {
-		@if $var-name == "success-color" {
-			$success-color: $color-value !global;
-		} @else if $var-name == "error-color" {
-			$error-color: $color-value !global;
+		@if $var-name == "success" {
+			$success: $color-value !global;
+		} @else if $var-name == "danger" {
+			$danger: $color-value !global;
 		}
 	}
 
-	@if not map-has-key($special-colors, "primary-color") {
-		$adjustment: map-get($adjustments, "primary-color") or 0;
-		$primary-color: get-adjusted-gray($primary-color, $adjustment) !global;
+	@if not map.has-key($special-colors, "accent") {
+		$adjustment: map.get($adjustments, "accent") or 0;
+		$accent: get-adjusted-gray($accent, $adjustment) !global;
 	}
 
-	@if not map-has-key($special-colors, "secondary-color") {
-		$adjustment: map-get($adjustments, "secondary-color") or 0;
-		$secondary-color: get-adjusted-gray($secondary-color, $adjustment) !global;
+	@if not map.has-key($special-colors, "accent-strong") {
+		$adjustment: map.get($adjustments, "accent-strong") or 0;
+		$accent-strong: get-adjusted-gray($accent-strong, $adjustment) !global;
 	}
 
-	@if not map-has-key($special-colors, "tertiary-color") {
-		$adjustment: map-get($adjustments, "tertiary-color") or 0;
-		$tertiary-color: get-adjusted-gray($tertiary-color, $adjustment) !global;
+	@if not map.has-key($special-colors, "accent-ink") {
+		$adjustment: map.get($adjustments, "accent-ink") or 0;
+		$accent-ink: get-adjusted-gray($accent-ink, $adjustment) !global;
+	}
+
+	@if not map.has-key($special-colors, "accent-soft") {
+		$adjustment: map.get($adjustments, "accent-soft") or 0;
+		$accent-soft: get-adjusted-gray($accent-soft, $adjustment) !global;
 	}
 
 	// Variables de liens aussi avec get-adjusted-gray
-	@if not map-has-key($special-colors, "link-color") {
-		$adjustment: map-get($adjustments, "link-color") or 0;
-		$link-color: get-adjusted-gray($link-color, $adjustment) !global;
-		$color_focus-outline: get-adjusted-gray(
-			$color_focus-outline,
+	@if not map.has-key($special-colors, "link") {
+		$adjustment: map.get($adjustments, "link") or 0;
+		$link: get-adjusted-gray($link, $adjustment) !global;
+		$color-focus-outline: get-adjusted-gray(
+			$color-focus-outline,
 			$adjustment
 		) !global;
-		$color_focus-bg: get-adjusted-gray($color_focus-bg, $adjustment) !global;
-		$color_link: get-adjusted-gray($color_link, $adjustment) !global;
+		$color-focus-bg: get-adjusted-gray($color-focus-bg, $adjustment) !global;
+		$color-link: get-adjusted-gray($color-link, $adjustment) !global;
 	}
 
-	@if not map-has-key($special-colors, "link-color-hover") {
-		$adjustment: map-get($adjustments, "link-color-hover") or 0;
-		$link-color-hover: get-adjusted-gray(
-			$link-color-hover,
+	@if not map.has-key($special-colors, "link-hover") {
+		$adjustment: map.get($adjustments, "link-hover") or 0;
+		$link-hover: get-adjusted-gray(
+			$link-hover,
 			$adjustment
 		) !global;
-		$color_link-hover: get-adjusted-gray(
-			$color_link-hover,
+		$color-link-hover: get-adjusted-gray(
+			$color-link-hover,
 			$adjustment
 		) !global;
 	}
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
+	@include apply-roles();
 
 	// Appliquer les variables dérivées
 	@include apply-theme-variables;
-}
-
-// Fonction utilitaire pour remplacer une chaîne
-@function str-replace($string, $search, $replace: "") {
-	$index: str-index($string, $search);
-	@if $index {
-		@return str-slice($string, 1, $index - 1) + $replace +
-			str-replace(
-				str-slice($string, $index + str-length($search)),
-				$search,
-				$replace
-			);
-	}
-	@return $string;
 }

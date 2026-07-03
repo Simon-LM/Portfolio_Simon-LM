@@ -1,17 +1,8 @@
 /** @format */
-// @import "../abstracts/base-palette";
-// @import "../abstracts/theme-utils";
-
-// @mixin protanomaly-theme-variables() {
-// 	// Génération automatique du thème daltonien léger
-// 	@include generate-protanomaly-theme();
-// }
-
-// // // // // // // // // // // //
-
-@import "../abstracts/base-palette";
-@import "../abstracts/theme-utils";
-@import "../themes/theme-variables";
+@use "../abstracts/base-palette" as *;
+@use "../abstracts/theme-utils" as *;
+@use "../themes/theme-variables" as *;
+@use "light" as *;
 
 @mixin protanomaly-theme-variables() {
 	// D'abord appliquer les variables du thème light
@@ -26,40 +17,27 @@
 		"overrides":
 			(
 				// Couleurs sémantiques
-				"primary-color": false,
-				"secondary-color": false,
-				"tertiary-color": false,
-				"link-color": false,
-				"link-color-hover": false,
-				"success-color": true,
-				"error-color": false
+				"accent": false,
+				"accent-ink": false,
+				"accent-soft": false,
+				"link": false,
+				"link-hover": false,
+				"success": true,
+				"danger": false
 			),
 
 		// Ajustements spéciaux par variable (intensité supplémentaire)
+		// Note : pas de clés "gray-*" ici — ce moteur ne transforme pas les gris.
 		"adjustments":
 			(
-				// Couleurs fondamentales
-				"off-white": 0,
-				"near-black": 0,
-
-				// Échelle de gris
-				"gray-darkest": 0,
-				"gray-darker": 0,
-				"gray-dark": 0,
-				"gray-medium-dark": 0,
-				"gray-medium-light": 0,
-				"gray-light": 0,
-				"gray-lighter": 0,
-				"gray-lightest": 0,
-
 				// Couleurs sémantiques
-				"primary-color": 0.1,
-				"secondary-color": 0,
-				"tertiary-color": 0,
-				"link-color": 0,
-				"link-color-hover": 0,
-				"success-color": 0,
-				"error-color": 0.3 // Plus d'effet pour le rouge qui est problématique
+				"accent": 0.1,
+				"accent-ink": 0,
+				"accent-soft": 0,
+				"link": 0,
+				"link-hover": 0,
+				"success": 0,
+				"danger": 0.3 // Plus d'effet pour le rouge qui est problématique
 			)
 	);
 
@@ -67,5 +45,4 @@
 	@include transform-light-to-protanomaly($protanomaly-config);
 
 	// Surcharges manuelles après l'automatisation si nécessaire
-	// $color_header_bg: blue !global;
 }

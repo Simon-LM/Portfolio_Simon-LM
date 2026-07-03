@@ -33,7 +33,7 @@
 		}
 
 		&:hover {
-			border-color: var(--primary-color);
+			border-color: var(--accent);
 		}
 	}
 
@@ -73,7 +73,7 @@
 		}
 
 		&.is-selected {
-			background-color: var(--primary-color);
+			background-color: var(--accent);
 			color: var(--color-button-active-text);
 		}
 

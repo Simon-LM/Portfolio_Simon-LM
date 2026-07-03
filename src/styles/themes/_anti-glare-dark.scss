@@ -1,15 +1,9 @@
 /** @format */
-// @import "../abstracts/base-palette";
-// @import "../abstracts/theme-utils";
-
-// @mixin anti-glare-dark-theme-variables() {
-// 	// Génération automatique du thème anti-éblouissement sombre
-// 	@include generate-anti-glare-dark-theme();
-// }
-
-@import "../abstracts/base-palette";
-@import "../abstracts/theme-utils";
-@import "../abstracts/anti-glare-functions";
+@use "../abstracts/base-palette" as *;
+@use "../abstracts/theme-utils" as *;
+@use "../abstracts/anti-glare-functions" as *;
+@use "../themes/theme-variables" as *;
+@use "dark" as *;
 
 @mixin anti-glare-dark-theme-variables() {
 	// D'abord appliquer complètement le thème dark avec toutes ses éventuelles surcharges

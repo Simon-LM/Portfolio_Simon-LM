@@ -13,6 +13,7 @@ import { useFontSizeStore } from "@/store/fontSizeStore";
 import { useDyslexicFontStore } from "@/store/dyslexicFontStore";
 import { FaUniversalAccess } from "react-icons/fa";
 import { useIsMounted } from "../../hooks/useIsMounted";
+import { ThemeOption } from "@/config/themes";
 
 type Props = {
 	language: string;
@@ -29,8 +30,6 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 	const mounted = useIsMounted();
 	const { theme, setTheme } = useTheme();
 	const { fontSize } = useFontSizeStore();
-	// const [isDyslexicFont, setIsDyslexicFont] = useState(false);
-	// const { isDyslexicFont, toggleDyslexicFont } = useDyslexicFontStore();
 	const { fontType, setFontType } = useDyslexicFontStore();
 	const [isDyslexicMode, setIsDyslexicMode] = useState(false);
 	// reduceMotion is lazily initialised from localStorage / matchMedia — no setState in any effect
@@ -44,9 +43,6 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 	const lastBaseTheme = useRef<"light" | "dark">(
 		prefersDarkMode ? "dark" : "light",
 	);
-	// const colorVisionSelectRef = useRef<any>(null);
-	// const fontTypeSelectRef = useRef<any>(null);
-
 	const colorVisionSelectRef = useRef<SelectInstance<OptionType> | null>(null);
 	const fontTypeSelectRef = useRef<SelectInstance<OptionType> | null>(null);
 
@@ -166,22 +162,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 		}
 
 		// Appliquer le thème de daltonisme sélectionné
-		// setTheme(mode as any);
-		setTheme(
-			mode as
-				| "light"
-				| "dark"
-				| "high-contrast"
-				| "anti-glare-light"
-				| "anti-glare-dark"
-				| "protanomaly"
-				| "protanopia"
-				| "deuteranomaly"
-				| "deuteranopia"
-				| "tritanomaly"
-				| "tritanopia"
-				| "achromatopsia",
-		);
+		setTheme(mode as ThemeOption);
 	};
 
 	const toggleReduceMotion = () => {
@@ -328,7 +309,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 				backgroundColor: "var(--color-panel-bg)",
 				borderColor: "var(--color-button-border)",
 				"&:hover": {
-					borderColor: "var(--primary-color)",
+					borderColor: "var(--accent)",
 				},
 			}),
 			menu: (base) => ({

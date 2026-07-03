@@ -1,5 +1,7 @@
 /** @format */
 
+@use "../abstracts/mixins" as *;
+@use "../abstracts/placeholders" as *;
 .sticky-footer {
 	position: fixed;
 	bottom: 0;

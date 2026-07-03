@@ -1,17 +1,8 @@
 /** @format */
-// @import "../abstracts/base-palette";
-// @import "../abstracts/theme-utils";
-
-// @mixin deuteranopia-theme-variables() {
-// 	// Génération automatique du thème daltonien
-// 	@include generate-deuteranopia-theme();
-// }
-
-// // // // // // // // // // // // //
-
-@import "../abstracts/base-palette";
-@import "../abstracts/theme-utils";
-@import "../themes/theme-variables";
+@use "../abstracts/base-palette" as *;
+@use "../abstracts/theme-utils" as *;
+@use "../themes/theme-variables" as *;
+@use "light" as *;
 
 @mixin deuteranopia-theme-variables() {
 	// D'abord appliquer les variables du thème light
@@ -22,21 +13,21 @@
 		// Couleurs spéciales pour remplacer certaines teintes indistinguables
 		"special-colors":
 			(
-				"success-color": #0075ff,
+				"success": #0075ff,
 				// Bleu spécifique pour remplacer le vert
-				"error-color": #ffcc00,
+				"danger": #ffcc00,
 				// Jaune-orange pour remplacer le rouge
-				// Vous pouvez ajouter d'autres couleurs spéciales ici,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+				// Vous pouvez ajouter d'autres couleurs spéciales ici
 			),
 		// Contrôle quelles variables sont transformées automatiquement
 		"overrides":
 			(
 				// Exemples: si vous voulez conserver certaines couleurs telles quelles
-				"primary-color": false,
-				"secondary-color": false,
-				"tertiary-color": false,
-				"link-color": false,
-				"link-color-hover": false
+				"accent": false,
+				"accent-ink": false,
+				"accent-soft": false,
+				"link": false,
+				"link-hover": false
 			)
 	);
 
@@ -44,5 +35,4 @@
 	@include transform-light-to-deuteranopia($deuteranopia-config);
 
 	// Surcharges manuelles après l'automatisation si nécessaire
-	// $color_header_bg: red !global;
 }

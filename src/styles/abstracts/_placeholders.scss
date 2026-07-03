@@ -33,14 +33,20 @@
 	text-align: center;
 	margin-bottom: 2rem;
 	color: var(--color-section-title);
-	@include word-wrap;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	word-break: break-word;
+	hyphens: auto;
 }
 
 %section-subtitle {
 	text-align: center;
 	margin-bottom: 2rem;
 	line-height: 1.6;
-	@include word-wrap;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	word-break: break-word;
+	hyphens: auto;
 }
 
 %section-placeholder {

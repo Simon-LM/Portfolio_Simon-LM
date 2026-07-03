@@ -1,5 +1,6 @@
 /** @format */
 
+@use "../abstracts/mixins" as *;
 .header {
 	background: var(--color-header-bg);
 	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.22);
@@ -95,7 +96,7 @@
 			left: -205%;
 			transform: translateX(-50%);
 			background: var(--color-tooltip-bg);
-			// background: $link-color;
+			// background: $link;
 			color: var(--color-tooltip-text);
 			padding: 0.25rem 0.5rem;
 			border-radius: 0.25rem;
@@ -172,7 +173,7 @@
 			left: 25%;
 			transform: translateX(-50%);
 			background: var(--color-tooltip-bg);
-			// background: $link-color;
+			// background: $link;
 			color: var(--color-tooltip-text);
 			padding: 0.25rem 0.5rem;
 			border-radius: 0.25rem;

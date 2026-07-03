@@ -1,5 +1,7 @@
 /** @format */
 
+@use "../abstracts/mixins" as *;
+@use "../abstracts/placeholders" as *;
 .hero {
 	display: flex;
 	align-items: center;

@@ -1,5 +1,6 @@
 /** @format */
 
+@use "../abstracts/mixins" as *;
 .legal {
 	@include page-container;
 

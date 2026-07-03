@@ -1,17 +1,22 @@
 /** @format */
 
+@use "sass:meta";
+@use "sass:math";
+@use "sass:color";
+@use "../themes/theme-variables" as *;
+
 // Fonction transformatrice pour réduction d'éblouissement et halos
 @function transform-for-anti-glare($color, $mode: "light", $intensity: 1) {
 	// Vérifier que l'entrée est bien une couleur
-	@if type-of($color) != "color" {
+	@if meta.type-of($color) != "color" {
 		@warn "transform-for-anti-glare: paramètre $color (#{$color}) n'est pas une couleur valide";
-		@return if($mode == "light", #888888, #aaaaaa);
+		@return if(sass($mode == "light"): #888888; else: #aaaaaa);
 	}
 
 	// Extraire les composantes HSL
-	$h: hue($color);
-	$s: saturation($color);
-	$l: lightness($color);
+	$h: color.channel($color, "hue", $space: hsl);
+	$s: color.channel($color, "saturation", $space: hsl);
+	$l: color.channel($color, "lightness", $space: hsl);
 
 	// Réduction d'éblouissement paramètres selon le mode
 	@if $mode == "light" {
@@ -62,154 +67,156 @@
 
 // Mixin qui transforme toutes les variables d'un thème
 @mixin transform-theme-for-anti-glare($mode: "light") {
-	// Transformation des variables fondamentales
-	$off-white: transform-for-anti-glare($off-white, $mode) !global;
-	$near-black: transform-for-anti-glare($near-black, $mode) !global;
+	// Transformation de l'échelle de gris (rail complet)
+	$gray-50: transform-for-anti-glare($gray-50, $mode) !global;
+	$gray-100: transform-for-anti-glare($gray-100, $mode) !global;
+	$gray-200: transform-for-anti-glare($gray-200, $mode) !global;
+	$gray-300: transform-for-anti-glare($gray-300, $mode) !global;
+	$gray-400: transform-for-anti-glare($gray-400, $mode) !global;
+	$gray-500: transform-for-anti-glare($gray-500, $mode) !global;
+	$gray-600: transform-for-anti-glare($gray-600, $mode) !global;
+	$gray-700: transform-for-anti-glare($gray-700, $mode) !global;
+	$gray-800: transform-for-anti-glare($gray-800, $mode) !global;
+	$gray-900: transform-for-anti-glare($gray-900, $mode) !global;
+	$gray-950: transform-for-anti-glare($gray-950, $mode) !global;
 
-	// Transformation de l'échelle de gris
-	$gray-darkest: transform-for-anti-glare($gray-darkest, $mode) !global;
-	$gray-darker: transform-for-anti-glare($gray-darker, $mode) !global;
-	$gray-dark: transform-for-anti-glare($gray-dark, $mode) !global;
-	$gray-medium-dark: transform-for-anti-glare($gray-medium-dark, $mode) !global;
-	$gray-medium-light: transform-for-anti-glare(
-		$gray-medium-light,
-		$mode
-	) !global;
-	$gray-light: transform-for-anti-glare($gray-light, $mode) !global;
-	$gray-lighter: transform-for-anti-glare($gray-lighter, $mode) !global;
-	$gray-lightest: transform-for-anti-glare($gray-lightest, $mode) !global;
+	// Re-sync rail-endpoint aliases after transformation, before they are
+	// consumed by apply-theme-variables
+	$off-white: $gray-50 !global;
+	$near-black: $gray-950 !global;
 
 	// Transformation des couleurs sémantiques
-	$primary-color: transform-for-anti-glare($primary-color, $mode) !global;
-	$secondary-color: transform-for-anti-glare($secondary-color, $mode) !global;
-	$tertiary-color: transform-for-anti-glare($tertiary-color, $mode) !global;
-	$link-color: transform-for-anti-glare($link-color, $mode) !global;
-	$link-color-hover: transform-for-anti-glare($link-color-hover, $mode) !global;
-	$success-color: transform-for-anti-glare($success-color, $mode) !global;
-	$error-color: transform-for-anti-glare($error-color, $mode) !global;
+	$accent: transform-for-anti-glare($accent, $mode) !global;
+	$accent-strong: transform-for-anti-glare($accent-strong, $mode) !global;
+	$accent-ink: transform-for-anti-glare($accent-ink, $mode) !global;
+	$accent-soft: transform-for-anti-glare($accent-soft, $mode) !global;
+	$link: transform-for-anti-glare($link, $mode) !global;
+	$link-hover: transform-for-anti-glare($link-hover, $mode) !global;
+	$success: transform-for-anti-glare($success, $mode) !global;
+	$danger: transform-for-anti-glare($danger, $mode) !global;
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives
+	// anti-éblouissement ; les tokens de couche 3 ci-dessous reçoivent
+	// ensuite chacun leur propre passe de réduction d'éblouissement.
+	@include apply-roles();
+
+	// Ces trois tokens ne sont pas transformés individuellement plus bas
+	// (contrairement aux autres) : les rederiver des rôles fraîchement
+	// resynchronisés reproduit exactement le comportement d'avant la
+	// phase 6, où l'émission CSS les lisait directement depuis $link-hover/
+	// $off-white/$near-black déjà transformés à ce stade.
+	$color-button-hover-bg: $link-hover !global;
+	$color-button-hover-text: $fg-on-emphasis !global;
+	$color-button-active-text: $fg-base !global;
 
 	// Transformation des variables dérivées UI
-	$color_main-bg: transform-for-anti-glare($color_main-bg, $mode) !global;
-	$color_main-text: transform-for-anti-glare($color_main-text, $mode) !global;
-	$color_header_bg: transform-for-anti-glare($color_header_bg, $mode) !global;
-	$color_header_text: transform-for-anti-glare(
-		$color_header_text,
+	$color-main-bg: transform-for-anti-glare($color-main-bg, $mode) !global;
+	$color-main-text: transform-for-anti-glare($color-main-text, $mode) !global;
+	$color-header-bg: transform-for-anti-glare($color-header-bg, $mode) !global;
+	$color-header-text: transform-for-anti-glare(
+		$color-header-text,
 		$mode
 	) !global;
-	$color_header_text-role: transform-for-anti-glare(
-		$color_header_text-role,
+	$color-header-text-role: transform-for-anti-glare(
+		$color-header-text-role,
 		$mode
 	) !global;
-	$color_header_blog-link_bg: transform-for-anti-glare(
-		$color_header_blog-link_bg,
+	$color-header-blog-link-bg: transform-for-anti-glare(
+		$color-header-blog-link-bg,
 		$mode
 	) !global;
-	$color_header_blog-link_text: transform-for-anti-glare(
-		$color_header_blog-link_text,
+	$color-header-blog-link-text: transform-for-anti-glare(
+		$color-header-blog-link-text,
 		$mode
 	) !global;
 
 	// Variables d'interface utilisateur - sections
-	$color_section_bg-even: transform-for-anti-glare(
-		$color_section_bg-even,
+	$color-section-bg-even: transform-for-anti-glare(
+		$color-section-bg-even,
 		$mode
 	) !global;
-	$color_section_bg-odd: transform-for-anti-glare(
-		$color_section_bg-odd,
+	$color-section-bg-odd: transform-for-anti-glare(
+		$color-section-bg-odd,
 		$mode
 	) !global;
-	$color_section_title: transform-for-anti-glare(
-		$color_section_title,
+	$color-section-title: transform-for-anti-glare(
+		$color-section-title,
 		$mode
 	) !global;
 
 	// Variables pour les éléments interactifs
-	$color_about_button-bg: transform-for-anti-glare(
-		$color_about_button-bg,
+	$color-about-button-bg: transform-for-anti-glare(
+		$color-about-button-bg,
 		$mode
 	) !global;
-	$color_about_button-text: transform-for-anti-glare(
-		$color_about_button-text,
+	$color-about-button-text: transform-for-anti-glare(
+		$color-about-button-text,
 		$mode
 	) !global;
-	$color_focus-outline: transform-for-anti-glare(
-		$color_focus-outline,
+	$color-focus-outline: transform-for-anti-glare(
+		$color-focus-outline,
 		$mode
 	) !global;
 
 	// Cartes et conteneurs
-	$color_section_card-bg: transform-for-anti-glare(
-		$color_section_card-bg,
+	$color-section-card-bg: transform-for-anti-glare(
+		$color-section-card-bg,
 		$mode
 	) !global;
-	$color_section-even_card-bg: transform-for-anti-glare(
-		$color_section-even_card-bg,
+	$color-section-even-card-bg: transform-for-anti-glare(
+		$color-section-even-card-bg,
 		$mode
 	) !global;
-	$color_section-odd_card-bg: transform-for-anti-glare(
-		$color_section-odd_card-bg,
+	$color-section-odd-card-bg: transform-for-anti-glare(
+		$color-section-odd-card-bg,
 		$mode
 	) !global;
-	$color_portfolio-tag_bg: transform-for-anti-glare(
-		$color_portfolio-tag_bg,
+	$color-portfolio-tag-bg: transform-for-anti-glare(
+		$color-portfolio-tag-bg,
 		$mode
 	) !global;
-	$color_portfolio-tag_bg-texte: transform-for-anti-glare(
-		$color_portfolio-tag_bg-texte,
+	$color-portfolio-tag-text: transform-for-anti-glare(
+		$color-portfolio-tag-text,
 		$mode
 	) !global;
 
 	// Footer et autres éléments spécifiques
-	$color_bottom-footer_bg: transform-for-anti-glare(
-		$color_bottom-footer_bg,
+	$color-bottom-footer-bg: transform-for-anti-glare(
+		$color-bottom-footer-bg,
 		$mode
 	) !global;
-	$color_bottom-footer_text: transform-for-anti-glare(
-		$color_bottom-footer_text,
+	$color-bottom-footer-text: transform-for-anti-glare(
+		$color-bottom-footer-text,
 		$mode
 	) !global;
-	$color_sticky-footer_bg: transform-for-anti-glare(
-		$color_sticky-footer_bg,
+	$color-sticky-footer-bg: transform-for-anti-glare(
+		$color-sticky-footer-bg,
 		$mode
 	) !global;
-	$color_sticky-footer_text: transform-for-anti-glare(
-		$color_sticky-footer_text,
+	$color-sticky-footer-text: transform-for-anti-glare(
+		$color-sticky-footer-text,
 		$mode
 	) !global;
 
 	// Ajustements spécifiques selon le mode
 	@if $mode == "light" {
 		// Mode clair: réduire les contrastes extrêmes
-		$color_collapse_border: rgba(
-			red($gray-dark),
-			green($gray-dark),
-			blue($gray-dark),
+		$color-collapse-border: rgba(
+			math.round(color.channel($gray-700, "red", $space: rgb)),
+			math.round(color.channel($gray-700, "green", $space: rgb)),
+			math.round(color.channel($gray-700, "blue", $space: rgb)),
 			0.7
 		) !global;
 	} @else {
 		// Mode sombre: adoucir les bordures pour éviter les halos
-		$color_collapse_border: rgba(
-			red($gray-light),
-			green($gray-light),
-			blue($gray-light),
+		$color-collapse-border: rgba(
+			math.round(color.channel($gray-400, "red", $space: rgb)),
+			math.round(color.channel($gray-400, "green", $space: rgb)),
+			math.round(color.channel($gray-400, "blue", $space: rgb)),
 			0.4
 		) !global;
 	}
 
 	// Effet anti-éblouissement
 	@include apply-anti-glare-filter($mode);
-}
-
-// Fonction utilitaire pour ajuster un angle de couleur pour éviter les fréquences problématiques
-@function safe-hue-for-keratoconus($hue) {
-	// Certaines fréquences de couleurs peuvent être plus problématiques pour le kératocône
-	// Éviter les bleus-violets qui causent souvent plus de halos
-	@if ($hue >= 220 and $hue <= 280) {
-		@if $hue < 250 {
-			@return 220; // Ramener vers le bleu
-		} @else {
-			@return 280; // Pousser vers le violet
-		}
-	}
-	@return $hue;
 }
