@@ -15,6 +15,33 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-03
 
+### Docs (guide d'extraction + revue des moteurs)
+
+- Création de [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) :
+  grandes lignes de la transformation en paquet open source (chantiers
+  E1→E7 : tests de contraste d'abord, revue des moteurs, monorepo pnpm,
+  extraction SCSS puis runtime, modules de préférences, CLI de scaffolding,
+  publication npm publique), avec la conception détaillée du **système de
+  tests de contrastes** (registre de paires, compilation → extraction par
+  bloc `[data-theme]` → ratio WCAG 2.2, gestion de l'alpha par composition,
+  waivers documentés, rapport matrice, APCA consultatif).
+- Merge de `refactor/theme-foundations` dans `main` (`bbc28f0`) après
+  validation visuelle des ombres restaurées par Simon ; branche supprimée.
+- Revue des moteurs (constats, corrections à planifier — chantier E2 du
+  guide) : **anti-glare** : double transformation des tokens de couche 3
+  (rail transformé, rôles dérivés, puis ~25 tokens re-transformés — des
+  tokens partageant le même rôle rendent différemment, ex. `main-bg` vs
+  `panel-bg`), paramètre `$intensity` inutilisé, expression `if()` mal
+  formée mais accidentellement fonctionnelle dans la branche d'erreur,
+  overlay `body::before` en `backdrop-filter` plein écran à évaluer (coût
+  GPU permanent pour un effet quasi imperceptible : contrast 98 % /
+  brightness 99 %) ; **daltoniens** : `enhance-factor` codé en dur à 2.5
+  pour les -opies (non configurable, contrairement aux anomalies),
+  variable `$hue_shift` morte dans `adapt-color-for-color-anomaly`,
+  fenêtres de teinte laissant la palette réelle du site quasi inchangée
+  (les thèmes -opies ≈ light + success/danger — comportement à confirmer
+  comme voulu ou à retravailler).
+
 ### Docs (architecture cible — décisions)
 
 - Deux décisions actées avec Simon, inscrites au README § 6 :
