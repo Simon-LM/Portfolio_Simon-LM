@@ -26,22 +26,9 @@
 			),
 
 		// Ajustements spéciaux par variable (intensité supplémentaire)
+		// Note : pas de clés "gray-*" ici — ce moteur ne transforme pas les gris.
 		"adjustments":
 			(
-				// Couleurs fondamentales
-				"off-white": 0,
-				"near-black": 0,
-
-				// Échelle de gris
-				"gray-darkest": 0,
-				"gray-darker": 0,
-				"gray-dark": 0,
-				"gray-medium-dark": 0,
-				"gray-medium-light": 0,
-				"gray-light": 0,
-				"gray-lighter": 0,
-				"gray-lightest": 0,
-
 				// Couleurs sémantiques
 				"primary-color": 0.1,
 				"secondary-color": 0,

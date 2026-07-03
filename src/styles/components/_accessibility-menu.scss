@@ -88,7 +88,7 @@
 		font-weight: 600;
 		margin: 0;
 		padding-bottom: 0.25rem;
-		border-bottom: 0.0625rem solid var(--color-divider, var(--gray-light));
+		border-bottom: 0.0625rem solid var(--color-divider, var(--gray-400));
 	}
 
 	// Groupe avec label
@@ -145,7 +145,7 @@
 	&__visual-help-group {
 		// margin-bottom: 1.25rem;
 		padding-bottom: 0.5rem;
-		// border-bottom: 0.0625rem dotted var(--color-divider, var(--gray-lighter));
+		// border-bottom: 0.0625rem dotted var(--color-divider, var(--gray-300));
 
 		&:last-child {
 			margin-bottom: 0;
@@ -156,7 +156,7 @@
 
 	&__help-description {
 		font-size: 0.75rem;
-		color: var(--color-text-secondary, var(--gray-dark));
+		color: var(--color-text-secondary, var(--gray-700));
 		margin: 0 0 0.5rem 0;
 		font-style: italic;
 	}
@@ -361,7 +361,7 @@
 		margin-top: 0.25rem;
 		margin-bottom: 0.5rem;
 		padding-top: 1rem;
-		border-top: 1px dashed var(--gray-lighter);
+		border-top: 1px dashed var(--gray-300);
 		text-align: center;
 	}
 

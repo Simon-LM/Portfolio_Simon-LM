@@ -15,6 +15,46 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-03
 
+### Added
+
+- Phase 3 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
+  couche 1 (rail numérique) complète — voir README § 6.1. Renommage de
+  l'échelle de gris descriptive (`$gray-darkest`…`$gray-lightest`, 8 crans)
+  en coordonnées Tailwind (`$gray-50`…`$gray-950`, 11 crans), avec ajout du
+  cran manquant `gray-100`. `$off-white`/`$near-black` deviennent de simples
+  alias resynchronisés (`$off-white: $gray-50`, `$near-black: $gray-950`)
+  après chaque transformation de thème, au lieu d'être transformés
+  indépendamment de l'échelle de gris.
+  - Moteurs mis à jour pour transformer les 11 crans (au lieu de 8 + 2
+    alias séparés) : `transform-light-to-dark`,
+    `transform-light-to-high-contrast`, `transform-light-to-achromatopsia`
+    (`_theme-utils.scss`), `transform-theme-for-anti-glare`
+    (`_anti-glare-functions.scss`). Les moteurs daltoniens (-opies/-anomalies)
+    ne transforment pas les gris — inchangés, par conception.
+  - Clés de configuration renommées dans `_dark.scss` et `_achromatopsia.scss`
+    (+ ajout de `"gray-100": 0`, cran non consommé par les variables
+    dérivées). Dans `_deuteranomaly.scss`, `_protanomaly.scss`,
+    `_tritanomaly.scss` : suppression des clés `"gray-*"` qui étaient des
+    entrées mortes (jamais consommées par ces moteurs).
+  - `generate-theme-css-vars()` émet désormais `--gray-50`…`--gray-950` (11
+    lignes, ordre `950`→`50` conservé pour un diff d'ajout pur) au lieu de
+    `--gray-darkest`…`--gray-lightest` (8 lignes) ; `--off-white`/
+    `--near-black` inchangées (émises depuis les alias).
+  - 5 consommateurs composants mis à jour (`_contact.scss`,
+    `_accessibility-menu.scss`) : `var(--gray-medium-light)` → `var(--gray-500)`,
+    `var(--gray-light)` → `var(--gray-400)`, `var(--gray-dark)` →
+    `var(--gray-700)`, `var(--gray-lighter)` → `var(--gray-300)` (×2, dont un
+    dans une ligne commentée).
+  - Vérification : diff du CSS compilé strictement additif (39 nouvelles
+    lignes `--gray-50`/`--gray-100`/`--gray-950` sur 14 blocs — `:root`, le
+    bloc `prefers-color-scheme`, et les 12 `[data-theme]` ; note : le plan
+    en annonçait 13, l'arithmétique exacte est 1 + 1 + 12 = 14), prouvé par
+    tri + `comm -3` (42 lignes de différence au total, dont 3 par bloc,
+    toutes des ajouts). Contrôles ciblés passés : `high-contrast` conserve
+    `--color-main-bg: #000000` / `--color-main-text: #ffff00` ;
+    `achromatopsia` reste sur la famille `neutral` et non `stone` ; dans
+    chaque bloc `--off-white == --gray-50` et `--near-black == --gray-950`.
+
 ### Changed
 
 - Phase 2 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :

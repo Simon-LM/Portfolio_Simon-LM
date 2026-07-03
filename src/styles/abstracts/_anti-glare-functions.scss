@@ -62,22 +62,23 @@
 
 // Mixin qui transforme toutes les variables d'un thème
 @mixin transform-theme-for-anti-glare($mode: "light") {
-	// Transformation des variables fondamentales
-	$off-white: transform-for-anti-glare($off-white, $mode) !global;
-	$near-black: transform-for-anti-glare($near-black, $mode) !global;
+	// Transformation de l'échelle de gris (rail complet)
+	$gray-50: transform-for-anti-glare($gray-50, $mode) !global;
+	$gray-100: transform-for-anti-glare($gray-100, $mode) !global;
+	$gray-200: transform-for-anti-glare($gray-200, $mode) !global;
+	$gray-300: transform-for-anti-glare($gray-300, $mode) !global;
+	$gray-400: transform-for-anti-glare($gray-400, $mode) !global;
+	$gray-500: transform-for-anti-glare($gray-500, $mode) !global;
+	$gray-600: transform-for-anti-glare($gray-600, $mode) !global;
+	$gray-700: transform-for-anti-glare($gray-700, $mode) !global;
+	$gray-800: transform-for-anti-glare($gray-800, $mode) !global;
+	$gray-900: transform-for-anti-glare($gray-900, $mode) !global;
+	$gray-950: transform-for-anti-glare($gray-950, $mode) !global;
 
-	// Transformation de l'échelle de gris
-	$gray-darkest: transform-for-anti-glare($gray-darkest, $mode) !global;
-	$gray-darker: transform-for-anti-glare($gray-darker, $mode) !global;
-	$gray-dark: transform-for-anti-glare($gray-dark, $mode) !global;
-	$gray-medium-dark: transform-for-anti-glare($gray-medium-dark, $mode) !global;
-	$gray-medium-light: transform-for-anti-glare(
-		$gray-medium-light,
-		$mode
-	) !global;
-	$gray-light: transform-for-anti-glare($gray-light, $mode) !global;
-	$gray-lighter: transform-for-anti-glare($gray-lighter, $mode) !global;
-	$gray-lightest: transform-for-anti-glare($gray-lightest, $mode) !global;
+	// Re-sync rail-endpoint aliases after transformation, before they are
+	// consumed by apply-theme-variables
+	$off-white: $gray-50 !global;
+	$near-black: $gray-950 !global;
 
 	// Transformation des couleurs sémantiques
 	$primary-color: transform-for-anti-glare($primary-color, $mode) !global;
@@ -181,17 +182,17 @@
 	@if $mode == "light" {
 		// Mode clair: réduire les contrastes extrêmes
 		$color_collapse_border: rgba(
-			red($gray-dark),
-			green($gray-dark),
-			blue($gray-dark),
+			red($gray-700),
+			green($gray-700),
+			blue($gray-700),
 			0.7
 		) !global;
 	} @else {
 		// Mode sombre: adoucir les bordures pour éviter les halos
 		$color_collapse_border: rgba(
-			red($gray-light),
-			green($gray-light),
-			blue($gray-light),
+			red($gray-400),
+			green($gray-400),
+			blue($gray-400),
 			0.4
 		) !global;
 	}

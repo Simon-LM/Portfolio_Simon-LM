@@ -4,19 +4,23 @@
 // DÉFINITION DES COULEURS DE BASE
 // -----------------------------------------------
 @mixin define-base-colors() {
-	// Couleurs fondamentales avec accès direct à la palette Tailwind
-	$off-white: get-color("stone", 50) !global; // #fafaf9
-	$near-black: get-color("stone", 950) !global; // #0c0a09
+	// Full numeric rail — 11 Tailwind weights of the reference "stone" family
+	$gray-50: get-color("stone", 50) !global; // #fafaf9
+	$gray-100: get-color("stone", 100) !global; // #f5f5f4
+	$gray-200: get-color("stone", 200) !global; // #e7e5e4
+	$gray-300: get-color("stone", 300) !global; // #d6d3d1
+	$gray-400: get-color("stone", 400) !global; // #a8a29e
+	$gray-500: get-color("stone", 500) !global; // #78716c
+	$gray-600: get-color("stone", 600) !global; // #57534e
+	$gray-700: get-color("stone", 700) !global; // #44403c
+	$gray-800: get-color("stone", 800) !global; // #292524
+	$gray-900: get-color("stone", 900) !global; // #1c1917
+	$gray-950: get-color("stone", 950) !global; // #0c0a09
 
-	// Échelle de gris
-	$gray-darkest: get-color("stone", 900) !global; // #1c1917
-	$gray-darker: get-color("stone", 800) !global; // #292524
-	$gray-dark: get-color("stone", 700) !global; // #44403c
-	$gray-medium-dark: get-color("stone", 600) !global; // #57534e
-	$gray-medium-light: get-color("stone", 500) !global; // #78716c
-	$gray-light: get-color("stone", 400) !global; // #a8a29e
-	$gray-lighter: get-color("stone", 300) !global; // #d6d3d1
-	$gray-lightest: get-color("stone", 200) !global; // #e7e5e4
+	// Semantic aliases for the rail endpoints (kept for the ~35 component
+	// call sites; re-synced after every theme transformation)
+	$off-white: $gray-50 !global;
+	$near-black: $gray-950 !global;
 
 	// Couleurs sémantiques
 	$primary-color: get-color("amber", 300) !global; // #fcd34d
@@ -43,33 +47,33 @@
 	// Variables d'entête
 	$color_header_bg: $primary-color !global;
 	$color_header_text: $near-black !global;
-	$color_header_text-role: $gray-dark !global;
-	$color_header_blog-link_bg: $gray-dark !global;
+	$color_header_text-role: $gray-700 !global;
+	$color_header_blog-link_bg: $gray-700 !global;
 	$color_header_blog-link_text: $primary-color !global;
 
 	// Sélecteur de langue
 	$color_lang-toggle_bg: $off-white !global;
-	$color_lang-toggle_border: $gray-dark !global;
-	$color_lang-toggle_bg-activated: $gray-dark !global;
+	$color_lang-toggle_border: $gray-700 !global;
+	$color_lang-toggle_bg-activated: $gray-700 !global;
 	$color_lang-toggle_text-activated: $off-white !global;
-	$color_lang-toggle_text-disabled: $gray-dark !global;
+	$color_lang-toggle_text-disabled: $gray-700 !global;
 	$color_lang-toggle_disabled-hover_bg: $link-color !global;
 	$color_lang-toggle_disabled-hover_text: $off-white !global;
 
 	// Indicateurs de défilement
 	$color_scroll-progress_line: $link-color !global;
-	$color_scroll-progress_indicator: $gray-medium-dark !global;
+	$color_scroll-progress_indicator: $gray-600 !global;
 	$color_scroll-progress_indicator-active: $link-color !global;
 
 	// Éléments collapse
 	$color_collapse_title: $off-white !global;
-	$color_collapse_bg: $gray-lighter !global;
-	$color_collapse_bg-title: $gray-dark !global;
-	$color_collapse_border: $gray-dark !global;
+	$color_collapse_bg: $gray-300 !global;
+	$color_collapse_bg-title: $gray-700 !global;
+	$color_collapse_border: $gray-700 !global;
 
 	// Sections et héros
 	$color_section_bg-even: $off-white !global;
-	$color_section_bg-odd: $gray-lightest !global;
+	$color_section_bg-odd: $gray-200 !global;
 	$color_section_title: $secondary-color !global;
 	$color-hero-bg: $off-white !global;
 	$color-hero-title: $near-black !global;
@@ -89,25 +93,25 @@
 	$color_skills-presentation-link-hover_text: $off-white !global;
 
 	// Cartes et sections
-	$color_section_card-bg: $gray-lighter !global;
-	$color_section-even_card-bg: $gray-lighter !global;
-	$color_section-odd_card-bg: $gray-light !global;
+	$color_section_card-bg: $gray-300 !global;
+	$color_section-even_card-bg: $gray-300 !global;
+	$color_section-odd_card-bg: $gray-400 !global;
 
 	// Étiquettes de portfolio
 	$color_portfolio-tag_bg: $tertiary-color !global;
 	$color_portfolio-tag_bg-texte: $secondary-color !global;
 
 	// Formulaires de contact
-	$color_contact_form-bg: $gray-lighter !global;
-	$color_contact_modal_bg: $gray-lightest !global;
+	$color_contact_form-bg: $gray-300 !global;
+	$color_contact_modal_bg: $gray-200 !global;
 
 	// Pieds de page
-	$color_bottom-footer_bg: $gray-dark !global;
+	$color_bottom-footer_bg: $gray-700 !global;
 	$color_bottom-footer_title: $tertiary-color !global;
 	$color_bottom-footer_text: $off-white !global;
 	$color_bottom-footer_link-bg: $off-white !global;
 	$color_bottom-footer_link-text: $link-color !global;
-	$color_sticky-footer_bg: $gray-darker !global;
+	$color_sticky-footer_bg: $gray-800 !global;
 	$color_sticky-footer_text: $off-white !global;
 
 	// Liens et focus
@@ -124,16 +128,16 @@
 
 	// Variables pour le panneau d'accessibilité
 	$color_panel_bg: $off-white !global;
-	$color_panel_border: $gray-medium-dark !global;
+	$color_panel_border: $gray-600 !global;
 	$color_scrollbar_track: $off-white !global;
-	$color_scrollbar_thumb: $gray-medium-light !global;
-	$color_button_border: $gray-medium-light !global;
+	$color_scrollbar_thumb: $gray-500 !global;
+	$color_button_border: $gray-500 !global;
 	$color_button_hover_bg: rgba($primary-color, 0.1) !global;
 	$color_button_active_text: $off-white !global;
 	$color_button_active_outline: $primary-color !global;
 
 	// Variables pour le curseur de taille de police
-	$color_border: $gray-medium-light !global;
+	$color_border: $gray-500 !global;
 	$color_accent: $primary-color !global;
 	$color_accent_hover: darken($primary-color, 15%) !global;
 }

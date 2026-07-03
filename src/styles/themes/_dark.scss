@@ -23,19 +23,18 @@
 		// Ajustements spéciaux par variable (écarts par rapport à $steps)
 		"adjustments":
 			(
-				// Valeurs fondamentales
-				"off-white": 0,
-				"near-black": 1,
-
-				// Échelle de gris complète avec ajustements explicites
-				"gray-darkest": 0,
-				"gray-darker": 0,
-				"gray-dark": 0,
-				"gray-medium-dark": 0,
-				"gray-medium-light": 0,
-				"gray-light": -2,
-				"gray-lighter": -2,
-				"gray-lightest": -1,
+				// Rail numérique complet (11 crans)
+				"gray-50": 0,
+				"gray-100": 0,
+				"gray-200": -1,
+				"gray-300": -2,
+				"gray-400": -2,
+				"gray-500": 0,
+				"gray-600": 0,
+				"gray-700": 0,
+				"gray-800": 0,
+				"gray-900": 0,
+				"gray-950": 1,
 
 				// Couleurs fonctionnelles
 				"link-color": 0,

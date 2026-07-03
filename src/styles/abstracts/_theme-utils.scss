@@ -433,40 +433,22 @@ $midpoint: 500;
 	$config: map-merge($default-config, $config);
 
 	// Traiter chaque variable du thème avec sa configuration
-	$off-white: auto-dark-transform($off-white, "off-white", $config) !global;
-	$near-black: auto-dark-transform($near-black, "near-black", $config) !global;
-	$gray-darkest: auto-dark-transform(
-		$gray-darkest,
-		"gray-darkest",
-		$config
-	) !global;
-	$gray-darker: auto-dark-transform(
-		$gray-darker,
-		"gray-darker",
-		$config
-	) !global;
-	$gray-dark: auto-dark-transform($gray-dark, "gray-dark", $config) !global;
-	$gray-medium-dark: auto-dark-transform(
-		$gray-medium-dark,
-		"gray-medium-dark",
-		$config
-	) !global;
-	$gray-medium-light: auto-dark-transform(
-		$gray-medium-light,
-		"gray-medium-light",
-		$config
-	) !global;
-	$gray-light: auto-dark-transform($gray-light, "gray-light", $config) !global;
-	$gray-lighter: auto-dark-transform(
-		$gray-lighter,
-		"gray-lighter",
-		$config
-	) !global;
-	$gray-lightest: auto-dark-transform(
-		$gray-lightest,
-		"gray-lightest",
-		$config
-	) !global;
+	$gray-50: auto-dark-transform($gray-50, "gray-50", $config) !global;
+	$gray-100: auto-dark-transform($gray-100, "gray-100", $config) !global;
+	$gray-200: auto-dark-transform($gray-200, "gray-200", $config) !global;
+	$gray-300: auto-dark-transform($gray-300, "gray-300", $config) !global;
+	$gray-400: auto-dark-transform($gray-400, "gray-400", $config) !global;
+	$gray-500: auto-dark-transform($gray-500, "gray-500", $config) !global;
+	$gray-600: auto-dark-transform($gray-600, "gray-600", $config) !global;
+	$gray-700: auto-dark-transform($gray-700, "gray-700", $config) !global;
+	$gray-800: auto-dark-transform($gray-800, "gray-800", $config) !global;
+	$gray-900: auto-dark-transform($gray-900, "gray-900", $config) !global;
+	$gray-950: auto-dark-transform($gray-950, "gray-950", $config) !global;
+
+	// Re-sync rail-endpoint aliases after transformation, before they are
+	// consumed by apply-theme-variables
+	$off-white: $gray-50 !global;
+	$near-black: $gray-950 !global;
 
 	// Ne pas transformer les couleurs déjà surchargées
 	$overrides: map-get($config, "overrides");
@@ -581,19 +563,25 @@ $hc-palette: (
 	$hc-palette: map-get($config, "colors");
 	$overrides: map-get($config, "overrides");
 
-	//  Couleurs fondamentales
-	$off-white: get-high-contrast-color($off-white, "background") !global;
-	$near-black: get-high-contrast-color($near-black, "text") !global;
+	//  Couleurs fondamentales (rail endpoints)
+	$gray-50: get-high-contrast-color($gray-50, "background") !global;
+	$gray-950: get-high-contrast-color($gray-950, "text") !global;
 
 	//  Échelle de gris - convertir selon luminosité
-	$gray-darkest: get-high-contrast-color($gray-darkest) !global;
-	$gray-darker: get-high-contrast-color($gray-darker) !global;
-	$gray-dark: get-high-contrast-color($gray-dark) !global;
-	$gray-medium-dark: get-high-contrast-color($gray-medium-dark) !global;
-	$gray-medium-light: get-high-contrast-color($gray-medium-light) !global;
-	$gray-light: get-high-contrast-color($gray-light) !global;
-	$gray-lighter: get-high-contrast-color($gray-lighter) !global;
-	$gray-lightest: get-high-contrast-color($gray-lightest) !global;
+	$gray-100: get-high-contrast-color($gray-100) !global;
+	$gray-200: get-high-contrast-color($gray-200) !global;
+	$gray-300: get-high-contrast-color($gray-300) !global;
+	$gray-400: get-high-contrast-color($gray-400) !global;
+	$gray-500: get-high-contrast-color($gray-500) !global;
+	$gray-600: get-high-contrast-color($gray-600) !global;
+	$gray-700: get-high-contrast-color($gray-700) !global;
+	$gray-800: get-high-contrast-color($gray-800) !global;
+	$gray-900: get-high-contrast-color($gray-900) !global;
+
+	// Re-sync rail-endpoint aliases after transformation, before they are
+	// consumed by apply-theme-variables
+	$off-white: $gray-50 !global;
+	$near-black: $gray-950 !global;
 
 	// Couleurs sémantiques avec rôles spécifiques
 	$primary-color: get-high-contrast-color($primary-color) !global;
@@ -1261,16 +1249,17 @@ $hc-palette: (
 				"error-color": get-color("neutral", 900),
 			),
 		"adjustments": (
-			"off-white": 0,
-			"near-black": 0,
-			"gray-darkest": 0,
-			"gray-darker": 0,
-			"gray-dark": 0,
-			"gray-medium-dark": 0,
-			"gray-medium-light": 0,
-			"gray-light": 0,
-			"gray-lighter": 0,
-			"gray-lightest": 0,
+			"gray-50": 0,
+			"gray-100": 0,
+			"gray-200": 0,
+			"gray-300": 0,
+			"gray-400": 0,
+			"gray-500": 0,
+			"gray-600": 0,
+			"gray-700": 0,
+			"gray-800": 0,
+			"gray-900": 0,
+			"gray-950": 0,
 			"primary-color": 0,
 			"secondary-color": 0,
 			"tertiary-color": 0,
@@ -1287,16 +1276,22 @@ $hc-palette: (
 	$adjustments: map-get($config, "adjustments");
 
 	// Convertir d'abord toutes les variables de gris en neutral
-	$off-white: convert-to-neutral-gray($off-white) !global;
-	$near-black: convert-to-neutral-gray($near-black) !global;
-	$gray-darkest: convert-to-neutral-gray($gray-darkest) !global;
-	$gray-darker: convert-to-neutral-gray($gray-darker) !global;
-	$gray-dark: convert-to-neutral-gray($gray-dark) !global;
-	$gray-medium-dark: convert-to-neutral-gray($gray-medium-dark) !global;
-	$gray-medium-light: convert-to-neutral-gray($gray-medium-light) !global;
-	$gray-light: convert-to-neutral-gray($gray-light) !global;
-	$gray-lighter: convert-to-neutral-gray($gray-lighter) !global;
-	$gray-lightest: convert-to-neutral-gray($gray-lightest) !global;
+	$gray-50: convert-to-neutral-gray($gray-50) !global;
+	$gray-100: convert-to-neutral-gray($gray-100) !global;
+	$gray-200: convert-to-neutral-gray($gray-200) !global;
+	$gray-300: convert-to-neutral-gray($gray-300) !global;
+	$gray-400: convert-to-neutral-gray($gray-400) !global;
+	$gray-500: convert-to-neutral-gray($gray-500) !global;
+	$gray-600: convert-to-neutral-gray($gray-600) !global;
+	$gray-700: convert-to-neutral-gray($gray-700) !global;
+	$gray-800: convert-to-neutral-gray($gray-800) !global;
+	$gray-900: convert-to-neutral-gray($gray-900) !global;
+	$gray-950: convert-to-neutral-gray($gray-950) !global;
+
+	// Re-sync rail-endpoint aliases after transformation, before they are
+	// consumed by apply-theme-variables
+	$off-white: $gray-50 !global;
+	$near-black: $gray-950 !global;
 
 	// Appliquer les couleurs spéciales
 	@each $var-name, $color-value in $special-colors {
