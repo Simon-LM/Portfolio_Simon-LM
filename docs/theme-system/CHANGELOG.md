@@ -15,6 +15,19 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-04
 
+### Added (chantier E1 — tests de contrastes, phase 2)
+
+- Phase 2 de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) :
+  `src/accessibility/contrast/contrast-pairs.ts`, le registre des paires
+  fg/bg (source de vérité, extensible, jamais amputé — un échec devient un
+  waiver en phase 3, pas une suppression).
+  - 19 paires **niveau rôles** (partiront dans le paquet, README § 6.1) et
+    21 paires **niveau site** (couche 3, propre au portfolio), reprises
+    telles quelles des tables du plan. `--color-tooltip-text` déclare
+    `composeOver: "--bg-base"` (son fond porte un alpha).
+  - `@types/culori` ajouté (types manquants du paquet `culori`).
+  - Vérifié : `pnpm lint` et `pnpm exec tsc --noEmit` verts.
+
 ### Added (chantier E1 — tests de contrastes, phase 1)
 
 - Phase 1 de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) : mise en
