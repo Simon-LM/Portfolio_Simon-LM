@@ -15,6 +15,21 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-03
 
+### Docs (plan de la refonte daltonienne + carte des documents)
+
+- Création de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) :
+  remap de familles Tailwind à poids constant (résolution en 3 étapes :
+  table de familles → `special-colors` → repli OKLCH), anomalies par
+  mélange perceptuel `color.mix(…, oklch)` avec `severity` configurable,
+  tests de distinguabilité par simulation CVD (matrices Machado, ΔE
+  CIEDE2000, seuil de calibration ≥ 20) livrés **avant** la bascule des
+  thèmes, tables par défaut proposées comme points de calibration
+  (validation Simon + tests), purge des anciens chemins (fenêtres de
+  teinte HSL). Prérequis bloquant : E1 mergé ; E2 recommandé avant.
+- Ajout d'une **carte des documents** en tête du README (rôle et statut de
+  chaque document, principe « un chantier = un plan = une branche = une
+  exécution par IA »).
+
 ### Docs (plan des tests de contrastes)
 
 - Création de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md)

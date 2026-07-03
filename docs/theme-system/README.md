@@ -16,6 +16,21 @@ mergée : rollup + src, datant d'avant plusieurs refontes du système).
 > [CHANGELOG.md](./CHANGELOG.md) (changelog dédié, distinct du changelog
 > global du projet).
 
+## Carte des documents de ce dossier
+
+| Document | Rôle | Statut |
+| --- | --- | --- |
+| **README.md** (ce fichier) | Conception : fonctionnement, architecture cible, décisions actées | vivant |
+| [CHANGELOG.md](./CHANGELOG.md) | Journal de toutes les modifications de la fonctionnalité | vivant |
+| [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) | Feuille de route vers le paquet open source (chantiers E1→E7) — c'est **la carte** qui ordonne les plans | vivant |
+| [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) | Plan d'exécution : fondations (rail, rôles, `@use`…) | ✅ exécuté le 2026-07-03 |
+| [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) | Plan d'exécution : chantier E1 — système de tests de contrastes | à exécuter (**en premier**) |
+| [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) | Plan d'exécution : chantier E2 — corrections moteurs + OKLCH anti-glare | à exécuter (après E1) |
+| [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : remap de familles Tailwind + tests de distinguabilité | à exécuter (après E1, et E2 recommandé) |
+
+Principe : **un chantier = un plan = une branche = une exécution par IA**,
+avec revue avant merge. Le guide donne l'ordre ; chaque plan est autonome.
+
 ---
 
 ## 1. Principe fondamental
