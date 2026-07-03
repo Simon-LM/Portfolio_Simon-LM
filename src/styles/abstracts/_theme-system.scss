@@ -173,6 +173,8 @@
 }
 
 // Thèmes explicites via data-theme
+// NOTE: cette liste de 12 thèmes doit rester synchronisée manuellement avec
+// src/config/themes.ts (source unique côté runtime).
 [data-theme="light"] {
 	@include light-theme-variables();
 	@include generate-theme-css-vars();

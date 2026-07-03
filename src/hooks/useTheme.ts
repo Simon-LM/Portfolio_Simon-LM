@@ -1,42 +1,15 @@
 /** @format */
 
 import { useState, useEffect } from "react";
-
-type ThemeOption =
-	| "light"
-	| "dark"
-	| "anti-glare-light"
-	| "anti-glare-dark"
-	| "high-contrast"
-	| "deuteranomaly"
-	| "deuteranopia"
-	| "protanomaly"
-	| "protanopia"
-	| "tritanomaly"
-	| "tritanopia"
-	| "achromatopsia";
-
-const VALID_THEMES: ThemeOption[] = [
-	"light",
-	"dark",
-	"anti-glare-light",
-	"anti-glare-dark",
-	"high-contrast",
-	"deuteranomaly",
-	"deuteranopia",
-	"protanomaly",
-	"protanopia",
-	"tritanomaly",
-	"tritanopia",
-	"achromatopsia",
-];
+import { THEMES, ThemeOption } from "@/config/themes";
 
 // Read initial theme from localStorage or system preference.
 // Called as a lazy useState initializer — runs on server (returns "light") and on client.
 function getInitialTheme(): ThemeOption {
 	if (typeof window === "undefined") return "light"; // SSR default
 	const savedTheme = localStorage.getItem("theme") as ThemeOption | null;
-	if (savedTheme && VALID_THEMES.includes(savedTheme)) return savedTheme;
+	if (savedTheme && (THEMES as readonly string[]).includes(savedTheme))
+		return savedTheme;
 	if (window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
 	return "light";
 }
@@ -70,7 +43,7 @@ export function useTheme() {
 						"data-theme",
 					) as ThemeOption;
 					// setState is called inside a callback, not in the effect body — allowed
-					if (newTheme && VALID_THEMES.includes(newTheme))
+					if (newTheme && (THEMES as readonly string[]).includes(newTheme))
 						setThemeState(newTheme);
 				}
 			});

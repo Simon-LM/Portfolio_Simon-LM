@@ -3,6 +3,7 @@
 import { Metadata } from "next";
 import Script from "next/script";
 import { LanguageSync } from "../../components/LanguageSync";
+import { THEMES } from "@/config/themes";
 
 const metadata = {
 	fr: {
@@ -83,7 +84,7 @@ export default async function LangLayout({
 				(function() {
 					try {
 						var savedTheme = localStorage.getItem('theme');
-						if (savedTheme && ['light', 'dark', 'anti-glare-light', 'anti-glare-dark', 'high-contrast', 'deuteranomaly', 'deuteranopia', 'protanomaly', 'protanopia', 'tritanomaly', 'tritanopia', 'achromatopsia'].includes(savedTheme)) {
+						if (savedTheme && ${JSON.stringify(THEMES)}.includes(savedTheme)) {
 							document.documentElement.setAttribute('data-theme', savedTheme);
 						} else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
 							document.documentElement.setAttribute('data-theme', 'dark');

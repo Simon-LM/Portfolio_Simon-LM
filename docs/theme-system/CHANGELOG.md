@@ -15,6 +15,27 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-03
 
+### Added (phase 7 — single source of truth, runtime)
+
+- Phase 7 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
+  élimination de la triple duplication de la liste des 12 thèmes (README
+  § 5 constat n° 5). Nouveau `src/config/themes.ts` exportant `THEMES`
+  (`as const`) et le type `ThemeOption` dérivé.
+  - `useTheme.ts` : suppression du type `ThemeOption` local et de
+    `VALID_THEMES`, import depuis `@/config/themes` (cast
+    `readonly string[]` pour `.includes()` sur un tableau `as const`).
+  - `layout.tsx` : le script anti-FOUC injecte désormais
+    `${JSON.stringify(THEMES)}` au lieu de la liste codée en dur — vérifié
+    dans le HTML généré par `pnpm build` (les 12 thèmes sont bien présents
+    dans le script inline).
+  - `AccessibilityMenu.tsx` : le cast union inline de 12 littéraux dans
+    `handleColorVisionChange` remplacé par `ThemeOption`.
+  - Ajout d'un commentaire de synchronisation dans `_theme-system.scss`
+    pointant vers `src/config/themes.ts` (les blocs `[data-theme]` SCSS
+    restent à synchroniser manuellement jusqu'à l'extraction en paquet).
+  - Aucun changement de CSS compilé (diff vide) ; `pnpm build`, `pnpm lint`,
+    `pnpm test` verts.
+
 ### Changed (phase 6 — layer 2, role tokens)
 
 - Phase 6 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :

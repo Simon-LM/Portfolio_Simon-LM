@@ -13,6 +13,7 @@ import { useFontSizeStore } from "@/store/fontSizeStore";
 import { useDyslexicFontStore } from "@/store/dyslexicFontStore";
 import { FaUniversalAccess } from "react-icons/fa";
 import { useIsMounted } from "../../hooks/useIsMounted";
+import { ThemeOption } from "@/config/themes";
 
 type Props = {
 	language: string;
@@ -161,21 +162,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 		}
 
 		// Appliquer le thème de daltonisme sélectionné
-		setTheme(
-			mode as
-				| "light"
-				| "dark"
-				| "high-contrast"
-				| "anti-glare-light"
-				| "anti-glare-dark"
-				| "protanomaly"
-				| "protanopia"
-				| "deuteranomaly"
-				| "deuteranopia"
-				| "tritanomaly"
-				| "tritanopia"
-				| "achromatopsia",
-		);
+		setTheme(mode as ThemeOption);
 	};
 
 	const toggleReduceMotion = () => {
