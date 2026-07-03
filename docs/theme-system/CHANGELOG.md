@@ -15,6 +15,39 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-03
 
+### Docs (phase 8 — finalisation)
+
+- Phase 8 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
+  vérification globale (`pnpm build`/`lint`/`test` verts ; contrôle visuel
+  des 12 thèmes via un script CDP headless — captures d'écran + zéro erreur
+  console ; `pnpm test:a11y` non exécutable dans cet environnement, Chromium
+  de pa11y-ci absent — non lié à la migration). Mise à jour de
+  [README.md](./README.md) : § 3 (fichiers purgés marqués, `src/config/themes.ts`
+  ajouté), § 4 (chaîne à trois couches, noms à jour), § 5 (constats n° 1, 5,
+  6, 7 marqués résolus, n° 4, 8, 11 résolus partiellement), § 6 (étapes 1 et
+  2 de la trajectoire marquées faites), § 7 (section « Assainissement »
+  marquée faite). Entrée de synthèse ajoutée au
+  [CHANGELOG](../../CHANGELOG.md) global.
+  - **Écarts constatés par rapport au plan initial**, tous identifiés et
+    tranchés en cours d'exécution (voir entrées phases 3, 4, 5, 6
+    ci-dessous pour le détail) : deux régressions de valeur détectées et
+    corrigées pendant la migration Sass (phase 5 : clamping de
+    `color.adjust`, arrondi de `color.channel`) ; une régression de valeur
+    détectée et corrigée pendant l'introduction des rôles (phase 6 :
+    tokens de bouton non réappliqués par le moteur anti-éblouissement) ;
+    un deuxième changement visuel non prévu par le plan, mineur et
+    documenté (phase 4 : la couleur du texte des tags portfolio, jusque-là
+    non résolue à cause de la typo `bg-texte`, s'applique réellement pour
+    la première fois) ; un écart de comptage sans conséquence dans le texte
+    du plan (phase 3 : 14 blocs de thème réels contre 13 annoncés).
+  - **Point laissé en suspens**, signalé explicitement par le plan comme
+    hors périmètre : `src/styles/pages/_contact.scss` ligne ~143 (et deux
+    occurrences supplémentaires trouvées en cours de route,
+    `_skills.scss:108` et `_language-selector.scss:15`) référencent
+    `rgba(var(--color-gray-dark), 0.1)`, une custom property qui n'a jamais
+    existé — déclaration morte antérieure à cette migration, non corrigée
+    (décision à prendre séparément par Simon).
+
 ### Added (phase 7 — single source of truth, runtime)
 
 - Phase 7 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
