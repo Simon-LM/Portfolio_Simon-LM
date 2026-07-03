@@ -81,8 +81,11 @@ packages/<nom>/                  # nom : décision en cours (a11y-prefs pressent
 
 ### E1 — Système de tests de contrastes (in situ, avant tout)
 
-Voir le chapitre dédié en fin de document. Livré d'abord dans le portfolio
-(`pnpm test`), déplacé plus tard dans `testing/` du paquet.
+Plan d'exécution : [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md).
+Conception : chapitre dédié en fin de document. Livré d'abord dans le
+portfolio (`pnpm test`), déplacé plus tard dans `testing/` du paquet.
+Chantier **purement additif** : les échecs préexistants deviennent des
+waivers documentés pour arbitrage, aucune couleur n'est corrigée.
 
 ### E2 — Revue des moteurs anti-glare / daltoniens (in situ)
 

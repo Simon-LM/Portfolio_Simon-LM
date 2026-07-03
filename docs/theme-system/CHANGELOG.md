@@ -15,6 +15,19 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-03
 
+### Docs (plan des tests de contrastes)
+
+- Création de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md)
+  (chantier E1, pour IA exécutante) : implantation dans
+  `src/accessibility/contrast/`, utilitaires WCAG (culori, composition
+  alpha), extraction des 12 blocs `[data-theme]` du CSS compilé (postcss),
+  registre initial de ~40 paires (rôles + couche 3 du site), suite Jest
+  avec mécanisme de waivers anti-zombies (un waiver dont le ratio devient
+  conforme fait échouer le test), rapport matrice généré et commité
+  (`CONTRAST-REPORT.md`) avec test de fraîcheur. Chantier purement
+  additif : aucun fichier de `src/styles/` modifié, les échecs
+  préexistants sont inventoriés en waivers pour arbitrage de Simon.
+
 ### Docs (garde-fous du remap daltonien — mesures)
 
 - Question de Simon : le remap de familles peut-il casser le ratio 4.5:1 ou
