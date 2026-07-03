@@ -86,13 +86,28 @@
 	$near-black: $gray-950 !global;
 
 	// Transformation des couleurs sémantiques
-	$primary-color: transform-for-anti-glare($primary-color, $mode) !global;
-	$secondary-color: transform-for-anti-glare($secondary-color, $mode) !global;
-	$tertiary-color: transform-for-anti-glare($tertiary-color, $mode) !global;
-	$link-color: transform-for-anti-glare($link-color, $mode) !global;
-	$link-color-hover: transform-for-anti-glare($link-color-hover, $mode) !global;
-	$success-color: transform-for-anti-glare($success-color, $mode) !global;
-	$error-color: transform-for-anti-glare($error-color, $mode) !global;
+	$accent: transform-for-anti-glare($accent, $mode) !global;
+	$accent-strong: transform-for-anti-glare($accent-strong, $mode) !global;
+	$accent-ink: transform-for-anti-glare($accent-ink, $mode) !global;
+	$accent-soft: transform-for-anti-glare($accent-soft, $mode) !global;
+	$link: transform-for-anti-glare($link, $mode) !global;
+	$link-hover: transform-for-anti-glare($link-hover, $mode) !global;
+	$success: transform-for-anti-glare($success, $mode) !global;
+	$danger: transform-for-anti-glare($danger, $mode) !global;
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives
+	// anti-éblouissement ; les tokens de couche 3 ci-dessous reçoivent
+	// ensuite chacun leur propre passe de réduction d'éblouissement.
+	@include apply-roles();
+
+	// Ces trois tokens ne sont pas transformés individuellement plus bas
+	// (contrairement aux autres) : les rederiver des rôles fraîchement
+	// resynchronisés reproduit exactement le comportement d'avant la
+	// phase 6, où l'émission CSS les lisait directement depuis $link-hover/
+	// $off-white/$near-black déjà transformés à ce stade.
+	$color-button-hover-bg: $link-hover !global;
+	$color-button-hover-text: $fg-on-emphasis !global;
+	$color-button-active-text: $fg-base !global;
 
 	// Transformation des variables dérivées UI
 	$color-main-bg: transform-for-anti-glare($color-main-bg, $mode) !global;

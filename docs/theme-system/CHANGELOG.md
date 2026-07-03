@@ -15,6 +15,58 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-03
 
+### Changed (phase 6 — layer 2, role tokens)
+
+- Phase 6 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
+  introduction de la couche 2 (rôles), voir README § 6.1. **Seule phase du
+  plan avec un changement visuel autorisé** (voir plus bas).
+  - Renommage des primitives sémantiques : `$primary-color` → `$accent`,
+    `$secondary-color` → `$accent-ink`, `$tertiary-color` → `$accent-soft`,
+    `$link-color` → `$link`, `$link-color-hover` → `$link-hover`,
+    `$success-color` → `$success`, `$error-color` → `$danger` (Sass et clés
+    de configuration). Nouvelle primitive `$accent-strong` (amber-500),
+    transformée dans chaque moteur à l'identique de `$accent`.
+  - Nouveau mixin `apply-roles()` dans `_theme-variables.scss` : dérive 15
+    tokens de rôle (`$bg-*`, `$fg-*`, `$border-*`, `$focus-ring`) depuis le
+    rail et les primitives, appelé par chaque moteur (et
+    `light-theme-variables()`) entre la transformation et
+    `apply-theme-variables()`.
+  - Recâblage complet des ~70 tokens de couche 3 pour dériver des rôles
+    plutôt que directement du rail/des primitives (table complète en
+    README § 6.3). Corrigé au passage : `--color-button-hover-bg`,
+    `--color-button-hover-text` et `--color-button-active-text` avaient
+    chacun une incohérence préexistante (l'émission CSS lisait directement
+    `$link-hover`/`$off-white`/`$near-black`, en ignorant la variable Sass
+    censée porter cette valeur) — alignées sur la valeur *effective*, donc
+    aucun changement de valeur émise en thème statique.
+  - `generate-theme-css-vars()` : renommage des 5 propriétés de primitives
+    (`--primary-color` → `--accent`, etc.), ajout de 8 propriétés de
+    primitives/feedback (`--accent-strong`, `--success`, `--danger`, …) et
+    15 propriétés de rôles (`--bg-base` … `--focus-ring`). 12 consommateurs
+    composants mis à jour (`var(--primary-color)` → `var(--accent)` ×7 dont
+    un avec valeur de repli, `var(--link-color)` → `var(--link)` ×3,
+    `var(--link-hover-color)` → `var(--link-hover)` ×2 ; le reste des
+    occurrences comptées par le plan était dans des commentaires, mis à
+    jour par cohérence).
+  - **Régression détectée et corrigée pendant la migration** : le moteur
+    anti-éblouissement (`transform-theme-for-anti-glare`) transforme
+    chaque token de couche 3 individuellement et ne recalculait pas
+    `$color-button-hover-bg`/`-text`/`$color-button-active-text` après
+    coup — en les faisant dériver des rôles (couche 2) au lieu de les lire
+    depuis les primitives directement, ces trois tokens seraient restés
+    sur leur valeur *avant* réduction d'éblouissement dans les thèmes
+    `anti-glare-light`/`anti-glare-dark`. Corrigé en les rederivant des
+    rôles resynchronisés (déjà anti-éblouis) juste après `apply-roles()`
+    dans ce moteur.
+  - **Changement visuel** (seul de toute la migration) :
+    `--color-accent-hover` passe de `darken(amber-300, 15%)` à
+    `amber-500` (`#f59e0b`) — remplacement d'un `darken()` arbitraire par
+    un cran du rail, et son équivalent transformé dans les 11 autres
+    thèmes. Vérifié : diff du CSS compilé strictement additif partout
+    ailleurs (rôles + primitives + `accent-strong`/`success`/`danger`
+    ajoutés dans les 14 blocs), confirmé par tri + `comm -3`. Contrôle
+    visuel à faire en phase 8.
+
 ### Changed (phase 5 — Sass modules)
 
 - Phase 5 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :

@@ -34,14 +34,34 @@
 	--gray-100: #{$gray-100};
 	--gray-50: #{$gray-50};
 
-	// Variables sémantiques
-	--primary-color: #{$primary-color};
-	--secondary-color: #{$secondary-color};
-	--tertiary-color: #{$tertiary-color};
-	--link-color: #{$link-color};
-	--link-hover-color: #{$link-color-hover};
+	// Variables sémantiques (couche 1 — primitives)
+	--accent: #{$accent};
+	--accent-strong: #{$accent-strong};
+	--accent-ink: #{$accent-ink};
+	--accent-soft: #{$accent-soft};
+	--link: #{$link};
+	--link-hover: #{$link-hover};
+	--success: #{$success};
+	--danger: #{$danger};
 
-	// Couleurs fonctionnelles constantes
+	// Rôles (couche 2 — API du futur paquet)
+	--bg-base: #{$bg-base};
+	--bg-subtle: #{$bg-subtle};
+	--bg-container: #{$bg-container};
+	--bg-container-high: #{$bg-container-high};
+	--bg-emphasis: #{$bg-emphasis};
+	--bg-emphasis-strong: #{$bg-emphasis-strong};
+	--bg-inverse: #{$bg-inverse};
+	--fg-base: #{$fg-base};
+	--fg-muted: #{$fg-muted};
+	--fg-on-emphasis: #{$fg-on-emphasis};
+	--fg-on-accent: #{$fg-on-accent};
+	--border-subtle: #{$border-subtle};
+	--border-base: #{$border-base};
+	--border-strong: #{$border-strong};
+	--focus-ring: #{$focus-ring};
+
+	// Couleurs fonctionnelles constantes (non thématisées, cf. README § 5.11)
 	--constant-error-color: #dc2626; // Rouge d'erreur fixe
 	--constant-success-color: #059669; // Vert de succès fixe
 
@@ -127,9 +147,9 @@
 	--color-scrollbar-track: #{$color-scrollbar-track};
 	--color-scrollbar-thumb: #{$color-scrollbar-thumb};
 	--color-button-border: #{$color-button-border};
-	--color-button-hover-bg: #{$link-color-hover};
-	--color-button-hover-text: #{$off-white};
-	--color-button-active-text: #{$near-black};
+	--color-button-hover-bg: #{$color-button-hover-bg};
+	--color-button-hover-text: #{$color-button-hover-text};
+	--color-button-active-text: #{$color-button-active-text};
 	--color-button-active-outline: #{$color-button-active-outline};
 
 	// Variables pour le curseur

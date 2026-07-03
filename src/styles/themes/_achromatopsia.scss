@@ -13,8 +13,8 @@
 		// Surcharges spécifiques (couleurs complètement remplacées)
 		"special-colors":
 			(
-				"success-color": get-color("neutral", 400),
-				"error-color": get-color("neutral", 900),
+				"success": get-color("neutral", 400),
+				"danger": get-color("neutral", 900),
 			),
 
 		// Ajustements de poids pour les variables de couleur (comme dans le thème dark)
@@ -33,11 +33,11 @@
 				"gray-900": 0,
 				"gray-950": 0,
 				// Couleurs sémantiques
-				"primary-color": 0,
-				"secondary-color": 0,
-				"tertiary-color": 0,
-				"link-color": 0,
-				"link-color-hover": 0
+				"accent": 0,
+				"accent-ink": 0,
+				"accent-soft": 0,
+				"link": 0,
+				"link-hover": 0
 			)
 	);
 

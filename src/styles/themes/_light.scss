@@ -7,6 +7,8 @@
 @mixin light-theme-variables() {
 	// Définir toutes les couleurs de base
 	@include define-base-colors();
+	// Dériver les rôles (couche 2) depuis le rail et les primitives
+	@include apply-roles();
 	// Appliquer les variables dérivées
 	@include apply-theme-variables;
 

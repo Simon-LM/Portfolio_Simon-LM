@@ -16,9 +16,9 @@
 		// Surcharges spécifiques
 		"overrides":
 			(
-				"primary-color": true,
-				"secondary-color": true,
-				"tertiary-color": true,
+				"accent": true,
+				"accent-ink": true,
+				"accent-soft": true,
 			),
 
 		// Ajustements spéciaux par variable (écarts par rapport à $steps)
@@ -38,16 +38,16 @@
 				"gray-950": 1,
 
 				// Couleurs fonctionnelles
-				"link-color": 0,
-				"link-color-hover": 0,
-				"success-color": 0,
-				"error-color": 0
+				"link": 0,
+				"link-hover": 0,
+				"success": 0,
+				"danger": 0
 			)
 	);
 
 	// Appliquer les surcharges explicites en premier
-	$secondary-color: get-color("amber", 100) !global;
-	$tertiary-color: get-color("amber", 950) !global;
+	$accent-ink: get-color("amber", 100) !global;
+	$accent-soft: get-color("amber", 950) !global;
 
 	// Appliquer la transformation automatique avec la configuration
 	@include transform-light-to-dark($dark-config);

@@ -13,9 +13,9 @@
 		// Couleurs spéciales pour remplacer certaines teintes indistinguables
 		"special-colors":
 			(
-				"success-color": #0075ff,
+				"success": #0075ff,
 				// Bleu spécifique pour remplacer le vert
-				"error-color": #ffcc00,
+				"danger": #ffcc00,
 				// Jaune-orange pour remplacer le rouge
 				// Vous pouvez ajouter d'autres couleurs spéciales ici
 			),
@@ -23,11 +23,11 @@
 		"overrides":
 			(
 				// Exemples: si vous voulez conserver certaines couleurs telles quelles
-				"primary-color": false,
-				"secondary-color": false,
-				"tertiary-color": false,
-				"link-color": false,
-				"link-color-hover": false
+				"accent": false,
+				"accent-ink": false,
+				"accent-soft": false,
+				"link": false,
+				"link-hover": false
 			)
 	);
 

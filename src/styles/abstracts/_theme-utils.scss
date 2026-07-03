@@ -455,63 +455,80 @@
 	// Traiter les couleurs sémantiques qui ne sont pas surchargées ou quand override est f
 	@if not(
 		$overrides and
-			map.has-key($overrides, "primary-color") and
-			map.get($overrides, "primary-color") ==
+			map.has-key($overrides, "accent") and
+			map.get($overrides, "accent") ==
 			true
 	)
 	{
-		$primary-color: auto-dark-transform(
-			$primary-color,
-			"primary-color",
+		$accent: auto-dark-transform(
+			$accent,
+			"accent",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map.has-key($overrides, "secondary-color") and
-			map.get($overrides, "secondary-color") ==
+			map.has-key($overrides, "accent-strong") and
+			map.get($overrides, "accent-strong") ==
 			true
 	)
 	{
-		$secondary-color: auto-dark-transform(
-			$secondary-color,
-			"secondary-color",
+		$accent-strong: auto-dark-transform(
+			$accent-strong,
+			"accent-strong",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map.has-key($overrides, "tertiary-color") and
-			map.get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "accent-ink") and
+			map.get($overrides, "accent-ink") ==
 			true
 	)
 	{
-		$tertiary-color: auto-dark-transform(
-			$tertiary-color,
-			"tertiary-color",
+		$accent-ink: auto-dark-transform(
+			$accent-ink,
+			"accent-ink",
+			$config
+		) !global;
+	}
+
+	@if not(
+		$overrides and
+			map.has-key($overrides, "accent-soft") and
+			map.get($overrides, "accent-soft") ==
+			true
+	)
+	{
+		$accent-soft: auto-dark-transform(
+			$accent-soft,
+			"accent-soft",
 			$config
 		) !global;
 	}
 
 	// Liens et autres couleurs fonctionnelles
-	$link-color: auto-dark-transform($link-color, "link-color", $config) !global;
-	$link-color-hover: auto-dark-transform(
-		$link-color-hover,
-		"link-color-hover",
+	$link: auto-dark-transform($link, "link", $config) !global;
+	$link-hover: auto-dark-transform(
+		$link-hover,
+		"link-hover",
 		$config
 	) !global;
-	$success-color: auto-dark-transform(
-		$success-color,
-		"success-color",
+	$success: auto-dark-transform(
+		$success,
+		"success",
 		$config
 	) !global;
-	$error-color: auto-dark-transform(
-		$error-color,
-		"error-color",
+	$danger: auto-dark-transform(
+		$danger,
+		"danger",
 		$config
 	) !global;
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
+	@include apply-roles();
 
 	// Appliquer les variables dérivées
 	@include apply-theme-variables;
@@ -582,35 +599,41 @@ $hc-palette: (
 	$near-black: $gray-950 !global;
 
 	// Couleurs sémantiques avec rôles spécifiques
-	$primary-color: get-high-contrast-color($primary-color) !global;
-	$secondary-color: get-high-contrast-color($secondary-color) !global;
-	$tertiary-color: get-high-contrast-color($tertiary-color) !global;
-	$link-color: get-high-contrast-color($link-color, "link") !global;
-	$link-color-hover: get-high-contrast-color(
-		$link-color-hover,
+	$accent: get-high-contrast-color($accent) !global;
+	$accent-strong: get-high-contrast-color($accent-strong) !global;
+	$accent-ink: get-high-contrast-color($accent-ink) !global;
+	$accent-soft: get-high-contrast-color($accent-soft) !global;
+	$link: get-high-contrast-color($link, "link") !global;
+	$link-hover: get-high-contrast-color(
+		$link-hover,
 		"action"
 	) !global;
-	$success-color: get-high-contrast-color($success-color, "success") !global;
-	$error-color: get-high-contrast-color($error-color, "error") !global;
+	$success: get-high-contrast-color($success, "success") !global;
+	$danger: get-high-contrast-color($danger, "error") !global;
 
 	// Appliquer les surcharges spécifiques avec structure conditionnelle
 	@each $var, $value in $overrides {
-		@if $var == "primary-color" {
-			$primary-color: $value !global;
-		} @else if $var == "secondary-color" {
-			$secondary-color: $value !global;
-		} @else if $var == "tertiary-color" {
-			$tertiary-color: $value !global;
-		} @else if $var == "link-color" {
-			$link-color: $value !global;
-		} @else if $var == "link-color-hover" {
-			$link-color-hover: $value !global;
-		} @else if $var == "success-color" {
-			$success-color: $value !global;
-		} @else if $var == "error-color" {
-			$error-color: $value !global;
+		@if $var == "accent" {
+			$accent: $value !global;
+		} @else if $var == "accent-strong" {
+			$accent-strong: $value !global;
+		} @else if $var == "accent-ink" {
+			$accent-ink: $value !global;
+		} @else if $var == "accent-soft" {
+			$accent-soft: $value !global;
+		} @else if $var == "link" {
+			$link: $value !global;
+		} @else if $var == "link-hover" {
+			$link-hover: $value !global;
+		} @else if $var == "success" {
+			$success: $value !global;
+		} @else if $var == "danger" {
+			$danger: $value !global;
 		}
 	}
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
+	@include apply-roles();
 
 	// Appliquer les variables dérivées
 	@include apply-theme-variables;
@@ -638,67 +661,84 @@ $hc-palette: (
 	// Traiter les couleurs sémantiques qui ne sont pas surchargées ou quand override est false
 	@if not(
 		$overrides and
-			map.has-key($overrides, "primary-color") and
-			map.get($overrides, "primary-color") ==
+			map.has-key($overrides, "accent") and
+			map.get($overrides, "accent") ==
 			true
 	)
 	{
-		$primary-color: auto-deuteranomaly-transform(
-			$primary-color,
-			"primary-color",
+		$accent: auto-deuteranomaly-transform(
+			$accent,
+			"accent",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map.has-key($overrides, "secondary-color") and
-			map.get($overrides, "secondary-color") ==
+			map.has-key($overrides, "accent-strong") and
+			map.get($overrides, "accent-strong") ==
 			true
 	)
 	{
-		$secondary-color: auto-deuteranomaly-transform(
-			$secondary-color,
-			"secondary-color",
+		$accent-strong: auto-deuteranomaly-transform(
+			$accent-strong,
+			"accent-strong",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map.has-key($overrides, "tertiary-color") and
-			map.get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "accent-ink") and
+			map.get($overrides, "accent-ink") ==
 			true
 	)
 	{
-		$tertiary-color: auto-deuteranomaly-transform(
-			$tertiary-color,
-			"tertiary-color",
+		$accent-ink: auto-deuteranomaly-transform(
+			$accent-ink,
+			"accent-ink",
+			$config
+		) !global;
+	}
+
+	@if not(
+		$overrides and
+			map.has-key($overrides, "accent-soft") and
+			map.get($overrides, "accent-soft") ==
+			true
+	)
+	{
+		$accent-soft: auto-deuteranomaly-transform(
+			$accent-soft,
+			"accent-soft",
 			$config
 		) !global;
 	}
 
 	// Liens et autres couleurs fonctionnelles
-	$link-color: auto-deuteranomaly-transform(
-		$link-color,
-		"link-color",
+	$link: auto-deuteranomaly-transform(
+		$link,
+		"link",
 		$config
 	) !global;
-	$link-color-hover: auto-deuteranomaly-transform(
-		$link-color-hover,
-		"link-color-hover",
+	$link-hover: auto-deuteranomaly-transform(
+		$link-hover,
+		"link-hover",
 		$config
 	) !global;
-	$success-color: auto-deuteranomaly-transform(
-		$success-color,
-		"success-color",
+	$success: auto-deuteranomaly-transform(
+		$success,
+		"success",
 		$config
 	) !global;
-	$error-color: auto-deuteranomaly-transform(
-		$error-color,
-		"error-color",
+	$danger: auto-deuteranomaly-transform(
+		$danger,
+		"danger",
 		$config
 	) !global;
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
+	@include apply-roles();
 
 	// Appliquer les variables dérivées
 	@include apply-theme-variables;
@@ -709,9 +749,9 @@ $hc-palette: (
 	// Utiliser la configuration par défaut si aucune n'est fournie
 	$default-config: (
 		"special-colors": (
-			"success-color": #0075ff,
+			"success": #0075ff,
 			// Bleu spécifique pour remplacer le vert
-			"error-color": #ffcc00
+			"danger": #ffcc00
 				// Jaune-orange pour remplacer le rouge
 		),
 		"overrides": (),
@@ -726,10 +766,10 @@ $hc-palette: (
 
 	// Appliquer directement les couleurs spéciales
 	@each $var-name, $color-value in $special-colors {
-		@if $var-name == "success-color" {
-			$success-color: $color-value !global;
-		} @else if $var-name == "error-color" {
-			$error-color: $color-value !global;
+		@if $var-name == "success" {
+			$success: $color-value !global;
+		} @else if $var-name == "danger" {
+			$danger: $color-value !global;
 		}
 		// Ajouter aux overrides pour éviter la transformation
 		$overrides: map.merge(
@@ -751,67 +791,84 @@ $hc-palette: (
 	// Traiter les couleurs sémantiques
 	@if not(
 		$overrides and
-			map.has-key($overrides, "primary-color") and
-			map.get($overrides, "primary-color") ==
+			map.has-key($overrides, "accent") and
+			map.get($overrides, "accent") ==
 			true
 	)
 	{
-		$primary-color: auto-deuteranopia-transform(
-			$primary-color,
-			"primary-color",
+		$accent: auto-deuteranopia-transform(
+			$accent,
+			"accent",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map.has-key($overrides, "secondary-color") and
-			map.get($overrides, "secondary-color") ==
+			map.has-key($overrides, "accent-strong") and
+			map.get($overrides, "accent-strong") ==
 			true
 	)
 	{
-		$secondary-color: auto-deuteranopia-transform(
-			$secondary-color,
-			"secondary-color",
+		$accent-strong: auto-deuteranopia-transform(
+			$accent-strong,
+			"accent-strong",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map.has-key($overrides, "tertiary-color") and
-			map.get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "accent-ink") and
+			map.get($overrides, "accent-ink") ==
 			true
 	)
 	{
-		$tertiary-color: auto-deuteranopia-transform(
-			$tertiary-color,
-			"tertiary-color",
+		$accent-ink: auto-deuteranopia-transform(
+			$accent-ink,
+			"accent-ink",
+			$config
+		) !global;
+	}
+
+	@if not(
+		$overrides and
+			map.has-key($overrides, "accent-soft") and
+			map.get($overrides, "accent-soft") ==
+			true
+	)
+	{
+		$accent-soft: auto-deuteranopia-transform(
+			$accent-soft,
+			"accent-soft",
 			$config
 		) !global;
 	}
 
 	// Liens et autres couleurs fonctionnelles
-	$link-color: auto-deuteranopia-transform(
-		$link-color,
-		"link-color",
+	$link: auto-deuteranopia-transform(
+		$link,
+		"link",
 		$config
 	) !global;
-	$link-color-hover: auto-deuteranopia-transform(
-		$link-color-hover,
-		"link-color-hover",
+	$link-hover: auto-deuteranopia-transform(
+		$link-hover,
+		"link-hover",
 		$config
 	) !global;
-	$success-color: auto-deuteranopia-transform(
-		$success-color,
-		"success-color",
+	$success: auto-deuteranopia-transform(
+		$success,
+		"success",
 		$config
 	) !global;
-	$error-color: auto-deuteranopia-transform(
-		$error-color,
-		"error-color",
+	$danger: auto-deuteranopia-transform(
+		$danger,
+		"danger",
 		$config
 	) !global;
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
+	@include apply-roles();
 
 	// Appliquer les variables dérivées
 	@include apply-theme-variables;
@@ -835,67 +892,84 @@ $hc-palette: (
 	// Traiter les couleurs sémantiques qui ne sont pas surchargées ou quand override est false
 	@if not(
 		$overrides and
-			map.has-key($overrides, "primary-color") and
-			map.get($overrides, "primary-color") ==
+			map.has-key($overrides, "accent") and
+			map.get($overrides, "accent") ==
 			true
 	)
 	{
-		$primary-color: auto-protanomaly-transform(
-			$primary-color,
-			"primary-color",
+		$accent: auto-protanomaly-transform(
+			$accent,
+			"accent",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map.has-key($overrides, "secondary-color") and
-			map.get($overrides, "secondary-color") ==
+			map.has-key($overrides, "accent-strong") and
+			map.get($overrides, "accent-strong") ==
 			true
 	)
 	{
-		$secondary-color: auto-protanomaly-transform(
-			$secondary-color,
-			"secondary-color",
+		$accent-strong: auto-protanomaly-transform(
+			$accent-strong,
+			"accent-strong",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map.has-key($overrides, "tertiary-color") and
-			map.get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "accent-ink") and
+			map.get($overrides, "accent-ink") ==
 			true
 	)
 	{
-		$tertiary-color: auto-protanomaly-transform(
-			$tertiary-color,
-			"tertiary-color",
+		$accent-ink: auto-protanomaly-transform(
+			$accent-ink,
+			"accent-ink",
+			$config
+		) !global;
+	}
+
+	@if not(
+		$overrides and
+			map.has-key($overrides, "accent-soft") and
+			map.get($overrides, "accent-soft") ==
+			true
+	)
+	{
+		$accent-soft: auto-protanomaly-transform(
+			$accent-soft,
+			"accent-soft",
 			$config
 		) !global;
 	}
 
 	// Liens et autres couleurs fonctionnelles
-	$link-color: auto-protanomaly-transform(
-		$link-color,
-		"link-color",
+	$link: auto-protanomaly-transform(
+		$link,
+		"link",
 		$config
 	) !global;
-	$link-color-hover: auto-protanomaly-transform(
-		$link-color-hover,
-		"link-color-hover",
+	$link-hover: auto-protanomaly-transform(
+		$link-hover,
+		"link-hover",
 		$config
 	) !global;
-	$success-color: auto-protanomaly-transform(
-		$success-color,
-		"success-color",
+	$success: auto-protanomaly-transform(
+		$success,
+		"success",
 		$config
 	) !global;
-	$error-color: auto-protanomaly-transform(
-		$error-color,
-		"error-color",
+	$danger: auto-protanomaly-transform(
+		$danger,
+		"danger",
 		$config
 	) !global;
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
+	@include apply-roles();
 
 	// Appliquer les variables dérivées
 	@include apply-theme-variables;
@@ -906,9 +980,9 @@ $hc-palette: (
 	// Utiliser la configuration par défaut si aucune n'est fournie
 	$default-config: (
 		"special-colors": (
-			"success-color": #0090ff,
+			"success": #0090ff,
 			// Bleu clair pour remplacer le vert
-			"error-color": #ffd700
+			"danger": #ffd700
 				// Or pour remplacer le rouge
 		),
 		"overrides": (),
@@ -923,67 +997,84 @@ $hc-palette: (
 	// Traiter les couleurs sémantiques
 	@if not(
 		$overrides and
-			map.has-key($overrides, "primary-color") and
-			map.get($overrides, "primary-color") ==
+			map.has-key($overrides, "accent") and
+			map.get($overrides, "accent") ==
 			true
 	)
 	{
-		$primary-color: auto-protanopia-transform(
-			$primary-color,
-			"primary-color",
+		$accent: auto-protanopia-transform(
+			$accent,
+			"accent",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map.has-key($overrides, "secondary-color") and
-			map.get($overrides, "secondary-color") ==
+			map.has-key($overrides, "accent-strong") and
+			map.get($overrides, "accent-strong") ==
 			true
 	)
 	{
-		$secondary-color: auto-protanopia-transform(
-			$secondary-color,
-			"secondary-color",
+		$accent-strong: auto-protanopia-transform(
+			$accent-strong,
+			"accent-strong",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map.has-key($overrides, "tertiary-color") and
-			map.get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "accent-ink") and
+			map.get($overrides, "accent-ink") ==
 			true
 	)
 	{
-		$tertiary-color: auto-protanopia-transform(
-			$tertiary-color,
-			"tertiary-color",
+		$accent-ink: auto-protanopia-transform(
+			$accent-ink,
+			"accent-ink",
+			$config
+		) !global;
+	}
+
+	@if not(
+		$overrides and
+			map.has-key($overrides, "accent-soft") and
+			map.get($overrides, "accent-soft") ==
+			true
+	)
+	{
+		$accent-soft: auto-protanopia-transform(
+			$accent-soft,
+			"accent-soft",
 			$config
 		) !global;
 	}
 
 	// Liens et autres couleurs fonctionnelles
-	$link-color: auto-protanopia-transform(
-		$link-color,
-		"link-color",
+	$link: auto-protanopia-transform(
+		$link,
+		"link",
 		$config
 	) !global;
-	$link-color-hover: auto-protanopia-transform(
-		$link-color-hover,
-		"link-color-hover",
+	$link-hover: auto-protanopia-transform(
+		$link-hover,
+		"link-hover",
 		$config
 	) !global;
-	$success-color: auto-protanopia-transform(
-		$success-color,
-		"success-color",
+	$success: auto-protanopia-transform(
+		$success,
+		"success",
 		$config
 	) !global;
-	$error-color: auto-protanopia-transform(
-		$error-color,
-		"error-color",
+	$danger: auto-protanopia-transform(
+		$danger,
+		"danger",
 		$config
 	) !global;
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
+	@include apply-roles();
 
 	// Appliquer les variables dérivées
 	@include apply-theme-variables;
@@ -1007,67 +1098,84 @@ $hc-palette: (
 	// Traiter les couleurs sémantiques qui ne sont pas surchargées ou quand override est false
 	@if not(
 		$overrides and
-			map.has-key($overrides, "primary-color") and
-			map.get($overrides, "primary-color") ==
+			map.has-key($overrides, "accent") and
+			map.get($overrides, "accent") ==
 			true
 	)
 	{
-		$primary-color: auto-tritanomaly-transform(
-			$primary-color,
-			"primary-color",
+		$accent: auto-tritanomaly-transform(
+			$accent,
+			"accent",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map.has-key($overrides, "secondary-color") and
-			map.get($overrides, "secondary-color") ==
+			map.has-key($overrides, "accent-strong") and
+			map.get($overrides, "accent-strong") ==
 			true
 	)
 	{
-		$secondary-color: auto-tritanomaly-transform(
-			$secondary-color,
-			"secondary-color",
+		$accent-strong: auto-tritanomaly-transform(
+			$accent-strong,
+			"accent-strong",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map.has-key($overrides, "tertiary-color") and
-			map.get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "accent-ink") and
+			map.get($overrides, "accent-ink") ==
 			true
 	)
 	{
-		$tertiary-color: auto-tritanomaly-transform(
-			$tertiary-color,
-			"tertiary-color",
+		$accent-ink: auto-tritanomaly-transform(
+			$accent-ink,
+			"accent-ink",
+			$config
+		) !global;
+	}
+
+	@if not(
+		$overrides and
+			map.has-key($overrides, "accent-soft") and
+			map.get($overrides, "accent-soft") ==
+			true
+	)
+	{
+		$accent-soft: auto-tritanomaly-transform(
+			$accent-soft,
+			"accent-soft",
 			$config
 		) !global;
 	}
 
 	// Liens et autres couleurs fonctionnelles
-	$link-color: auto-tritanomaly-transform(
-		$link-color,
-		"link-color",
+	$link: auto-tritanomaly-transform(
+		$link,
+		"link",
 		$config
 	) !global;
-	$link-color-hover: auto-tritanomaly-transform(
-		$link-color-hover,
-		"link-color-hover",
+	$link-hover: auto-tritanomaly-transform(
+		$link-hover,
+		"link-hover",
 		$config
 	) !global;
-	$success-color: auto-tritanomaly-transform(
-		$success-color,
-		"success-color",
+	$success: auto-tritanomaly-transform(
+		$success,
+		"success",
 		$config
 	) !global;
-	$error-color: auto-tritanomaly-transform(
-		$error-color,
-		"error-color",
+	$danger: auto-tritanomaly-transform(
+		$danger,
+		"danger",
 		$config
 	) !global;
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
+	@include apply-roles();
 
 	// Appliquer les variables dérivées
 	@include apply-theme-variables;
@@ -1078,9 +1186,9 @@ $hc-palette: (
 	// Utiliser la configuration par défaut si aucune n'est fournie
 	$default-config: (
 		"special-colors": (
-			"success-color": #ff6600,
+			"success": #ff6600,
 			// Orange pour remplacer le vert
-			"error-color": #ff3399
+			"danger": #ff3399
 				// Rose pour remplacer le rouge
 		),
 		"overrides": (),
@@ -1095,67 +1203,84 @@ $hc-palette: (
 	// Traiter les couleurs sémantiques
 	@if not(
 		$overrides and
-			map.has-key($overrides, "primary-color") and
-			map.get($overrides, "primary-color") ==
+			map.has-key($overrides, "accent") and
+			map.get($overrides, "accent") ==
 			true
 	)
 	{
-		$primary-color: auto-tritanopia-transform(
-			$primary-color,
-			"primary-color",
+		$accent: auto-tritanopia-transform(
+			$accent,
+			"accent",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map.has-key($overrides, "secondary-color") and
-			map.get($overrides, "secondary-color") ==
+			map.has-key($overrides, "accent-strong") and
+			map.get($overrides, "accent-strong") ==
 			true
 	)
 	{
-		$secondary-color: auto-tritanopia-transform(
-			$secondary-color,
-			"secondary-color",
+		$accent-strong: auto-tritanopia-transform(
+			$accent-strong,
+			"accent-strong",
 			$config
 		) !global;
 	}
 
 	@if not(
 		$overrides and
-			map.has-key($overrides, "tertiary-color") and
-			map.get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "accent-ink") and
+			map.get($overrides, "accent-ink") ==
 			true
 	)
 	{
-		$tertiary-color: auto-tritanopia-transform(
-			$tertiary-color,
-			"tertiary-color",
+		$accent-ink: auto-tritanopia-transform(
+			$accent-ink,
+			"accent-ink",
+			$config
+		) !global;
+	}
+
+	@if not(
+		$overrides and
+			map.has-key($overrides, "accent-soft") and
+			map.get($overrides, "accent-soft") ==
+			true
+	)
+	{
+		$accent-soft: auto-tritanopia-transform(
+			$accent-soft,
+			"accent-soft",
 			$config
 		) !global;
 	}
 
 	// Liens et autres couleurs fonctionnelles
-	$link-color: auto-tritanopia-transform(
-		$link-color,
-		"link-color",
+	$link: auto-tritanopia-transform(
+		$link,
+		"link",
 		$config
 	) !global;
-	$link-color-hover: auto-tritanopia-transform(
-		$link-color-hover,
-		"link-color-hover",
+	$link-hover: auto-tritanopia-transform(
+		$link-hover,
+		"link-hover",
 		$config
 	) !global;
-	$success-color: auto-tritanopia-transform(
-		$success-color,
-		"success-color",
+	$success: auto-tritanopia-transform(
+		$success,
+		"success",
 		$config
 	) !global;
-	$error-color: auto-tritanopia-transform(
-		$error-color,
-		"error-color",
+	$danger: auto-tritanopia-transform(
+		$danger,
+		"danger",
 		$config
 	) !global;
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
+	@include apply-roles();
 
 	// Appliquer les variables dérivées
 	@include apply-theme-variables;
@@ -1244,8 +1369,8 @@ $hc-palette: (
 		// "contrast": 1.4,
 		"special-colors":
 			(
-				"success-color": get-color("neutral", 400),
-				"error-color": get-color("neutral", 900),
+				"success": get-color("neutral", 400),
+				"danger": get-color("neutral", 900),
 			),
 		"adjustments": (
 			"gray-50": 0,
@@ -1259,11 +1384,12 @@ $hc-palette: (
 			"gray-800": 0,
 			"gray-900": 0,
 			"gray-950": 0,
-			"primary-color": 0,
-			"secondary-color": 0,
-			"tertiary-color": 0,
-			"link-color": 0,
-			"link-color-hover": 0,
+			"accent": 0,
+			"accent-strong": 0,
+			"accent-ink": 0,
+			"accent-soft": 0,
+			"link": 0,
+			"link-hover": 0,
 		)
 	);
 
@@ -1294,32 +1420,37 @@ $hc-palette: (
 
 	// Appliquer les couleurs spéciales
 	@each $var-name, $color-value in $special-colors {
-		@if $var-name == "success-color" {
-			$success-color: $color-value !global;
-		} @else if $var-name == "error-color" {
-			$error-color: $color-value !global;
+		@if $var-name == "success" {
+			$success: $color-value !global;
+		} @else if $var-name == "danger" {
+			$danger: $color-value !global;
 		}
 	}
 
-	@if not map.has-key($special-colors, "primary-color") {
-		$adjustment: map.get($adjustments, "primary-color") or 0;
-		$primary-color: get-adjusted-gray($primary-color, $adjustment) !global;
+	@if not map.has-key($special-colors, "accent") {
+		$adjustment: map.get($adjustments, "accent") or 0;
+		$accent: get-adjusted-gray($accent, $adjustment) !global;
 	}
 
-	@if not map.has-key($special-colors, "secondary-color") {
-		$adjustment: map.get($adjustments, "secondary-color") or 0;
-		$secondary-color: get-adjusted-gray($secondary-color, $adjustment) !global;
+	@if not map.has-key($special-colors, "accent-strong") {
+		$adjustment: map.get($adjustments, "accent-strong") or 0;
+		$accent-strong: get-adjusted-gray($accent-strong, $adjustment) !global;
 	}
 
-	@if not map.has-key($special-colors, "tertiary-color") {
-		$adjustment: map.get($adjustments, "tertiary-color") or 0;
-		$tertiary-color: get-adjusted-gray($tertiary-color, $adjustment) !global;
+	@if not map.has-key($special-colors, "accent-ink") {
+		$adjustment: map.get($adjustments, "accent-ink") or 0;
+		$accent-ink: get-adjusted-gray($accent-ink, $adjustment) !global;
+	}
+
+	@if not map.has-key($special-colors, "accent-soft") {
+		$adjustment: map.get($adjustments, "accent-soft") or 0;
+		$accent-soft: get-adjusted-gray($accent-soft, $adjustment) !global;
 	}
 
 	// Variables de liens aussi avec get-adjusted-gray
-	@if not map.has-key($special-colors, "link-color") {
-		$adjustment: map.get($adjustments, "link-color") or 0;
-		$link-color: get-adjusted-gray($link-color, $adjustment) !global;
+	@if not map.has-key($special-colors, "link") {
+		$adjustment: map.get($adjustments, "link") or 0;
+		$link: get-adjusted-gray($link, $adjustment) !global;
 		$color-focus-outline: get-adjusted-gray(
 			$color-focus-outline,
 			$adjustment
@@ -1328,10 +1459,10 @@ $hc-palette: (
 		$color-link: get-adjusted-gray($color-link, $adjustment) !global;
 	}
 
-	@if not map.has-key($special-colors, "link-color-hover") {
-		$adjustment: map.get($adjustments, "link-color-hover") or 0;
-		$link-color-hover: get-adjusted-gray(
-			$link-color-hover,
+	@if not map.has-key($special-colors, "link-hover") {
+		$adjustment: map.get($adjustments, "link-hover") or 0;
+		$link-hover: get-adjusted-gray(
+			$link-hover,
 			$adjustment
 		) !global;
 		$color-link-hover: get-adjusted-gray(
@@ -1339,6 +1470,9 @@ $hc-palette: (
 			$adjustment
 		) !global;
 	}
+
+	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
+	@include apply-roles();
 
 	// Appliquer les variables dérivées
 	@include apply-theme-variables;

@@ -9,8 +9,8 @@
 // only re-assign a variable that already exists at the root of the module
 // where it's declared — it can no longer create one. So every variable the
 // mixins below reassign is declared here first, initialized to its light
-// value. Re-including define-base-colors()/apply-theme-variables() resets
-// this state to light before each theme's transformation runs.
+// value. Re-including define-base-colors()/apply-roles()/apply-theme-variables()
+// resets this state to light before each theme's transformation runs.
 
 // Full numeric rail — 11 Tailwind weights of the reference "stone" family
 $gray-50: get-color("stone", 50); // #fafaf9
@@ -30,116 +30,142 @@ $gray-950: get-color("stone", 950); // #0c0a09
 $off-white: $gray-50;
 $near-black: $gray-950;
 
-// Couleurs sémantiques
-$primary-color: get-color("amber", 300); // #fcd34d
-$secondary-color: get-color("amber", 950); // #451a03
-$tertiary-color: get-color("amber", 100); // #fef3c7
-$link-color: get-color("sky", 900); // #0c4a6e
-$link-color-hover: get-color("sky", 800); // #075985
-$success-color: get-color("emerald", 600); // #059669
-$error-color: get-color("redd", 600); // #dc2626
+// Couleurs sémantiques (layer 1 primitives, transformed directly by engines)
+$accent: get-color("amber", 300); // #fcd34d
+$accent-strong: get-color("amber", 500); // #f59e0b
+$accent-ink: get-color("amber", 950); // #451a03
+$accent-soft: get-color("amber", 100); // #fef3c7
+$link: get-color("sky", 900); // #0c4a6e
+$link-hover: get-color("sky", 800); // #075985
+$success: get-color("emerald", 600); // #059669
+$danger: get-color("redd", 600); // #dc2626
+
+// -----------------------------------------------
+// LAYER 2 — ROLE TOKENS (the future package's public API)
+// -----------------------------------------------
+// Pure aliases of rail slots / color primitives: engines transform the
+// rail and primitives, then roles and layer-3 tokens re-derive from them.
+$bg-base: $gray-50;
+$bg-subtle: $gray-200;
+$bg-container: $gray-300;
+$bg-container-high: $gray-400;
+$bg-emphasis: $gray-700;
+$bg-emphasis-strong: $gray-800;
+$bg-inverse: $gray-950;
+$fg-base: $gray-950;
+$fg-muted: $gray-700;
+$fg-on-emphasis: $gray-50;
+$fg-on-accent: $gray-950;
+$border-subtle: $gray-500;
+$border-base: $gray-600;
+$border-strong: $gray-700;
+$focus-ring: $link;
 
 // Couleurs d'arrière-plan et de texte principales
-$color-main-bg: $off-white;
-$color-main-text: $near-black;
-$color-pages-title: $near-black;
+$color-main-bg: $bg-base;
+$color-main-text: $fg-base;
+$color-pages-title: $fg-base;
 
 // Variables d'entête
-$color-header-bg: $primary-color;
-$color-header-text: $near-black;
-$color-header-text-role: $gray-700;
-$color-header-blog-link-bg: $gray-700;
-$color-header-blog-link-text: $primary-color;
+$color-header-bg: $accent;
+$color-header-text: $fg-on-accent;
+$color-header-text-role: $fg-muted;
+$color-header-blog-link-bg: $bg-emphasis;
+$color-header-blog-link-text: $accent;
 
 // Sélecteur de langue
-$color-lang-toggle-bg: $off-white;
-$color-lang-toggle-border: $gray-700;
-$color-lang-toggle-bg-activated: $gray-700;
-$color-lang-toggle-text-activated: $off-white;
-$color-lang-toggle-text-disabled: $gray-700;
-$color-lang-toggle-disabled-hover-bg: $link-color;
-$color-lang-toggle-disabled-hover-text: $off-white;
+$color-lang-toggle-bg: $bg-base;
+$color-lang-toggle-border: $border-strong;
+$color-lang-toggle-bg-activated: $bg-emphasis;
+$color-lang-toggle-text-activated: $fg-on-emphasis;
+$color-lang-toggle-text-disabled: $fg-muted;
+$color-lang-toggle-disabled-hover-bg: $link;
+$color-lang-toggle-disabled-hover-text: $fg-on-emphasis;
 
 // Indicateurs de défilement
-$color-scroll-progress-line: $link-color;
-$color-scroll-progress-indicator: $gray-600;
-$color-scroll-progress-indicator-active: $link-color;
+$color-scroll-progress-line: $link;
+$color-scroll-progress-indicator: $border-base;
+$color-scroll-progress-indicator-active: $link;
 
 // Éléments collapse
-$color-collapse-title: $off-white;
-$color-collapse-bg: $gray-300;
-$color-collapse-bg-title: $gray-700;
-$color-collapse-border: $gray-700;
+$color-collapse-title: $fg-on-emphasis;
+$color-collapse-bg: $bg-container;
+$color-collapse-bg-title: $bg-emphasis;
+$color-collapse-border: $border-strong;
 
 // Sections et héros
-$color-section-bg-even: $off-white;
-$color-section-bg-odd: $gray-200;
-$color-section-title: $secondary-color;
-$color-hero-bg: $off-white;
-$color-hero-title: $near-black;
-$color-hero-text: $near-black;
+$color-section-bg-even: $bg-base;
+$color-section-bg-odd: $bg-subtle;
+$color-section-title: $accent-ink;
+$color-hero-bg: $bg-base;
+$color-hero-title: $fg-base;
+$color-hero-text: $fg-base;
 
 // Section À propos
-$color-about-overlay-bg: $near-black;
-$color-about-overlay-text: $off-white;
-$color-about-button-bg: $link-color;
-$color-about-button-border: $off-white;
-$color-about-button-text: $off-white;
+$color-about-overlay-bg: $bg-inverse;
+$color-about-overlay-text: $fg-on-emphasis;
+$color-about-button-bg: $link;
+$color-about-button-border: $fg-on-emphasis;
+$color-about-button-text: $fg-on-emphasis;
 
 // Section compétences
-$color-skills-icon-bg: $tertiary-color;
-$color-skills-icon-text: $secondary-color;
-$color-skills-presentation-link-hover-bg: $link-color;
-$color-skills-presentation-link-hover-text: $off-white;
+$color-skills-icon-bg: $accent-soft;
+$color-skills-icon-text: $accent-ink;
+$color-skills-presentation-link-hover-bg: $link;
+$color-skills-presentation-link-hover-text: $fg-on-emphasis;
 
 // Cartes et sections
-$color-section-card-bg: $gray-300;
-$color-section-even-card-bg: $gray-300;
-$color-section-odd-card-bg: $gray-400;
+$color-section-card-bg: $bg-container;
+$color-section-even-card-bg: $bg-container;
+$color-section-odd-card-bg: $bg-container-high;
 
 // Étiquettes de portfolio
-$color-portfolio-tag-bg: $tertiary-color;
-$color-portfolio-tag-text: $secondary-color;
+$color-portfolio-tag-bg: $accent-soft;
+$color-portfolio-tag-text: $accent-ink;
 
 // Formulaires de contact
-$color-contact-form-bg: $gray-300;
-$color-contact-modal-bg: $gray-200;
+$color-contact-form-bg: $bg-container;
+$color-contact-modal-bg: $bg-subtle;
 
 // Pieds de page
-$color-bottom-footer-bg: $gray-700;
-$color-bottom-footer-title: $tertiary-color;
-$color-bottom-footer-text: $off-white;
-$color-bottom-footer-link-bg: $off-white;
-$color-bottom-footer-link-text: $link-color;
-$color-sticky-footer-bg: $gray-800;
-$color-sticky-footer-text: $off-white;
+$color-bottom-footer-bg: $bg-emphasis;
+$color-bottom-footer-title: $accent-soft;
+$color-bottom-footer-text: $fg-on-emphasis;
+$color-bottom-footer-link-bg: $bg-base;
+$color-bottom-footer-link-text: $link;
+$color-sticky-footer-bg: $bg-emphasis-strong;
+$color-sticky-footer-text: $fg-on-emphasis;
 
 // Liens et focus
-$color-link: $link-color;
-$color-link-hover: $link-color-hover;
-$color-link-bg: $off-white;
-$color-focus-outline: $link-color;
-$color-focus-bg: $link-color;
-$color-focus-text: $off-white;
+$color-link: $link;
+$color-link-hover: $link-hover;
+$color-link-bg: $bg-base;
+$color-focus-outline: $focus-ring;
+$color-focus-bg: $focus-ring;
+$color-focus-text: $fg-on-emphasis;
 
 // Infobulles
-$color-tooltip-text: $off-white;
-$color-tooltip-bg: rgba($near-black, 0.9);
+$color-tooltip-text: $fg-on-emphasis;
+$color-tooltip-bg: rgba($bg-inverse, 0.9);
 
 // Variables pour le panneau d'accessibilité
-$color-panel-bg: $off-white;
-$color-panel-border: $gray-600;
-$color-scrollbar-track: $off-white;
-$color-scrollbar-thumb: $gray-500;
-$color-button-border: $gray-500;
-$color-button-hover-bg: rgba($primary-color, 0.1);
-$color-button-active-text: $off-white;
-$color-button-active-outline: $primary-color;
+$color-panel-bg: $bg-base;
+$color-panel-border: $border-base;
+$color-scrollbar-track: $bg-base;
+$color-scrollbar-thumb: $border-subtle;
+$color-button-border: $border-subtle;
+// Effective values pre-phase-6 came from $link-hover/$off-white/$near-black
+// directly at emission time (bypassing these variables) — now a single
+// source, same resulting values.
+$color-button-hover-bg: $link-hover;
+$color-button-hover-text: $fg-on-emphasis;
+$color-button-active-text: $fg-base;
+$color-button-active-outline: $accent;
 
 // Variables pour le curseur de taille de police
-$color-border: $gray-500;
-$color-accent: $primary-color;
-$color-accent-hover: adjust-lightness-clamped($primary-color, -15%);
+$color-border: $border-subtle;
+$color-accent: $accent;
+$color-accent-hover: $accent-strong; // sole visual change of this migration
 
 // -----------------------------------------------
 // DÉFINITION DES COULEURS DE BASE
@@ -164,119 +190,146 @@ $color-accent-hover: adjust-lightness-clamped($primary-color, -15%);
 	$near-black: $gray-950 !global;
 
 	// Couleurs sémantiques
-	$primary-color: get-color("amber", 300) !global; // #fcd34d
-	$secondary-color: get-color("amber", 950) !global; // #451a03
-	$tertiary-color: get-color("amber", 100) !global; // #fef3c7
-	$link-color: get-color("sky", 900) !global; // #0c4a6e
-	$link-color-hover: get-color("sky", 800) !global; // #075985
-	$success-color: get-color("emerald", 600) !global; // #059669
-	$error-color: get-color("redd", 600) !global; // #dc2626
+	$accent: get-color("amber", 300) !global; // #fcd34d
+	$accent-strong: get-color("amber", 500) !global; // #f59e0b
+	$accent-ink: get-color("amber", 950) !global; // #451a03
+	$accent-soft: get-color("amber", 100) !global; // #fef3c7
+	$link: get-color("sky", 900) !global; // #0c4a6e
+	$link-hover: get-color("sky", 800) !global; // #075985
+	$success: get-color("emerald", 600) !global; // #059669
+	$danger: get-color("redd", 600) !global; // #dc2626
+}
+
+// -----------------------------------------------
+// LAYER 2 — ROLE TOKENS
+// -----------------------------------------------
+// Called by each engine after transformation and before apply-theme-variables
+// (same place as the rail-endpoint alias resync introduced in phase 3).
+@mixin apply-roles() {
+	$bg-base: $gray-50 !global;
+	$bg-subtle: $gray-200 !global;
+	$bg-container: $gray-300 !global;
+	$bg-container-high: $gray-400 !global;
+	$bg-emphasis: $gray-700 !global;
+	$bg-emphasis-strong: $gray-800 !global;
+	$bg-inverse: $gray-950 !global;
+	$fg-base: $gray-950 !global;
+	$fg-muted: $gray-700 !global;
+	$fg-on-emphasis: $gray-50 !global;
+	$fg-on-accent: $gray-950 !global;
+	$border-subtle: $gray-500 !global;
+	$border-base: $gray-600 !global;
+	$border-strong: $gray-700 !global;
+	$focus-ring: $link !global;
+	// accent, accent-strong, accent-soft, accent-ink, link, link-hover,
+	// success, danger are primitives transformed directly by the engines.
 }
 
 // -----------------------------------------------
 // VARIABLES PARTAGÉES ENTRE THÈMES
 // -----------------------------------------------
-// Mixin qui applique toutes les variables dérivées à partir des couleurs de base
+// Mixin qui applique toutes les variables dérivées à partir des rôles
 @mixin apply-theme-variables {
 	// Couleurs d'arrière-plan et de texte principales
-	$color-main-bg: $off-white !global;
-	$color-main-text: $near-black !global;
-	$color-pages-title: $near-black !global;
+	$color-main-bg: $bg-base !global;
+	$color-main-text: $fg-base !global;
+	$color-pages-title: $fg-base !global;
 
 	// Variables d'entête
-	$color-header-bg: $primary-color !global;
-	$color-header-text: $near-black !global;
-	$color-header-text-role: $gray-700 !global;
-	$color-header-blog-link-bg: $gray-700 !global;
-	$color-header-blog-link-text: $primary-color !global;
+	$color-header-bg: $accent !global;
+	$color-header-text: $fg-on-accent !global;
+	$color-header-text-role: $fg-muted !global;
+	$color-header-blog-link-bg: $bg-emphasis !global;
+	$color-header-blog-link-text: $accent !global;
 
 	// Sélecteur de langue
-	$color-lang-toggle-bg: $off-white !global;
-	$color-lang-toggle-border: $gray-700 !global;
-	$color-lang-toggle-bg-activated: $gray-700 !global;
-	$color-lang-toggle-text-activated: $off-white !global;
-	$color-lang-toggle-text-disabled: $gray-700 !global;
-	$color-lang-toggle-disabled-hover-bg: $link-color !global;
-	$color-lang-toggle-disabled-hover-text: $off-white !global;
+	$color-lang-toggle-bg: $bg-base !global;
+	$color-lang-toggle-border: $border-strong !global;
+	$color-lang-toggle-bg-activated: $bg-emphasis !global;
+	$color-lang-toggle-text-activated: $fg-on-emphasis !global;
+	$color-lang-toggle-text-disabled: $fg-muted !global;
+	$color-lang-toggle-disabled-hover-bg: $link !global;
+	$color-lang-toggle-disabled-hover-text: $fg-on-emphasis !global;
 
 	// Indicateurs de défilement
-	$color-scroll-progress-line: $link-color !global;
-	$color-scroll-progress-indicator: $gray-600 !global;
-	$color-scroll-progress-indicator-active: $link-color !global;
+	$color-scroll-progress-line: $link !global;
+	$color-scroll-progress-indicator: $border-base !global;
+	$color-scroll-progress-indicator-active: $link !global;
 
 	// Éléments collapse
-	$color-collapse-title: $off-white !global;
-	$color-collapse-bg: $gray-300 !global;
-	$color-collapse-bg-title: $gray-700 !global;
-	$color-collapse-border: $gray-700 !global;
+	$color-collapse-title: $fg-on-emphasis !global;
+	$color-collapse-bg: $bg-container !global;
+	$color-collapse-bg-title: $bg-emphasis !global;
+	$color-collapse-border: $border-strong !global;
 
 	// Sections et héros
-	$color-section-bg-even: $off-white !global;
-	$color-section-bg-odd: $gray-200 !global;
-	$color-section-title: $secondary-color !global;
-	$color-hero-bg: $off-white !global;
-	$color-hero-title: $near-black !global;
-	$color-hero-text: $near-black !global;
+	$color-section-bg-even: $bg-base !global;
+	$color-section-bg-odd: $bg-subtle !global;
+	$color-section-title: $accent-ink !global;
+	$color-hero-bg: $bg-base !global;
+	$color-hero-title: $fg-base !global;
+	$color-hero-text: $fg-base !global;
 
 	// Section À propos
-	$color-about-overlay-bg: $near-black !global;
-	$color-about-overlay-text: $off-white !global;
-	$color-about-button-bg: $link-color !global;
-	$color-about-button-border: $off-white !global;
-	$color-about-button-text: $off-white !global;
+	$color-about-overlay-bg: $bg-inverse !global;
+	$color-about-overlay-text: $fg-on-emphasis !global;
+	$color-about-button-bg: $link !global;
+	$color-about-button-border: $fg-on-emphasis !global;
+	$color-about-button-text: $fg-on-emphasis !global;
 
 	// Section compétences
-	$color-skills-icon-bg: $tertiary-color !global;
-	$color-skills-icon-text: $secondary-color !global;
-	$color-skills-presentation-link-hover-bg: $link-color !global;
-	$color-skills-presentation-link-hover-text: $off-white !global;
+	$color-skills-icon-bg: $accent-soft !global;
+	$color-skills-icon-text: $accent-ink !global;
+	$color-skills-presentation-link-hover-bg: $link !global;
+	$color-skills-presentation-link-hover-text: $fg-on-emphasis !global;
 
 	// Cartes et sections
-	$color-section-card-bg: $gray-300 !global;
-	$color-section-even-card-bg: $gray-300 !global;
-	$color-section-odd-card-bg: $gray-400 !global;
+	$color-section-card-bg: $bg-container !global;
+	$color-section-even-card-bg: $bg-container !global;
+	$color-section-odd-card-bg: $bg-container-high !global;
 
 	// Étiquettes de portfolio
-	$color-portfolio-tag-bg: $tertiary-color !global;
-	$color-portfolio-tag-text: $secondary-color !global;
+	$color-portfolio-tag-bg: $accent-soft !global;
+	$color-portfolio-tag-text: $accent-ink !global;
 
 	// Formulaires de contact
-	$color-contact-form-bg: $gray-300 !global;
-	$color-contact-modal-bg: $gray-200 !global;
+	$color-contact-form-bg: $bg-container !global;
+	$color-contact-modal-bg: $bg-subtle !global;
 
 	// Pieds de page
-	$color-bottom-footer-bg: $gray-700 !global;
-	$color-bottom-footer-title: $tertiary-color !global;
-	$color-bottom-footer-text: $off-white !global;
-	$color-bottom-footer-link-bg: $off-white !global;
-	$color-bottom-footer-link-text: $link-color !global;
-	$color-sticky-footer-bg: $gray-800 !global;
-	$color-sticky-footer-text: $off-white !global;
+	$color-bottom-footer-bg: $bg-emphasis !global;
+	$color-bottom-footer-title: $accent-soft !global;
+	$color-bottom-footer-text: $fg-on-emphasis !global;
+	$color-bottom-footer-link-bg: $bg-base !global;
+	$color-bottom-footer-link-text: $link !global;
+	$color-sticky-footer-bg: $bg-emphasis-strong !global;
+	$color-sticky-footer-text: $fg-on-emphasis !global;
 
 	// Liens et focus
-	$color-link: $link-color !global;
-	$color-link-hover: $link-color-hover !global;
-	$color-link-bg: $off-white !global;
-	$color-focus-outline: $link-color !global;
-	$color-focus-bg: $link-color !global;
-	$color-focus-text: $off-white !global;
+	$color-link: $link !global;
+	$color-link-hover: $link-hover !global;
+	$color-link-bg: $bg-base !global;
+	$color-focus-outline: $focus-ring !global;
+	$color-focus-bg: $focus-ring !global;
+	$color-focus-text: $fg-on-emphasis !global;
 
 	// Infobulles
-	$color-tooltip-text: $off-white !global;
-	$color-tooltip-bg: rgba($near-black, 0.9) !global;
+	$color-tooltip-text: $fg-on-emphasis !global;
+	$color-tooltip-bg: rgba($bg-inverse, 0.9) !global;
 
 	// Variables pour le panneau d'accessibilité
-	$color-panel-bg: $off-white !global;
-	$color-panel-border: $gray-600 !global;
-	$color-scrollbar-track: $off-white !global;
-	$color-scrollbar-thumb: $gray-500 !global;
-	$color-button-border: $gray-500 !global;
-	$color-button-hover-bg: rgba($primary-color, 0.1) !global;
-	$color-button-active-text: $off-white !global;
-	$color-button-active-outline: $primary-color !global;
+	$color-panel-bg: $bg-base !global;
+	$color-panel-border: $border-base !global;
+	$color-scrollbar-track: $bg-base !global;
+	$color-scrollbar-thumb: $border-subtle !global;
+	$color-button-border: $border-subtle !global;
+	$color-button-hover-bg: $link-hover !global;
+	$color-button-hover-text: $fg-on-emphasis !global;
+	$color-button-active-text: $fg-base !global;
+	$color-button-active-outline: $accent !global;
 
 	// Variables pour le curseur de taille de police
-	$color-border: $gray-500 !global;
-	$color-accent: $primary-color !global;
-	$color-accent-hover: adjust-lightness-clamped($primary-color, -15%) !global;
+	$color-border: $border-subtle !global;
+	$color-accent: $accent !global;
+	$color-accent-hover: $accent-strong !global;
 }

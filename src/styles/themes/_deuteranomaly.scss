@@ -17,13 +17,13 @@
 		"overrides":
 			(
 				// Couleurs sémantiques
-				"primary-color": false,
-				"secondary-color": false,
-				"tertiary-color": false,
-				"link-color": false,
-				"link-color-hover": false,
-				"success-color": true,
-				"error-color": false
+				"accent": false,
+				"accent-ink": false,
+				"accent-soft": false,
+				"link": false,
+				"link-hover": false,
+				"success": true,
+				"danger": false
 			),
 
 		// Ajustements spéciaux par variable (intensité supplémentaire)
@@ -31,13 +31,13 @@
 		"adjustments":
 			(
 				// Couleurs sémantiques
-				"primary-color": 0.1,
-				"secondary-color": 0,
-				"tertiary-color": 0,
-				"link-color": 0,
-				"link-color-hover": 0,
-				"success-color": 0,
-				"error-color": 0.2
+				"accent": 0.1,
+				"accent-ink": 0,
+				"accent-soft": 0,
+				"link": 0,
+				"link-hover": 0,
+				"success": 0,
+				"danger": 0.2
 			)
 	);
 

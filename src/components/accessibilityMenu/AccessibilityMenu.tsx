@@ -322,7 +322,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 				backgroundColor: "var(--color-panel-bg)",
 				borderColor: "var(--color-button-border)",
 				"&:hover": {
-					borderColor: "var(--primary-color)",
+					borderColor: "var(--accent)",
 				},
 			}),
 			menu: (base) => ({
