@@ -1,5 +1,6 @@
 /** @format */
 
+@use "../abstracts/placeholders" as *;
 .skills {
 	@extend %section-base;
 	background-color: var(--color-section-bg-even);

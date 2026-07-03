@@ -1,16 +1,17 @@
 /** @format */
-@import "../themes/light";
-@import "../themes/dark";
-@import "../themes/anti-glare-light";
-@import "../themes/anti-glare-dark";
-@import "../themes/high-contrast";
-@import "../themes/deuteranopia";
-@import "../themes/protanopia";
-@import "../themes/tritanopia";
-@import "../themes/deuteranomaly";
-@import "../themes/protanomaly";
-@import "../themes/tritanomaly";
-@import "../themes/achromatopsia";
+@use "../themes/theme-variables" as *;
+@use "../themes/light" as *;
+@use "../themes/dark" as *;
+@use "../themes/anti-glare-light" as *;
+@use "../themes/anti-glare-dark" as *;
+@use "../themes/high-contrast" as *;
+@use "../themes/deuteranopia" as *;
+@use "../themes/protanopia" as *;
+@use "../themes/tritanopia" as *;
+@use "../themes/deuteranomaly" as *;
+@use "../themes/protanomaly" as *;
+@use "../themes/tritanomaly" as *;
+@use "../themes/achromatopsia" as *;
 
 @mixin generate-theme-css-vars() {
 	// Variables fondamentales

@@ -1,42 +1,42 @@
 /** @format */
 
-@import "base/normalize";
+@use "base/normalize" as *;
 
-@import "abstracts/base-palette";
-@import "abstracts/theme-utils";
-@import "abstracts/theme-system";
+@use "abstracts/base-palette" as *;
+@use "abstracts/theme-utils" as *;
+@use "abstracts/theme-system" as *;
 
-@import "abstracts/functions";
-@import "abstracts/mixins";
-@import "abstracts/placeholders";
+@use "abstracts/functions" as *;
+@use "abstracts/mixins" as *;
+@use "abstracts/placeholders" as *;
 
-@import "base/globale";
-@import "base/typography";
+@use "base/globale" as *;
+@use "base/typography" as *;
 
-@import "components/language-selector";
-@import "components/navigation-sticky";
-@import "components/scroll-progress";
-@import "components/collapse";
-@import "components/portfolioCard";
-@import "components/custom-select";
-@import "components/accessibility-menu";
+@use "components/language-selector" as *;
+@use "components/navigation-sticky" as *;
+@use "components/scroll-progress" as *;
+@use "components/collapse" as *;
+@use "components/portfolioCard" as *;
+@use "components/custom-select" as *;
+@use "components/accessibility-menu" as *;
 
-@import "layout/header";
-@import "layout/bottomFooter";
-@import "layout/stickyFooter";
+@use "layout/header" as *;
+@use "layout/bottomFooter" as *;
+@use "layout/stickyFooter" as *;
 
-@import "pages/hero";
-@import "pages/about";
-@import "pages/skills";
-@import "pages/portfolio";
-@import "pages/contact";
-@import "pages/privacy-policy";
-@import "pages/legal";
-@import "pages/terms";
-@import "pages/accessibility";
-@import "pages/sitemap";
+@use "pages/hero" as *;
+@use "pages/about" as *;
+@use "pages/skills" as *;
+@use "pages/portfolio" as *;
+@use "pages/contact" as *;
+@use "pages/privacy-policy" as *;
+@use "pages/legal" as *;
+@use "pages/terms" as *;
+@use "pages/accessibility" as *;
+@use "pages/sitemap" as *;
 
-@import "accessibility/motion";
-@import "accessibility/a11y";
-@import "accessibility/menu-accessibility";
-@import "accessibility/screen-reader";
+@use "accessibility/motion" as *;
+@use "accessibility/a11y" as *;
+@use "accessibility/menu-accessibility" as *;
+@use "accessibility/screen-reader" as *;

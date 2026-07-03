@@ -1,8 +1,8 @@
 /** @format */
 
-@import "../abstracts/base-palette";
-@import "../abstracts/theme-utils";
-@import "../themes/theme-variables";
+@use "../abstracts/base-palette" as *;
+@use "../abstracts/theme-utils" as *;
+@use "../themes/theme-variables" as *;
 
 @mixin light-theme-variables() {
 	// Définir toutes les couleurs de base

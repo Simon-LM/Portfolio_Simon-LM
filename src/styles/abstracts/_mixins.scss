@@ -1,5 +1,7 @@
 /** @format */
 
+@use "placeholders" as *;
+
 @mixin word-wrap {
 	overflow-wrap: break-word;
 	word-wrap: break-word;

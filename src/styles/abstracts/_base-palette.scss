@@ -1,5 +1,9 @@
 /** @format */
 
+@use "sass:map";
+@use "sass:math";
+@use "sass:color";
+
 // Tailwindcss Colors
 $colors: (
 	neutral: (
@@ -94,3 +98,27 @@ $colors: (
 		950: #022c22,
 	),
 );
+
+// -----------------------------------------------
+// FONCTIONS D'ACCÈS AUX COULEURS
+// -----------------------------------------------
+@function get-color($family, $weight) {
+	@return map.get(map.get($colors, $family), $weight);
+}
+
+// Reproduces the exact clamped-lightness arithmetic of the deprecated
+// darken()/lighten() functions, which color.adjust() does not clamp on its
+// own (it can push $lightness below 0% or above 100%).
+@function adjust-lightness-clamped($color, $delta) {
+	$l: color.channel($color, "lightness", $space: hsl);
+	@return color.change(
+		$color,
+		$lightness: math.max(0%, math.min(100%, $l + $delta)),
+		$space: hsl
+	);
+}
+
+// Liste des poids disponibles dans Tailwind
+$tailwind-weights: (50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950);
+// Point médian pour déterminer si on fonce ou éclaircit
+$midpoint: 500;

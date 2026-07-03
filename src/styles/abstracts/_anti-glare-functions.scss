@@ -1,17 +1,22 @@
 /** @format */
 
+@use "sass:meta";
+@use "sass:math";
+@use "sass:color";
+@use "../themes/theme-variables" as *;
+
 // Fonction transformatrice pour réduction d'éblouissement et halos
 @function transform-for-anti-glare($color, $mode: "light", $intensity: 1) {
 	// Vérifier que l'entrée est bien une couleur
-	@if type-of($color) != "color" {
+	@if meta.type-of($color) != "color" {
 		@warn "transform-for-anti-glare: paramètre $color (#{$color}) n'est pas une couleur valide";
-		@return if($mode == "light", #888888, #aaaaaa);
+		@return if(sass($mode == "light"): #888888; else: #aaaaaa);
 	}
 
 	// Extraire les composantes HSL
-	$h: hue($color);
-	$s: saturation($color);
-	$l: lightness($color);
+	$h: color.channel($color, "hue", $space: hsl);
+	$s: color.channel($color, "saturation", $space: hsl);
+	$l: color.channel($color, "lightness", $space: hsl);
 
 	// Réduction d'éblouissement paramètres selon le mode
 	@if $mode == "light" {
@@ -182,17 +187,17 @@
 	@if $mode == "light" {
 		// Mode clair: réduire les contrastes extrêmes
 		$color-collapse-border: rgba(
-			red($gray-700),
-			green($gray-700),
-			blue($gray-700),
+			math.round(color.channel($gray-700, "red", $space: rgb)),
+			math.round(color.channel($gray-700, "green", $space: rgb)),
+			math.round(color.channel($gray-700, "blue", $space: rgb)),
 			0.7
 		) !global;
 	} @else {
 		// Mode sombre: adoucir les bordures pour éviter les halos
 		$color-collapse-border: rgba(
-			red($gray-400),
-			green($gray-400),
-			blue($gray-400),
+			math.round(color.channel($gray-400, "red", $space: rgb)),
+			math.round(color.channel($gray-400, "green", $space: rgb)),
+			math.round(color.channel($gray-400, "blue", $space: rgb)),
 			0.4
 		) !global;
 	}

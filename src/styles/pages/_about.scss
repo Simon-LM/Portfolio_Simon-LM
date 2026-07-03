@@ -1,5 +1,7 @@
 /** @format */
 
+@use "../abstracts/mixins" as *;
+@use "../abstracts/placeholders" as *;
 .about {
 	@extend %section-base;
 	background: var(--color-section-bg-odd);

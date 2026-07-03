@@ -1,5 +1,6 @@
 /** @format */
 
+@use "../abstracts/placeholders" as *;
 .contact {
 	// position: relative;
 	// min-height: 100vh;
@@ -388,7 +389,6 @@
 		cursor: not-allowed;
 	}
 }
-
 
 // Badge reCAPTCHA v3
 .grecaptcha-badge {

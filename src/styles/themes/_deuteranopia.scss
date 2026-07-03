@@ -1,7 +1,8 @@
 /** @format */
-@import "../abstracts/base-palette";
-@import "../abstracts/theme-utils";
-@import "../themes/theme-variables";
+@use "../abstracts/base-palette" as *;
+@use "../abstracts/theme-utils" as *;
+@use "../themes/theme-variables" as *;
+@use "light" as *;
 
 @mixin deuteranopia-theme-variables() {
 	// D'abord appliquer les variables du thème light

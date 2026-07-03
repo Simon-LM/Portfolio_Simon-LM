@@ -1,5 +1,6 @@
 /** @format */
 
+@use "../abstracts/mixins" as *;
 .portfolio__card {
 	display: flex;
 	flex-direction: column;

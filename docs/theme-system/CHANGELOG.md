@@ -15,6 +15,60 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-03
 
+### Changed (phase 5 — Sass modules)
+
+- Phase 5 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
+  migration complète `@import` → `@use`/`@forward` sur l'ensemble de
+  `src/styles/` (système de thèmes **et** les autres partials chargés par
+  `main.scss`, puisque `@use` exige que chaque fichier déclare explicitement
+  ses dépendances — l'ancien flattening global de `@import` masquait ces
+  dépendances). Compilation finale **sans aucun avertissement de
+  dépréciation** (`@import`, `darken`/`lighten`, `red`/`green`/`blue`,
+  `hue`/`saturation`/`lightness`, `map-get`/`map-has-key`/`map-merge`,
+  `index`/`nth`/`length`, division `/`, syntaxe `if()`).
+  - Préalable anti-cycle : `get-color()`, `$tailwind-weights`, `$midpoint`
+    déplacés de `_theme-utils.scss` vers `_base-palette.scss`.
+  - `_theme-variables.scss` : toutes les variables mutées par
+    `define-base-colors()`/`apply-theme-variables()` (rail 11 crans,
+    couleurs sémantiques, ~70 tokens de couche 3) désormais déclarées à la
+    racine du module — obligatoire pour que les réaffectations `!global`
+    des moteurs restent valides sous `@use`.
+  - Cycle détecté et corrigé entre `_mixins.scss` et `_placeholders.scss`
+    (extend/include mutuels) : le mixin `word-wrap` (4 déclarations) a été
+    intégré directement dans les deux placeholders qui l'utilisaient plutôt
+    que d'y être inclus, cassant le cycle sans changer le CSS produit.
+  - **Deux régressions détectées et corrigées** pendant la migration (le
+    diff du CSS compilé les a révélées — protocole de vérification
+    fonctionnel) :
+    1. `color.adjust($c, $lightness: -15%)` ne reproduit **pas** le
+       comportement borné de `darken()` : sur une couleur déjà à 0 % de
+       luminosité (ex. `$primary-color` viré au noir pur par un thème),
+       `darken()` plafonne à 0 % alors que `color.adjust()` produit une
+       lightness négative invalide (`hsl(0, 0%, -15%)`). Nouvelle fonction
+       `adjust-lightness-clamped()` dans `_base-palette.scss` qui borne
+       explicitement le résultat entre 0 % et 100 %, utilisée partout où
+       `darken()`/`lighten()` étaient appelés.
+    2. `color.channel($c, "red"/"green"/"blue", $space: rgb)` ne borne pas
+       le résultat à un entier, contrairement aux anciennes fonctions
+       globales `red()`/`green()`/`blue()` — écart constaté sur des couleurs
+       reconstruites via `hsl()` (ex. `rgba(67.6, 64, 60.4, 0.7)` au lieu de
+       `rgba(68, 64, 60, 0.7)`). Tous les appels concernés enveloppés dans
+       `math.round()`.
+  - **Écarts résiduels dans le diff CSS, expliqués et prouvés inoffensifs**
+    (aucune valeur ne change, uniquement confirmé par tri + `comm -3`) :
+    - Les en-têtes de commentaires `/** @format */` et le bloc de
+      documentation de `_theme-utils.scss` n'apparaissent plus qu'**une
+      seule fois** dans le CSS compilé (contre jusqu'à 13× avant) : `@use`
+      ne charge chaque module qu'une fois, alors que `@import` réinjectait
+      tout le fichier à chaque `@import`, y compris ses commentaires de
+      tête. Sans effet sur le runtime (ce sont des commentaires).
+    - Réordonnancement de 3 listes de sélecteurs issues de `@extend`
+      (`.sticky-footer__link:hover, …`, `.sticky-footer__fixed-links, …`,
+      `.skills__title, .skills__subtitle, …`) : même ensemble de
+      sélecteurs, même règle, ordre différent — conséquence du nouveau
+      graphe de chargement des modules. Sans effet (mêmes déclarations,
+      pas de conflit de spécificité entre ces sélecteurs).
+
 ### Fixed
 
 - Phase 4 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :

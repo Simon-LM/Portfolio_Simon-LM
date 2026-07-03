@@ -1,5 +1,146 @@
 /** @format */
 
+@use "../abstracts/base-palette" as *;
+
+// -----------------------------------------------
+// MODULE-LEVEL STATE — single source of mutable theme state.
+// -----------------------------------------------
+// Under the Sass module system, a `!global` assignment inside a mixin can
+// only re-assign a variable that already exists at the root of the module
+// where it's declared — it can no longer create one. So every variable the
+// mixins below reassign is declared here first, initialized to its light
+// value. Re-including define-base-colors()/apply-theme-variables() resets
+// this state to light before each theme's transformation runs.
+
+// Full numeric rail — 11 Tailwind weights of the reference "stone" family
+$gray-50: get-color("stone", 50); // #fafaf9
+$gray-100: get-color("stone", 100); // #f5f5f4
+$gray-200: get-color("stone", 200); // #e7e5e4
+$gray-300: get-color("stone", 300); // #d6d3d1
+$gray-400: get-color("stone", 400); // #a8a29e
+$gray-500: get-color("stone", 500); // #78716c
+$gray-600: get-color("stone", 600); // #57534e
+$gray-700: get-color("stone", 700); // #44403c
+$gray-800: get-color("stone", 800); // #292524
+$gray-900: get-color("stone", 900); // #1c1917
+$gray-950: get-color("stone", 950); // #0c0a09
+
+// Semantic aliases for the rail endpoints (kept for the ~35 component
+// call sites; re-synced after every theme transformation)
+$off-white: $gray-50;
+$near-black: $gray-950;
+
+// Couleurs sémantiques
+$primary-color: get-color("amber", 300); // #fcd34d
+$secondary-color: get-color("amber", 950); // #451a03
+$tertiary-color: get-color("amber", 100); // #fef3c7
+$link-color: get-color("sky", 900); // #0c4a6e
+$link-color-hover: get-color("sky", 800); // #075985
+$success-color: get-color("emerald", 600); // #059669
+$error-color: get-color("redd", 600); // #dc2626
+
+// Couleurs d'arrière-plan et de texte principales
+$color-main-bg: $off-white;
+$color-main-text: $near-black;
+$color-pages-title: $near-black;
+
+// Variables d'entête
+$color-header-bg: $primary-color;
+$color-header-text: $near-black;
+$color-header-text-role: $gray-700;
+$color-header-blog-link-bg: $gray-700;
+$color-header-blog-link-text: $primary-color;
+
+// Sélecteur de langue
+$color-lang-toggle-bg: $off-white;
+$color-lang-toggle-border: $gray-700;
+$color-lang-toggle-bg-activated: $gray-700;
+$color-lang-toggle-text-activated: $off-white;
+$color-lang-toggle-text-disabled: $gray-700;
+$color-lang-toggle-disabled-hover-bg: $link-color;
+$color-lang-toggle-disabled-hover-text: $off-white;
+
+// Indicateurs de défilement
+$color-scroll-progress-line: $link-color;
+$color-scroll-progress-indicator: $gray-600;
+$color-scroll-progress-indicator-active: $link-color;
+
+// Éléments collapse
+$color-collapse-title: $off-white;
+$color-collapse-bg: $gray-300;
+$color-collapse-bg-title: $gray-700;
+$color-collapse-border: $gray-700;
+
+// Sections et héros
+$color-section-bg-even: $off-white;
+$color-section-bg-odd: $gray-200;
+$color-section-title: $secondary-color;
+$color-hero-bg: $off-white;
+$color-hero-title: $near-black;
+$color-hero-text: $near-black;
+
+// Section À propos
+$color-about-overlay-bg: $near-black;
+$color-about-overlay-text: $off-white;
+$color-about-button-bg: $link-color;
+$color-about-button-border: $off-white;
+$color-about-button-text: $off-white;
+
+// Section compétences
+$color-skills-icon-bg: $tertiary-color;
+$color-skills-icon-text: $secondary-color;
+$color-skills-presentation-link-hover-bg: $link-color;
+$color-skills-presentation-link-hover-text: $off-white;
+
+// Cartes et sections
+$color-section-card-bg: $gray-300;
+$color-section-even-card-bg: $gray-300;
+$color-section-odd-card-bg: $gray-400;
+
+// Étiquettes de portfolio
+$color-portfolio-tag-bg: $tertiary-color;
+$color-portfolio-tag-text: $secondary-color;
+
+// Formulaires de contact
+$color-contact-form-bg: $gray-300;
+$color-contact-modal-bg: $gray-200;
+
+// Pieds de page
+$color-bottom-footer-bg: $gray-700;
+$color-bottom-footer-title: $tertiary-color;
+$color-bottom-footer-text: $off-white;
+$color-bottom-footer-link-bg: $off-white;
+$color-bottom-footer-link-text: $link-color;
+$color-sticky-footer-bg: $gray-800;
+$color-sticky-footer-text: $off-white;
+
+// Liens et focus
+$color-link: $link-color;
+$color-link-hover: $link-color-hover;
+$color-link-bg: $off-white;
+$color-focus-outline: $link-color;
+$color-focus-bg: $link-color;
+$color-focus-text: $off-white;
+
+// Infobulles
+$color-tooltip-text: $off-white;
+$color-tooltip-bg: rgba($near-black, 0.9);
+
+// Variables pour le panneau d'accessibilité
+$color-panel-bg: $off-white;
+$color-panel-border: $gray-600;
+$color-scrollbar-track: $off-white;
+$color-scrollbar-thumb: $gray-500;
+$color-button-border: $gray-500;
+$color-button-hover-bg: rgba($primary-color, 0.1);
+$color-button-active-text: $off-white;
+$color-button-active-outline: $primary-color;
+
+// Variables pour le curseur de taille de police
+$color-border: $gray-500;
+$color-accent: $primary-color;
+$color-accent-hover: adjust-lightness-clamped($primary-color, -15%);
+
 // -----------------------------------------------
 // DÉFINITION DES COULEURS DE BASE
 // -----------------------------------------------
@@ -137,5 +278,5 @@
 	// Variables pour le curseur de taille de police
 	$color-border: $gray-500 !global;
 	$color-accent: $primary-color !global;
-	$color-accent-hover: darken($primary-color, 15%) !global;
+	$color-accent-hover: adjust-lightness-clamped($primary-color, -15%) !global;
 }

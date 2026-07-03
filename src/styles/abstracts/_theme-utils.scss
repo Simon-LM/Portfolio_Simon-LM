@@ -1,6 +1,11 @@
 /** @format */
 
-@import "../themes/theme-variables";
+@use "sass:map";
+@use "sass:list";
+@use "sass:math";
+@use "sass:color";
+@use "base-palette" as *;
+@use "../themes/theme-variables" as *;
 /**
  * Utilitaires pour la gestion des thèmes
  * - Accès simplifié aux couleurs Tailwind
@@ -8,26 +13,16 @@
  */
 
 // Note: Les fonctions anti-éblouissement ont été déplacées dans _anti-glare-functions.scss
-
-// -----------------------------------------------
-// FONCTIONS D'ACCÈS AUX COULEURS
-// -----------------------------------------------
-@function get-color($family, $weight) {
-	@return map-get(map-get($colors, $family), $weight);
-}
+// Note: get-color(), $tailwind-weights et $midpoint ont été déplacées dans _base-palette.scss
 
 // -----------------------------------------------
 // UTILITAIRES POUR THÈME SOMBRE
 // -----------------------------------------------
-// Liste des poids disponibles dans Tailwind
-$tailwind-weights: (50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950);
-// Point médian pour déterminer si on fonce ou éclaircit
-$midpoint: 500;
 
 // Fonction pour obtenir la couleur décalée pour le thème sombre
 @function get-dark-color($family, $weight, $steps: 6) {
 	// Trouver l'index du poids actuel dans la liste des poids Tailwind
-	$current-index: index($tailwind-weights, $weight);
+	$current-index: list.index($tailwind-weights, $weight);
 
 	@if not $current-index {
 		@error "Le poids #{$weight} n'existe pas dans la palette Tailwind";
@@ -49,14 +44,14 @@ $midpoint: 500;
 	}
 
 	// Limiter l'index dans les bornes de la liste
-	@if $new-index > length($tailwind-weights) {
-		$new-index: length($tailwind-weights);
+	@if $new-index > list.length($tailwind-weights) {
+		$new-index: list.length($tailwind-weights);
 	} @else if $new-index < 1 {
 		$new-index: 1;
 	}
 
 	// Obtenir le nouveau poids
-	$new-weight: nth($tailwind-weights, $new-index);
+	$new-weight: list.nth($tailwind-weights, $new-index);
 
 	// Retourner la couleur correspondante
 	@return get-color($family, $new-weight);
@@ -89,34 +84,34 @@ $midpoint: 500;
 // Fonction qui transforme une couleur en version dark en tenant compte de la configuration
 @function auto-dark-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
-	$steps: map-get($config, "steps");
-	$adjustments: map-get($config, "adjustments");
+	$steps: map.get($config, "steps");
+	$adjustments: map.get($config, "adjustments");
 
 	// Calculer l'ajustement spécifique pour cette variable
 	$adjustment: 0;
-	@if $adjustments and map-has-key($adjustments, $var-name) {
-		$adjustment: map-get($adjustments, $var-name);
+	@if $adjustments and map.has-key($adjustments, $var-name) {
+		$adjustment: map.get($adjustments, $var-name);
 	}
 
 	// Analyser la couleur pour trouver sa famille et son poids Tailwind
 	$analysis: analyze-tailwind-color($color);
 
 	// Si une correspondance Tailwind est trouvée, utiliser get-dark-color
-	@if map-get($analysis, "found") {
-		$family: map-get($analysis, "family");
-		$weight: map-get($analysis, "weight");
+	@if map.get($analysis, "found") {
+		$family: map.get($analysis, "family");
+		$weight: map.get($analysis, "weight");
 		@return get-dark-color($family, $weight, $steps + $adjustment);
 	}
 
 	// Si aucune correspondance n'est trouvée, appliquer un algorithme générique
-	$lightness: lightness($color);
+	$lightness: color.channel($color, "lightness", $space: hsl);
 
 	@if $lightness > 50 {
 		// Pour les couleurs claires, les assombrir
-		@return darken($color, 40% + $adjustment * 5%);
+		@return adjust-lightness-clamped($color, -(40% + $adjustment * 5%));
 	} @else {
 		// Pour les couleurs foncées, les éclaircir
-		@return lighten($color, 30% + $adjustment * 5%);
+		@return adjust-lightness-clamped($color, 30% + $adjustment * 5%);
 	}
 }
 
@@ -126,9 +121,10 @@ $midpoint: 500;
 
 // Fonction pour déterminer si une couleur est sombre ou claire
 @function is-dark($color) {
-	$luminance: (
-			red($color) * 0.299 + green($color) * 0.587 + blue($color) * 0.114
-		) / 255;
+	$luminance: math.div(
+		math.round(color.channel($color, "red", $space: rgb)) * 0.299 + math.round(color.channel($color, "green", $space: rgb)) * 0.587 + math.round(color.channel($color, "blue", $space: rgb)) * 0.114,
+		255
+	);
 	@return $luminance < 0.5;
 }
 
@@ -168,9 +164,9 @@ $midpoint: 500;
 
 	// Pour les autres couleurs, appliquer un algorithme de transformation
 	// qui augmente la saturation dans les canaux que la personne distingue le mieux
-	$h: hue($color);
-	$s: saturation($color);
-	$l: lightness($color);
+	$h: color.channel($color, "hue", $space: hsl);
+	$s: color.channel($color, "saturation", $space: hsl);
+	$l: color.channel($color, "lightness", $space: hsl);
 
 	@if $type == "deuteranopia" or $type == "protanopia" {
 		// Pour la confusion rouge-vert, déplacer vers bleu ou jaune
@@ -206,18 +202,20 @@ $midpoint: 500;
 
 // Fonctions auxiliaires
 @function brightness($color) {
-	@return (red($color) * 0.299 + green($color) * 0.587 + blue($color) * 0.114) /
-		255;
+	@return math.div(
+		math.round(color.channel($color, "red", $space: rgb)) * 0.299 + math.round(color.channel($color, "green", $space: rgb)) * 0.587 + math.round(color.channel($color, "blue", $space: rgb)) * 0.114,
+		255
+	);
 }
 
 @function is-similar-to($color1, $color2, $threshold: 60) {
-	$r1: red($color1);
-	$g1: green($color1);
-	$b1: blue($color1);
+	$r1: math.round(color.channel($color1, "red", $space: rgb));
+	$g1: math.round(color.channel($color1, "green", $space: rgb));
+	$b1: math.round(color.channel($color1, "blue", $space: rgb));
 
-	$r2: red($color2);
-	$g2: green($color2);
-	$b2: blue($color2);
+	$r2: math.round(color.channel($color2, "red", $space: rgb));
+	$g2: math.round(color.channel($color2, "green", $space: rgb));
+	$b2: math.round(color.channel($color2, "blue", $space: rgb));
 
 	$r_diff: abs($r1 - $r2);
 	$g_diff: abs($g1 - $g2);
@@ -231,11 +229,11 @@ $midpoint: 500;
 // Fonction qui transforme une couleur en version deuteranopia
 @function auto-deuteranopia-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
-	$special-colors: map-get($config, "special-colors");
+	$special-colors: map.get($config, "special-colors");
 
 	// Si la variable a une couleur spéciale définie, l'utiliser
-	@if $special-colors and map-has-key($special-colors, $var-name) {
-		@return map-get($special-colors, $var-name);
+	@if $special-colors and map.has-key($special-colors, $var-name) {
+		@return map.get($special-colors, $var-name);
 	}
 
 	// Autrement, appliquer la transformation standard
@@ -245,11 +243,11 @@ $midpoint: 500;
 // Fonction qui transforme une couleur en version protanopia
 @function auto-protanopia-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
-	$special-colors: map-get($config, "special-colors");
+	$special-colors: map.get($config, "special-colors");
 
 	// Si la variable a une couleur spéciale définie, l'utiliser
-	@if $special-colors and map-has-key($special-colors, $var-name) {
-		@return map-get($special-colors, $var-name);
+	@if $special-colors and map.has-key($special-colors, $var-name) {
+		@return map.get($special-colors, $var-name);
 	}
 
 	// Autrement, appliquer la transformation standard
@@ -259,11 +257,11 @@ $midpoint: 500;
 // Fonction qui transforme une couleur en version tritanopia
 @function auto-tritanopia-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
-	$special-colors: map-get($config, "special-colors");
+	$special-colors: map.get($config, "special-colors");
 
 	// Si la variable a une couleur spéciale définie, l'utiliser
-	@if $special-colors and map-has-key($special-colors, $var-name) {
-		@return map-get($special-colors, $var-name);
+	@if $special-colors and map.has-key($special-colors, $var-name) {
+		@return map.get($special-colors, $var-name);
 	}
 
 	// Autrement, appliquer la transformation standard
@@ -273,9 +271,9 @@ $midpoint: 500;
 // Fonction qui transforme une couleur pour l'adapter à un type léger de daltonisme (anomalie)
 @function adapt-color-for-color-anomaly($color, $type, $enhance-factor: 1.2) {
 	// Pour les anomalies, on amplifie les différences sans transformer complètement
-	$h: hue($color);
-	$s: saturation($color);
-	$l: lightness($color);
+	$h: color.channel($color, "hue", $space: hsl);
+	$s: color.channel($color, "saturation", $space: hsl);
+	$l: color.channel($color, "lightness", $space: hsl);
 
 	// Calculer l'impact du facteur d'intensification
 	$hue_shift: ($enhance-factor - 1) * 30; // Amplifier l'effet sur la teinte
@@ -317,22 +315,22 @@ $midpoint: 500;
 // Fonction qui transforme une couleur en version deutéranomalie en tenant compte de la configuration
 @function auto-deuteranomaly-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
-	$enhancer: map-get($config, "enhancer");
-	$adjustments: map-get($config, "adjustments");
+	$enhancer: map.get($config, "enhancer");
+	$adjustments: map.get($config, "adjustments");
 
 	// Calculer l'ajustement spécifique pour cette variable
 	$adjustment: 0;
-	@if $adjustments and map-has-key($adjustments, $var-name) {
-		$adjustment: map-get($adjustments, $var-name);
+	@if $adjustments and map.has-key($adjustments, $var-name) {
+		$adjustment: map.get($adjustments, $var-name);
 	}
 
 	// Analyser la couleur pour trouver sa famille et son poids Tailwind
 	$analysis: analyze-tailwind-color($color);
 
 	// Si une correspondance Tailwind est trouvée, utiliser get-deuteranomaly-color
-	@if map-get($analysis, "found") {
-		$family: map-get($analysis, "family");
-		$weight: map-get($analysis, "weight");
+	@if map.get($analysis, "found") {
+		$family: map.get($analysis, "family");
+		$weight: map.get($analysis, "weight");
 		@return adapt-color-for-color-anomaly(
 			$color,
 			"deuteranomaly",
@@ -351,13 +349,13 @@ $midpoint: 500;
 // Fonction qui transforme une couleur en version protanomalie
 @function auto-protanomaly-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
-	$enhancer: map-get($config, "enhancer");
-	$adjustments: map-get($config, "adjustments");
+	$enhancer: map.get($config, "enhancer");
+	$adjustments: map.get($config, "adjustments");
 
 	// Calculer l'ajustement spécifique pour cette variable
 	$adjustment: 0;
-	@if $adjustments and map-has-key($adjustments, $var-name) {
-		$adjustment: map-get($adjustments, $var-name);
+	@if $adjustments and map.has-key($adjustments, $var-name) {
+		$adjustment: map.get($adjustments, $var-name);
 	}
 
 	// Analyser la couleur pour trouver sa famille et son poids Tailwind
@@ -374,13 +372,13 @@ $midpoint: 500;
 // Fonction qui transforme une couleur en version tritanomalie
 @function auto-tritanomaly-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
-	$enhancer: map-get($config, "enhancer");
-	$adjustments: map-get($config, "adjustments");
+	$enhancer: map.get($config, "enhancer");
+	$adjustments: map.get($config, "adjustments");
 
 	// Calculer l'ajustement spécifique pour cette variable
 	$adjustment: 0;
-	@if $adjustments and map-has-key($adjustments, $var-name) {
-		$adjustment: map-get($adjustments, $var-name);
+	@if $adjustments and map.has-key($adjustments, $var-name) {
+		$adjustment: map.get($adjustments, $var-name);
 	}
 
 	// Analyser la couleur pour trouver sa famille et son poids Tailwind
@@ -397,9 +395,10 @@ $midpoint: 500;
 // Fonction qui transforme les couleurs pour l'achromatopsie (monochrome)
 @function adapt-color-for-achromatopsia($color, $enhance-factor: 1.4) {
 	// Convertir la couleur en niveaux de gris basés sur la luminosité
-	$luminance: (
-			red($color) * 0.299 + green($color) * 0.587 + blue($color) * 0.114
-		) / 255;
+	$luminance: math.div(
+		math.round(color.channel($color, "red", $space: rgb)) * 0.299 + math.round(color.channel($color, "green", $space: rgb)) * 0.587 + math.round(color.channel($color, "blue", $space: rgb)) * 0.114,
+		255
+	);
 
 	// Accentuer le contraste pour les gris moyens
 	@if $luminance > 0.4 and $luminance < 0.6 {
@@ -430,7 +429,7 @@ $midpoint: 500;
 	);
 
 	// Fusionner avec la configuration par défaut
-	$config: map-merge($default-config, $config);
+	$config: map.merge($default-config, $config);
 
 	// Traiter chaque variable du thème avec sa configuration
 	$gray-50: auto-dark-transform($gray-50, "gray-50", $config) !global;
@@ -451,13 +450,13 @@ $midpoint: 500;
 	$near-black: $gray-950 !global;
 
 	// Ne pas transformer les couleurs déjà surchargées
-	$overrides: map-get($config, "overrides");
+	$overrides: map.get($config, "overrides");
 
 	// Traiter les couleurs sémantiques qui ne sont pas surchargées ou quand override est f
 	@if not(
 		$overrides and
-			map-has-key($overrides, "primary-color") and
-			map-get($overrides, "primary-color") ==
+			map.has-key($overrides, "primary-color") and
+			map.get($overrides, "primary-color") ==
 			true
 	)
 	{
@@ -470,8 +469,8 @@ $midpoint: 500;
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "secondary-color") and
-			map-get($overrides, "secondary-color") ==
+			map.has-key($overrides, "secondary-color") and
+			map.get($overrides, "secondary-color") ==
 			true
 	)
 	{
@@ -484,8 +483,8 @@ $midpoint: 500;
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "tertiary-color") and
-			map-get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "tertiary-color") and
+			map.get($overrides, "tertiary-color") ==
 			true
 	)
 	{
@@ -538,15 +537,14 @@ $hc-palette: (
 // Fonction qui détermine la couleur high contrast basée sur la luminosité
 @function get-high-contrast-color($color, $role: null) {
 	// Si un rôle spécifique est demandé, l'utiliser
-	@if $role and map-has-key($hc-palette, $role) {
-		@return map-get($hc-palette, $role);
+	@if $role and map.has-key($hc-palette, $role) {
+		@return map.get($hc-palette, $role);
 	}
 
 	// Sinon, décider en fonction de la luminosité
 	@return if(
-		is-dark($color),
-		map-get($hc-palette, "text"),
-		map-get($hc-palette, "background")
+		sass(is-dark($color)): map.get($hc-palette, "text");
+		else: map.get($hc-palette, "background")
 	);
 }
 
@@ -559,9 +557,9 @@ $hc-palette: (
 	);
 
 	// Fusionner la configuration personnalisée
-	$config: map-merge($default-config, $config);
-	$hc-palette: map-get($config, "colors");
-	$overrides: map-get($config, "overrides");
+	$config: map.merge($default-config, $config);
+	$hc-palette: map.get($config, "colors");
+	$overrides: map.get($config, "overrides");
 
 	//  Couleurs fondamentales (rail endpoints)
 	$gray-50: get-high-contrast-color($gray-50, "background") !global;
@@ -628,20 +626,20 @@ $hc-palette: (
 	);
 
 	// Fusionner avec la configuration par défaut
-	$config: map-merge($default-config, $config);
+	$config: map.merge($default-config, $config);
 
 	// Traiter chaque variable du thème avec sa configuration
 	// On ne transforme pas les couleurs fondamentales et l'échelle de gris
 	// car elles restent identiques dans la deutéranomalie
 
 	// Ne pas transformer les couleurs déjà surchargées
-	$overrides: map-get($config, "overrides");
+	$overrides: map.get($config, "overrides");
 
 	// Traiter les couleurs sémantiques qui ne sont pas surchargées ou quand override est false
 	@if not(
 		$overrides and
-			map-has-key($overrides, "primary-color") and
-			map-get($overrides, "primary-color") ==
+			map.has-key($overrides, "primary-color") and
+			map.get($overrides, "primary-color") ==
 			true
 	)
 	{
@@ -654,8 +652,8 @@ $hc-palette: (
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "secondary-color") and
-			map-get($overrides, "secondary-color") ==
+			map.has-key($overrides, "secondary-color") and
+			map.get($overrides, "secondary-color") ==
 			true
 	)
 	{
@@ -668,8 +666,8 @@ $hc-palette: (
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "tertiary-color") and
-			map-get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "tertiary-color") and
+			map.get($overrides, "tertiary-color") ==
 			true
 	)
 	{
@@ -720,11 +718,11 @@ $hc-palette: (
 	);
 
 	// Fusionner avec la configuration par défaut
-	$config: map-merge($default-config, $config);
+	$config: map.merge($default-config, $config);
 
 	// Récupérer les listes de valeurs spéciales et overrides
-	$special-colors: map-get($config, "special-colors");
-	$overrides: map-get($config, "overrides");
+	$special-colors: map.get($config, "special-colors");
+	$overrides: map.get($config, "overrides");
 
 	// Appliquer directement les couleurs spéciales
 	@each $var-name, $color-value in $special-colors {
@@ -734,7 +732,7 @@ $hc-palette: (
 			$error-color: $color-value !global;
 		}
 		// Ajouter aux overrides pour éviter la transformation
-		$overrides: map-merge(
+		$overrides: map.merge(
 			$overrides,
 			(
 				$var-name: true,
@@ -743,7 +741,7 @@ $hc-palette: (
 	}
 
 	// Mettre à jour les overrides dans la config
-	$config: map-merge(
+	$config: map.merge(
 		$config,
 		(
 			"overrides": $overrides,
@@ -753,8 +751,8 @@ $hc-palette: (
 	// Traiter les couleurs sémantiques
 	@if not(
 		$overrides and
-			map-has-key($overrides, "primary-color") and
-			map-get($overrides, "primary-color") ==
+			map.has-key($overrides, "primary-color") and
+			map.get($overrides, "primary-color") ==
 			true
 	)
 	{
@@ -767,8 +765,8 @@ $hc-palette: (
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "secondary-color") and
-			map-get($overrides, "secondary-color") ==
+			map.has-key($overrides, "secondary-color") and
+			map.get($overrides, "secondary-color") ==
 			true
 	)
 	{
@@ -781,8 +779,8 @@ $hc-palette: (
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "tertiary-color") and
-			map-get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "tertiary-color") and
+			map.get($overrides, "tertiary-color") ==
 			true
 	)
 	{
@@ -829,16 +827,16 @@ $hc-palette: (
 	);
 
 	// Fusionner avec la configuration par défaut
-	$config: map-merge($default-config, $config);
+	$config: map.merge($default-config, $config);
 
 	// Ne pas transformer les couleurs déjà surchargées
-	$overrides: map-get($config, "overrides");
+	$overrides: map.get($config, "overrides");
 
 	// Traiter les couleurs sémantiques qui ne sont pas surchargées ou quand override est false
 	@if not(
 		$overrides and
-			map-has-key($overrides, "primary-color") and
-			map-get($overrides, "primary-color") ==
+			map.has-key($overrides, "primary-color") and
+			map.get($overrides, "primary-color") ==
 			true
 	)
 	{
@@ -851,8 +849,8 @@ $hc-palette: (
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "secondary-color") and
-			map-get($overrides, "secondary-color") ==
+			map.has-key($overrides, "secondary-color") and
+			map.get($overrides, "secondary-color") ==
 			true
 	)
 	{
@@ -865,8 +863,8 @@ $hc-palette: (
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "tertiary-color") and
-			map-get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "tertiary-color") and
+			map.get($overrides, "tertiary-color") ==
 			true
 	)
 	{
@@ -917,16 +915,16 @@ $hc-palette: (
 	);
 
 	// Fusionner avec la configuration par défaut
-	$config: map-merge($default-config, $config);
+	$config: map.merge($default-config, $config);
 
 	// Ne pas transformer les couleurs déjà surchargées
-	$overrides: map-get($config, "overrides");
+	$overrides: map.get($config, "overrides");
 
 	// Traiter les couleurs sémantiques
 	@if not(
 		$overrides and
-			map-has-key($overrides, "primary-color") and
-			map-get($overrides, "primary-color") ==
+			map.has-key($overrides, "primary-color") and
+			map.get($overrides, "primary-color") ==
 			true
 	)
 	{
@@ -939,8 +937,8 @@ $hc-palette: (
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "secondary-color") and
-			map-get($overrides, "secondary-color") ==
+			map.has-key($overrides, "secondary-color") and
+			map.get($overrides, "secondary-color") ==
 			true
 	)
 	{
@@ -953,8 +951,8 @@ $hc-palette: (
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "tertiary-color") and
-			map-get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "tertiary-color") and
+			map.get($overrides, "tertiary-color") ==
 			true
 	)
 	{
@@ -1001,16 +999,16 @@ $hc-palette: (
 	);
 
 	// Fusionner avec la configuration par défaut
-	$config: map-merge($default-config, $config);
+	$config: map.merge($default-config, $config);
 
 	// Ne pas transformer les couleurs déjà surchargées
-	$overrides: map-get($config, "overrides");
+	$overrides: map.get($config, "overrides");
 
 	// Traiter les couleurs sémantiques qui ne sont pas surchargées ou quand override est false
 	@if not(
 		$overrides and
-			map-has-key($overrides, "primary-color") and
-			map-get($overrides, "primary-color") ==
+			map.has-key($overrides, "primary-color") and
+			map.get($overrides, "primary-color") ==
 			true
 	)
 	{
@@ -1023,8 +1021,8 @@ $hc-palette: (
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "secondary-color") and
-			map-get($overrides, "secondary-color") ==
+			map.has-key($overrides, "secondary-color") and
+			map.get($overrides, "secondary-color") ==
 			true
 	)
 	{
@@ -1037,8 +1035,8 @@ $hc-palette: (
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "tertiary-color") and
-			map-get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "tertiary-color") and
+			map.get($overrides, "tertiary-color") ==
 			true
 	)
 	{
@@ -1089,16 +1087,16 @@ $hc-palette: (
 	);
 
 	// Fusionner avec la configuration par défaut
-	$config: map-merge($default-config, $config);
+	$config: map.merge($default-config, $config);
 
 	// Ne pas transformer les couleurs déjà surchargées
-	$overrides: map-get($config, "overrides");
+	$overrides: map.get($config, "overrides");
 
 	// Traiter les couleurs sémantiques
 	@if not(
 		$overrides and
-			map-has-key($overrides, "primary-color") and
-			map-get($overrides, "primary-color") ==
+			map.has-key($overrides, "primary-color") and
+			map.get($overrides, "primary-color") ==
 			true
 	)
 	{
@@ -1111,8 +1109,8 @@ $hc-palette: (
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "secondary-color") and
-			map-get($overrides, "secondary-color") ==
+			map.has-key($overrides, "secondary-color") and
+			map.get($overrides, "secondary-color") ==
 			true
 	)
 	{
@@ -1125,8 +1123,8 @@ $hc-palette: (
 
 	@if not(
 		$overrides and
-			map-has-key($overrides, "tertiary-color") and
-			map-get($overrides, "tertiary-color") ==
+			map.has-key($overrides, "tertiary-color") and
+			map.get($overrides, "tertiary-color") ==
 			true
 	)
 	{
@@ -1168,9 +1166,10 @@ $hc-palette: (
 	$tw-weights: (50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950);
 
 	// Calculer la luminosité de la couleur (valeur entre 0 et 1)
-	$luminance: (
-			red($color) * 0.299 + green($color) * 0.587 + blue($color) * 0.114
-		) / 255;
+	$luminance: math.div(
+		math.round(color.channel($color, "red", $space: rgb)) * 0.299 + math.round(color.channel($color, "green", $space: rgb)) * 0.587 + math.round(color.channel($color, "blue", $space: rgb)) * 0.114,
+		255
+	);
 
 	// Déterminer l'index de base approximatif dans la palette Tailwind
 	$base-index: 1; // Par défaut (50)
@@ -1206,7 +1205,7 @@ $hc-palette: (
 	$adjusted-index: max(1, min(11, $adjusted-index));
 
 	// Retourner la valeur du poids correspondant
-	@return nth($tw-weights, $adjusted-index);
+	@return list.nth($tw-weights, $adjusted-index);
 }
 
 // Fonction qui obtient la couleur grise ajustée
@@ -1221,15 +1220,15 @@ $hc-palette: (
 	$analysis: analyze-tailwind-color($color);
 
 	// Si c'est une couleur Tailwind trouvée
-	@if map-get($analysis, "found") {
-		$family: map-get($analysis, "family");
-		$weight: map-get($analysis, "weight");
+	@if map.get($analysis, "found") {
+		$family: map.get($analysis, "family");
+		$weight: map.get($analysis, "weight");
 
 		// Liste des familles de gris à convertir
 		$gray-families: ("slate", "gray", "zinc", "stone");
 
 		// Si la couleur est d'une famille de gris (mais pas déjà neutral), la convertir
-		@if index($gray-families, $family) {
+		@if list.index($gray-families, $family) {
 			@return get-color("neutral", $weight);
 		}
 	}
@@ -1269,11 +1268,11 @@ $hc-palette: (
 	);
 
 	// Fusionner avec la configuration par défaut
-	$config: map-merge($default-config, $config);
+	$config: map.merge($default-config, $config);
 
 	// Récupérer les configurations
-	$special-colors: map-get($config, "special-colors");
-	$adjustments: map-get($config, "adjustments");
+	$special-colors: map.get($config, "special-colors");
+	$adjustments: map.get($config, "adjustments");
 
 	// Convertir d'abord toutes les variables de gris en neutral
 	$gray-50: convert-to-neutral-gray($gray-50) !global;
@@ -1302,24 +1301,24 @@ $hc-palette: (
 		}
 	}
 
-	@if not map-has-key($special-colors, "primary-color") {
-		$adjustment: map-get($adjustments, "primary-color") or 0;
+	@if not map.has-key($special-colors, "primary-color") {
+		$adjustment: map.get($adjustments, "primary-color") or 0;
 		$primary-color: get-adjusted-gray($primary-color, $adjustment) !global;
 	}
 
-	@if not map-has-key($special-colors, "secondary-color") {
-		$adjustment: map-get($adjustments, "secondary-color") or 0;
+	@if not map.has-key($special-colors, "secondary-color") {
+		$adjustment: map.get($adjustments, "secondary-color") or 0;
 		$secondary-color: get-adjusted-gray($secondary-color, $adjustment) !global;
 	}
 
-	@if not map-has-key($special-colors, "tertiary-color") {
-		$adjustment: map-get($adjustments, "tertiary-color") or 0;
+	@if not map.has-key($special-colors, "tertiary-color") {
+		$adjustment: map.get($adjustments, "tertiary-color") or 0;
 		$tertiary-color: get-adjusted-gray($tertiary-color, $adjustment) !global;
 	}
 
 	// Variables de liens aussi avec get-adjusted-gray
-	@if not map-has-key($special-colors, "link-color") {
-		$adjustment: map-get($adjustments, "link-color") or 0;
+	@if not map.has-key($special-colors, "link-color") {
+		$adjustment: map.get($adjustments, "link-color") or 0;
 		$link-color: get-adjusted-gray($link-color, $adjustment) !global;
 		$color-focus-outline: get-adjusted-gray(
 			$color-focus-outline,
@@ -1329,8 +1328,8 @@ $hc-palette: (
 		$color-link: get-adjusted-gray($color-link, $adjustment) !global;
 	}
 
-	@if not map-has-key($special-colors, "link-color-hover") {
-		$adjustment: map-get($adjustments, "link-color-hover") or 0;
+	@if not map.has-key($special-colors, "link-color-hover") {
+		$adjustment: map.get($adjustments, "link-color-hover") or 0;
 		$link-color-hover: get-adjusted-gray(
 			$link-color-hover,
 			$adjustment

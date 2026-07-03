@@ -1,5 +1,6 @@
 /** @format */
 
+@use "../abstracts/placeholders" as *;
 .portfolio {
 	@extend %section-base;
 	background: var(--color-section-bg-odd);
