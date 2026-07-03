@@ -15,6 +15,33 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-04
 
+### Added (chantier E1 — tests de contrastes, phase 4)
+
+- Phase 4 de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) :
+  `src/accessibility/contrast/report.ts`, générateur de
+  [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) (matrice `pairs × 12
+  thèmes`, cellule = ratio mesuré + symbole ✓/✗/⚠, légende des
+  abréviations de thème, section « Waivers » reprenant les raisons de
+  `contrast-pairs.ts`). Script `pnpm contrast:report` (via `tsx`) ajouté
+  à `package.json`.
+  - Refactor mineur au passage : la logique de résolution/mesure
+    (`resolveColor` + `measureRatio`), jusque-là dupliquée dans
+    `contrast.test.ts`, extraite dans `src/accessibility/contrast/measure.ts`
+    et réutilisée par `contrast.test.ts` et `report.ts` — aucun changement
+    de comportement (498 tests toujours verts après le refactor).
+  - **Date de génération non source de flakiness** : `generateReport()`
+    accepte une date en paramètre ; le test de fraîcheur
+    (`report.test.ts`) extrait la date déjà présente dans le fichier
+    commité, régénère avec cette même date, puis compare le contenu
+    intégral. Ainsi le test échoue uniquement si les *données* (couleurs,
+    ratios, waivers) ont changé sans régénération — jamais à cause du
+    changement de date d'un jour sur l'autre.
+  - Rapport généré et commité. État actuel : 33 cellules `⚠` (les 7 paires
+    waivées en phase 3), 0 cellule `✗` restante.
+  - Vérifié : `pnpm test` (566 tests, 15 suites) vert, `pnpm lint` vert,
+    `pnpm exec tsc --noEmit` vert, CSS compilé strictement identique à la
+    baseline de phase 0.
+
 ### Added (chantier E1 — tests de contrastes, phase 3)
 
 - Phase 3 de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) :
