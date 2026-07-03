@@ -15,6 +15,19 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-03
 
+### Docs (architecture cible — décisions)
+
+- Deux décisions actées avec Simon, inscrites au README § 6 :
+  **élargissement** du composant exportable au système de préférences
+  d'accessibilité complet (nouveau § 6.5 : déclencheur + carte livrés
+  fonctionnels, modules opt-in zoom/polices/animations/dyslexie, polices
+  d'accessibilité embarquées — licences à vérifier avant publication,
+  contrats hôte `rem`/`reduce-motion`) et **distribution hybride** (§ 6.3
+  réécrit : moteurs via npm pour les correctifs centralisés, UI scaffoldée
+  dans le projet via une CLI `init`, à la manière shadcn/Radix). Nom de
+  travail : `a11y-prefs`. Périmètre § 6.2 et § 6.4 mis à jour en
+  conséquence.
+
 ### Fixed (post-revue)
 
 - Résolution de la déclaration morte `var(--color-gray-dark)` (custom

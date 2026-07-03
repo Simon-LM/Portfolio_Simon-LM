@@ -315,7 +315,10 @@ Constats factuels issus de l'analyse du code, sans hiérarchie :
 Simon. Ces décisions orientent toutes les migrations à venir. Statut : le
 modèle à trois couches, le périmètre du paquet et la trajectoire sont
 **actés** ; le vocabulaire précis de la couche 2 est **accepté comme base**,
-affinable avant son introduction.
+affinable avant son introduction. Complété le **2026-07-03** par deux
+décisions actées : élargissement du périmètre au **système de préférences
+d'accessibilité complet** (§ 6.5) et **distribution hybride** npm +
+scaffolding (§ 6.3).
 
 ### 6.1 Le modèle à trois couches
 
@@ -427,16 +430,20 @@ WCAG dans les 12 thèmes ; styler un nouveau composant = choisir un `bg`, un
 | Liste des thèmes — source unique dont dérivent type TS, `VALID_THEMES`, script anti-FOUC et blocs SCSS | Sous-ensemble de thèmes émis (à la carte, pour un CSS léger) |
 | Palettes Tailwind embarquées (maps statiques)                                                          | Palettes maison éventuelles (contrat : 11 poids)             |
 | Émetteur des blocs `[data-theme]`                                                                      | Couche 3 (tokens de composants)                              |
-| Runtime : `useTheme`, script anti-FOUC généré, `<AccessibilityMenu>` en opt-in                         | Rôles additionnels éventuels (extension, pas renommage)      |
-| Vérificateur de contrastes WCAG sur les paires de rôles                                                | —                                                            |
+| Runtime : cœur des préférences (persistance, application DOM, anti-FOUC), `useTheme`                  | Rôles additionnels éventuels (extension, pas renommage)      |
+| UI **scaffoldée** : déclencheur (icône) + carte d'accessibilité complète, copiées dans le projet (§ 6.3) | Personnalisation libre de l'UI copiée (libellés, styles, modules) |
+| Polices d'accessibilité **embarquées** (module opt-in — licences à vérifier avant publication, § 6.5) | Polices de base du site (inchangées)                         |
+| Vérificateur de contrastes WCAG sur les paires de rôles                                                | Respect des contrats hôte (§ 6.5 : tailles en `rem`, animations soumises à `reduce-motion`) |
 | Exemples de couche 3 commentés                                                                         | —                                                            |
 
 Esquisse de structure et de consommation :
 
 ```
-@lostintab/a11y-themes            (nom à décider)
+@lostintab/a11y-prefs             (nom à décider)
 ├── scss/       palettes, rail, rôles, moteurs, émetteur [data-theme]
-├── react/      useTheme, script anti-FOUC, <AccessibilityMenu> (opt-in)
+├── react/      cœur des préférences, useTheme, script anti-FOUC
+├── fonts/      polices d'accessibilité embarquées (@font-face, opt-in)
+├── cli/        init (scaffolding de l'UI + config), init --diff
 ├── testing/    vérificateur de contrastes WCAG
 └── examples/   couche 3 commentée (recettes du portfolio)
 ```
@@ -463,20 +470,37 @@ Esquisse de structure et de consommation :
 Prérequis technique : la migration `@import` → `@use`/`@forward` — le modèle
 de configuration `@use … with ()` n'existe pas avec `@import`.
 
-### 6.3 Distribution : options et trajectoire
+### 6.3 Distribution : modèle hybride (acté le 2026-07-03)
 
-Options envisagées :
+**Décision** : distribution **hybride**, découpée selon la nature de chaque
+partie — c'est l'anatomie de shadcn/ui lui-même (couche stylée copiée chez le
+dev, primitives critiques via npm/Radix) :
 
-1. **Workspace pnpm dans ce dépôt** (`packages/`) — point de départ obligé :
-   zéro infrastructure, le portfolio devient le premier consommateur et le
-   banc d'essai de l'API.
-2. **Publication npm** (publique ou privée) quand l'API est stable — la
-   cible, cohérente avec l'objectif multi-domaines : un correctif de
-   contraste dans le paquet se déploie partout par bump de version.
-3. **Copie dans le projet** (modèle shadcn/ui) — écarté comme modèle
-   principal (perte de la centralisation des correctifs, contraire à la
-   logique de garanties d'accessibilité partagées) ; option de secours pour
-   un projet très divergent.
+| Partie | Nature | Canal |
+| --- | --- | --- |
+| Les **moteurs** (transformations, cœur des préférences, anti-FOUC, garanties et tests de contraste) | doit rester correct, correctifs centralisés | **npm** — un fix d'accessibilité se déploie partout par bump de version |
+| L'**UI** (déclencheur + carte) + config + exemples de couche 3 | chaque projet la restyle, la traduit, la réorganise | **copiée dans le projet** via une CLI de scaffolding — le dev la possède |
+
+Expérience dev cible :
+
+```bash
+pnpm add @lostintab/a11y-prefs        # moteurs (mis à jour par versions)
+pnpm dlx @lostintab/a11y-prefs init   # copie l'UI + theme.config.scss +
+                                      # exemples dans le projet
+pnpm dlx @lostintab/a11y-prefs init --diff   # voir les évolutions de l'UI
+                                             # de référence, à reporter ou non
+```
+
+Points ayant motivé la décision (discussion du 2026-07-03) : un paquet npm
+livre de toute façon le SCSS/TS **en source lisible** (pas une boîte noire) ;
+`pnpm patch` reste l'échappatoire pour modifier proprement la partie moteur ;
+la copie intégrale (shadcn pur) a été écartée comme modèle *unique* car elle
+prive les sites des correctifs d'accessibilité centralisés.
+
+Historique des options étudiées avant décision : (1) workspace pnpm seul,
+(2) npm seul, (3) copie shadcn seule. Le workspace pnpm reste le **point de
+départ** de l'extraction (étape 3 de la trajectoire) ; le modèle hybride
+décrit la forme **publiée** (étape 4).
 
 Trajectoire décidée (faire mûrir l'API dans un vrai site avant de la
 graver — extraire d'abord serait l'anti-pattern) :
@@ -504,11 +528,42 @@ cette migration restent à faire in situ (cf. « Hors périmètre » du plan) :
 réécriture déclarative du moteur high-contrast sur les rôles, et tests
 automatiques de contraste WCAG sur les paires de rôles.
 
-Reportable **sans risque** : le canal de distribution (workspace vs npm vs
-copie). Il n'influence pas le code des couches, seulement l'endroit où il
-vivra au moment de l'extraction (étape 3) — les migrations des étapes 1 et 2
-sont des refactorings internes au portfolio, valides quel que soit le mode
-d'export retenu.
+Le canal de distribution, initialement identifié comme reportable, a été
+**acté le 2026-07-03** (modèle hybride, § 6.3). Restent reportables sans
+risque : le nom définitif du paquet, et le choix registre npm public vs
+privé.
+
+### 6.5 Élargissement : du système de thèmes au système de préférences d'accessibilité (acté le 2026-07-03)
+
+Le composant exportable ne couvre pas seulement les thèmes de couleurs :
+c'est l'**ensemble du menu d'accessibilité actuel** (retour à la vision
+d'origine de `darkmode-plus-a11y`). Le livrable visible : le site hôte
+installe le **déclencheur** (l'icône d'accessibilité) et obtient au clic une
+**carte d'accessibilité complète et fonctionnelle**, personnalisable puisque
+scaffoldée dans son projet (§ 6.3).
+
+Toutes les fonctionnalités partagent le même patron, qui constitue le cœur
+du paquet :
+
+```
+préférence utilisateur → persistance (localStorage) → application au DOM
+(attribut, classe ou variable CSS sur <html>) → le CSS du site y répond
+```
+
+Modules (chacun **opt-in** — un projet peut ne prendre que les thèmes) :
+
+| Module | Mécanisme DOM | Difficulté | Point d'attention |
+| --- | --- | --- | --- |
+| Thèmes de couleurs | `data-theme` | fait (fondations 2026-07-03) | — |
+| Taille de texte (zoom) | `--font-size-factor` | facile | **contrat hôte** : tailles en `rem`/`em` sensibles au facteur |
+| Réduction des animations | classe `reduce-motion` | facile | **contrat hôte** : les animations doivent s'y soumettre (mixin fourni) |
+| Polices d'accessibilité | classes de police | moyen | polices **embarquées dans le paquet** (décision Simon 2026-07-03) ; **vérifier les licences avant publication** : OpenDyslexic, Andika, Raleway Dots = OFL (ok) ; Sylexiad, Tiresias, Atkinson Hyperlegible = à vérifier. N'affecte pas les polices de base du site hôte |
+| Mode dyslexie optimisé | classe `dyslexia-optimized` | moyen | dépend du module polices |
+| UI (déclencheur + carte) | — | moyen | scaffoldée, pas dans npm (§ 6.3) |
+
+Conséquence sur le nom et le concept : « système de thèmes » devient un
+module — le paquet est un **système de préférences d'accessibilité**
+(`a11y-prefs` comme nom de travail).
 
 ## 7. Pistes d'amélioration envisagées
 
