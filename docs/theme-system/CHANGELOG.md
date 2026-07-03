@@ -13,6 +13,47 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-04
+
+### Added (chantier E1 — tests de contrastes, phase 1)
+
+- Phase 1 de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) : mise en
+  place des utilitaires du système de tests de contrastes WCAG (branche
+  `feat/contrast-tests`, chantier additif — aucun fichier de `src/styles/`
+  modifié, CSS compilé byte-identique).
+  - Dépendances dev ajoutées : `culori` (parsing/conversion de couleurs),
+    `postcss` (parsing structuré du CSS compilé), `tsx` (exécution du futur
+    générateur de rapport, phase 4).
+  - `src/accessibility/contrast/wcag.ts` : `toRgb()` (erreur explicite sur
+    couleur invalide, jamais de repli silencieux), `compositeOver()`
+    (composition alpha standard sRGB), `contrastRatio()` (délègue à
+    `culori.wcagContrast`, à appeler après composition), `thresholdFor()`
+    (seuils WCAG 2.2 : `text` 4.5, `large-text`/`non-text` 3.0).
+  - `src/accessibility/contrast/extract-themes.ts` : compile
+    `src/styles/main.scss` via l'API JS de `sass` (mémoïsé), parse le CSS
+    avec `postcss`, extrait les custom properties de chacun des 12 blocs
+    `[data-theme="X"]` (sélecteur exact, pas les descendants comme
+    `[data-theme="dark"] .header__title-name`) ainsi que de `:root`. Erreur
+    explicite si un thème de `src/config/themes.ts` (source unique) est
+    absent du CSS compilé.
+  - **Bug détecté et corrigé pendant l'écriture des tests** : `:root`
+    contient *deux* règles distinctes dans le CSS compilé — celle du
+    système de thèmes (~94 propriétés) et une autre, sans rapport, de
+    `_scroll-progress.scss` (`--scroll-progress-link-default`). La première
+    version de l'extraction ne gardait que la dernière rencontrée, perdant
+    silencieusement les valeurs de thème. Corrigé en fusionnant toutes les
+    règles `:root` (comme le ferait la cascade CSS), et le test de
+    cohérence adapté en conséquence (vérifie que les propriétés de thème de
+    `:root` concordent avec `[data-theme="light"]`, sans exiger que `:root`
+    ne contienne *que* des tokens de thème).
+  - Tests unitaires : `wcag.test.ts` (valeurs de référence connues :
+    noir/blanc = 21:1, `#767676`/blanc ≈ 4.54:1, composition
+    `rgba(0,0,0,0.5)` sur blanc ≈ `#808080`), `extract-themes.test.ts` (les
+    12 thèmes présents, cohérence `:root`, erreurs explicites sur
+    thème/propriété inconnus).
+  - Vérifié : `pnpm test` vert (83 tests, 13 suites), `pnpm lint` vert, CSS
+    compilé strictement identique à la baseline de phase 0.
+
 ## 2026-07-03
 
 ### Docs (plan de la refonte daltonienne + carte des documents)
