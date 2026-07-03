@@ -148,6 +148,10 @@ $color-focus-text: $fg-on-emphasis;
 $color-tooltip-text: $fg-on-emphasis;
 $color-tooltip-bg: rgba($bg-inverse, 0.9);
 
+// Elevation shadow for cards and forms (theme-aware, pre-mixed alpha —
+// rgba(var(--x), a) is not valid CSS, so the color is computed here)
+$color-shadow: rgba($border-strong, 0.1);
+
 // Variables pour le panneau d'accessibilité
 $color-panel-bg: $bg-base;
 $color-panel-border: $border-base;
@@ -316,6 +320,7 @@ $color-accent-hover: $accent-strong; // sole visual change of this migration
 	// Infobulles
 	$color-tooltip-text: $fg-on-emphasis !global;
 	$color-tooltip-bg: rgba($bg-inverse, 0.9) !global;
+	$color-shadow: rgba($border-strong, 0.1) !global;
 
 	// Variables pour le panneau d'accessibilité
 	$color-panel-bg: $bg-base !global;

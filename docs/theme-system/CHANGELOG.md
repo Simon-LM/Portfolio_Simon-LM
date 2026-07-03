@@ -15,6 +15,18 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-03
 
+### Fixed (post-revue)
+
+- Résolution de la déclaration morte `var(--color-gray-dark)` (custom
+  property jamais définie ; de plus, `rgba(var(--x), a)` est invalide en
+  CSS) : les ombres portées des cartes portfolio, des cartes compétences et
+  du formulaire de contact, ainsi qu'une bordure du sélecteur de langue, ne
+  s'affichaient pas. Nouveau token `--color-shadow`
+  (`rgba($border-strong, 0.1)`, calculé en Sass par thème, sur le modèle de
+  `--color-tooltip-bg`) consommé par les 3 `box-shadow` ; la bordure passe
+  sur `var(--border-strong)`. **Changement visuel voulu** : ces ombres et
+  cette bordure (re)deviennent visibles, dans les 12 thèmes.
+
 ### Docs (phase 8 — finalisation)
 
 - Phase 8 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :

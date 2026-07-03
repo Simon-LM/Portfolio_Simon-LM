@@ -106,7 +106,7 @@
 		background: var(--color-section-card-bg);
 		padding: 2rem;
 		border-radius: 0.5rem;
-		box-shadow: 0 4px 6px rgba(var(--color-gray-dark), 0.1);
+		box-shadow: 0 4px 6px var(--color-shadow);
 
 		&-title {
 			color: var(--color-section-title);
