@@ -53,31 +53,6 @@
 	);
 }
 
-// Mixin pour appliquer l'effet anti-éblouissement sur le body
-@mixin apply-anti-glare-filter($mode: "light") {
-	body {
-		&::before {
-			content: "";
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			pointer-events: none;
-
-			@if $mode == "light" {
-				backdrop-filter: #{"contrast(98%) brightness(99%)"};
-				opacity: 0.3;
-			} @else {
-				backdrop-filter: #{"contrast(95%) brightness(102%)"};
-				opacity: 0.2;
-			}
-
-			z-index: 9999;
-		}
-	}
-}
-
 // Mixin qui transforme toutes les variables d'un thème
 @mixin transform-theme-for-anti-glare($mode: "light") {
 	// Transformation de l'échelle de gris (rail complet)
@@ -136,7 +111,4 @@
 			0.4
 		) !global;
 	}
-
-	// Effet anti-éblouissement
-	@include apply-anti-glare-filter($mode);
 }

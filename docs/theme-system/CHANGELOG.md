@@ -15,6 +15,33 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-04
 
+### Removed (chantier E2 — revue des moteurs, phase 4 — overlay backdrop-filter)
+
+- Phase 4 de [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) : mixin
+  `apply-anti-glare-filter` (`_anti-glare-functions.scss`) et son
+  invocation supprimés — l'overlay plein écran `body::before`
+  (`backdrop-filter: contrast(98%) brightness(99%)`/`opacity: 0.3` en
+  light, `contrast(95%) brightness(102%)`/`opacity: 0.2` en dark,
+  `z-index: 9999`) imposait un coût GPU permanent pour un effet mesuré
+  quasi nul.
+- **Diff CSS** : exactement les deux règles `[data-theme="anti-glare-light"]
+  body::before` et `[data-theme="anti-glare-dark"] body::before`
+  disparaissent, rien d'autre (vérifié par diff complet).
+- **Comparaison avant/après pour Simon** : capture d'écran automatisée
+  (Chromium headless, page d'accueil) des deux thèmes anti-glare avec et
+  sans l'overlay. Diff pixel par pixel : ~1.4 % des pixels changent de
+  plus de 10/255 sur un canal, concentrés sur les zones de texte/icônes
+  (bruit d'anti-aliasing entre deux rendus Chromium distincts, pas un
+  changement de contenu) — aucune différence visuelle perceptible
+  attribuable à l'overlay. Confirme le diagnostic du plan (« effet mesuré
+  quasi nul »).
+- **Décision** : suppression conservée par défaut. **C'est Simon qui
+  tranche** — s'il perçoit malgré tout une différence utile à l'usage
+  réel (au-delà de ce que montrent des captures statiques), revenir en
+  arrière sur ce commit uniquement et consigner la décision ici.
+- **Vérif** : `pnpm build`/`lint`/`test` (566 tests, 15 suites) verts ;
+  aucun effet de bord sur `CONTRAST-REPORT.md` (aucune couleur touchée).
+
 ### Changed (chantier E2 — revue des moteurs, phase 3 — anti-éblouissement en OKLCH)
 
 - Phase 3 (décision actée par Simon le 2026-07-03) de
