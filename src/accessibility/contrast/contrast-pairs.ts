@@ -222,14 +222,14 @@ const sitePairs: ContrastPair[] = [
 				"the 3:1 non-text threshold; dark-based themes pass because --bg-base " +
 				"itself becomes dark there. Pre-existing; a higher-contrast role " +
 				"(--accent-strong) already exists but is not wired to this token. " +
-				"anti-glare-light's ratio dropped further (1.38 → 1.06) after the " +
-				"chantier E2 single-pass anti-glare fix gave this pair its first-ever " +
-				"anti-glare attenuation (previously unattenuated, matching `light`) — " +
-				"see PLAN-revue-moteurs.md phase 2.",
+				"anti-glare-light's ratio dropped slightly (1.38 → 1.31) after " +
+				"chantier E2: phase 2 gave this pair its first-ever anti-glare " +
+				"attenuation (previously unattenuated, matching `light`), then the " +
+				"phase 3 OKLCH rewrite settled it at 1.31 — see PLAN-revue-moteurs.md.",
 			preexisting: true,
 			measured: {
 				light: 1.3806,
-				"anti-glare-light": 1.057,
+				"anti-glare-light": 1.307,
 				"high-contrast": 1.0,
 				deuteranomaly: 1.128,
 				deuteranopia: 1.18,

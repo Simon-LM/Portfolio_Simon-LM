@@ -15,6 +15,17 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-04
 
+### Fixed (revue indépendante du chantier E2)
+
+- Waiver `site/button-active-outline-on-panel-bg` : la valeur `measured`
+  de `anti-glare-light` (1.057) datait de la phase 2 et n'avait pas été
+  rafraîchie après la réécriture OKLCH de la phase 3 — la mesure réelle
+  est 1.307 (recalcul indépendant depuis le CSS compilé, concordant avec
+  la matrice régénérée du [CONTRAST-REPORT.md](./CONTRAST-REPORT.md)).
+  Valeur et texte du waiver corrigés, rapport régénéré. Sans effet sur
+  les tests (les cartes `measured` sont documentaires ; le garde-fou
+  anti-zombie ne se déclenche qu'au passage du seuil).
+
 ### Docs (chantier E2 — revue des moteurs, phase 5 — finalisation)
 
 - Phase 5 (dernière) de [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) :
