@@ -15,6 +15,100 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-04
 
+### Added (chantier E3 — refonte daltonienne, phase 1 — tests de distinguabilité)
+
+- Phase 1 de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md)
+  (branche `refactor/theme-cvd-remap`, chantier additif — aucun fichier de
+  `src/styles/` modifié, CSS compilé byte-identique).
+  - `src/accessibility/contrast/cvd-simulation.ts` : simulation de la
+    perception sous déficience de vision des couleurs. Dichromacies
+    (protanopie/deutéranopie/tritanopie) et anomalies (sévérité 0.5) via
+    les matrices de Machado, Oliveira & Fernandes (2009), appliquées en
+    RVB **linéaire** (conversion `culori.convertRgbToLrgb`/
+    `convertLrgbToRgb`) — les lignes de chaque matrice somment à ≈ 1
+    (un gris neutre reste un gris neutre, vérifié en test). Achromatopsie
+    traitée à part (pas une dichromatie) : luma BT.601 sur RVB gamma
+    (mêmes poids que `adapt-color-for-achromatopsia` existant dans
+    `_theme-utils.scss`), pour rester cohérent avec le mécanisme déjà en
+    place plutôt qu'un modèle de monochromacie théorique différent.
+  - **Choix de dépendance** : le paquet npm `color-blind` évoqué par le
+    plan a été écarté après vérification (`license: undefined` sur le
+    registre npm — affiché « Proprietary », donc risqué pour un projet
+    dont l'objectif est l'extraction en paquet open source, § E7).
+    Implémentation directe des matrices publiées, comme le permettait le
+    plan en repli (« recopier les matrices … en citant la source »).
+  - `contrast-pairs.ts` : nouveau type `DistinguishabilityPair` (registre
+    séparé `distinguishabilityPairs`, pas fondu dans `ContrastPair`— les
+    deux notions ne partagent que `id`/`waiver`, pas de `level` ni de
+    seuil WCAG côté distinguabilité) et 5 paires du plan (`success`/
+    `danger`, `accent`/`danger`, `accent`/`success`, `link`/`success`,
+    `link`/`fg-base`), chacune sur les 7 thèmes CVD (6 daltoniens +
+    achromatopsie). Seuil de départ ΔE ≥ 20 (calibration, § plan).
+  - `measure.ts` : `measureDeltaE(pair, theme)` — résout les deux
+    couleurs, simule la déficience, mesure `culori.differenceCiede2000`
+    entre les deux couleurs simulées.
+  - `__tests__/cvd-simulation.test.ts` : gris invariant à sévérité 1
+    (les 3 dichromaties), no-op à sévérité 0, mélange monotone entre 0 et
+    1, collapse rouge/vert bien plus fort que l'écart d'origine en
+    proto/deutéranopie (fait manuel le plus connu du daltonisme
+    rouge-vert — utilisé comme « valeur de référence publiée » faute de
+    triplet RVB exact vérifiable sans accès réseau), achromatopsie =
+    gris strict correspondant au luma attendu.
+  - `__tests__/distinguishability.test.ts` : intégrité du registre +
+    matrice paire × thème avec le même mécanisme anti-zombie que E1.
+  - **Premier run = inventaire** (avant refonte, sortie brute) :
+
+    ```
+    distinguish/success-vs-danger   deuteranomaly   deltaE=40.0116  ok
+    distinguish/success-vs-danger   deuteranopia    deltaE=74.2821  ok
+    distinguish/success-vs-danger   protanomaly     deltaE=41.5478  ok
+    distinguish/success-vs-danger   protanopia      deltaE=66.0516  ok
+    distinguish/success-vs-danger   tritanomaly     deltaE=69.0999  ok
+    distinguish/success-vs-danger   tritanopia      deltaE=6.8121   FAIL
+    distinguish/success-vs-danger   achromatopsia   deltaE=50.2749  ok
+    distinguish/accent-vs-danger    deuteranomaly   deltaE=35.8373  ok
+    distinguish/accent-vs-danger    deuteranopia    deltaE=44.8679  ok
+    distinguish/accent-vs-danger    protanomaly     deltaE=43.7267  ok
+    distinguish/accent-vs-danger    protanopia      deltaE=38.3857  ok
+    distinguish/accent-vs-danger    tritanomaly     deltaE=56.9452  ok
+    distinguish/accent-vs-danger    tritanopia      deltaE=43.4750  ok
+    distinguish/accent-vs-danger    achromatopsia   deltaE=83.0816  ok
+    distinguish/accent-vs-success   deuteranomaly   deltaE=39.8462  ok
+    distinguish/accent-vs-success   deuteranopia    deltaE=36.1816  ok
+    distinguish/accent-vs-success   protanomaly     deltaE=37.0724  ok
+    distinguish/accent-vs-success   protanopia      deltaE=30.4932  ok
+    distinguish/accent-vs-success   tritanomaly     deltaE=41.7694  ok
+    distinguish/accent-vs-success   tritanopia      deltaE=39.8797  ok
+    distinguish/accent-vs-success   achromatopsia   deltaE=16.7522  FAIL
+    distinguish/link-vs-success     deuteranomaly   deltaE=38.3770  ok
+    distinguish/link-vs-success     deuteranopia    deltaE=22.4811  ok
+    distinguish/link-vs-success     protanomaly     deltaE=40.4417  ok
+    distinguish/link-vs-success     protanopia      deltaE=33.3957  ok
+    distinguish/link-vs-success     tritanomaly     deltaE=45.2418  ok
+    distinguish/link-vs-success     tritanopia      deltaE=35.8973  ok
+    distinguish/link-vs-success     achromatopsia   deltaE=38.9493  ok
+    distinguish/link-vs-fg-base     deuteranomaly   deltaE=24.5366  ok
+    distinguish/link-vs-fg-base     deuteranopia    deltaE=24.8620  ok
+    distinguish/link-vs-fg-base     protanomaly     deltaE=24.9146  ok
+    distinguish/link-vs-fg-base     protanopia      deltaE=25.4625  ok
+    distinguish/link-vs-fg-base     tritanomaly     deltaE=23.4640  ok
+    distinguish/link-vs-fg-base     tritanopia      deltaE=29.2716  ok
+    distinguish/link-vs-fg-base     achromatopsia   deltaE=15.9997  FAIL
+    ```
+
+  - 3 échecs sur 35, waivés `preexisting: true` (aucune couleur
+    corrigée) : `success`/`danger` en tritanopie (ΔE 6.81 — les deux
+    portent peu de bleu, la confusion bleu-jaune de la tritanopie laisse
+    peu de quoi les distinguer), `accent`/`success` en achromatopsie
+    (ΔE 16.75 — luma BT.601 proche une fois désaturés), `link`/`fg-base`
+    en achromatopsie (ΔE 16.00 — deux couleurs très sombres, luma
+    proche). Ces trois cas sont des candidats explicites pour les tables
+    de remap de la phase 3 (sauf les deux cas achromatopsie, dont le
+    mécanisme reste hors périmètre de ce chantier).
+  - Vérifié : `pnpm test` (609 tests, 17 suites), `pnpm lint`,
+    `pnpm exec tsc --noEmit` verts ; CSS compilé strictement identique à
+    la baseline de phase 0.
+
 ### Fixed (revue indépendante du chantier E2)
 
 - Waiver `site/button-active-outline-on-panel-bg` : la valeur `measured`

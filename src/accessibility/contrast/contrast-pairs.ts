@@ -2,6 +2,7 @@
 
 import type { ThemeOption } from "../../config/themes";
 import type { ContrastLevel } from "./wcag";
+import type { CvdTheme } from "./cvd-simulation";
 
 export type { ContrastLevel };
 
@@ -246,3 +247,123 @@ const sitePairs: ContrastPair[] = [
 // The registry is extensible, never amputated: a pair that fails gets a
 // waiver (phase 3), it is never deleted.
 export const contrastPairs: readonly ContrastPair[] = [...rolePairs, ...sitePairs];
+
+// ---------------------------------------------------------------------
+// Distinguishability pairs (chantier E3, PLAN-refonte-daltonienne.md
+// phase 1) — a different question from the WCAG ratio pairs above: not
+// "is this readable against its background" but "do these two semantic
+// colors still look different from each other once CVD simulation is
+// applied". Measured in ΔE CIEDE2000 between the two colors *after*
+// simulateForCvdTheme(), not a contrast ratio — kept in a parallel
+// registry/type rather than folded into ContrastPair, since the two kinds
+// share nothing beyond id/waiver (no `level`, no WCAG threshold, no
+// `bg`/`fg` roles — two arbitrary colors and a CVD-only theme list).
+export type DistinguishabilityPair = {
+	/** Stable identifier, e.g. "distinguish/success-vs-danger". */
+	id: string;
+	/** Custom property name of the first color, e.g. "--success". */
+	colorA: string;
+	/** Custom property name of the second color. */
+	colorB: string;
+	/** Composite colorA over this custom property first (alpha channel). */
+	composeOverA?: string;
+	/** Composite colorB over this custom property first (alpha channel). */
+	composeOverB?: string;
+	/** CVD themes this pair is checked against (no non-CVD default). */
+	themes: readonly CvdTheme[];
+	/** Minimum ΔE CIEDE2000 required between the two simulated colors. */
+	minDeltaE: number;
+	waiver?: {
+		reason: string;
+		preexisting: boolean;
+		measured?: Record<string, number>;
+	};
+};
+
+const ALL_CVD_THEMES: readonly CvdTheme[] = [
+	"deuteranomaly",
+	"deuteranopia",
+	"protanomaly",
+	"protanopia",
+	"tritanomaly",
+	"tritanopia",
+	"achromatopsia",
+];
+
+// ΔE ≥ 20 is a calibration starting point (plan § phase 1), not a proven
+// threshold — Simon adjusts it during phase 4 validation.
+const DEFAULT_MIN_DELTA_E = 20;
+
+export const distinguishabilityPairs: readonly DistinguishabilityPair[] = [
+	{
+		id: "distinguish/success-vs-danger",
+		colorA: "--success",
+		colorB: "--danger",
+		themes: ALL_CVD_THEMES,
+		minDeltaE: DEFAULT_MIN_DELTA_E,
+		waiver: {
+			reason:
+				"emerald-600 (--success, #059669) and red-600 (--danger, #dc2626) " +
+				"collapse to nearly the same perceived color under tritanopia " +
+				"simulation (ΔE 6.81) — tritanopia's blue-yellow confusion axis " +
+				"leaves little to separate a mid-green and a mid-red that both " +
+				"carry almost no blue component. Both roles are currently " +
+				"unreferenced by any component. Pre-existing to this measurement " +
+				"system; candidate for the family-remap tables (phase 3).",
+			preexisting: true,
+			measured: { tritanopia: 6.8121 },
+		},
+	},
+	{
+		id: "distinguish/accent-vs-danger",
+		colorA: "--accent",
+		colorB: "--danger",
+		themes: ALL_CVD_THEMES,
+		minDeltaE: DEFAULT_MIN_DELTA_E,
+	},
+	{
+		id: "distinguish/accent-vs-success",
+		colorA: "--accent",
+		colorB: "--success",
+		themes: ALL_CVD_THEMES,
+		minDeltaE: DEFAULT_MIN_DELTA_E,
+		waiver: {
+			reason:
+				"amber-300 (--accent, #fcd34d) and emerald-600 (--success, #059669) " +
+				"have similar BT.601 luma once desaturated to grayscale, so " +
+				"achromatopsia simulation collapses them close together (ΔE 16.75, " +
+				"just under the 20 threshold). --success is currently unreferenced " +
+				"by any component. Pre-existing; achromatopsia's own mechanism is " +
+				"explicitly out of scope for this refonte (kept as-is).",
+			preexisting: true,
+			measured: { achromatopsia: 16.7522 },
+		},
+	},
+	{
+		id: "distinguish/link-vs-success",
+		colorA: "--link",
+		colorB: "--success",
+		themes: ALL_CVD_THEMES,
+		minDeltaE: DEFAULT_MIN_DELTA_E,
+	},
+	{
+		id: "distinguish/link-vs-fg-base",
+		colorA: "--link",
+		colorB: "--fg-base",
+		themes: ALL_CVD_THEMES,
+		minDeltaE: DEFAULT_MIN_DELTA_E,
+		waiver: {
+			reason:
+				"sky-900 (--link, #0c4a6e) and gray-950 (--fg-base, #0c0a09) are " +
+				"both very dark colors with similar BT.601 luma, so achromatopsia " +
+				"simulation collapses them close together (ΔE 16.00, just under " +
+				"the 20 threshold) — a link rendered at body-text darkness reads " +
+				"as barely darker gray in full monochromacy. Achromatopsia's own " +
+				"mechanism is explicitly out of scope for this refonte (kept as-is); " +
+				"candidate for a future --link lightness adjustment if this matters " +
+				"in practice (links are also underlined/styled beyond color).",
+			preexisting: true,
+			measured: { achromatopsia: 15.9997 },
+		},
+	},
+];
