@@ -15,6 +15,67 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-04
 
+### Added (chantier E3 — refonte daltonienne, phase 2 — moteur de remap)
+
+- Phase 2 de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) :
+  `remap-for-cvd($color, $var-name, $config, $cvd-type)` ajoutée à
+  `_theme-utils.scss`, résolution en 4 cas (le plan en distingue 3, le
+  4ᵉ — « famille reconnue mais absente de la table » — a dû être rendu
+  explicite, voir divergence ci-dessous) :
+  1. `special-colors` explicite pour la variable → prioritaire sur tout
+     (mécanisme conservé tel quel).
+  2. Couleur reconnue comme swatch Tailwind **et** sa famille présente
+     dans `family-remap` → substitution vers la famille cible, au poids
+     décalé (décalage d'**index** dans `$tailwind-weights`, borné à
+     [50, 950], `@warn` si le bornage s'applique).
+  3. Couleur reconnue mais famille absente de `family-remap` → laissée
+     **inchangée** (déjà jugée sûre pour ce type de CVD — c'est
+     pourquoi, par exemple, `amber`/`sky` n'auront pas d'entrée dans les
+     tables proto/deutéranopie de la phase 3).
+  4. Couleur hors palette Tailwind (custom, futur consommateur du
+     paquet) : repli par rotation de teinte OKLCH vers une ancre fixe du
+     type de CVD, à luminance/chroma constants — point de calibration
+     non validé perceptuellement.
+  Mélange `severity` (0.5 pour les anomalies) appliqué en sortie via
+  `color.mix(…, $method: oklch)`, quel que soit le cas résolu.
+  Vérifié par un script Sass isolé (non commité) : priorité des
+  special-colors, remap + décalage de poids correct, bornage avec
+  `@warn`, famille non listée laissée intacte, rotation OKLCH avec
+  L/C préservés (vérifié : identiques à la couleur d'origine), mélange
+  de sévérité strictement compris entre original et remap complet.
+- **Divergence documentée : le branchement dans les 6 mixins
+  `auto-{deuter,prot,trit}{anopia,anomaly}-transform` est repoussé à la
+  phase 3**, alors que le plan demande de le faire dès la phase 2. Raison
+  mesurée : l'oracle « CSS byte-identique, le moteur existe mais aucun
+  thème ne l'utilise encore » de la phase 2 est incompatible avec un
+  branchement réel maintenant. Les 6 fichiers de thèmes actuels ne
+  définissent aucune clé `family-remap` ; sous la résolution ci-dessus,
+  une famille reconnue non listée (cas 3) doit être **laissée
+  inchangée** — or c'est déjà le comportement *correct* final, mais il
+  diffère du comportement *actuel* de l'ancien moteur HSL
+  (`adapt-color-for-colorblindness`), qui décale bel et bien la teinte de
+  `--accent` (ambre, teinte ≈45°, tombe dans sa fenêtre verte 30–150°) en
+  proto/deutéranopie. Rien ne permet de brancher le nouveau moteur sans
+  changer le CSS avant que les vraies tables existent (phase 3) — le
+  branchement des mixins et la pose des tables sont donc faits ensemble
+  en phase 3, qui attend de toute façon un diff CSS confiné aux thèmes
+  daltoniens.
+- Le champ « 3. Sinon (couleur hors palette) → repli OKLCH » du plan
+  était rédigé comme un `else` terminal après le test de `family-remap`,
+  ce qui aurait fait passer `--accent`/`--link` (familles reconnues mais
+  non listées) par le repli OKLCH plutôt que de les laisser intacts —
+  incohérent avec les tables suggérées en phase 3 (qui ne listent pas
+  ces familles, précisément parce qu'elles sont déjà sûres). Résolution
+  retenue : un cas 3 explicite (« famille reconnue, non listée →
+  inchangée ») distinct du cas 4 (« famille non reconnue → OKLCH »).
+- Chemins hérités (`adapt-color-for-colorblindness`,
+  `adapt-color-for-color-anomaly`, `auto-*-transform`, `brightness`,
+  `is-similar-to`) intégralement conservés à ce stade — toujours actifs,
+  suppression prévue en fin de phase 4 seulement si le grep confirme
+  qu'ils ne sont plus référencés.
+- Vérifié : `pnpm build`/`lint`/`test` (609 tests, 17 suites) verts ; CSS
+  compilé strictement identique à la baseline de phase 0.
+
 ### Added (chantier E3 — refonte daltonienne, phase 1 — tests de distinguabilité)
 
 - Phase 1 de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md)

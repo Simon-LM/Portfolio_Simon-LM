@@ -81,6 +81,98 @@
 	@return ("family": null, "weight": null, "found": false);
 }
 
+// -----------------------------------------------
+// MOTEUR DE REMAP DALTONIEN (CVD) — chantier E3, refonte daltonienne
+// -----------------------------------------------
+// NOTE D'ÉTAT (phase 2 du plan) : cette fonction est construite et testée
+// isolément dans cette phase, mais N'EST PAS ENCORE appelée par
+// auto-{deuter,prot,trit}{anopia,anomaly}-transform ci-dessous — ce
+// branchement est repoussé à la phase 3, avec les tables de remap réelles.
+// Raison : l'oracle « CSS byte-identique » de la phase 2 est incompatible
+// avec un branchement immédiat. Avec les configs actuelles des 6 fichiers
+// de thèmes (aucune clé "family-remap"), le comportement *correct* pour
+// une famille reconnue mais non listée dans la table est de laisser la
+// couleur inchangée (ex. amber/sky ne sont pas remappées en
+// deutéranopie/protanopie — elles sont déjà sur l'axe sûr) ; or ce
+// comportement diffère déjà de l'ancien décalage de teinte HSL
+// (`adapt-color-for-colorblindness`) pour `--accent`/`--link`, qui EST
+// actuellement appliqué à ces couleurs. Rien ne permet de brancher ce
+// moteur sans changer le CSS avant que les tables réelles existent — voir
+// le rapport de phase 2 pour la mesure qui a établi ce point.
+@function remap-for-cvd($color, $var-name, $config, $cvd-type) {
+	// 1. Couleur spéciale explicite : prioritaire sur tout (mécanisme
+	// conservé tel quel depuis l'ancien moteur).
+	$special-colors: map.get($config, "special-colors");
+	$resolved: null;
+	@if $special-colors and map.has-key($special-colors, $var-name) {
+		$resolved: map.get($special-colors, $var-name);
+	} @else {
+		$analysis: analyze-tailwind-color($color);
+		$family-remap: map.get($config, "family-remap");
+
+		@if map.get($analysis, "found") {
+			$family: map.get($analysis, "family");
+			@if $family-remap and map.has-key($family-remap, $family) {
+				// 2. Famille reconnue et présente dans la table de remap :
+				// substituer la famille cible, au poids décalé (décalage
+				// d'index dans $tailwind-weights, borné à [50, 950]).
+				$target: map.get($family-remap, $family);
+				$target-family: list.nth($target, 1);
+				$shift: list.nth($target, 2);
+				$current-index: list.index($tailwind-weights, map.get($analysis, "weight"));
+				$new-index: $current-index + $shift;
+				@if $new-index > list.length($tailwind-weights) {
+					@warn "remap-for-cvd: #{$var-name} decalage de poids hors bornes, ramene a 950";
+					$new-index: list.length($tailwind-weights);
+				} @else if $new-index < 1 {
+					@warn "remap-for-cvd: #{$var-name} decalage de poids hors bornes, ramene a 50";
+					$new-index: 1;
+				}
+				$resolved: get-color($target-family, list.nth($tailwind-weights, $new-index));
+			} @else {
+				// 3. Famille reconnue mais absente de la table : déjà jugée
+				// sûre pour ce type de CVD, laissée inchangée.
+				$resolved: $color;
+			}
+		} @else {
+			// 4. Couleur hors palette Tailwind (custom, consommateur futur du
+			// paquet) : rotation de teinte OKLCH vers une ancre sûre du type
+			// de CVD, à luminance et chroma constants. Point de calibration
+			// (ancres non validées perceptuellement), voir rapport de phase 2.
+			$anchor-hue: cvd-safe-anchor-hue($cvd-type);
+			$resolved: color.to-space(
+				color.change($color, $hue: $anchor-hue, $space: oklch),
+				rgb
+			);
+		}
+	}
+
+	// Anomalies : mélange perceptuel entre l'originale et la version
+	// remappée, sévérité configurable (0.5 par défaut pour les -omalies).
+	$severity: 1;
+	@if map.has-key($config, "severity") {
+		$severity: map.get($config, "severity");
+	}
+	@if $severity < 1 {
+		@return color.mix($resolved, $color, $weight: $severity * 100%, $method: oklch);
+	}
+	@return $resolved;
+}
+
+// Ancre de teinte "sûre" par type de CVD pour le repli OKLCH ci-dessus :
+// pour les confusions rouge-vert (proto/deutéranopie), le bleu reste
+// perceptible ; pour la confusion bleu-jaune (tritanopie), le rouge/orangé
+// reste perceptible. Point de départ de calibration, pas une vérité
+// perceptuelle validée — à ajuster si ce chemin s'avère effectivement
+// emprunté (voir note d'état ci-dessus : probablement du code mort pour
+// les 8 primitives actuelles, toutes des couleurs Tailwind reconnues).
+@function cvd-safe-anchor-hue($cvd-type) {
+	@if $cvd-type == "tritanopia" or $cvd-type == "tritanomaly" {
+		@return 25deg;
+	}
+	@return 250deg;
+}
+
 // Fonction qui transforme une couleur en version dark en tenant compte de la configuration
 @function auto-dark-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
