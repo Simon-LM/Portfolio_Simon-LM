@@ -15,6 +15,77 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-04
 
+### Docs (chantier E3 — refonte daltonienne, phase 4 — vérifications et arbitrages)
+
+- Phase 4 de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md).
+  Les deux premiers points du plan (suite de contrastes redevenue verte,
+  waivers obsolètes retirés) ont dû être traités **dès la phase 3** pour
+  garder `pnpm test` vert à chaque commit (discipline du chantier) ; ce
+  qui reste propre à la phase 4 :
+- **Tableau ΔE avant/après** (avant = inventaire de la phase 1, avant
+  toute bascule ; après = mesuré une fois les 6 thèmes branchés sur
+  `remap-for-cvd`, phase 3 complète) :
+
+  | Paire | Thème | Avant | Après |
+  | --- | --- | --- | --- |
+  | success/danger | deuteranomaly | 40.01 | 43.17 |
+  | success/danger | deuteranopia | 74.28 | 53.18 |
+  | success/danger | protanomaly | 41.55 | 45.68 |
+  | success/danger | protanopia | 66.05 | 56.41 |
+  | success/danger | tritanomaly | 69.10 | 69.10 |
+  | success/danger | **tritanopia** | **6.81 ⚠** | **69.66 ✓** |
+  | success/danger | achromatopsia | 50.27 | 50.27 |
+  | accent/danger | deuteranomaly | 35.84 | 34.61 |
+  | accent/danger | deuteranopia | 44.87 | 29.55 |
+  | accent/danger | protanomaly | 43.73 | 41.02 |
+  | accent/danger | protanopia | 38.39 | 36.36 |
+  | accent/danger | tritanomaly | 56.95 | 35.13 |
+  | accent/danger | tritanopia | 43.48 | 30.35 |
+  | accent/danger | achromatopsia | 83.08 | 83.08 |
+  | accent/success | deuteranomaly | 39.85 | 41.85 |
+  | accent/success | deuteranopia | 36.18 | 50.53 |
+  | accent/success | protanomaly | 37.07 | 38.15 |
+  | accent/success | protanopia | 30.49 | 47.59 |
+  | accent/success | tritanomaly | 41.77 | 49.67 |
+  | accent/success | tritanopia | 39.88 | 59.15 |
+  | accent/success | achromatopsia | 16.75 ⚠ | 16.75 ⚠ (inchangé) |
+  | link/success | deuteranomaly | 38.38 | 40.28 |
+  | link/success | deuteranopia | 22.48 | 49.02 |
+  | link/success | protanomaly | 40.44 | 42.08 |
+  | link/success | protanopia | 33.40 | 47.08 |
+  | link/success | tritanomaly | 45.24 | 38.86 |
+  | link/success | tritanopia | 35.90 | 36.86 |
+  | link/success | achromatopsia | 38.95 | 38.95 |
+  | link/fg-base | (7 thèmes CVD) | 15.9–29.3 | inchangé (paire non affectée par le remap) |
+
+  Seul le cas `success/danger` en tritanopie change de statut
+  (échec → conforme, waiver retiré). `accent/success` en achromatopsie
+  reste le seul waiver de distinguabilité restant — mécanisme
+  achromatopsie explicitement hors périmètre de ce chantier.
+- **Rapport regénéré** : [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) déjà
+  à jour depuis le commit de phase 3 (aucune couleur modifiée depuis) —
+  revérifié, `report.test.ts` toujours vert.
+- **Validation visuelle** : capture d'écran automatisée (Chromium
+  headless) des 6 thèmes daltoniens sur la page d'accueil, plus le
+  panneau d'accessibilité ouvert (deutéranomalie) pour vérifier les
+  boutons/titres/focus. Rendu sain partout, y compris tritanopie où le
+  header passe visiblement à l'orange (`amber → orange`) — changement
+  attendu, pas une régression. **Validation visuelle humaine de Simon
+  requise avant merge**, comme l'exige le plan, en particulier sur : le
+  virage orange du header en tritanopie/tritanomalie, le virage violet
+  des liens dans les mêmes thèmes, et le teal/sky clair de `--success`
+  dans les 4 thèmes rouge-vert (`role/success-on-bg-base`, non consommé
+  aujourd'hui mais visible si un futur composant l'utilise).
+- **Point d'arbitrage explicite pour Simon** (déjà signalé en phase 3,
+  rappelé ici) : `role/success-on-bg-base` régresse en contraste WCAG
+  dans les 4 thèmes rouge-vert (jusqu'à 1.60:1) parce que la calibration
+  a priorisé la distinguabilité CVD (`distinguish/link-vs-success`) —
+  sans impact utilisateur réel aujourd'hui (`--success` inutilisé), mais
+  un arbitrage futur (nouveau rôle `success-strong` ? accepter le
+  compromis ?) reste à trancher si ce rôle est un jour consommé.
+- Vérifié : `pnpm build`/`lint`/`test` (609 tests, 17 suites) verts,
+  diff CSS cumulé toujours confiné aux 6 thèmes daltoniens.
+
 ### Changed (chantier E3 — refonte daltonienne, phase 3 — tables par défaut et bascule des 6 thèmes)
 
 - Phase 3 de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) :
