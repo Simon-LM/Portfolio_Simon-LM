@@ -97,6 +97,41 @@ $colors: (
 		900: #064e3b,
 		950: #022c22,
 	),
+	// Added for the CVD family-remap engine (chantier E3,
+	// PLAN-refonte-daltonienne.md phase 3): tritanopia/tritanomaly retarget
+	// amber -> orange and sky -> violet, families not otherwise used by
+	// any role.
+	// NOTE: quoted explicitly — "orange" and "violet" are recognized CSS
+	// named colors, so an unquoted key here is parsed as a *color value*
+	// by Sass (silent, only a "you probably don't mean this" @warn), not
+	// as a string, which then fails to match string lookups everywhere
+	// else in the codebase (analyze-tailwind-color, get-color, …).
+	"orange": (
+		50: #fff7ed,
+		100: #ffedd5,
+		200: #fed7aa,
+		300: #fdba74,
+		400: #fb923c,
+		500: #f97316,
+		600: #ea580c,
+		700: #c2410c,
+		800: #9a3412,
+		900: #7c2d12,
+		950: #431407,
+	),
+	"violet": (
+		50: #f5f3ff,
+		100: #ede9fe,
+		200: #ddd6fe,
+		300: #c4b5fd,
+		400: #a78bfa,
+		500: #8b5cf6,
+		600: #7c3aed,
+		700: #6d28d9,
+		800: #5b21b6,
+		900: #4c1d95,
+		950: #2e1065,
+	),
 );
 
 // -----------------------------------------------

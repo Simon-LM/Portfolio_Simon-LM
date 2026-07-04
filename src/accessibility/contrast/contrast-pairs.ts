@@ -81,17 +81,26 @@ const rolePairs: ContrastPair[] = [
 				"src/components). Pre-existing since the role's introduction. " +
 				"anti-glare-light's ratio rose slightly (2.85 → 3.13, still " +
 				"non-compliant) after the chantier E2 OKLCH anti-glare rewrite " +
-				"(PLAN-revue-moteurs.md phase 3).",
+				"(PLAN-revue-moteurs.md phase 3). deuteranomaly/deuteranopia/" +
+				"protanomaly/protanopia's ratios dropped further (were 3.61/4.03/" +
+				"3.61/3.13) after the chantier E3 family-remap (emerald -> sky, " +
+				"weight shift -3): the shift was calibrated for the " +
+				"distinguish/link-vs-success pair (--link is already sky-900; " +
+				"emerald -> sky at shift 0 collided with it under CVD simulation, " +
+				"ΔE as low as 4.6 — see PLAN-refonte-daltonienne.md phase 3/4), " +
+				"which took priority since --success carries no live contrast " +
+				"impact today. tritanomaly/tritanopia/achromatopsia unaffected " +
+				"(emerald isn't remapped for tritan; achromatopsia unrelated).",
 			preexisting: true,
 			measured: {
 				light: 3.6079,
 				"anti-glare-light": 3.1323,
-				deuteranomaly: 3.6079,
-				deuteranopia: 4.0306,
-				protanomaly: 3.6079,
-				protanopia: 3.1254,
+				deuteranomaly: 2.333,
+				deuteranopia: 1.5964,
+				protanomaly: 2.333,
+				protanopia: 1.5964,
 				tritanomaly: 3.6079,
-				tritanopia: 2.8112,
+				tritanopia: 3.6079,
 				achromatopsia: 2.4167,
 			},
 		},
@@ -103,23 +112,19 @@ const rolePairs: ContrastPair[] = [
 		level: "text",
 		waiver: {
 			reason:
-				"red-600 (--danger) meets 4.5:1 against --bg-base in most themes, but " +
-				"the CVD-engine substitution colors (e.g. #ffcc00 in deuteranopia / " +
-				"protanopia, chosen for perceptual distinguishability for that vision " +
-				"deficiency, not for contrast) drop well below threshold; " +
-				"anti-glare-light's warmth shift also erodes the margin. --danger is " +
-				"currently unreferenced by any component. Pre-existing; candidate for " +
-				"PLAN-refonte-daltonienne.md. anti-glare-light's ratio rose (3.46 → " +
-				"3.94, still non-compliant) after the chantier E2 OKLCH anti-glare " +
-				"rewrite (PLAN-revue-moteurs.md phase 3).",
+				"anti-glare-light only, as of chantier E3 (family-remap). The " +
+				"6 CVD-theme failures documented here since chantier E1 — the old " +
+				"CVD-engine substitution colors (e.g. #ffcc00 in deuteranopia, " +
+				"chosen for perceptual distinguishability, not contrast, as low as " +
+				"1.34:1) — are resolved: redd -> amber (+1 weight) now covers " +
+				"--danger in all 6 CVD themes, all >= 4.5:1 (PLAN-refonte-daltonienne.md " +
+				"phase 3). anti-glare-light's ratio rose (3.46 → 3.94, still " +
+				"non-compliant) after the chantier E2 OKLCH anti-glare rewrite " +
+				"(PLAN-revue-moteurs.md phase 3), unrelated to the CVD remap. " +
+				"--danger remains currently unreferenced by any component.",
 			preexisting: true,
 			measured: {
 				"anti-glare-light": 3.9425,
-				deuteranomaly: 3.333,
-				deuteranopia: 1.4477,
-				protanomaly: 3.2777,
-				protanopia: 1.343,
-				tritanopia: 3.2507,
 			},
 		},
 	},
@@ -296,23 +301,20 @@ const DEFAULT_MIN_DELTA_E = 20;
 
 export const distinguishabilityPairs: readonly DistinguishabilityPair[] = [
 	{
+		// Waiver removed (chantier E3 phase 3): tritanopia's old
+		// special-colors for --success/--danger (#ff6600/#ff3399,
+		// hand-picked without a documented distinguishability check)
+		// collapsed to ΔE 6.81 under tritanopia simulation. Tritanopia's
+		// family-remap table doesn't touch emerald/redd (already safe for
+		// the blue-yellow confusion axis, per the plan), so dropping the
+		// special-colors default left --success/--danger at their plain
+		// emerald-600/red-600 values — which measure ΔE 69.66, a large
+		// improvement with zero design effort. All 7 CVD themes pass.
 		id: "distinguish/success-vs-danger",
 		colorA: "--success",
 		colorB: "--danger",
 		themes: ALL_CVD_THEMES,
 		minDeltaE: DEFAULT_MIN_DELTA_E,
-		waiver: {
-			reason:
-				"emerald-600 (--success, #059669) and red-600 (--danger, #dc2626) " +
-				"collapse to nearly the same perceived color under tritanopia " +
-				"simulation (ΔE 6.81) — tritanopia's blue-yellow confusion axis " +
-				"leaves little to separate a mid-green and a mid-red that both " +
-				"carry almost no blue component. Both roles are currently " +
-				"unreferenced by any component. Pre-existing to this measurement " +
-				"system; candidate for the family-remap tables (phase 3).",
-			preexisting: true,
-			measured: { tritanopia: 6.8121 },
-		},
 	},
 	{
 		id: "distinguish/accent-vs-danger",

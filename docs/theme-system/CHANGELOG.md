@@ -15,6 +15,80 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-04
 
+### Changed (chantier E3 — refonte daltonienne, phase 3 — tables par défaut et bascule des 6 thèmes)
+
+- Phase 3 de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) :
+  `_base-palette.scss` étendue avec deux familles Tailwind (`orange`,
+  `violet`) ; les 6 mixins `transform-light-to-{deuter,prot,trit}{anopia,anomaly}`
+  et les 6 fichiers de thèmes branchés sur `remap-for-cvd`. Tables
+  retenues :
+  - deutéranopie/deutéranomalie/protanopie/protanomalie (confusion
+    rouge-vert) : `emerald → sky (-3)`, `redd → amber (+1)`.
+  - tritanopie/tritanomalie (confusion bleu-jaune) : `amber → orange (0)`,
+    `sky → violet (0)` ; emerald/redd inchangées (déjà sûres pour cet axe).
+  - anomalies : mêmes tables que leur -opie, `"severity": 0.5`.
+  Les `special-colors` codées en dur (`#0075ff`, `#ffcc00`, `#0090ff`,
+  `#ffd700`, `#ff6600`, `#ff3399`) retirées des défauts partout ; les 6
+  fichiers de thèmes simplifiés (plus de config locale, les nouveaux
+  défauts des mixins suffisent).
+- **Bug Sass trouvé et corrigé pendant l'implémentation** : les clés de
+  map non quotées `orange:`/`violet:` dans `_base-palette.scss` sont des
+  **couleurs CSS reconnues** — Sass les interprète silencieusement comme
+  des valeurs `color` plutôt que des chaînes (`@warn` discret : « you
+  probably don't mean to use the color value orange… »), ce qui cassait
+  toute recherche par chaîne (`analyze-tailwind-color`, `get-color`)
+  avec `$map: null is not a map`. Corrigé en quotant explicitement
+  (`"orange":`, `"violet":`) comme le sont déjà `redd` (nommée ainsi
+  pour éviter la collision avec le mot-clé `red`) — cette même classe de
+  bug guettait déjà `redd` si elle avait été nommée `red`.
+- **Calibration mesurée du décalage `emerald → sky`** (le plan qualifie
+  ces tables de point de départ, pas une vérité) : le shift `0` proposé
+  fait chuter `distinguish/link-vs-success` sous le seuil ΔE ≥ 20 en
+  deutéranomalie/protanomalie (jusqu'à ΔE 4.6) — `--link` occupe déjà
+  `sky-900`, et le mélange de sévérité 0.5 de `--success` vers `sky-600`
+  finit perceptuellement trop proche. Essai `emerald → violet` : pire
+  (violet et sky sont perceptuellement voisins, ΔE jusqu'à 4.59). Essai
+  `sky (-4)` (sky-200, très clair) : ΔE ≥ 38 partout mais dégrade
+  fortement le contraste WCAG déjà non conforme de `--success` (jusqu'à
+  1.27:1). Retenu : `sky (-3)` (sky-300), qui satisfait ΔE ≥ 20 avec une
+  marge confortable (≥ 40 sur les thèmes affectés) sans creuser le
+  contraste plus que nécessaire.
+- **Suite de contrastes (E1) et de distinguabilité (E3 phase 1)
+  re-exécutées après bascule — succès attendu du plan** :
+  - `role/danger-on-bg-base` : passe de 6 thèmes waivés à **1 seul**
+    (`anti-glare-light`, non lié au remap CVD) — les 6 thèmes daltoniens
+    passent désormais ≥ 4.5:1 (le pire cas historique, `#ffcc00` à
+    1.34:1 en protanopie, est résolu par `redd → amber`).
+  - `distinguish/success-vs-danger` : waiver **retiré entièrement** — le
+    seul échec (tritanopie, ΔE 6.81, dû aux anciennes special-colors
+    `#ff6600`/`#ff3399` jamais vérifiées pour leur distinguabilité) est
+    résolu du simple fait de retirer ces special-colors par défaut
+    (emerald/redd restent inchangées en tritanopie, ΔE 69.66).
+  - `role/success-on-bg-base` **régresse** en deutéranomalie/
+    deutéranopie/protanomalie/protanopie (ratios 2.33/1.60/2.33/1.60,
+    contre 3.61/4.03/3.61/3.13 avant) : la calibration `sky (-3)`
+    priorise la distinguabilité CVD (voir ci-dessus) au détriment du
+    contraste WCAG déjà non conforme de ce rôle. `--success` reste
+    consommé par aucun composant à ce jour (vérifié par grep) — impact
+    utilisateur réel nul, mais point à signaler explicitement à Simon
+    (voir rapport de phase 4/5).
+  - Sortie brute complète (avant/après par thème, contraste et ΔE) dans
+    le rapport de phase joint à cette entrée ; `CONTRAST-REPORT.md`
+    régénéré.
+- **Diff CSS** : strictement confiné aux 6 blocs `[data-theme]`
+  daltoniens (`deuteranomaly`, `deuteranopia`, `protanomaly`,
+  `protanopia`, `tritanomaly`, `tritanopia`) — vérifié sur l'ensemble du
+  CSS compilé, rien d'autre n'a bougé.
+- **Purge des chemins morts, faite en fin de phase 3** (le plan la prévoit
+  « en fin de phase 4 », mais son unique condition — « quand plus rien ne
+  les référence » — était déjà remplie ici, et la phase 3 la redemande
+  elle-même en item 4) : `adapt-color-for-colorblindness`,
+  `adapt-color-for-color-anomaly` et leurs auxiliaires `brightness`/
+  `is-similar-to` supprimées de `_theme-utils.scss`, confirmé sans
+  appelant restant par grep avant suppression. CSS compilé strictement
+  identique avant/après cette purge (suppression de code mort pur).
+- Vérifié : `pnpm build`/`lint`/`test` (609 tests, 17 suites) verts.
+
 ### Added (chantier E3 — refonte daltonienne, phase 2 — moteur de remap)
 
 - Phase 2 de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) :
