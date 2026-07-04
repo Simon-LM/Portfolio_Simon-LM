@@ -15,6 +15,54 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-04
 
+### Changed (chantier E2 — revue des moteurs, phase 2 — anti-éblouissement en passe unique)
+
+- Phase 2 de [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) :
+  `transform-theme-for-anti-glare` (`_anti-glare-functions.scss`)
+  réécrite pour dériver les ~70 tokens de couche 3 en **une seule passe**
+  depuis les rôles anti-éblouis (`@include apply-theme-variables;` juste
+  après `apply-roles()`), au lieu de re-transformer individuellement une
+  liste de ~22 tokens codée en dur. Supprimés : les 3 resynchronisations
+  manuelles de tokens de boutons (redondantes) et les ~22 blocs de
+  re-transformation individuelle.
+- **Bug corrigé** : ~45 tokens de couche 3 partageant un rôle avec les 22
+  auparavant listés (ex. `--color-lang-toggle-bg`, `--color-panel-bg`,
+  `--color-button-active-outline`, `--color-tooltip-*`, `--color-focus-*`…)
+  n'étaient **jamais** atténués en anti-éblouissement (valeur clair brute).
+  Ils reçoivent maintenant la même atténuation que le reste de leur rôle.
+- **Constat en cours d'analyse, non prédit tel quel par le plan** : contrairement à l'attente du plan
+  (« double atténuation » pour les 22 tokens auparavant listés), la mesure
+  montre que ces 22 restent **strictement inchangés** (diff CSS vide sur
+  ces propriétés) — dans ce pipeline, les réassigner individuellement
+  après capture de leur valeur claire pré-transformation puis leur
+  appliquer `transform-for-anti-glare` une fois équivaut mathématiquement
+  à les dériver du rôle déjà transformé une fois (fonction pure appliquée
+  au même argument d'origine). Le bug réel n'était donc pas la double
+  atténuation mais uniquement l'absence totale de traitement des ~45
+  tokens oubliés — désormais corrigée. Aucune régression sur les 22.
+- **Diff CSS** : strictement confiné aux blocs `[data-theme="anti-glare-light"]`
+  et `[data-theme="anti-glare-dark"]` (vérifié : aucune ligne changée en
+  dehors de ces deux plages). Sortie brute (diff `phase1.css` →
+  `phase2.css`, 228 lignes, ~57 propriétés touchées par thème) conservée
+  dans `/tmp/theme-engines/phase2.diff` pour la revue de Simon.
+- **Effet de bord attendu et traité** : ce changement de couleurs réelles
+  a rendu `docs/theme-system/CONTRAST-REPORT.md` (chantier E1) périmé —
+  régénéré via `pnpm contrast:report`. Un seul waiver enregistré dans
+  `contrast-pairs.ts` référence une paire affectée
+  (`site/button-active-outline-on-panel-bg`, thème `anti-glare-light`,
+  qui n'était lui-même jamais atténué avant ce correctif) : ratio mesuré
+  mis à jour de 1.38 à 1.06 (toujours non conforme, aucun waiver devenu
+  zombie). Les autres waivers concernent des paires de rôles ou des
+  couples de tokens de couche 3 non affectés par ce correctif (vérifié
+  un par un contre le diff CSS).
+- **Vérification visuelle** : capture d'écran automatisée (Chromium
+  headless, page d'accueil) des deux thèmes anti-glare après correctif —
+  header, hero, panneaux collapse et footer s'affichent normalement,
+  aucun élément invisible ou non stylé. **Validation visuelle complète
+  par Simon requise avant merge**, comme l'exige le plan (comparaison
+  avant/après sur les pages principales).
+- **Vérif** : `pnpm build`/`lint`/`test` (566 tests, 15 suites) verts.
+
 ### Fixed (chantier E2 — revue des moteurs, phase 1 — API et dead-code)
 
 - Phase 1 de [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) (branche

@@ -48,26 +48,26 @@ applied), ⚠ waived (see reason below). Cell value is the measured ratio.
 | `role/focus-ring-on-bg-base` (non-text ≥ 3) | ✓ 9.06 | ✓ 7.74 | ✓ 6.72 | ✓ 7.73 | ✓ 16.75 | ✓ 9.06 | ✓ 9.06 | ✓ 9.06 | ✓ 9.06 | ✓ 13.57 | ✓ 9.54 | ✓ 9.93 |
 | `role/border-strong-on-bg-base` (non-text ≥ 3) | ✓ 9.84 | ✓ 9.84 | ✓ 7.15 | ✓ 9.84 | ✓ 19.56 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.93 |
 | `site/main-text-on-main-bg` (text ≥ 4.5) | ✓ 18.92 | ✓ 8.18 | ✓ 13.74 | ✓ 8.19 | ✓ 19.56 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.97 |
-| `site/hero-text-on-hero-bg` (text ≥ 4.5) | ✓ 18.92 | ✓ 8.18 | ✓ 18.92 | ✓ 8.18 | ✓ 19.56 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.97 |
+| `site/hero-text-on-hero-bg` (text ≥ 4.5) | ✓ 18.92 | ✓ 8.18 | ✓ 13.74 | ✓ 8.19 | ✓ 19.56 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.97 |
 | `site/header-text-on-header-bg` (text ≥ 4.5) | ✓ 13.70 | ⚠ 1.15 | ✓ 13.00 | ⚠ 1.18 | ✓ 17.52 | ✓ 16.77 | ✓ 16.03 | ✓ 16.77 | ✓ 16.03 | ✓ 18.47 | ✓ 17.88 | ✓ 15.72 |
 | `site/header-text-role-on-header-bg` (text ≥ 4.5) | ✓ 7.12 | ⚠ 1.38 | ✓ 6.76 | ⚠ 1.42 | ✓ 17.52 | ✓ 8.72 | ✓ 8.33 | ✓ 8.72 | ✓ 8.33 | ✓ 9.60 | ✓ 9.30 | ✓ 8.23 |
 | `site/header-blog-link-text-on-bg` (text ≥ 4.5) | ✓ 7.12 | ⚠ 1.38 | ✓ 6.76 | ⚠ 1.42 | ✓ 19.56 | ✓ 8.72 | ✓ 8.33 | ✓ 8.72 | ✓ 8.33 | ✓ 9.60 | ✓ 9.30 | ✓ 8.23 |
-| `site/lang-toggle-text-activated-on-bg` (text ≥ 4.5) | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 19.56 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.93 |
-| `site/lang-toggle-text-disabled-on-bg` (text ≥ 4.5) | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 19.56 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.93 |
-| `site/collapse-title-on-bg-title` (text ≥ 4.5) | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 19.56 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.93 |
+| `site/lang-toggle-text-activated-on-bg` (text ≥ 4.5) | ✓ 9.84 | ✓ 9.84 | ✓ 7.15 | ✓ 9.84 | ✓ 19.56 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.93 |
+| `site/lang-toggle-text-disabled-on-bg` (text ≥ 4.5) | ✓ 9.84 | ✓ 9.84 | ✓ 7.15 | ✓ 9.84 | ✓ 19.56 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.93 |
+| `site/collapse-title-on-bg-title` (text ≥ 4.5) | ✓ 9.84 | ✓ 9.84 | ✓ 7.15 | ✓ 9.84 | ✓ 19.56 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.93 |
 | `site/section-title-on-bg-odd` (text ≥ 4.5) | ✓ 11.93 | ✓ 13.62 | ✓ 8.56 | ✓ 13.52 | ✓ 19.56 | ✓ 10.53 | ✓ 9.85 | ✓ 10.53 | ✓ 9.85 | ✓ 11.93 | ✓ 11.93 | ✓ 12.01 |
 | `site/portfolio-tag-text-on-bg` (text ≥ 4.5) | ✓ 13.45 | ✓ 13.45 | ✓ 11.59 | ✓ 10.08 | ✓ 19.56 | ✓ 11.57 | ✓ 11.28 | ✓ 11.57 | ✓ 11.28 | ✓ 14.50 | ✓ 13.42 | ✓ 14.50 |
-| `site/bottom-footer-title-on-bg` (text ≥ 4.5) | ✓ 9.22 | ✓ 14.34 | ✓ 9.23 | ✓ 14.34 | ✓ 19.56 | ✓ 8.99 | ✓ 9.37 | ✓ 8.99 | ✓ 9.37 | ✓ 9.95 | ✓ 9.20 | ✓ 9.93 |
+| `site/bottom-footer-title-on-bg` (text ≥ 4.5) | ✓ 9.22 | ✓ 14.34 | ✓ 7.88 | ✓ 10.83 | ✓ 19.56 | ✓ 8.99 | ✓ 9.37 | ✓ 8.99 | ✓ 9.37 | ✓ 9.95 | ✓ 9.20 | ✓ 9.93 |
 | `site/bottom-footer-text-on-bg` (text ≥ 4.5) | ✓ 9.84 | ✓ 9.84 | ✓ 7.15 | ✓ 9.84 | ✓ 19.56 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.93 |
-| `site/bottom-footer-link-text-on-bg` (text ≥ 4.5) | ✓ 9.06 | ✓ 7.74 | ✓ 9.06 | ✓ 7.74 | ✓ 16.75 | ✓ 9.06 | ✓ 9.06 | ✓ 9.06 | ✓ 9.06 | ✓ 13.57 | ✓ 9.54 | ✓ 9.93 |
+| `site/bottom-footer-link-text-on-bg` (text ≥ 4.5) | ✓ 9.06 | ✓ 7.74 | ✓ 6.72 | ✓ 7.73 | ✓ 16.75 | ✓ 9.06 | ✓ 9.06 | ✓ 9.06 | ✓ 9.06 | ✓ 13.57 | ✓ 9.54 | ✓ 9.93 |
 | `site/sticky-footer-text-on-bg` (text ≥ 4.5) | ✓ 14.52 | ✓ 9.42 | ✓ 10.54 | ✓ 9.42 | ✓ 19.56 | ✓ 14.52 | ✓ 14.52 | ✓ 14.52 | ✓ 14.52 | ✓ 14.52 | ✓ 14.52 | ✓ 14.50 |
-| `site/about-overlay-text-on-bg` (text ≥ 4.5) | ✓ 18.92 | ✓ 8.18 | ✓ 18.92 | ✓ 8.18 | ✓ 19.56 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.97 |
+| `site/about-overlay-text-on-bg` (text ≥ 4.5) | ✓ 18.92 | ✓ 8.18 | ✓ 13.74 | ✓ 8.19 | ✓ 19.56 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.97 |
 | `site/about-button-text-on-bg` (text ≥ 4.5) | ✓ 9.06 | ✓ 7.74 | ✓ 6.72 | ✓ 7.73 | ✓ 16.75 | ✓ 9.06 | ✓ 9.06 | ✓ 9.06 | ✓ 9.06 | ✓ 13.57 | ✓ 9.54 | ✓ 9.93 |
-| `site/skills-icon-text-on-bg` (text ≥ 4.5) | ✓ 13.45 | ✓ 13.45 | ✓ 13.45 | ✓ 13.45 | ✓ 19.56 | ✓ 11.57 | ✓ 11.28 | ✓ 11.57 | ✓ 11.28 | ✓ 14.50 | ✓ 13.42 | ✓ 14.50 |
-| `site/focus-text-on-focus-bg` (text ≥ 4.5) | ✓ 9.06 | ✓ 7.74 | ✓ 9.06 | ✓ 7.74 | ✓ 16.75 | ✓ 9.06 | ✓ 9.06 | ✓ 9.06 | ✓ 9.06 | ✓ 13.57 | ✓ 9.54 | ✓ 9.93 |
-| `site/tooltip-text-on-tooltip-bg` (text ≥ 4.5) | ✓ 15.17 | ✓ 6.99 | ✓ 15.81 | ✓ 6.99 | ✓ 15.61 | ✓ 15.17 | ✓ 15.17 | ✓ 15.17 | ✓ 15.17 | ✓ 15.17 | ✓ 15.17 | ✓ 15.24 |
+| `site/skills-icon-text-on-bg` (text ≥ 4.5) | ✓ 13.45 | ✓ 13.45 | ✓ 11.59 | ✓ 10.08 | ✓ 19.56 | ✓ 11.57 | ✓ 11.28 | ✓ 11.57 | ✓ 11.28 | ✓ 14.50 | ✓ 13.42 | ✓ 14.50 |
+| `site/focus-text-on-focus-bg` (text ≥ 4.5) | ✓ 9.06 | ✓ 7.74 | ✓ 6.72 | ✓ 7.73 | ✓ 16.75 | ✓ 9.06 | ✓ 9.06 | ✓ 9.06 | ✓ 9.06 | ✓ 13.57 | ✓ 9.54 | ✓ 9.93 |
+| `site/tooltip-text-on-tooltip-bg` (text ≥ 4.5) | ✓ 15.17 | ✓ 6.99 | ✓ 11.48 | ✓ 6.99 | ✓ 15.61 | ✓ 15.17 | ✓ 15.17 | ✓ 15.17 | ✓ 15.17 | ✓ 15.17 | ✓ 15.17 | ✓ 15.24 |
 | `site/scroll-progress-indicator-on-bg-base` (non-text ≥ 3) | ✓ 7.30 | ✓ 9.84 | ✓ 5.31 | ✓ 9.84 | ✓ 19.56 | ✓ 7.30 | ✓ 7.30 | ✓ 7.30 | ✓ 7.30 | ✓ 7.30 | ✓ 7.30 | ✓ 7.49 |
-| `site/button-active-outline-on-panel-bg` (non-text ≥ 3) | ⚠ 1.38 | ✓ 7.12 | ⚠ 1.38 | ✓ 7.12 | ⚠ 1.00 | ⚠ 1.13 | ⚠ 1.18 | ⚠ 1.13 | ⚠ 1.18 | ⚠ 1.02 | ⚠ 1.06 | ⚠ 1.21 |
+| `site/button-active-outline-on-panel-bg` (non-text ≥ 3) | ⚠ 1.38 | ✓ 7.12 | ⚠ 1.06 | ✓ 6.94 | ⚠ 1.00 | ⚠ 1.13 | ⚠ 1.18 | ⚠ 1.13 | ⚠ 1.18 | ⚠ 1.02 | ⚠ 1.06 | ⚠ 1.21 |
 
 ## Waivers
 
@@ -110,5 +110,5 @@ applied), ⚠ waived (see reason below). Cell value is the measured ratio.
 ### `site/button-active-outline-on-panel-bg`
 
 - Threshold: 3:1 (non-text)
-- Measured: `light`: 1.3806:1, `anti-glare-light`: 1.3806:1, `high-contrast`: 1.0000:1, `deuteranomaly`: 1.1280:1, `deuteranopia`: 1.1800:1, `protanomaly`: 1.1280:1, `protanopia`: 1.1800:1, `tritanomaly`: 1.0241:1, `tritanopia`: 1.0579:1, `achromatopsia`: 1.2069:1
-- Reason: --color-button-active-outline = --accent, --color-panel-bg = --bg-base. In high-contrast both resolve to the exact same value (#000000) — the outline is literally indistinguishable from its background (ratio 1.0:1). In the other light-based themes --accent stays a light amber against a near-white --bg-base, inherently under the 3:1 non-text threshold; dark-based themes pass because --bg-base itself becomes dark there. Pre-existing; a higher-contrast role (--accent-strong) already exists but is not wired to this token.
+- Measured: `light`: 1.3806:1, `anti-glare-light`: 1.0570:1, `high-contrast`: 1.0000:1, `deuteranomaly`: 1.1280:1, `deuteranopia`: 1.1800:1, `protanomaly`: 1.1280:1, `protanopia`: 1.1800:1, `tritanomaly`: 1.0241:1, `tritanopia`: 1.0579:1, `achromatopsia`: 1.2069:1
+- Reason: --color-button-active-outline = --accent, --color-panel-bg = --bg-base. In high-contrast both resolve to the exact same value (#000000) — the outline is literally indistinguishable from its background (ratio 1.0:1). In the other light-based themes --accent stays a light amber against a near-white --bg-base, inherently under the 3:1 non-text threshold; dark-based themes pass because --bg-base itself becomes dark there. Pre-existing; a higher-contrast role (--accent-strong) already exists but is not wired to this token. anti-glare-light's ratio dropped further (1.38 → 1.06) after the chantier E2 single-pass anti-glare fix gave this pair its first-ever anti-glare attenuation (previously unattenuated, matching `light`) — see PLAN-revue-moteurs.md phase 2.

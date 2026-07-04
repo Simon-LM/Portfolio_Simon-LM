@@ -100,107 +100,14 @@
 	$danger: transform-for-anti-glare($danger, $mode) !global;
 
 	// Dériver les rôles (couche 2) depuis le rail et les primitives
-	// anti-éblouissement ; les tokens de couche 3 ci-dessous reçoivent
-	// ensuite chacun leur propre passe de réduction d'éblouissement.
+	// anti-éblouissement.
 	@include apply-roles();
 
-	// Ces trois tokens ne sont pas transformés individuellement plus bas
-	// (contrairement aux autres) : les rederiver des rôles fraîchement
-	// resynchronisés reproduit exactement le comportement d'avant la
-	// phase 6, où l'émission CSS les lisait directement depuis $link-hover/
-	// $off-white/$near-black déjà transformés à ce stade.
-	$color-button-hover-bg: $link-hover !global;
-	$color-button-hover-text: $fg-on-emphasis !global;
-	$color-button-active-text: $fg-base !global;
-
-	// Transformation des variables dérivées UI
-	$color-main-bg: transform-for-anti-glare($color-main-bg, $mode) !global;
-	$color-main-text: transform-for-anti-glare($color-main-text, $mode) !global;
-	$color-header-bg: transform-for-anti-glare($color-header-bg, $mode) !global;
-	$color-header-text: transform-for-anti-glare(
-		$color-header-text,
-		$mode
-	) !global;
-	$color-header-text-role: transform-for-anti-glare(
-		$color-header-text-role,
-		$mode
-	) !global;
-	$color-header-blog-link-bg: transform-for-anti-glare(
-		$color-header-blog-link-bg,
-		$mode
-	) !global;
-	$color-header-blog-link-text: transform-for-anti-glare(
-		$color-header-blog-link-text,
-		$mode
-	) !global;
-
-	// Variables d'interface utilisateur - sections
-	$color-section-bg-even: transform-for-anti-glare(
-		$color-section-bg-even,
-		$mode
-	) !global;
-	$color-section-bg-odd: transform-for-anti-glare(
-		$color-section-bg-odd,
-		$mode
-	) !global;
-	$color-section-title: transform-for-anti-glare(
-		$color-section-title,
-		$mode
-	) !global;
-
-	// Variables pour les éléments interactifs
-	$color-about-button-bg: transform-for-anti-glare(
-		$color-about-button-bg,
-		$mode
-	) !global;
-	$color-about-button-text: transform-for-anti-glare(
-		$color-about-button-text,
-		$mode
-	) !global;
-	$color-focus-outline: transform-for-anti-glare(
-		$color-focus-outline,
-		$mode
-	) !global;
-
-	// Cartes et conteneurs
-	$color-section-card-bg: transform-for-anti-glare(
-		$color-section-card-bg,
-		$mode
-	) !global;
-	$color-section-even-card-bg: transform-for-anti-glare(
-		$color-section-even-card-bg,
-		$mode
-	) !global;
-	$color-section-odd-card-bg: transform-for-anti-glare(
-		$color-section-odd-card-bg,
-		$mode
-	) !global;
-	$color-portfolio-tag-bg: transform-for-anti-glare(
-		$color-portfolio-tag-bg,
-		$mode
-	) !global;
-	$color-portfolio-tag-text: transform-for-anti-glare(
-		$color-portfolio-tag-text,
-		$mode
-	) !global;
-
-	// Footer et autres éléments spécifiques
-	$color-bottom-footer-bg: transform-for-anti-glare(
-		$color-bottom-footer-bg,
-		$mode
-	) !global;
-	$color-bottom-footer-text: transform-for-anti-glare(
-		$color-bottom-footer-text,
-		$mode
-	) !global;
-	$color-sticky-footer-bg: transform-for-anti-glare(
-		$color-sticky-footer-bg,
-		$mode
-	) !global;
-	$color-sticky-footer-text: transform-for-anti-glare(
-		$color-sticky-footer-text,
-		$mode
-	) !global;
+	// Rederive layer-3 tokens (~70) from the anti-glared roles/primitives in
+	// a single pass: was previously ~25 tokens transformed a second time
+	// individually here (double attenuation) while ~45 others sharing the
+	// same roles (e.g. $color-lang-toggle-bg) were never attenuated at all.
+	@include apply-theme-variables;
 
 	// Ajustements spécifiques selon le mode
 	@if $mode == "light" {
