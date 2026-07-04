@@ -174,7 +174,7 @@
 			// Vert -> Bleu-vert
 			$h: 180;
 			$s: min(100%, $s * $enhance-factor);
-		} @else if $h >= 330 or $h <= 30 {
+		} @else if $h >= 330 or $h < 30 {
 			// Rouge -> Jaune-orange
 			$h: 40;
 			$s: min(100%, $s * $enhance-factor);
@@ -230,6 +230,7 @@
 @function auto-deuteranopia-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
 	$special-colors: map.get($config, "special-colors");
+	$enhancer: map.get($config, "enhancer");
 
 	// Si la variable a une couleur spéciale définie, l'utiliser
 	@if $special-colors and map.has-key($special-colors, $var-name) {
@@ -237,13 +238,14 @@
 	}
 
 	// Autrement, appliquer la transformation standard
-	@return adapt-color-for-colorblindness($color, "deuteranopia", 2.5);
+	@return adapt-color-for-colorblindness($color, "deuteranopia", $enhancer);
 }
 
 // Fonction qui transforme une couleur en version protanopia
 @function auto-protanopia-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
 	$special-colors: map.get($config, "special-colors");
+	$enhancer: map.get($config, "enhancer");
 
 	// Si la variable a une couleur spéciale définie, l'utiliser
 	@if $special-colors and map.has-key($special-colors, $var-name) {
@@ -251,13 +253,14 @@
 	}
 
 	// Autrement, appliquer la transformation standard
-	@return adapt-color-for-colorblindness($color, "protanopia", 2.5);
+	@return adapt-color-for-colorblindness($color, "protanopia", $enhancer);
 }
 
 // Fonction qui transforme une couleur en version tritanopia
 @function auto-tritanopia-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
 	$special-colors: map.get($config, "special-colors");
+	$enhancer: map.get($config, "enhancer");
 
 	// Si la variable a une couleur spéciale définie, l'utiliser
 	@if $special-colors and map.has-key($special-colors, $var-name) {
@@ -265,7 +268,7 @@
 	}
 
 	// Autrement, appliquer la transformation standard
-	@return adapt-color-for-colorblindness($color, "tritanopia", 2.5);
+	@return adapt-color-for-colorblindness($color, "tritanopia", $enhancer);
 }
 
 // Fonction qui transforme une couleur pour l'adapter à un type léger de daltonisme (anomalie)
@@ -276,7 +279,6 @@
 	$l: color.channel($color, "lightness", $space: hsl);
 
 	// Calculer l'impact du facteur d'intensification
-	$hue_shift: ($enhance-factor - 1) * 30; // Amplifier l'effet sur la teinte
 	$saturation_boost: $enhance-factor; // Impact direct sur la saturation
 
 	// Paramètres d'adaptation moins intenses que pour les -opies
@@ -754,6 +756,7 @@ $hc-palette: (
 			"danger": #ffcc00
 				// Jaune-orange pour remplacer le rouge
 		),
+		"enhancer": 2.5,
 		"overrides": (),
 	);
 
@@ -985,6 +988,7 @@ $hc-palette: (
 			"danger": #ffd700
 				// Or pour remplacer le rouge
 		),
+		"enhancer": 2.5,
 		"overrides": (),
 	);
 
@@ -1191,6 +1195,7 @@ $hc-palette: (
 			"danger": #ff3399
 				// Rose pour remplacer le rouge
 		),
+		"enhancer": 2.5,
 		"overrides": (),
 	);
 

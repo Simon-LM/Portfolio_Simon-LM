@@ -15,6 +15,54 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-04
 
+### Fixed (chantier E2 — revue des moteurs, phase 1 — API et dead-code)
+
+- Phase 1 de [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) (branche
+  `refactor/theme-engines`), corrections sans changement visuel :
+  - `_anti-glare-functions.scss` : paramètre `$intensity` de
+    `transform-for-anti-glare` supprimé (jamais passé à aucun des ~30
+    sites d'appel, vérifié par grep).
+  - `_theme-utils.scss` : variable morte `$hue_shift` supprimée dans
+    `adapt-color-for-color-anomaly` (calculée, jamais lue). Chevauchement
+    de fenêtre de teinte corrigé dans `adapt-color-for-colorblindness`
+    (la fenêtre rouge `$h >= 330 or $h <= 30` revendiquait `h = 30` en
+    commun avec la fenêtre verte `$h >= 30 and $h <= 150` ; changée en
+    `$h >= 330 or $h < 30`). `enhance-factor` des trois `-opies`
+    (deutéranopie, protanopie, tritanopie) rendu configurable : les
+    `auto-*-opia-transform` lisent désormais une clé `"enhancer"` du
+    config (même patron que les anomalies) au lieu de coder `2.5` en dur
+    dans l'appel à `adapt-color-for-colorblindness` ; les trois mixins
+    `transform-light-to-*opia` déclarent `"enhancer": 2.5` dans leur
+    config par défaut (valeur inchangée). Les fichiers de thèmes
+    `_deuteranopia.scss`/`_protanopia.scss`/`_tritanopia.scss` n'ont pas
+    été modifiés (aucun ne définissait déjà de clé `"enhancer"`, vérifié
+    par lecture des trois fichiers).
+- **Divergence constatée et non appliquée telle quelle (item 1 du plan,
+  l'expression `if()` de `transform-for-anti-glare`)** : le plan décrit
+  `@return if(sass($mode == "light"): #888888; else: #aaaaaa);` comme
+  cassée (« fonctionne par accident du parsing spécial de if() ») et
+  demande de la remplacer par la forme positionnelle
+  `if($mode == "light", #888888, #aaaaaa)`. Mesure faite avant
+  d'appliquer : avec Dart Sass 1.101.0 (version installée), c'est
+  l'inverse — compiler la forme positionnelle déclenche un nouveau
+  `DEPRECATION WARNING [if-function]` (« The Sass if() syntax is
+  deprecated in favor of the modern CSS syntax »), dont le message
+  suggère explicitement de revenir à la forme `sass(...): …; else: …`.
+  Un test isolé (`if($mode == "light", …)` vs `if(sass($mode ==
+  "light"): …; else: …)` pour `$mode` valant `"light"` puis `"dark"`)
+  confirme que les deux formes retournent déjà la bonne couleur — la
+  forme actuelle n'est donc pas buggée, c'est la syntaxe de
+  désambiguïsation officielle entre le `if()` Sass et le nouveau `if()`
+  CSS natif. Cette branche est de toute façon inatteignable en
+  fonctionnement normal (elle ne s'exécute que si `$color` n'est pas une
+  couleur valide, ce qu'aucun site d'appel ne produit). **Décision** :
+  code laissé tel quel (commentaire ajouté renvoyant à cette entrée),
+  aucune régression introduite. Arbitrage de Simon bienvenu si un
+  contexte m'échappe.
+- **Vérif** : CSS compilé strictement byte-identique à la baseline de
+  phase 0 (`diff` vide). `pnpm build`/`lint`/`test` (566 tests, 15
+  suites) verts.
+
 ### Docs (chantier E1 — tests de contrastes, phase 5 — finalisation)
 
 - Phase 5 (dernière) de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) :

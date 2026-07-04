@@ -6,10 +6,14 @@
 @use "../themes/theme-variables" as *;
 
 // Fonction transformatrice pour réduction d'éblouissement et halos
-@function transform-for-anti-glare($color, $mode: "light", $intensity: 1) {
+@function transform-for-anti-glare($color, $mode: "light") {
 	// Vérifier que l'entrée est bien une couleur
 	@if meta.type-of($color) != "color" {
 		@warn "transform-for-anti-glare: paramètre $color (#{$color}) n'est pas une couleur valide";
+		// NOTE (plan phase 1, item 1) : ce n'est pas la syntaxe if() cassée
+		// qu'elle semble être. C'est la syntaxe de désambiguïsation officielle
+		// de Dart Sass 1.101 entre son if() natif et le if() CSS natif. Voir
+		// le rapport de phase 1 pour la mesure qui a établi ce point.
 		@return if(sass($mode == "light"): #888888; else: #aaaaaa);
 	}
 
