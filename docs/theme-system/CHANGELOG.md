@@ -15,6 +15,57 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-04
 
+### Docs (chantier E2 — revue des moteurs, phase 5 — finalisation)
+
+- Phase 5 (dernière) de [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) :
+  vérification finale et documentation, branche `refactor/theme-engines`
+  (4 commits, non mergée). `pnpm build`/`lint`/`test` verts.
+- **Preuve par diff** : le plan demande un CSS « byte-identique à
+  phase 0 » en finalisation — formule reprise telle quelle des plans E1/
+  fondations, mais **contradictoire avec le contenu même de ce plan**
+  (les phases 2, 3 et 4 documentent et attendent explicitement un diff
+  CSS visuel confiné aux thèmes anti-glare). Interprétation retenue,
+  cohérente avec l'esprit de l'oracle CSS des trois plans : prouver que
+  le diff cumulé `phase0.css` → CSS final est *exactement* la somme des
+  changements documentés phase par phase, rien d'accidentel ailleurs.
+  Vérifié : diff complet (470 lignes) confiné aux blocs
+  `[data-theme="anti-glare-light"]` et `[data-theme="anti-glare-dark"]`
+  uniquement (plages de lignes identiques à celles rapportées en
+  phases 2/3/4) — aucune ligne changée en dehors de ces deux thèmes sur
+  l'ensemble des 5350 lignes du CSS compilé.
+- Docs mises à jour : README § 5 (point 10, couverture anti-glare
+  partielle, marqué résolu), § « Carte des documents » (E2 exécuté,
+  merge en attente de validation visuelle), guide E2 (résumé du
+  résultat, divergences documentées).
+- **Divergences par rapport au plan, documentées phase par phase et
+  résumées ici** :
+  1. Phase 1, item 1 (syntaxe `if()`) : non appliqué tel quel — la
+     « correction » proposée introduit une régression (nouveau
+     `DEPRECATION WARNING`) avec Dart Sass 1.101 ; le code existant est
+     en réalité la syntaxe de désambiguïsation officielle contre le
+     nouveau `if()` CSS natif. Code inchangé, commenté.
+  2. Phase 2 : l'hypothèse du plan (« double atténuation » pour les ~22
+     tokens auparavant listés) ne se vérifie pas — ils ressortent
+     strictement inchangés. Le bug réel était uniquement l'absence de
+     traitement des ~45 tokens oubliés, corrigée sans régression sur les
+     22 premiers.
+  3. Phase 3 : seuil clair recalibré de 92% à 85% (OKLCH) — à 92%,
+     `stone-300` restait quasiment intact, ce que l'ancien moteur HSL
+     n'aurait pas laissé passer. Seuil sombre (22%) inchangé, sa
+     couverture correspond déjà exactement à l'ancien seuil HSL (15%).
+  4. Phase 5 (ce point) : la formule « CSS byte-identique » réinterprétée
+     comme ci-dessus.
+- **Rapport final pour arbitrage de Simon** (voir aussi le message de
+  fin de tâche) : 4 commits sur `refactor/theme-engines`, diff CSS
+  cumulé strictement confiné aux thèmes anti-glare, `CONTRAST-REPORT.md`
+  tenu à jour à chaque phase colorée (aucun waiver devenu zombie),
+  vérification visuelle automatisée faite (captures Chromium headless)
+  mais **validation visuelle humaine de Simon requise avant tout merge** —
+  en particulier sur : le rendu des deux thèmes anti-glare après passe
+  unique + recalibration OKLCH (phases 2-3), et la suppression de
+  l'overlay `backdrop-filter` (phase 4, réversible indépendamment des
+  autres phases si besoin).
+
 ### Removed (chantier E2 — revue des moteurs, phase 4 — overlay backdrop-filter)
 
 - Phase 4 de [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) : mixin

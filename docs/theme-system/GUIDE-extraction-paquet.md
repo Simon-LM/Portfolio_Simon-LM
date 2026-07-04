@@ -95,13 +95,25 @@ rapport), [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) généré et commité. 33
 d'arbitrage par Simon (voir CHANGELOG phase 5 pour la liste triée par
 gravité). CSS compilé resté strictement byte-identique du début à la fin.
 
-### E2 — Revue des moteurs anti-glare / daltoniens (in situ)
+### E2 — Revue des moteurs anti-glare / daltoniens (in situ) — exécuté le 2026-07-04, merge en attente
 
 Plan d'exécution : [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md)
 (corrections mécaniques : passe unique anti-glare à couverture totale,
 `enhance-factor` configurable, scories). Toute modification de valeurs est
 validée par les tests de contraste (E1, idéalement livrés avant) + validation
 visuelle de Simon. Sortie : moteurs stables, prêts à être figés dans une API.
+
+Résultat (branche `refactor/theme-engines`, non mergée) : phase 1 (corrections
+API/dead-code, CSS byte-identique — un item du plan, la syntaxe `if()`, n'a
+pas été appliqué tel quel car il introduisait une régression avec Dart Sass
+1.101, voir CHANGELOG) ; phase 2 (passe unique anti-glare, couverture des
+~45 tokens auparavant jamais atténués) ; phase 3 (moteur anti-glare réécrit
+en OKLCH, seuil clair recalibré de 92% à 85% pour rester proche du rendu
+HSL précédent, seuil sombre inchangé) ; phase 4 (overlay `backdrop-filter`
+supprimé, effet mesuré comme négligeable). Diff CSS cumulé strictement
+confiné aux blocs `anti-glare-light`/`anti-glare-dark`, `CONTRAST-REPORT.md`
+tenu à jour à chaque phase colorée. **Validation visuelle de Simon requise
+avant merge** (phases 2, 3 et 4 changent des couleurs réelles).
 
 **Évolutions du mécanisme — actées par Simon le 2026-07-03**, avec ses
 contraintes de conception, qui priment :

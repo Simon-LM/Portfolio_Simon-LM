@@ -26,8 +26,8 @@ mergée : rollup + src, datant d'avant plusieurs refontes du système).
 | [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) | Plan d'exécution : fondations (rail, rôles, `@use`…) | ✅ exécuté le 2026-07-03 |
 | [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) | Plan d'exécution : chantier E1 — système de tests de contrastes | ✅ exécuté le 2026-07-04 |
 | [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) | Artefact généré : matrice de contraste WCAG des 40 paires × 12 thèmes | vivant (régénéré par `pnpm contrast:report`) |
-| [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) | Plan d'exécution : chantier E2 — corrections moteurs + OKLCH anti-glare | à exécuter (E1 fait) |
-| [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : remap de familles Tailwind + tests de distinguabilité | à exécuter (E1 fait, E2 recommandé) |
+| [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) | Plan d'exécution : chantier E2 — corrections moteurs + OKLCH anti-glare | exécuté le 2026-07-04 sur `refactor/theme-engines`, **validation visuelle de Simon requise avant merge** |
+| [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : remap de familles Tailwind + tests de distinguabilité | à exécuter (E1 fait, E2 en attente de merge) |
 
 Principe : **un chantier = un plan = une branche = une exécution par IA**,
 avec revue avant merge. Le guide donne l'ordre ; chaque plan est autonome.
@@ -315,6 +315,12 @@ Constats factuels issus de l'analyse du code, sans hiérarchie :
     variables dérivées (les autres restent héritées du thème de base) ; les
     thèmes daltoniens ne touchent que les couleurs sémantiques (gris
     intacts, ce qui est voulu, mais implicite).
+    *(résolu pour l'anti-éblouissement — voir CHANGELOG du 2026-07-04,
+    chantier E2 phase 2 : `transform-theme-for-anti-glare` rederive
+    désormais les ~70 tokens de couche 3 en une seule passe depuis les
+    rôles anti-éblouis (`apply-theme-variables`), couverture totale au
+    lieu d'une liste explicite de ~22 tokens ; le point daltonien reste
+    voulu/implicite tel quel, hors périmètre d'E2)*
 11. **`--success-color`/`--error-color` ne sont pas exposées en CSS** (lignes
     commentées dans `generate-theme-css-vars()`) ; à la place, deux
     constantes `--constant-error-color`/`--constant-success-color` codées en

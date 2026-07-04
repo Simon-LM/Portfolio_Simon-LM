@@ -9,6 +9,30 @@ version numbers to track.
 
 ## 2026-07-04
 
+### Changed
+
+- Theme engines review (branch `refactor/theme-engines`, 4 phases, one
+  commit each, **not yet merged — visual validation by Simon required**):
+  fixed dead `$intensity` param and dead `$hue_shift` var, fixed a
+  red/green hue-window overlap in the colorblind engine, made the -opia
+  enhance-factor configurable; rewrote `transform-theme-for-anti-glare`
+  to derive all ~70 layer-3 tokens from the anti-glared roles in a single
+  pass instead of a hardcoded ~22-token list (fixes ~45 tokens, e.g.
+  `--color-lang-toggle-bg`, that were never attenuated at all); rewrote
+  the anti-glare color transform itself in OKLCH for perceptually
+  uniform attenuation (HSL lightness isn't perceptually uniform across
+  hues), recalibrating the light-mode threshold from the plan's 92%
+  starting point down to 85% after measuring a coverage gap against the
+  old engine; removed the full-screen `backdrop-filter` overlay (GPU
+  cost for a measured near-zero visual effect). CSS diff strictly
+  confined to the anti-glare-light/anti-glare-dark theme blocks
+  throughout; full detail, including two points where the plan's literal
+  instructions were not followed as written (with measurements showing
+  why), in
+  [docs/theme-system/CHANGELOG.md](docs/theme-system/CHANGELOG.md) and
+  the executed plan,
+  [docs/theme-system/PLAN-revue-moteurs.md](docs/theme-system/PLAN-revue-moteurs.md).
+
 ### Added
 
 - WCAG 2.2 contrast-testing system for the 12-theme color system (branch
