@@ -183,6 +183,29 @@ dès maintenant ; la refonte daltonienne (points 2 et 3) attend le chantier
 E1 (les tests de distinguabilité en sont le filet de sécurité) et recevra
 son propre plan.
 
+**Refonte daltonienne — exécutée le 2026-07-04, merge en attente**
+(branche `refactor/theme-cvd-remap`, plan
+[PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md), 5 phases,
+un commit chacune) : `remap-for-cvd()` implémente exactement le
+mécanisme décrit ci-dessus (family-remap à poids décalé, repli OKLCH,
+garde-fous de poids et de collision mesurés plutôt que devinés) ; tests
+de distinguabilité par simulation CVD (matrices de Machado et al. 2009,
+pas Brettel/Viénot comme envisagé plus haut — équivalentes dans
+l'esprit, mesures publiées plus simples à sourcer sans accès réseau)
+livrés en phase 1, avant toute bascule de couleurs, comme prévu. Résumé
+des résultats : le pire cas historique (`#ffcc00` à 1.34:1 en
+protanopie) est résolu, `role/danger-on-bg-base` passe de 6 thèmes
+daltoniens waivés à 0 ; `distinguish/success-vs-danger` (le seul échec
+de distinguabilité de l'inventaire de phase 1, tritanopie ΔE 6.81) est
+résolu à ΔE 69.66. Point d'arbitrage laissé à Simon :
+`role/success-on-bg-base` régresse en contraste WCAG dans 4 thèmes
+(jusqu'à 1.60:1) car la calibration a priorisé la distinguabilité CVD —
+sans impact aujourd'hui, `--success` n'étant consommé par aucun
+composant. Détail complet, tableaux avant/après et diffs bruts : voir
+[CHANGELOG.md](./CHANGELOG.md). **Validation visuelle de Simon requise
+avant merge**, comme pour le reste d'E2 (phases 3 et 4 changent des
+couleurs réelles dans les 6 thèmes daltoniens).
+
 ### E3 — Monorepo et extraction de la face SCSS
 
 `pnpm-workspace.yaml`, création du paquet, déplacement de

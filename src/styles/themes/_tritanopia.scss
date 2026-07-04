@@ -8,7 +8,7 @@
 	// D'abord appliquer les variables du thème light
 	@include light-theme-variables();
 
-	// Family-remap CVD (chantier E3, PLAN-refonte-daltonienne.md phase 3) :
+	// Family-remap CVD (chantier E2 (refonte daltonienne), PLAN-refonte-daltonienne.md phase 3) :
 	// table par défaut de transform-light-to-tritanopia dans
 	// _theme-utils.scss (amber -> orange, sky -> violet ; emerald/redd
 	// inchangées, déjà sûres pour la confusion bleu-jaune).

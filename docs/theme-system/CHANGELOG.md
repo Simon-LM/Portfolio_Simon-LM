@@ -15,7 +15,57 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-04
 
-### Docs (chantier E3 — refonte daltonienne, phase 4 — vérifications et arbitrages)
+### Docs (chantier E2 (refonte daltonienne), phase 5 — finalisation)
+
+- Phase 5 (dernière) de
+  [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md).
+  `pnpm build`/`lint`/`test` (609 tests, 17 suites) verts ; diff CSS
+  cumulé toujours confiné aux 6 blocs `[data-theme]` daltoniens.
+- **Correction d'étiquetage** : les entrées de phases 1 à 4 de ce
+  chantier référencent « chantier E3 » — une erreur de ma part, pas du
+  plan. [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) n'a
+  que E1/E2/E3(monorepo)/E4-E7 ; la refonte daltonienne fait partie
+  d'**E2** (« Revue des moteurs anti-glare / daltoniens »), la même
+  ombrelle que [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md).
+  Corrigé partout (docs et commentaires source, y compris dans les
+  entrées de phases 1 à 4 ci-dessous) en « chantier E2 (refonte
+  daltonienne) » pour lever l'ambiguïté avec l'autre plan, également
+  E2 — par un nouveau commit qui modifie le texte, sans toucher aux
+  commits déjà faits (aucune réécriture d'historique Git).
+- Docs mises à jour : README § 4.3 (moteurs daltoniens et
+  anti-éblouissement tous deux réécrits, description de
+  `remap-for-cvd()` à 4 cas), § 5 point 10 (le point daltonien n'est
+  plus implicite — testé mécaniquement), « Carte des documents »
+  (PLAN-refonte-daltonienne.md marqué exécuté), guide E2 (résultat
+  détaillé de la refonte,
+  résumé des chiffres clés).
+- **Rapport final pour arbitrage de Simon** :
+  - 5 commits sur `refactor/theme-cvd-remap` (code aux phases 1-3 ; la
+    4 et cette phase 5 sont documentation pure), diff CSS confiné aux 6
+    thèmes daltoniens.
+  - Waivers retirés : `role/danger-on-bg-base` (6 → 1 thème restant,
+    seul `anti-glare-light` — sans rapport avec le remap CVD) ;
+    `distinguish/success-vs-danger` (retiré entièrement).
+  - Waiver dégradé, point d'arbitrage explicite : `role/success-on-bg-base`
+    régresse en contraste WCAG dans 4 thèmes rouge-vert (jusqu'à
+    1.60:1, contre 3.13-4.03:1 avant) — la calibration du remap
+    `emerald → sky` a priorisé la distinguabilité CVD
+    (`distinguish/link-vs-success`, qui aurait autrement chuté jusqu'à
+    ΔE 4.6) au détriment du contraste déjà non conforme de ce rôle.
+    Aucun impact utilisateur réel aujourd'hui (`--success` inutilisé) ;
+    décisions possibles pour Simon : accepter le compromis tel quel,
+    introduire un rôle `success-strong` distinct pour un futur usage en
+    texte, ou recalibrer une troisième fois avec un poids intermédiaire.
+  - Bug Sass documenté et corrigé (clés de map non quotées `orange`/
+    `violet` interprétées comme couleurs) — vigilance à garder pour
+    toute future famille nommée d'après une couleur CSS reconnue.
+  - Validation visuelle automatisée faite (captures Chromium headless
+    des 6 thèmes + panneau d'accessibilité) ; **validation visuelle
+    humaine de Simon requise avant tout merge**, en particulier sur le
+    virage orange du header en tritanopie/tritanomalie et le virage
+    violet des liens dans les mêmes thèmes.
+
+### Docs (chantier E2 (refonte daltonienne), phase 4 — vérifications et arbitrages)
 
 - Phase 4 de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md).
   Les deux premiers points du plan (suite de contrastes redevenue verte,
@@ -86,7 +136,7 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 - Vérifié : `pnpm build`/`lint`/`test` (609 tests, 17 suites) verts,
   diff CSS cumulé toujours confiné aux 6 thèmes daltoniens.
 
-### Changed (chantier E3 — refonte daltonienne, phase 3 — tables par défaut et bascule des 6 thèmes)
+### Changed (chantier E2 (refonte daltonienne), phase 3 — tables par défaut et bascule des 6 thèmes)
 
 - Phase 3 de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) :
   `_base-palette.scss` étendue avec deux familles Tailwind (`orange`,
@@ -124,7 +174,7 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
   1.27:1). Retenu : `sky (-3)` (sky-300), qui satisfait ΔE ≥ 20 avec une
   marge confortable (≥ 40 sur les thèmes affectés) sans creuser le
   contraste plus que nécessaire.
-- **Suite de contrastes (E1) et de distinguabilité (E3 phase 1)
+- **Suite de contrastes (E1) et de distinguabilité (E2/refonte daltonienne phase 1)
   re-exécutées après bascule — succès attendu du plan** :
   - `role/danger-on-bg-base` : passe de 6 thèmes waivés à **1 seul**
     (`anti-glare-light`, non lié au remap CVD) — les 6 thèmes daltoniens
@@ -160,7 +210,7 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
   identique avant/après cette purge (suppression de code mort pur).
 - Vérifié : `pnpm build`/`lint`/`test` (609 tests, 17 suites) verts.
 
-### Added (chantier E3 — refonte daltonienne, phase 2 — moteur de remap)
+### Added (chantier E2 (refonte daltonienne), phase 2 — moteur de remap)
 
 - Phase 2 de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) :
   `remap-for-cvd($color, $var-name, $config, $cvd-type)` ajoutée à
@@ -221,7 +271,7 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 - Vérifié : `pnpm build`/`lint`/`test` (609 tests, 17 suites) verts ; CSS
   compilé strictement identique à la baseline de phase 0.
 
-### Added (chantier E3 — refonte daltonienne, phase 1 — tests de distinguabilité)
+### Added (chantier E2 (refonte daltonienne), phase 1 — tests de distinguabilité)
 
 - Phase 1 de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md)
   (branche `refactor/theme-cvd-remap`, chantier additif — aucun fichier de

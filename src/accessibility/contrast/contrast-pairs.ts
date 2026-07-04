@@ -83,7 +83,7 @@ const rolePairs: ContrastPair[] = [
 				"non-compliant) after the chantier E2 OKLCH anti-glare rewrite " +
 				"(PLAN-revue-moteurs.md phase 3). deuteranomaly/deuteranopia/" +
 				"protanomaly/protanopia's ratios dropped further (were 3.61/4.03/" +
-				"3.61/3.13) after the chantier E3 family-remap (emerald -> sky, " +
+				"3.61/3.13) after the chantier E2 (refonte daltonienne) family-remap (emerald -> sky, " +
 				"weight shift -3): the shift was calibrated for the " +
 				"distinguish/link-vs-success pair (--link is already sky-900; " +
 				"emerald -> sky at shift 0 collided with it under CVD simulation, " +
@@ -112,7 +112,7 @@ const rolePairs: ContrastPair[] = [
 		level: "text",
 		waiver: {
 			reason:
-				"anti-glare-light only, as of chantier E3 (family-remap). The " +
+				"anti-glare-light only, as of chantier E2 (refonte daltonienne, family-remap). The " +
 				"6 CVD-theme failures documented here since chantier E1 — the old " +
 				"CVD-engine substitution colors (e.g. #ffcc00 in deuteranopia, " +
 				"chosen for perceptual distinguishability, not contrast, as low as " +
@@ -254,7 +254,7 @@ const sitePairs: ContrastPair[] = [
 export const contrastPairs: readonly ContrastPair[] = [...rolePairs, ...sitePairs];
 
 // ---------------------------------------------------------------------
-// Distinguishability pairs (chantier E3, PLAN-refonte-daltonienne.md
+// Distinguishability pairs (chantier E2 (refonte daltonienne), PLAN-refonte-daltonienne.md
 // phase 1) — a different question from the WCAG ratio pairs above: not
 // "is this readable against its background" but "do these two semantic
 // colors still look different from each other once CVD simulation is
@@ -301,7 +301,7 @@ const DEFAULT_MIN_DELTA_E = 20;
 
 export const distinguishabilityPairs: readonly DistinguishabilityPair[] = [
 	{
-		// Waiver removed (chantier E3 phase 3): tritanopia's old
+		// Waiver removed (chantier E2 (refonte daltonienne) phase 3): tritanopia's old
 		// special-colors for --success/--danger (#ff6600/#ff3399,
 		// hand-picked without a documented distinguishability check)
 		// collapsed to ΔE 6.81 under tritanopia simulation. Tritanopia's

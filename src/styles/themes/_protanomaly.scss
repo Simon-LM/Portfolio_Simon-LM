@@ -8,7 +8,7 @@
 	// D'abord appliquer les variables du thème light
 	@include light-theme-variables();
 
-	// Family-remap CVD (chantier E3, PLAN-refonte-daltonienne.md phase 3) :
+	// Family-remap CVD (chantier E2 (refonte daltonienne), PLAN-refonte-daltonienne.md phase 3) :
 	// même table que transform-light-to-protanopia, sévérité 0.5 par
 	// défaut (mélange perceptuel original/remap) — voir _theme-utils.scss.
 	@include transform-light-to-protanomaly();

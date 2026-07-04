@@ -82,7 +82,7 @@
 }
 
 // -----------------------------------------------
-// MOTEUR DE REMAP DALTONIEN (CVD) — chantier E3, refonte daltonienne
+// MOTEUR DE REMAP DALTONIEN (CVD) — chantier E2 (refonte daltonienne)
 // -----------------------------------------------
 // NOTE D'ÉTAT (phase 2 du plan) : cette fonction est construite et testée
 // isolément dans cette phase, mais N'EST PAS ENCORE appelée par
@@ -850,7 +850,7 @@ $hc-palette: (
 // Mixin qui transforme automatiquement toutes les variables du thème light en thème protanopia
 @mixin transform-light-to-protanopia($config: ()) {
 	// Utiliser la configuration par défaut si aucune n'est fournie.
-	// "special-colors" retiré des défauts (chantier E3, phase 3) : voir
+	// "special-colors" retiré des défauts (chantier E2 (refonte daltonienne), phase 3) : voir
 	// transform-light-to-deuteranopia ci-dessus pour la justification.
 	$default-config: (
 		"special-colors": (),
@@ -1061,7 +1061,7 @@ $hc-palette: (
 // Mixin qui transforme automatiquement toutes les variables du thème light en thème tritanopia
 @mixin transform-light-to-tritanopia($config: ()) {
 	// Utiliser la configuration par défaut si aucune n'est fournie.
-	// "special-colors" retiré des défauts (chantier E3, phase 3) :
+	// "special-colors" retiré des défauts (chantier E2 (refonte daltonienne), phase 3) :
 	// emerald/redd n'ont pas d'entrée family-remap ici (déjà sûres pour la
 	// confusion bleu-jaune, cf. plan) — --success/--danger restent donc
 	// inchangées ; seules amber/sky (l'axe réellement confus) sont remappées.

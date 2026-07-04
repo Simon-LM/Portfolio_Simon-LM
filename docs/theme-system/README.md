@@ -27,7 +27,7 @@ mergée : rollup + src, datant d'avant plusieurs refontes du système).
 | [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) | Plan d'exécution : chantier E1 — système de tests de contrastes | ✅ exécuté le 2026-07-04 |
 | [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) | Artefact généré : matrice de contraste WCAG des 40 paires × 12 thèmes | vivant (régénéré par `pnpm contrast:report`) |
 | [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) | Plan d'exécution : chantier E2 — corrections moteurs + OKLCH anti-glare | exécuté le 2026-07-04 sur `refactor/theme-engines`, **validation visuelle de Simon requise avant merge** |
-| [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : remap de familles Tailwind + tests de distinguabilité | à exécuter (E1 fait, E2 en attente de merge) |
+| [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : remap de familles Tailwind + tests de distinguabilité | exécuté le 2026-07-04 sur `refactor/theme-cvd-remap`, **validation visuelle de Simon requise avant merge** |
 
 Principe : **un chantier = un plan = une branche = une exécution par IA**,
 avec revue avant merge. Le guide donne l'ordre ; chaque plan est autonome.
@@ -192,27 +192,44 @@ Cas particulier : les thèmes anti-glare se **composent** —
   couleurs pures (`#000`/`#ff0`/`#0ff`/…) choisie par **rôle**, déduit du nom
   de la variable (`_bg`, `_text`, `link`, `title`, `hover`…) ou, à défaut, de
   la luminance (`is-dark()`).
-- **Daltonismes complets** (`transform-light-to-{deuter,prot,trit}anopia`) :
-  les couleurs fonctionnelles indistinguables (succès/erreur) sont remplacées
-  par des `special-colors` fixes (ex. deutéranopie : vert → `#0075ff`,
-  rouge → `#ffcc00`) ; les autres passent par
-  `adapt-color-for-colorblindness()` qui déplace les teintes HSL vers des
-  zones perceptibles (les matrices de simulation LMS jamais consommées par
-  le chemin effectif ont été purgées en phase 1 de la migration des
-  fondations — voir CHANGELOG).
-- **Daltonismes légers** (`transform-light-to-{…}anomaly`) :
-  `adapt-color-for-color-anomaly()` amplifie seulement les différences —
-  décalage de teinte et boost de saturation proportionnels au facteur
-  `enhancer` (1.2 par défaut).
+- **Daltonismes (les 6 thèmes non-achromatopsie)**
+  (`transform-light-to-{deuter,prot,trit}{anopia,anomaly}`) — réécrit
+  chantier E2/refonte daltonienne, 2026-07-04 : `remap-for-cvd()` résout
+  chaque primitive en cascade — (1) `special-colors` explicite (prioritaire,
+  mécanisme conservé mais vide par défaut désormais), (2) famille Tailwind
+  reconnue **et** présente dans la table `family-remap` du thème →
+  substitution vers la famille cible à poids décalé (ex. deutéranopie/
+  protanopie : `emerald → sky (-3)`, `redd → amber (+1)` ; tritanopie :
+  `amber → orange (0)`, `sky → violet (0)`), (3) famille reconnue mais
+  absente de la table → laissée inchangée (déjà jugée sûre pour ce type de
+  CVD), (4) couleur hors palette → repli par rotation de teinte OKLCH vers
+  une ancre fixe (calibration non validée, probablement du code mort pour
+  les primitives actuelles). Les anomalies (`-omaly`) réutilisent la table
+  de leur `-opie`, avec un mélange perceptuel OKLCH (`severity: 0.5`) entre
+  couleur originale et couleur remappée. L'ancien mécanisme à fenêtres de
+  teinte HSL (`adapt-color-for-colorblindness`/`adapt-color-for-color-anomaly`)
+  est purgé (plus aucun appelant, confirmé par grep). Garanties vérifiées
+  mécaniquement par le système de tests de contrastes (§ 6, chantier E1) :
+  ratio WCAG **et** distinguabilité ΔE CIEDE2000 sous simulation CVD
+  (`src/accessibility/contrast/cvd-simulation.ts`, matrices de Machado et
+  al. 2009).
 - **Achromatopsie** (`transform-light-to-achromatopsia`) : conversion des
   familles de gris vers `neutral` (`convert-to-neutral-gray`), et des
   couleurs vers un gris de luminance équivalente (`get-adjusted-gray`, qui
-  requantifie la luminance sur les 11 poids Tailwind).
-- **Anti-éblouissement** (`transform-theme-for-anti-glare`) : en mode light,
-  plafonne la luminosité des couleurs très claires (pas de blanc pur) et
-  désature légèrement ; en mode dark, relève les noirs profonds. Ajoute un
-  overlay plein écran `body::before` avec `backdrop-filter`
-  (contraste/luminosité) — seul thème qui injecte un pseudo-élément global.
+  requantifie la luminance sur les 11 poids Tailwind). Mécanisme séparé,
+  volontairement non touché par la refonte daltonienne ci-dessus (elle ne
+  couvre que les 6 thèmes dichromates/anomaux).
+- **Anti-éblouissement** (`transform-theme-for-anti-glare`) — réécrit
+  chantier E2/revue des moteurs, 2026-07-04 : dérive désormais les ~70
+  tokens de couche 3 en une seule passe depuis les rôles anti-éblouis
+  (couverture totale, au lieu d'une liste explicite d'une vingtaine de
+  tokens) ; la transformation perceptuelle (`transform-for-anti-glare`) 
+  travaille en OKLCH (lightness/chroma) plutôt qu'en HSL, pour une
+  atténuation perceptuellement uniforme quelle que soit la teinte. En mode
+  light, plafonne la luminosité des couleurs très claires (pas de blanc
+  pur) et réduit légèrement la chroma ; en mode dark, relève les noirs
+  profonds. L'overlay plein écran `body::before` (`backdrop-filter`) a été
+  supprimé (coût GPU permanent pour un effet mesuré comme négligeable).
 
 ### 4.4 L'assemblage CSS
 
@@ -316,11 +333,16 @@ Constats factuels issus de l'analyse du code, sans hiérarchie :
     thèmes daltoniens ne touchent que les couleurs sémantiques (gris
     intacts, ce qui est voulu, mais implicite).
     *(résolu pour l'anti-éblouissement — voir CHANGELOG du 2026-07-04,
-    chantier E2 phase 2 : `transform-theme-for-anti-glare` rederive
-    désormais les ~70 tokens de couche 3 en une seule passe depuis les
-    rôles anti-éblouis (`apply-theme-variables`), couverture totale au
-    lieu d'une liste explicite de ~22 tokens ; le point daltonien reste
-    voulu/implicite tel quel, hors périmètre d'E2)*
+    chantier E2/revue des moteurs phase 2 : `transform-theme-for-anti-glare`
+    rederive désormais les ~70 tokens de couche 3 en une seule passe depuis
+    les rôles anti-éblouis (`apply-theme-variables`), couverture totale au
+    lieu d'une liste explicite de ~22 tokens. Le point daltonien reste
+    voulu tel quel — seules les 8 primitives sémantiques (`accent`,
+    `link`, `success`, `danger`…) sont remappées, les gris ne le sont
+    jamais — mais n'est plus *implicite* : voir CHANGELOG du 2026-07-04,
+    chantier E2/refonte daltonienne, qui documente et teste
+    mécaniquement ce périmètre (`remap-for-cvd` ne s'applique qu'aux
+    primitives passées explicitement par les 6 mixins de thème))*
 11. **`--success-color`/`--error-color` ne sont pas exposées en CSS** (lignes
     commentées dans `generate-theme-css-vars()`) ; à la place, deux
     constantes `--constant-error-color`/`--constant-success-color` codées en
