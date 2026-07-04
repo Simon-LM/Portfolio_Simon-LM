@@ -7,6 +7,26 @@ version. This is a continuously-deployed personal site — every merge to
 `main` ships on the next deploy, so there are no discrete "releases" for
 version numbers to track.
 
+## 2026-07-04
+
+### Added
+
+- WCAG 2.2 contrast-testing system for the 12-theme color system (branch
+  `feat/contrast-tests`, 5 phases, one commit each, purely additive — no
+  file under `src/styles/` was touched, compiled CSS stayed byte-identical
+  throughout). `src/accessibility/contrast/`: WCAG utilities (`culori`),
+  extraction of the 12 `[data-theme]` blocks from the compiled CSS
+  (`postcss`), a registry of 40 fg/bg pairs (role-level + site-level),
+  a Jest suite (498 tests) checking every pair against its WCAG threshold
+  in every applicable theme, and a generated matrix report
+  (`docs/theme-system/CONTRAST-REPORT.md`, `pnpm contrast:report`). First
+  run surfaced 33 pre-existing failures across 7 pairs; each got a
+  documented waiver (measured ratio + factual root cause, no color
+  changes) for Simon's future arbitration — full detail, phase by phase,
+  in [docs/theme-system/CHANGELOG.md](docs/theme-system/CHANGELOG.md) and
+  the executed plan,
+  [docs/theme-system/PLAN-tests-contrastes.md](docs/theme-system/PLAN-tests-contrastes.md).
+
 ## 2026-07-03
 
 ### Changed

@@ -24,9 +24,10 @@ mergée : rollup + src, datant d'avant plusieurs refontes du système).
 | [CHANGELOG.md](./CHANGELOG.md) | Journal de toutes les modifications de la fonctionnalité | vivant |
 | [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) | Feuille de route vers le paquet open source (chantiers E1→E7) — c'est **la carte** qui ordonne les plans | vivant |
 | [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) | Plan d'exécution : fondations (rail, rôles, `@use`…) | ✅ exécuté le 2026-07-03 |
-| [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) | Plan d'exécution : chantier E1 — système de tests de contrastes | à exécuter (**en premier**) |
-| [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) | Plan d'exécution : chantier E2 — corrections moteurs + OKLCH anti-glare | à exécuter (après E1) |
-| [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : remap de familles Tailwind + tests de distinguabilité | à exécuter (après E1, et E2 recommandé) |
+| [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) | Plan d'exécution : chantier E1 — système de tests de contrastes | ✅ exécuté le 2026-07-04 |
+| [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) | Artefact généré : matrice de contraste WCAG des 40 paires × 12 thèmes | vivant (régénéré par `pnpm contrast:report`) |
+| [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) | Plan d'exécution : chantier E2 — corrections moteurs + OKLCH anti-glare | à exécuter (E1 fait) |
+| [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : remap de familles Tailwind + tests de distinguabilité | à exécuter (E1 fait, E2 recommandé) |
 
 Principe : **un chantier = un plan = une branche = une exécution par IA**,
 avec revue avant merge. Le guide donne l'ordre ; chaque plan est autonome.
@@ -539,9 +540,14 @@ convention kebab-case + hiérarchie portée par le registre (actée).
 
 Étapes 1 et 2 de la trajectoire (§ 6.3) exécutées le 2026-07-03. Avant
 l'étape 3 (extraction), deux chantiers explicitement hors périmètre de
-cette migration restent à faire in situ (cf. « Hors périmètre » du plan) :
-réécriture déclarative du moteur high-contrast sur les rôles, et tests
-automatiques de contraste WCAG sur les paires de rôles.
+cette migration restaient à faire in situ (cf. « Hors périmètre » du
+plan) : réécriture déclarative du moteur high-contrast sur les rôles
+(reste à faire, chantier E2), et tests automatiques de contraste WCAG sur
+les paires de rôles — **fait le 2026-07-04** (chantier E1, voir
+[PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) et
+[CONTRAST-REPORT.md](./CONTRAST-REPORT.md) ; 7 paires waivées comme
+échecs préexistants, en attente d'arbitrage — aucune couleur retouchée,
+chantier purement additif).
 
 Le canal de distribution, initialement identifié comme reportable, a été
 **acté le 2026-07-03** (modèle hybride, § 6.3). Restent reportables sans

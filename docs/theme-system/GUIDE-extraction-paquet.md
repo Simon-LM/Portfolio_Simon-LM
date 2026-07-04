@@ -79,13 +79,21 @@ packages/<nom>/                  # nom : décision en cours (a11y-prefs pressent
 
 ## Les chantiers, dans l'ordre
 
-### E1 — Système de tests de contrastes (in situ, avant tout)
+### E1 — Système de tests de contrastes (in situ, avant tout) — ✅ fait le 2026-07-04
 
 Plan d'exécution : [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md).
 Conception : chapitre dédié en fin de document. Livré d'abord dans le
 portfolio (`pnpm test`), déplacé plus tard dans `testing/` du paquet.
 Chantier **purement additif** : les échecs préexistants deviennent des
 waivers documentés pour arbitrage, aucune couleur n'est corrigée.
+
+Résultat : `src/accessibility/contrast/` (utilitaires WCAG, extraction des
+12 blocs `[data-theme]`, registre de 40 paires, suite Jest, générateur de
+rapport), [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) généré et commité. 33
+échecs mesurés au premier run, regroupés en 7 paires waivées
+(`preexisting: true`, ratio mesuré + raison factuelle) — en attente
+d'arbitrage par Simon (voir CHANGELOG phase 5 pour la liste triée par
+gravité). CSS compilé resté strictement byte-identique du début à la fin.
 
 ### E2 — Revue des moteurs anti-glare / daltoniens (in situ)
 

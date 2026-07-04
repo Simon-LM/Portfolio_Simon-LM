@@ -13,6 +13,230 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-04
+
+### Docs (chantier E1 — tests de contrastes, phase 5 — finalisation)
+
+- Phase 5 (dernière) de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) :
+  vérification finale et documentation. `pnpm build`/`lint`/`test` verts ;
+  CSS compilé toujours strictement byte-identique à la baseline de phase 0
+  (`diff` vide sur `sass --no-source-map --style=expanded`).
+- README mis à jour : carte des documents (E1 marqué exécuté, ajout de la
+  ligne CONTRAST-REPORT.md), § 6.4 (le second chantier hors périmètre de la
+  migration fondations — les tests de contraste — est maintenant fait).
+  Guide E1→E7 mis à jour (E1 marqué fait avec résumé du résultat).
+- **Rapport final pour arbitrage de Simon** — 7 paires waivées, triées par
+  gravité (ratio mesuré le plus bas d'abord) :
+
+  1. `site/button-active-outline-on-panel-bg` — **1.00:1 en high-contrast**
+     (le contour actif du bouton est littéralement invisible : `--accent`
+     et `--bg-base` résolvent tous deux à `#000000` dans ce thème) ; 1.02
+     à 1.38:1 dans les 9 autres thèmes waivés. **Recommandation** :
+     ajustement de rôle — `--color-button-active-outline` pourrait être
+     recâblé sur `--accent-strong` (déjà défini, amber-500) plutôt que
+     `--accent` ; à valider par Simon, hors périmètre de ce chantier
+     additif.
+  2. `role/fg-on-accent-on-accent` — 1.15:1 en `dark`, 1.18:1 en
+     `anti-glare-dark`. **Recommandation** : révision du modèle de rôles
+     (chantier E2, revue des moteurs) — `--fg-on-accent` s'inverse avec
+     les autres rôles de texte alors que `--accent` reste volontairement
+     fixe entre thèmes clair/sombre.
+  3. `site/header-text-on-header-bg` — même cause et mêmes ratios que
+     `role/fg-on-accent-on-accent` (paire identique). Même recommandation.
+  4. `role/danger-on-bg-base` — 1.34:1 en `protanopia`, 1.45:1 en
+     `deuteranopia`, 3.25–3.46:1 dans 4 autres thèmes. **Recommandation** :
+     [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) — les
+     couleurs de substitution des moteurs daltoniens sont choisies pour la
+     distinguabilité perceptuelle, pas le contraste ; `--danger` n'étant
+     consommé par aucun composant à ce jour, aucune urgence utilisateur.
+  5. `site/header-text-role-on-header-bg` — 1.38:1 en `dark`, 1.42:1 en
+     `anti-glare-dark`. **Recommandation** : chantier E2 (même famille que
+     #2/#3 — `--fg-muted`/`--accent` sur fond accent en thème sombre).
+  6. `site/header-blog-link-text-on-bg` — mêmes ratios que #5 (mêmes deux
+     couleurs, fg/bg échangés). Même recommandation.
+  7. `role/success-on-bg-base` — 2.42:1 en `achromatopsia`, 2.81–4.03:1
+     dans 8 autres thèmes. **Recommandation** : ajustement de rôle
+     (`emerald-600` → un cran plus soutenu) si `--success` venait à être
+     consommé par un composant ; aucune urgence, actuellement inutilisé.
+
+  Détail complet (raisons factuelles, valeurs hex/HSL vérifiées, ratios par
+  thème) : [contrast-pairs.ts](../../src/accessibility/contrast/contrast-pairs.ts)
+  et [CONTRAST-REPORT.md](./CONTRAST-REPORT.md).
+- Rappel : chantier strictement additif du début à la fin — aucune couleur,
+  rôle ou thème n'a été modifié dans `src/styles/`. Les 7 points ci-dessus
+  sont des **propositions** pour un futur chantier corrective ; leur
+  traitement (et son ordonnancement vs E2/E3) reste à l'arbitrage de Simon.
+
+### Added (chantier E1 — tests de contrastes, phase 4)
+
+- Phase 4 de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) :
+  `src/accessibility/contrast/report.ts`, générateur de
+  [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) (matrice `pairs × 12
+  thèmes`, cellule = ratio mesuré + symbole ✓/✗/⚠, légende des
+  abréviations de thème, section « Waivers » reprenant les raisons de
+  `contrast-pairs.ts`). Script `pnpm contrast:report` (via `tsx`) ajouté
+  à `package.json`.
+  - Refactor mineur au passage : la logique de résolution/mesure
+    (`resolveColor` + `measureRatio`), jusque-là dupliquée dans
+    `contrast.test.ts`, extraite dans `src/accessibility/contrast/measure.ts`
+    et réutilisée par `contrast.test.ts` et `report.ts` — aucun changement
+    de comportement (498 tests toujours verts après le refactor).
+  - **Date de génération non source de flakiness** : `generateReport()`
+    accepte une date en paramètre ; le test de fraîcheur
+    (`report.test.ts`) extrait la date déjà présente dans le fichier
+    commité, régénère avec cette même date, puis compare le contenu
+    intégral. Ainsi le test échoue uniquement si les *données* (couleurs,
+    ratios, waivers) ont changé sans régénération — jamais à cause du
+    changement de date d'un jour sur l'autre.
+  - Rapport généré et commité. État actuel : 33 cellules `⚠` (les 7 paires
+    waivées en phase 3), 0 cellule `✗` restante.
+  - Vérifié : `pnpm test` (566 tests, 15 suites) vert, `pnpm lint` vert,
+    `pnpm exec tsc --noEmit` vert, CSS compilé strictement identique à la
+    baseline de phase 0.
+
+### Added (chantier E1 — tests de contrastes, phase 3)
+
+- Phase 3 de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) :
+  `src/accessibility/contrast/__tests__/contrast.test.ts`, la suite Jest
+  complète (matrice paire × thème, 498 tests), plus le mécanisme
+  anti-zombie (un waiver dont le ratio mesuré redevient conforme fait
+  échouer le test avec un message explicite demandant sa suppression).
+- Premier run (inventaire, échec attendu par le plan) : **33 échecs / 482
+  tests**, regroupés sur **7 paires** distinctes. Sortie brute du script de
+  mesure (`getVar` + `wcag.ts`, avant tout waiver) :
+
+  ```
+  Total failures: 33
+
+  role/fg-on-accent-on-accent            dark               ratio=1.1484  threshold=4.5
+  role/fg-on-accent-on-accent            anti-glare-dark    ratio=1.1791  threshold=4.5
+  role/success-on-bg-base                light              ratio=3.6079  threshold=4.5
+  role/success-on-bg-base                anti-glare-light   ratio=2.8507  threshold=4.5
+  role/success-on-bg-base                deuteranomaly      ratio=3.6079  threshold=4.5
+  role/success-on-bg-base                deuteranopia       ratio=4.0306  threshold=4.5
+  role/success-on-bg-base                protanomaly        ratio=3.6079  threshold=4.5
+  role/success-on-bg-base                protanopia         ratio=3.1254  threshold=4.5
+  role/success-on-bg-base                tritanomaly        ratio=3.6079  threshold=4.5
+  role/success-on-bg-base                tritanopia         ratio=2.8112  threshold=4.5
+  role/success-on-bg-base                achromatopsia      ratio=2.4167  threshold=4.5
+  role/danger-on-bg-base                 anti-glare-light   ratio=3.4637  threshold=4.5
+  role/danger-on-bg-base                 deuteranomaly      ratio=3.3330  threshold=4.5
+  role/danger-on-bg-base                 deuteranopia       ratio=1.4477  threshold=4.5
+  role/danger-on-bg-base                 protanomaly        ratio=3.2777  threshold=4.5
+  role/danger-on-bg-base                 protanopia         ratio=1.3430  threshold=4.5
+  role/danger-on-bg-base                 tritanopia         ratio=3.2507  threshold=4.5
+  site/header-text-on-header-bg          dark               ratio=1.1484  threshold=4.5
+  site/header-text-on-header-bg          anti-glare-dark    ratio=1.1791  threshold=4.5
+  site/header-text-role-on-header-bg     dark               ratio=1.3806  threshold=4.5
+  site/header-text-role-on-header-bg     anti-glare-dark    ratio=1.4171  threshold=4.5
+  site/header-blog-link-text-on-bg       dark               ratio=1.3806  threshold=4.5
+  site/header-blog-link-text-on-bg       anti-glare-dark    ratio=1.4171  threshold=4.5
+  site/button-active-outline-on-panel-bg light              ratio=1.3806  threshold=3
+  site/button-active-outline-on-panel-bg anti-glare-light   ratio=1.3806  threshold=3
+  site/button-active-outline-on-panel-bg high-contrast      ratio=1.0000  threshold=3
+  site/button-active-outline-on-panel-bg deuteranomaly      ratio=1.1280  threshold=3
+  site/button-active-outline-on-panel-bg deuteranopia       ratio=1.1800  threshold=3
+  site/button-active-outline-on-panel-bg protanomaly        ratio=1.1280  threshold=3
+  site/button-active-outline-on-panel-bg protanopia         ratio=1.1800  threshold=3
+  site/button-active-outline-on-panel-bg tritanomaly        ratio=1.0241  threshold=3
+  site/button-active-outline-on-panel-bg tritanopia         ratio=1.0579  threshold=3
+  site/button-active-outline-on-panel-bg achromatopsia      ratio=1.2069  threshold=3
+  ```
+
+- 7 waivers `preexisting: true` ajoutés dans `contrast-pairs.ts`, chacun
+  avec le ratio mesuré par thème et une raison factuelle (valeurs
+  hexadécimales/HSL vérifiées via `getVar`, aucune couleur corrigée) :
+  - **`role/fg-on-accent-on-accent`** et **`site/header-text-on-header-bg`**
+    (même paire de variables) : `--accent` reste volontairement fixe
+    (`#fcd34d`) entre les thèmes clair et sombre, mais `--fg-on-accent`
+    s'inverse avec le reste des rôles de texte (`#0c0a09` en clair,
+    `#e7e5e4` en sombre) — texte clair sur fond resté clair en
+    `dark`/`anti-glare-dark`.
+  - **`site/header-text-role-on-header-bg`** et
+    **`site/header-blog-link-text-on-bg`** : même paire de couleurs
+    résolues (`--fg-muted` inversé ≈ `#fafaf9` en sombre / `--accent`
+    fixe `#fcd34d`), fg et bg simplement échangés entre les deux paires —
+    d'où les ratios identiques.
+  - **`role/success-on-bg-base`** : `emerald-600` choisi pour sa
+    reconnaissabilité sémantique, pas pour son contraste sur `--bg-base` ;
+    `--success` n'est consommé par aucun composant actuellement (vérifié
+    par grep, aucun `var(--success)` dans `src/`).
+  - **`role/danger-on-bg-base`** : `red-600` passe 4.5:1 sur `--bg-base`
+    dans la plupart des thèmes, mais les couleurs de substitution des
+    moteurs daltoniens (ex. `#ffcc00` en deutéranopie/protanopie, choisies
+    pour la distinguabilité perceptuelle, pas le contraste) tombent bien
+    en dessous ; `--danger` n'est consommé par aucun composant
+    actuellement. Candidat pour
+    [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md).
+  - **`site/button-active-outline-on-panel-bg`** : en `high-contrast`,
+    `--color-button-active-outline` (= `--accent`) et `--color-panel-bg`
+    (= `--bg-base`) résolvent tous deux à `#000000` — ratio exactement
+    1:1, contour totalement invisible sur son fond. Dans les autres
+    thèmes clairs, `--accent` (ambre clair) sur `--bg-base` (quasi blanc)
+    est structurellement sous le seuil non-texte de 3:1 ; les thèmes
+    sombres passent car `--bg-base` y devient sombre. Un rôle plus
+    contrasté (`--accent-strong`) existe déjà mais n'est pas câblé sur ce
+    token.
+- Suite complète re-exécutée après ajout des waivers : **498/498 tests
+  verts** (incluant la garde anti-zombie). Nettoyage du script de mesure
+  temporaire `__scratch_inventory.ts` (non livrable, jamais commité).
+- Vérifié : `pnpm test` (565 tests, 14 suites) vert, `pnpm lint` vert,
+  `pnpm exec tsc --noEmit` vert, CSS compilé strictement identique à la
+  baseline de phase 0 (`diff` vide, hors commentaire `sourceMappingURL`
+  absent dans les deux avec `--no-source-map`).
+
+### Added (chantier E1 — tests de contrastes, phase 2)
+
+- Phase 2 de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) :
+  `src/accessibility/contrast/contrast-pairs.ts`, le registre des paires
+  fg/bg (source de vérité, extensible, jamais amputé — un échec devient un
+  waiver en phase 3, pas une suppression).
+  - 19 paires **niveau rôles** (partiront dans le paquet, README § 6.1) et
+    21 paires **niveau site** (couche 3, propre au portfolio), reprises
+    telles quelles des tables du plan. `--color-tooltip-text` déclare
+    `composeOver: "--bg-base"` (son fond porte un alpha).
+  - `@types/culori` ajouté (types manquants du paquet `culori`).
+  - Vérifié : `pnpm lint` et `pnpm exec tsc --noEmit` verts.
+
+### Added (chantier E1 — tests de contrastes, phase 1)
+
+- Phase 1 de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) : mise en
+  place des utilitaires du système de tests de contrastes WCAG (branche
+  `feat/contrast-tests`, chantier additif — aucun fichier de `src/styles/`
+  modifié, CSS compilé byte-identique).
+  - Dépendances dev ajoutées : `culori` (parsing/conversion de couleurs),
+    `postcss` (parsing structuré du CSS compilé), `tsx` (exécution du futur
+    générateur de rapport, phase 4).
+  - `src/accessibility/contrast/wcag.ts` : `toRgb()` (erreur explicite sur
+    couleur invalide, jamais de repli silencieux), `compositeOver()`
+    (composition alpha standard sRGB), `contrastRatio()` (délègue à
+    `culori.wcagContrast`, à appeler après composition), `thresholdFor()`
+    (seuils WCAG 2.2 : `text` 4.5, `large-text`/`non-text` 3.0).
+  - `src/accessibility/contrast/extract-themes.ts` : compile
+    `src/styles/main.scss` via l'API JS de `sass` (mémoïsé), parse le CSS
+    avec `postcss`, extrait les custom properties de chacun des 12 blocs
+    `[data-theme="X"]` (sélecteur exact, pas les descendants comme
+    `[data-theme="dark"] .header__title-name`) ainsi que de `:root`. Erreur
+    explicite si un thème de `src/config/themes.ts` (source unique) est
+    absent du CSS compilé.
+  - **Bug détecté et corrigé pendant l'écriture des tests** : `:root`
+    contient *deux* règles distinctes dans le CSS compilé — celle du
+    système de thèmes (~94 propriétés) et une autre, sans rapport, de
+    `_scroll-progress.scss` (`--scroll-progress-link-default`). La première
+    version de l'extraction ne gardait que la dernière rencontrée, perdant
+    silencieusement les valeurs de thème. Corrigé en fusionnant toutes les
+    règles `:root` (comme le ferait la cascade CSS), et le test de
+    cohérence adapté en conséquence (vérifie que les propriétés de thème de
+    `:root` concordent avec `[data-theme="light"]`, sans exiger que `:root`
+    ne contienne *que* des tokens de thème).
+  - Tests unitaires : `wcag.test.ts` (valeurs de référence connues :
+    noir/blanc = 21:1, `#767676`/blanc ≈ 4.54:1, composition
+    `rgba(0,0,0,0.5)` sur blanc ≈ `#808080`), `extract-themes.test.ts` (les
+    12 thèmes présents, cohérence `:root`, erreurs explicites sur
+    thème/propriété inconnus).
+  - Vérifié : `pnpm test` vert (83 tests, 13 suites), `pnpm lint` vert, CSS
+    compilé strictement identique à la baseline de phase 0.
+
 ## 2026-07-03
 
 ### Docs (plan de la refonte daltonienne + carte des documents)
