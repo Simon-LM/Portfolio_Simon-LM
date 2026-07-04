@@ -15,6 +15,82 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-04
 
+### Changed (chantier E2 — revue des moteurs, phase 3 — anti-éblouissement en OKLCH)
+
+- Phase 3 (décision actée par Simon le 2026-07-03) de
+  [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) : `transform-for-anti-glare`
+  (`_anti-glare-functions.scss`) réécrite pour travailler en espace OKLCH
+  (`color.channel(…, $space: oklch)` / `color.change(…, $space: oklch)` /
+  `color.to-space(…, rgb)`) au lieu de HSL — la lightness OKLCH est
+  perceptuellement uniforme, contrairement à HSL où un jaune et un bleu de
+  même L ne s'assombrissent pas visuellement à l'identique.
+- **Seuils recalibrés par rapport au point de départ du plan** (le plan le
+  signale explicitement comme un point de départ à ajuster, pas une
+  vérité) :
+  - Mode `dark` (`L < 22%`) : conservé tel quel. Mesure : sur le rail
+    décalé du thème dark, seul le cran `gray-400` (le plus sombre du
+    thème dark, OKLCH L ≈ 21.6%) passe sous ce seuil — exactement la même
+    couverture que l'ancien seuil HSL `< 15%` (qui ne couvrait, lui
+    aussi, que ce même cran, à HSL L ≈ 10%). Aucun ajustement nécessaire.
+  - Mode `light` (`L > 92%` dans le plan) : **abaissé à `L > 85%`**. Avec
+    92%, `stone-300` (OKLCH L ≈ 86.9%) restait en dehors du seuil et donc
+    quasiment intact, alors que l'ancien moteur HSL l'atténuait déjà
+    (HSL L ≈ 82.9%, au-dessus de son seuil `75%`). Rendu observé avant
+    correction : `--gray-300` en anti-glare-light passait de `#d6d3d1`
+    (original, quasi inchangé) au lieu d'un ton nettement atténué. Avec
+    85%, `stone-50`/`100`/`200`/`300` sont couverts (comme avant),
+    `stone-400` (OKLCH L ≈ 71.6%) reste hors seuil avec une marge large.
+- **Tableau comparatif** (moteur HSL, phase 2, vs moteur OKLCH, phase 3 —
+  hex arrondis) :
+
+  | Token | AGL avant | AGL après | AGD avant | AGD après |
+  | --- | --- | --- | --- | --- |
+  | `--gray-950` | `#0c0a09` | `#0c0a09` | `#e7e5e4` | `#ece4e0` |
+  | `--gray-900` | `#1c1917` | `#1c1917` | `#e7e5e4` | `#ece4e0` |
+  | `--gray-800` | `#292524` | `#292524` | `#f5f5f4` | `#f6f6ee` |
+  | `--gray-700` | `#44403c` | `#44403c` | `#fafaf9` | `#fbfbf3` |
+  | `--gray-600` | `#57534e` | `#57534f` | `#fafaf9` | `#fbfbf3` |
+  | `--gray-500` | `#77716d` | `#77716d` | `#78716c` | `#78716c` |
+  | `--gray-400` | `#a8a29f` | `#a8a29f` | `#2a2623` | `#2c2723` |
+  | `--gray-300` | `#b8b3b0` | `#d0cdcb` | `#292524` | `#2b2423` |
+  | `--gray-200` | `#c6c2c0` | `#d8d4d3` | `#292524` | `#2b2423` |
+  | `--gray-100` | `#d2d2ce` | `#e5e5e1` | `#292524` | `#2b2423` |
+  | `--gray-50` | `#d8d8d1` | `#eaeae6` | `#44403c` | `#44403b` |
+  | `--accent` | `#f3ce56` | `#efca57` | `#f8d151` | `#fad358` |
+  | `--accent-strong` | `#e99b17` | `#efa135` | `#ef9d11` | `#f2a026` |
+  | `--accent-ink` | `#421b06` | `#431c08` | `#fdf2c8` | `#fdf3c9` |
+  | `--accent-soft` | `#f7e18a` | `#ece2bb` | `#652807` | `#441b05` |
+  | `--link` | `#114969` | `#174a6a` | `#bce5fb` | `#bce6fb` |
+  | `--link-hover` | `#0d577f` | `#195980` | `#e1f2fd` | `#e1f2fd` |
+  | `--success` | `#0c8f66` | `#28946b` | `#ecfdf5` | `#edfdf5` |
+  | `--danger` | `#d32f2f` | `#d43832` | `#fef2f2` | `#fef2f2` |
+
+  Lecture : `gray-300`/`200`/`100`/`50` sont désormais dans le même ordre
+  de grandeur qu'avant (auparavant `gray-300` seul restait quasi
+  intact avec le seuil 92% du plan) ; les grands aplats (`gray-950`
+  à `gray-500`, `link`, `danger`) sont quasi inchangés ; `accent-soft`
+  se déplace un peu plus que les autres primitives (chroma initiale plus
+  marquée). **Aucune de ces valeurs n'est définitive** : Simon reste seul
+  juge du réglage fin, le rendu ci-dessus n'est qu'un point de départ
+  raisonnable.
+- **Diff CSS** : strictement confiné aux blocs `anti-glare-light` et
+  `anti-glare-dark` (vérifié, mêmes plages de lignes qu'en phase 2).
+- **Effet de bord traité** : `CONTRAST-REPORT.md` régénéré. 6 waivers
+  référençant une paire affectée par ce changement de couleurs ont leur
+  ratio mesuré mis à jour dans `contrast-pairs.ts`
+  (`role/fg-on-accent-on-accent`, `role/success-on-bg-base`,
+  `role/danger-on-bg-base`, `site/header-text-on-header-bg`,
+  `site/header-text-role-on-header-bg`,
+  `site/header-blog-link-text-on-bg` — tous en `anti-glare-light` et/ou
+  `anti-glare-dark`) ; tous restent non conformes après le changement,
+  aucun waiver devenu zombie.
+- **Vérification visuelle** : capture d'écran automatisée (Chromium
+  headless, page d'accueil) des deux thèmes anti-glare recalibrés —
+  rendu sain, cohérent avec la phase 2, aucune régression visible.
+  **Validation visuelle complète par Simon requise avant merge**,
+  en particulier sur le réglage fin des seuils OKLCH ci-dessus.
+- **Vérif** : `pnpm build`/`lint`/`test` (566 tests, 15 suites) verts.
+
 ### Changed (chantier E2 — revue des moteurs, phase 2 — anti-éblouissement en passe unique)
 
 - Phase 2 de [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) :

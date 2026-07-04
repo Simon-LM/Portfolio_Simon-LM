@@ -53,9 +53,11 @@ const rolePairs: ContrastPair[] = [
 				"of the text roles (near-black #0c0a09 in light, near-white #e7e5e4 in " +
 				"dark) — in the dark-based themes this puts light text on a background " +
 				"that stayed light. Pre-existing since the role layer was introduced " +
-				"(fondations migration); same root cause as site/header-text-on-header-bg.",
+				"(fondations migration); same root cause as site/header-text-on-header-bg. " +
+				"anti-glare-dark's ratio shifted slightly (1.18 → 1.15) after the " +
+				"chantier E2 OKLCH anti-glare rewrite (PLAN-revue-moteurs.md phase 3).",
 			preexisting: true,
-			measured: { dark: 1.1484, "anti-glare-dark": 1.1791 },
+			measured: { dark: 1.1484, "anti-glare-dark": 1.1459 },
 		},
 	},
 	{ id: "role/accent-ink-on-accent-soft", fg: "--accent-ink", bg: "--accent-soft", level: "text" },
@@ -75,11 +77,14 @@ const rolePairs: ContrastPair[] = [
 				"emerald-600 (--success) is chosen for semantic recognizability, not " +
 				"for WCAG contrast against --bg-base; --success is currently " +
 				"unreferenced by any component (no var(--success) in src/styles or " +
-				"src/components). Pre-existing since the role's introduction.",
+				"src/components). Pre-existing since the role's introduction. " +
+				"anti-glare-light's ratio rose slightly (2.85 → 3.13, still " +
+				"non-compliant) after the chantier E2 OKLCH anti-glare rewrite " +
+				"(PLAN-revue-moteurs.md phase 3).",
 			preexisting: true,
 			measured: {
 				light: 3.6079,
-				"anti-glare-light": 2.8507,
+				"anti-glare-light": 3.1323,
 				deuteranomaly: 3.6079,
 				deuteranopia: 4.0306,
 				protanomaly: 3.6079,
@@ -103,10 +108,12 @@ const rolePairs: ContrastPair[] = [
 				"deficiency, not for contrast) drop well below threshold; " +
 				"anti-glare-light's warmth shift also erodes the margin. --danger is " +
 				"currently unreferenced by any component. Pre-existing; candidate for " +
-				"PLAN-refonte-daltonienne.md.",
+				"PLAN-refonte-daltonienne.md. anti-glare-light's ratio rose (3.46 → " +
+				"3.94, still non-compliant) after the chantier E2 OKLCH anti-glare " +
+				"rewrite (PLAN-revue-moteurs.md phase 3).",
 			preexisting: true,
 			measured: {
-				"anti-glare-light": 3.4637,
+				"anti-glare-light": 3.9425,
 				deuteranomaly: 3.333,
 				deuteranopia: 1.4477,
 				protanomaly: 3.2777,
@@ -133,9 +140,11 @@ const sitePairs: ContrastPair[] = [
 		waiver: {
 			reason:
 				"--color-header-text = --fg-on-accent, --color-header-bg = --accent — " +
-				"identical pair and root cause as role/fg-on-accent-on-accent.",
+				"identical pair and root cause as role/fg-on-accent-on-accent. " +
+				"anti-glare-dark's ratio shifted slightly (1.18 -> 1.15) after the " +
+				"chantier E2 OKLCH anti-glare rewrite (PLAN-revue-moteurs.md phase 3).",
 			preexisting: true,
-			measured: { dark: 1.1484, "anti-glare-dark": 1.1791 },
+			measured: { dark: 1.1484, "anti-glare-dark": 1.1459 },
 		},
 	},
 	// fg-muted rendered on the accent background — sensitive pair (small
@@ -152,9 +161,11 @@ const sitePairs: ContrastPair[] = [
 				"--accent, which stays a fixed light amber (#fcd34d) in every theme — " +
 				"near-white on light-amber in dark-based themes. Same two resolved " +
 				"colors (swapped) as site/header-blog-link-text-on-bg, hence the " +
-				"matching ratios. Pre-existing.",
+				"matching ratios. Pre-existing. anti-glare-dark's ratio shifted " +
+				"slightly (1.42 -> 1.38) after the chantier E2 OKLCH anti-glare " +
+				"rewrite (PLAN-revue-moteurs.md phase 3).",
 			preexisting: true,
-			measured: { dark: 1.3806, "anti-glare-dark": 1.4171 },
+			measured: { dark: 1.3806, "anti-glare-dark": 1.3816 },
 		},
 	},
 	{
@@ -168,9 +179,11 @@ const sitePairs: ContrastPair[] = [
 				"in every theme) on --color-header-blog-link-bg = --bg-emphasis, which " +
 				"inverts to near-white (#fafaf9) in the dark-based themes — light " +
 				"amber on near-white. Same two resolved colors (swapped) as " +
-				"site/header-text-role-on-header-bg. Pre-existing.",
+				"site/header-text-role-on-header-bg. Pre-existing. anti-glare-dark's " +
+				"ratio shifted slightly (1.42 -> 1.38) after the chantier E2 OKLCH " +
+				"anti-glare rewrite (PLAN-revue-moteurs.md phase 3).",
 			preexisting: true,
-			measured: { dark: 1.3806, "anti-glare-dark": 1.4171 },
+			measured: { dark: 1.3806, "anti-glare-dark": 1.3816 },
 		},
 	},
 	{ id: "site/lang-toggle-text-activated-on-bg", fg: "--color-lang-toggle-text-activated", bg: "--color-lang-toggle-bg-activated", level: "text" },

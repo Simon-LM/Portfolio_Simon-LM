@@ -17,31 +17,40 @@
 		@return if(sass($mode == "light"): #888888; else: #aaaaaa);
 	}
 
-	// Extraire les composantes HSL
-	$h: color.channel($color, "hue", $space: hsl);
-	$s: color.channel($color, "saturation", $space: hsl);
-	$l: color.channel($color, "lightness", $space: hsl);
+	// Extraire les canaux perceptuels OKLCH : contrairement à la lightness
+	// HSL, la lightness OKLCH est perceptuellement uniforme — un jaune et un
+	// bleu de même L s'assombrissent visuellement à l'identique ici.
+	$l: color.channel($color, "lightness", $space: oklch);
+	$c: color.channel($color, "chroma", $space: oklch);
 
 	// Réduction d'éblouissement paramètres selon le mode
 	@if $mode == "light" {
-		// Pour mode clair: réduire la luminosité des éléments très clairs
-		@if $l > 75% {
-			$l: max(65%, $l * 0.85); // Réduire l'éblouissement
-			$s: max(4%, $s); // Éviter le blanc pur
+		// Pour mode clair: réduire la luminosité des éléments très clairs.
+		// Seuil calibré à 85% (pas les 92% du point de départ du plan) pour
+		// couvrir stone-300 (OKLCH L ≈ 86.9%, HSL L ≈ 82.9% — au-dessus du
+		// seuil HSL 75% de l'ancien moteur, donc déjà atténué avant ce
+		// correctif) ; sans cet ajustement stone-300 restait quasi intact
+		// (voir rapport de phase 3 pour la mesure comparative complète).
+		@if $l > 85% {
+			$l: max(85%, $l - 5%); // Réduire l'éblouissement
+			$c: max(0.005, $c); // Éviter le blanc pur
 		}
-		// Réduire légèrement la saturation pour un effet plus doux
-		$s: $s * 0.9;
+		// Réduire légèrement la chroma pour un effet plus doux
+		$c: $c * 0.9;
 	} @else if $mode == "dark" {
 		// Pour mode sombre: éclaircir légèrement les noirs
-		@if $l < 15% {
-			$l: min(25%, $l * 1.5); // Éviter les noirs trop profonds
+		@if $l < 22% {
+			$l: min(30%, $l + 6%); // Éviter les noirs trop profonds
 		}
-		// Préserver un minimum de saturation
-		$s: max(5%, $s * 0.95);
+		// Préserver un minimum de chroma
+		$c: max(0.01, $c * 0.95);
 	}
 
-	// Retourner la couleur transformée
-	@return hsl($h, $s, $l);
+	// Reconstruire en RVB pour une émission CSS stable
+	@return color.to-space(
+		color.change($color, $lightness: $l, $chroma: $c, $space: oklch),
+		rgb
+	);
 }
 
 // Mixin pour appliquer l'effet anti-éblouissement sur le body
