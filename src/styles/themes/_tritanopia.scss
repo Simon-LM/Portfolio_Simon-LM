@@ -8,32 +8,11 @@
 	// D'abord appliquer les variables du thème light
 	@include light-theme-variables();
 
-	// Configuration centralisée du thème tritanopia
-	$tritanopia-config: (
-		// Couleurs spéciales pour remplacer certaines teintes indistinguables
-		"special-colors":
-			(
-				"success": #ff6600,
-				// Orange pour remplacer le vert
-				"danger": #ff3399,
-				// Rose pour remplacer le rouge
-				// Vous pouvez ajouter d'autres couleurs spéciales ici
-			),
-
-		// Contrôle quelles variables sont transformées automatiquement
-		"overrides":
-			(
-				// Exemples: si vous voulez conserver certaines couleurs telles quelles
-				"accent": false,
-				"accent-ink": false,
-				"accent-soft": false,
-				"link": false,
-				"link-hover": false
-			)
-	);
-
-	// Appliquer la transformation automatique avec la configuration
-	@include transform-light-to-tritanopia($tritanopia-config);
+	// Family-remap CVD (chantier E2 (refonte daltonienne), PLAN-refonte-daltonienne.md phase 3) :
+	// table par défaut de transform-light-to-tritanopia dans
+	// _theme-utils.scss (amber -> orange, sky -> violet ; emerald/redd
+	// inchangées, déjà sûres pour la confusion bleu-jaune).
+	@include transform-light-to-tritanopia();
 
 	// Surcharges manuelles après l'automatisation si nécessaire
 }

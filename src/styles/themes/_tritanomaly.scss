@@ -8,42 +8,10 @@
 	// D'abord appliquer les variables du thème light
 	@include light-theme-variables();
 
-	// Configuration centralisée du thème tritanomalie
-	$tritanomaly-config: (
-		// Paramètre global pour l'intensité d'adaptation
-		"enhancer": 1.3,
-
-		// Surcharges spécifiques
-		"overrides":
-			(
-				// Couleurs sémantiques
-				"accent": false,
-				"accent-ink": false,
-				"accent-soft": false,
-				"link": false,
-				"link-hover": false,
-				"success": true,
-				"danger": false
-			),
-
-		// Ajustements spéciaux par variable (intensité supplémentaire)
-		// Note : pas de clés "gray-*" ici — ce moteur ne transforme pas les gris.
-		"adjustments":
-			(
-				// Couleurs sémantiques
-				"accent": 0.1,
-				"accent-ink": 0,
-				"accent-soft": 0,
-				"link": 0.2,
-				// Plus d'effet pour les bleus
-				"link-hover": 0.2,
-				"success": 0,
-				"danger": 0
-			)
-	);
-
-	// Appliquer la transformation automatique avec la configuration
-	@include transform-light-to-tritanomaly($tritanomaly-config);
+	// Family-remap CVD (chantier E2 (refonte daltonienne), PLAN-refonte-daltonienne.md phase 3) :
+	// même table que transform-light-to-tritanopia, sévérité 0.5 par
+	// défaut (mélange perceptuel original/remap) — voir _theme-utils.scss.
+	@include transform-light-to-tritanomaly();
 
 	// Surcharges manuelles après l'automatisation si nécessaire
 }

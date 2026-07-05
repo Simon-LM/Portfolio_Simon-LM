@@ -15,6 +15,356 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-04
 
+### Docs (chantier E2 (refonte daltonienne), phase 5 — finalisation)
+
+- Phase 5 (dernière) de
+  [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md).
+  `pnpm build`/`lint`/`test` (609 tests, 17 suites) verts ; diff CSS
+  cumulé toujours confiné aux 6 blocs `[data-theme]` daltoniens.
+- **Correction d'étiquetage** : les entrées de phases 1 à 4 de ce
+  chantier référencent « chantier E3 » — une erreur de ma part, pas du
+  plan. [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) n'a
+  que E1/E2/E3(monorepo)/E4-E7 ; la refonte daltonienne fait partie
+  d'**E2** (« Revue des moteurs anti-glare / daltoniens »), la même
+  ombrelle que [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md).
+  Corrigé partout (docs et commentaires source, y compris dans les
+  entrées de phases 1 à 4 ci-dessous) en « chantier E2 (refonte
+  daltonienne) » pour lever l'ambiguïté avec l'autre plan, également
+  E2 — par un nouveau commit qui modifie le texte, sans toucher aux
+  commits déjà faits (aucune réécriture d'historique Git).
+- Docs mises à jour : README § 4.3 (moteurs daltoniens et
+  anti-éblouissement tous deux réécrits, description de
+  `remap-for-cvd()` à 4 cas), § 5 point 10 (le point daltonien n'est
+  plus implicite — testé mécaniquement), « Carte des documents »
+  (PLAN-refonte-daltonienne.md marqué exécuté), guide E2 (résultat
+  détaillé de la refonte,
+  résumé des chiffres clés).
+- **Rapport final pour arbitrage de Simon** :
+  - 5 commits sur `refactor/theme-cvd-remap` (code aux phases 1-3 ; la
+    4 et cette phase 5 sont documentation pure), diff CSS confiné aux 6
+    thèmes daltoniens.
+  - Waivers retirés : `role/danger-on-bg-base` (6 → 1 thème restant,
+    seul `anti-glare-light` — sans rapport avec le remap CVD) ;
+    `distinguish/success-vs-danger` (retiré entièrement).
+  - Waiver dégradé, point d'arbitrage explicite : `role/success-on-bg-base`
+    régresse en contraste WCAG dans 4 thèmes rouge-vert (jusqu'à
+    1.60:1, contre 3.13-4.03:1 avant) — la calibration du remap
+    `emerald → sky` a priorisé la distinguabilité CVD
+    (`distinguish/link-vs-success`, qui aurait autrement chuté jusqu'à
+    ΔE 4.6) au détriment du contraste déjà non conforme de ce rôle.
+    Aucun impact utilisateur réel aujourd'hui (`--success` inutilisé) ;
+    décisions possibles pour Simon : accepter le compromis tel quel,
+    introduire un rôle `success-strong` distinct pour un futur usage en
+    texte, ou recalibrer une troisième fois avec un poids intermédiaire.
+  - Bug Sass documenté et corrigé (clés de map non quotées `orange`/
+    `violet` interprétées comme couleurs) — vigilance à garder pour
+    toute future famille nommée d'après une couleur CSS reconnue.
+  - Validation visuelle automatisée faite (captures Chromium headless
+    des 6 thèmes + panneau d'accessibilité) ; **validation visuelle
+    humaine de Simon requise avant tout merge**, en particulier sur le
+    virage orange du header en tritanopie/tritanomalie et le virage
+    violet des liens dans les mêmes thèmes.
+
+### Docs (chantier E2 (refonte daltonienne), phase 4 — vérifications et arbitrages)
+
+- Phase 4 de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md).
+  Les deux premiers points du plan (suite de contrastes redevenue verte,
+  waivers obsolètes retirés) ont dû être traités **dès la phase 3** pour
+  garder `pnpm test` vert à chaque commit (discipline du chantier) ; ce
+  qui reste propre à la phase 4 :
+- **Tableau ΔE avant/après** (avant = inventaire de la phase 1, avant
+  toute bascule ; après = mesuré une fois les 6 thèmes branchés sur
+  `remap-for-cvd`, phase 3 complète) :
+
+  | Paire | Thème | Avant | Après |
+  | --- | --- | --- | --- |
+  | success/danger | deuteranomaly | 40.01 | 43.17 |
+  | success/danger | deuteranopia | 74.28 | 53.18 |
+  | success/danger | protanomaly | 41.55 | 45.68 |
+  | success/danger | protanopia | 66.05 | 56.41 |
+  | success/danger | tritanomaly | 69.10 | 69.10 |
+  | success/danger | **tritanopia** | **6.81 ⚠** | **69.66 ✓** |
+  | success/danger | achromatopsia | 50.27 | 50.27 |
+  | accent/danger | deuteranomaly | 35.84 | 34.61 |
+  | accent/danger | deuteranopia | 44.87 | 29.55 |
+  | accent/danger | protanomaly | 43.73 | 41.02 |
+  | accent/danger | protanopia | 38.39 | 36.36 |
+  | accent/danger | tritanomaly | 56.95 | 35.13 |
+  | accent/danger | tritanopia | 43.48 | 30.35 |
+  | accent/danger | achromatopsia | 83.08 | 83.08 |
+  | accent/success | deuteranomaly | 39.85 | 41.85 |
+  | accent/success | deuteranopia | 36.18 | 50.53 |
+  | accent/success | protanomaly | 37.07 | 38.15 |
+  | accent/success | protanopia | 30.49 | 47.59 |
+  | accent/success | tritanomaly | 41.77 | 49.67 |
+  | accent/success | tritanopia | 39.88 | 59.15 |
+  | accent/success | achromatopsia | 16.75 ⚠ | 16.75 ⚠ (inchangé) |
+  | link/success | deuteranomaly | 38.38 | 40.28 |
+  | link/success | deuteranopia | 22.48 | 49.02 |
+  | link/success | protanomaly | 40.44 | 42.08 |
+  | link/success | protanopia | 33.40 | 47.08 |
+  | link/success | tritanomaly | 45.24 | 38.86 |
+  | link/success | tritanopia | 35.90 | 36.86 |
+  | link/success | achromatopsia | 38.95 | 38.95 |
+  | link/fg-base | (7 thèmes CVD) | 15.9–29.3 | inchangé (paire non affectée par le remap) |
+
+  Seul le cas `success/danger` en tritanopie change de statut
+  (échec → conforme, waiver retiré). `accent/success` en achromatopsie
+  reste le seul waiver de distinguabilité restant — mécanisme
+  achromatopsie explicitement hors périmètre de ce chantier.
+- **Rapport regénéré** : [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) déjà
+  à jour depuis le commit de phase 3 (aucune couleur modifiée depuis) —
+  revérifié, `report.test.ts` toujours vert.
+- **Validation visuelle** : capture d'écran automatisée (Chromium
+  headless) des 6 thèmes daltoniens sur la page d'accueil, plus le
+  panneau d'accessibilité ouvert (deutéranomalie) pour vérifier les
+  boutons/titres/focus. Rendu sain partout, y compris tritanopie où le
+  header passe visiblement à l'orange (`amber → orange`) — changement
+  attendu, pas une régression. **Validation visuelle humaine de Simon
+  requise avant merge**, comme l'exige le plan, en particulier sur : le
+  virage orange du header en tritanopie/tritanomalie, le virage violet
+  des liens dans les mêmes thèmes, et le teal/sky clair de `--success`
+  dans les 4 thèmes rouge-vert (`role/success-on-bg-base`, non consommé
+  aujourd'hui mais visible si un futur composant l'utilise).
+- **Point d'arbitrage explicite pour Simon** (déjà signalé en phase 3,
+  rappelé ici) : `role/success-on-bg-base` régresse en contraste WCAG
+  dans les 4 thèmes rouge-vert (jusqu'à 1.60:1) parce que la calibration
+  a priorisé la distinguabilité CVD (`distinguish/link-vs-success`) —
+  sans impact utilisateur réel aujourd'hui (`--success` inutilisé), mais
+  un arbitrage futur (nouveau rôle `success-strong` ? accepter le
+  compromis ?) reste à trancher si ce rôle est un jour consommé.
+- Vérifié : `pnpm build`/`lint`/`test` (609 tests, 17 suites) verts,
+  diff CSS cumulé toujours confiné aux 6 thèmes daltoniens.
+
+### Changed (chantier E2 (refonte daltonienne), phase 3 — tables par défaut et bascule des 6 thèmes)
+
+- Phase 3 de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) :
+  `_base-palette.scss` étendue avec deux familles Tailwind (`orange`,
+  `violet`) ; les 6 mixins `transform-light-to-{deuter,prot,trit}{anopia,anomaly}`
+  et les 6 fichiers de thèmes branchés sur `remap-for-cvd`. Tables
+  retenues :
+  - deutéranopie/deutéranomalie/protanopie/protanomalie (confusion
+    rouge-vert) : `emerald → sky (-3)`, `redd → amber (+1)`.
+  - tritanopie/tritanomalie (confusion bleu-jaune) : `amber → orange (0)`,
+    `sky → violet (0)` ; emerald/redd inchangées (déjà sûres pour cet axe).
+  - anomalies : mêmes tables que leur -opie, `"severity": 0.5`.
+  Les `special-colors` codées en dur (`#0075ff`, `#ffcc00`, `#0090ff`,
+  `#ffd700`, `#ff6600`, `#ff3399`) retirées des défauts partout ; les 6
+  fichiers de thèmes simplifiés (plus de config locale, les nouveaux
+  défauts des mixins suffisent).
+- **Bug Sass trouvé et corrigé pendant l'implémentation** : les clés de
+  map non quotées `orange:`/`violet:` dans `_base-palette.scss` sont des
+  **couleurs CSS reconnues** — Sass les interprète silencieusement comme
+  des valeurs `color` plutôt que des chaînes (`@warn` discret : « you
+  probably don't mean to use the color value orange… »), ce qui cassait
+  toute recherche par chaîne (`analyze-tailwind-color`, `get-color`)
+  avec `$map: null is not a map`. Corrigé en quotant explicitement
+  (`"orange":`, `"violet":`) comme le sont déjà `redd` (nommée ainsi
+  pour éviter la collision avec le mot-clé `red`) — cette même classe de
+  bug guettait déjà `redd` si elle avait été nommée `red`.
+- **Calibration mesurée du décalage `emerald → sky`** (le plan qualifie
+  ces tables de point de départ, pas une vérité) : le shift `0` proposé
+  fait chuter `distinguish/link-vs-success` sous le seuil ΔE ≥ 20 en
+  deutéranomalie/protanomalie (jusqu'à ΔE 4.6) — `--link` occupe déjà
+  `sky-900`, et le mélange de sévérité 0.5 de `--success` vers `sky-600`
+  finit perceptuellement trop proche. Essai `emerald → violet` : pire
+  (violet et sky sont perceptuellement voisins, ΔE jusqu'à 4.59). Essai
+  `sky (-4)` (sky-200, très clair) : ΔE ≥ 38 partout mais dégrade
+  fortement le contraste WCAG déjà non conforme de `--success` (jusqu'à
+  1.27:1). Retenu : `sky (-3)` (sky-300), qui satisfait ΔE ≥ 20 avec une
+  marge confortable (≥ 40 sur les thèmes affectés) sans creuser le
+  contraste plus que nécessaire.
+- **Suite de contrastes (E1) et de distinguabilité (E2/refonte daltonienne phase 1)
+  re-exécutées après bascule — succès attendu du plan** :
+  - `role/danger-on-bg-base` : passe de 6 thèmes waivés à **1 seul**
+    (`anti-glare-light`, non lié au remap CVD) — les 6 thèmes daltoniens
+    passent désormais ≥ 4.5:1 (le pire cas historique, `#ffcc00` à
+    1.34:1 en protanopie, est résolu par `redd → amber`).
+  - `distinguish/success-vs-danger` : waiver **retiré entièrement** — le
+    seul échec (tritanopie, ΔE 6.81, dû aux anciennes special-colors
+    `#ff6600`/`#ff3399` jamais vérifiées pour leur distinguabilité) est
+    résolu du simple fait de retirer ces special-colors par défaut
+    (emerald/redd restent inchangées en tritanopie, ΔE 69.66).
+  - `role/success-on-bg-base` **régresse** en deutéranomalie/
+    deutéranopie/protanomalie/protanopie (ratios 2.33/1.60/2.33/1.60,
+    contre 3.61/4.03/3.61/3.13 avant) : la calibration `sky (-3)`
+    priorise la distinguabilité CVD (voir ci-dessus) au détriment du
+    contraste WCAG déjà non conforme de ce rôle. `--success` reste
+    consommé par aucun composant à ce jour (vérifié par grep) — impact
+    utilisateur réel nul, mais point à signaler explicitement à Simon
+    (voir rapport de phase 4/5).
+  - Sortie brute complète (avant/après par thème, contraste et ΔE) dans
+    le rapport de phase joint à cette entrée ; `CONTRAST-REPORT.md`
+    régénéré.
+- **Diff CSS** : strictement confiné aux 6 blocs `[data-theme]`
+  daltoniens (`deuteranomaly`, `deuteranopia`, `protanomaly`,
+  `protanopia`, `tritanomaly`, `tritanopia`) — vérifié sur l'ensemble du
+  CSS compilé, rien d'autre n'a bougé.
+- **Purge des chemins morts, faite en fin de phase 3** (le plan la prévoit
+  « en fin de phase 4 », mais son unique condition — « quand plus rien ne
+  les référence » — était déjà remplie ici, et la phase 3 la redemande
+  elle-même en item 4) : `adapt-color-for-colorblindness`,
+  `adapt-color-for-color-anomaly` et leurs auxiliaires `brightness`/
+  `is-similar-to` supprimées de `_theme-utils.scss`, confirmé sans
+  appelant restant par grep avant suppression. CSS compilé strictement
+  identique avant/après cette purge (suppression de code mort pur).
+- Vérifié : `pnpm build`/`lint`/`test` (609 tests, 17 suites) verts.
+
+### Added (chantier E2 (refonte daltonienne), phase 2 — moteur de remap)
+
+- Phase 2 de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) :
+  `remap-for-cvd($color, $var-name, $config, $cvd-type)` ajoutée à
+  `_theme-utils.scss`, résolution en 4 cas (le plan en distingue 3, le
+  4ᵉ — « famille reconnue mais absente de la table » — a dû être rendu
+  explicite, voir divergence ci-dessous) :
+  1. `special-colors` explicite pour la variable → prioritaire sur tout
+     (mécanisme conservé tel quel).
+  2. Couleur reconnue comme swatch Tailwind **et** sa famille présente
+     dans `family-remap` → substitution vers la famille cible, au poids
+     décalé (décalage d'**index** dans `$tailwind-weights`, borné à
+     [50, 950], `@warn` si le bornage s'applique).
+  3. Couleur reconnue mais famille absente de `family-remap` → laissée
+     **inchangée** (déjà jugée sûre pour ce type de CVD — c'est
+     pourquoi, par exemple, `amber`/`sky` n'auront pas d'entrée dans les
+     tables proto/deutéranopie de la phase 3).
+  4. Couleur hors palette Tailwind (custom, futur consommateur du
+     paquet) : repli par rotation de teinte OKLCH vers une ancre fixe du
+     type de CVD, à luminance/chroma constants — point de calibration
+     non validé perceptuellement.
+  Mélange `severity` (0.5 pour les anomalies) appliqué en sortie via
+  `color.mix(…, $method: oklch)`, quel que soit le cas résolu.
+  Vérifié par un script Sass isolé (non commité) : priorité des
+  special-colors, remap + décalage de poids correct, bornage avec
+  `@warn`, famille non listée laissée intacte, rotation OKLCH avec
+  L/C préservés (vérifié : identiques à la couleur d'origine), mélange
+  de sévérité strictement compris entre original et remap complet.
+- **Divergence documentée : le branchement dans les 6 mixins
+  `auto-{deuter,prot,trit}{anopia,anomaly}-transform` est repoussé à la
+  phase 3**, alors que le plan demande de le faire dès la phase 2. Raison
+  mesurée : l'oracle « CSS byte-identique, le moteur existe mais aucun
+  thème ne l'utilise encore » de la phase 2 est incompatible avec un
+  branchement réel maintenant. Les 6 fichiers de thèmes actuels ne
+  définissent aucune clé `family-remap` ; sous la résolution ci-dessus,
+  une famille reconnue non listée (cas 3) doit être **laissée
+  inchangée** — or c'est déjà le comportement *correct* final, mais il
+  diffère du comportement *actuel* de l'ancien moteur HSL
+  (`adapt-color-for-colorblindness`), qui décale bel et bien la teinte de
+  `--accent` (ambre, teinte ≈45°, tombe dans sa fenêtre verte 30–150°) en
+  proto/deutéranopie. Rien ne permet de brancher le nouveau moteur sans
+  changer le CSS avant que les vraies tables existent (phase 3) — le
+  branchement des mixins et la pose des tables sont donc faits ensemble
+  en phase 3, qui attend de toute façon un diff CSS confiné aux thèmes
+  daltoniens.
+- Le champ « 3. Sinon (couleur hors palette) → repli OKLCH » du plan
+  était rédigé comme un `else` terminal après le test de `family-remap`,
+  ce qui aurait fait passer `--accent`/`--link` (familles reconnues mais
+  non listées) par le repli OKLCH plutôt que de les laisser intacts —
+  incohérent avec les tables suggérées en phase 3 (qui ne listent pas
+  ces familles, précisément parce qu'elles sont déjà sûres). Résolution
+  retenue : un cas 3 explicite (« famille reconnue, non listée →
+  inchangée ») distinct du cas 4 (« famille non reconnue → OKLCH »).
+- Chemins hérités (`adapt-color-for-colorblindness`,
+  `adapt-color-for-color-anomaly`, `auto-*-transform`, `brightness`,
+  `is-similar-to`) intégralement conservés à ce stade — toujours actifs,
+  suppression prévue en fin de phase 4 seulement si le grep confirme
+  qu'ils ne sont plus référencés.
+- Vérifié : `pnpm build`/`lint`/`test` (609 tests, 17 suites) verts ; CSS
+  compilé strictement identique à la baseline de phase 0.
+
+### Added (chantier E2 (refonte daltonienne), phase 1 — tests de distinguabilité)
+
+- Phase 1 de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md)
+  (branche `refactor/theme-cvd-remap`, chantier additif — aucun fichier de
+  `src/styles/` modifié, CSS compilé byte-identique).
+  - `src/accessibility/contrast/cvd-simulation.ts` : simulation de la
+    perception sous déficience de vision des couleurs. Dichromacies
+    (protanopie/deutéranopie/tritanopie) et anomalies (sévérité 0.5) via
+    les matrices de Machado, Oliveira & Fernandes (2009), appliquées en
+    RVB **linéaire** (conversion `culori.convertRgbToLrgb`/
+    `convertLrgbToRgb`) — les lignes de chaque matrice somment à ≈ 1
+    (un gris neutre reste un gris neutre, vérifié en test). Achromatopsie
+    traitée à part (pas une dichromatie) : luma BT.601 sur RVB gamma
+    (mêmes poids que `adapt-color-for-achromatopsia` existant dans
+    `_theme-utils.scss`), pour rester cohérent avec le mécanisme déjà en
+    place plutôt qu'un modèle de monochromacie théorique différent.
+  - **Choix de dépendance** : le paquet npm `color-blind` évoqué par le
+    plan a été écarté après vérification (`license: undefined` sur le
+    registre npm — affiché « Proprietary », donc risqué pour un projet
+    dont l'objectif est l'extraction en paquet open source, § E7).
+    Implémentation directe des matrices publiées, comme le permettait le
+    plan en repli (« recopier les matrices … en citant la source »).
+  - `contrast-pairs.ts` : nouveau type `DistinguishabilityPair` (registre
+    séparé `distinguishabilityPairs`, pas fondu dans `ContrastPair`— les
+    deux notions ne partagent que `id`/`waiver`, pas de `level` ni de
+    seuil WCAG côté distinguabilité) et 5 paires du plan (`success`/
+    `danger`, `accent`/`danger`, `accent`/`success`, `link`/`success`,
+    `link`/`fg-base`), chacune sur les 7 thèmes CVD (6 daltoniens +
+    achromatopsie). Seuil de départ ΔE ≥ 20 (calibration, § plan).
+  - `measure.ts` : `measureDeltaE(pair, theme)` — résout les deux
+    couleurs, simule la déficience, mesure `culori.differenceCiede2000`
+    entre les deux couleurs simulées.
+  - `__tests__/cvd-simulation.test.ts` : gris invariant à sévérité 1
+    (les 3 dichromaties), no-op à sévérité 0, mélange monotone entre 0 et
+    1, collapse rouge/vert bien plus fort que l'écart d'origine en
+    proto/deutéranopie (fait manuel le plus connu du daltonisme
+    rouge-vert — utilisé comme « valeur de référence publiée » faute de
+    triplet RVB exact vérifiable sans accès réseau), achromatopsie =
+    gris strict correspondant au luma attendu.
+  - `__tests__/distinguishability.test.ts` : intégrité du registre +
+    matrice paire × thème avec le même mécanisme anti-zombie que E1.
+  - **Premier run = inventaire** (avant refonte, sortie brute) :
+
+    ```
+    distinguish/success-vs-danger   deuteranomaly   deltaE=40.0116  ok
+    distinguish/success-vs-danger   deuteranopia    deltaE=74.2821  ok
+    distinguish/success-vs-danger   protanomaly     deltaE=41.5478  ok
+    distinguish/success-vs-danger   protanopia      deltaE=66.0516  ok
+    distinguish/success-vs-danger   tritanomaly     deltaE=69.0999  ok
+    distinguish/success-vs-danger   tritanopia      deltaE=6.8121   FAIL
+    distinguish/success-vs-danger   achromatopsia   deltaE=50.2749  ok
+    distinguish/accent-vs-danger    deuteranomaly   deltaE=35.8373  ok
+    distinguish/accent-vs-danger    deuteranopia    deltaE=44.8679  ok
+    distinguish/accent-vs-danger    protanomaly     deltaE=43.7267  ok
+    distinguish/accent-vs-danger    protanopia      deltaE=38.3857  ok
+    distinguish/accent-vs-danger    tritanomaly     deltaE=56.9452  ok
+    distinguish/accent-vs-danger    tritanopia      deltaE=43.4750  ok
+    distinguish/accent-vs-danger    achromatopsia   deltaE=83.0816  ok
+    distinguish/accent-vs-success   deuteranomaly   deltaE=39.8462  ok
+    distinguish/accent-vs-success   deuteranopia    deltaE=36.1816  ok
+    distinguish/accent-vs-success   protanomaly     deltaE=37.0724  ok
+    distinguish/accent-vs-success   protanopia      deltaE=30.4932  ok
+    distinguish/accent-vs-success   tritanomaly     deltaE=41.7694  ok
+    distinguish/accent-vs-success   tritanopia      deltaE=39.8797  ok
+    distinguish/accent-vs-success   achromatopsia   deltaE=16.7522  FAIL
+    distinguish/link-vs-success     deuteranomaly   deltaE=38.3770  ok
+    distinguish/link-vs-success     deuteranopia    deltaE=22.4811  ok
+    distinguish/link-vs-success     protanomaly     deltaE=40.4417  ok
+    distinguish/link-vs-success     protanopia      deltaE=33.3957  ok
+    distinguish/link-vs-success     tritanomaly     deltaE=45.2418  ok
+    distinguish/link-vs-success     tritanopia      deltaE=35.8973  ok
+    distinguish/link-vs-success     achromatopsia   deltaE=38.9493  ok
+    distinguish/link-vs-fg-base     deuteranomaly   deltaE=24.5366  ok
+    distinguish/link-vs-fg-base     deuteranopia    deltaE=24.8620  ok
+    distinguish/link-vs-fg-base     protanomaly     deltaE=24.9146  ok
+    distinguish/link-vs-fg-base     protanopia      deltaE=25.4625  ok
+    distinguish/link-vs-fg-base     tritanomaly     deltaE=23.4640  ok
+    distinguish/link-vs-fg-base     tritanopia      deltaE=29.2716  ok
+    distinguish/link-vs-fg-base     achromatopsia   deltaE=15.9997  FAIL
+    ```
+
+  - 3 échecs sur 35, waivés `preexisting: true` (aucune couleur
+    corrigée) : `success`/`danger` en tritanopie (ΔE 6.81 — les deux
+    portent peu de bleu, la confusion bleu-jaune de la tritanopie laisse
+    peu de quoi les distinguer), `accent`/`success` en achromatopsie
+    (ΔE 16.75 — luma BT.601 proche une fois désaturés), `link`/`fg-base`
+    en achromatopsie (ΔE 16.00 — deux couleurs très sombres, luma
+    proche). Ces trois cas sont des candidats explicites pour les tables
+    de remap de la phase 3 (sauf les deux cas achromatopsie, dont le
+    mécanisme reste hors périmètre de ce chantier).
+  - Vérifié : `pnpm test` (609 tests, 17 suites), `pnpm lint`,
+    `pnpm exec tsc --noEmit` verts ; CSS compilé strictement identique à
+    la baseline de phase 0.
+
 ### Fixed (revue indépendante du chantier E2)
 
 - Waiver `site/button-active-outline-on-panel-bg` : la valeur `measured`

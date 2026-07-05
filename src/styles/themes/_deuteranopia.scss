@@ -8,31 +8,10 @@
 	// D'abord appliquer les variables du thème light
 	@include light-theme-variables();
 
-	// Configuration centralisée du thème deuteranopia
-	$deuteranopia-config: (
-		// Couleurs spéciales pour remplacer certaines teintes indistinguables
-		"special-colors":
-			(
-				"success": #0075ff,
-				// Bleu spécifique pour remplacer le vert
-				"danger": #ffcc00,
-				// Jaune-orange pour remplacer le rouge
-				// Vous pouvez ajouter d'autres couleurs spéciales ici
-			),
-		// Contrôle quelles variables sont transformées automatiquement
-		"overrides":
-			(
-				// Exemples: si vous voulez conserver certaines couleurs telles quelles
-				"accent": false,
-				"accent-ink": false,
-				"accent-soft": false,
-				"link": false,
-				"link-hover": false
-			)
-	);
-
-	// Appliquer la transformation automatique avec la configuration
-	@include transform-light-to-deuteranopia($deuteranopia-config);
+	// Family-remap CVD (chantier E2 (refonte daltonienne), PLAN-refonte-daltonienne.md phase 3) :
+	// table par défaut de transform-light-to-deuteranopia dans
+	// _theme-utils.scss (emerald -> sky, redd -> amber).
+	@include transform-light-to-deuteranopia();
 
 	// Surcharges manuelles après l'automatisation si nécessaire
 }

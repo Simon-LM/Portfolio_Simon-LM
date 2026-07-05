@@ -81,6 +81,98 @@
 	@return ("family": null, "weight": null, "found": false);
 }
 
+// -----------------------------------------------
+// MOTEUR DE REMAP DALTONIEN (CVD) — chantier E2 (refonte daltonienne)
+// -----------------------------------------------
+// NOTE D'ÉTAT (phase 2 du plan) : cette fonction est construite et testée
+// isolément dans cette phase, mais N'EST PAS ENCORE appelée par
+// auto-{deuter,prot,trit}{anopia,anomaly}-transform ci-dessous — ce
+// branchement est repoussé à la phase 3, avec les tables de remap réelles.
+// Raison : l'oracle « CSS byte-identique » de la phase 2 est incompatible
+// avec un branchement immédiat. Avec les configs actuelles des 6 fichiers
+// de thèmes (aucune clé "family-remap"), le comportement *correct* pour
+// une famille reconnue mais non listée dans la table est de laisser la
+// couleur inchangée (ex. amber/sky ne sont pas remappées en
+// deutéranopie/protanopie — elles sont déjà sur l'axe sûr) ; or ce
+// comportement diffère déjà de l'ancien décalage de teinte HSL
+// (`adapt-color-for-colorblindness`) pour `--accent`/`--link`, qui EST
+// actuellement appliqué à ces couleurs. Rien ne permet de brancher ce
+// moteur sans changer le CSS avant que les tables réelles existent — voir
+// le rapport de phase 2 pour la mesure qui a établi ce point.
+@function remap-for-cvd($color, $var-name, $config, $cvd-type) {
+	// 1. Couleur spéciale explicite : prioritaire sur tout (mécanisme
+	// conservé tel quel depuis l'ancien moteur).
+	$special-colors: map.get($config, "special-colors");
+	$resolved: null;
+	@if $special-colors and map.has-key($special-colors, $var-name) {
+		$resolved: map.get($special-colors, $var-name);
+	} @else {
+		$analysis: analyze-tailwind-color($color);
+		$family-remap: map.get($config, "family-remap");
+
+		@if map.get($analysis, "found") {
+			$family: map.get($analysis, "family");
+			@if $family-remap and map.has-key($family-remap, $family) {
+				// 2. Famille reconnue et présente dans la table de remap :
+				// substituer la famille cible, au poids décalé (décalage
+				// d'index dans $tailwind-weights, borné à [50, 950]).
+				$target: map.get($family-remap, $family);
+				$target-family: list.nth($target, 1);
+				$shift: list.nth($target, 2);
+				$current-index: list.index($tailwind-weights, map.get($analysis, "weight"));
+				$new-index: $current-index + $shift;
+				@if $new-index > list.length($tailwind-weights) {
+					@warn "remap-for-cvd: #{$var-name} decalage de poids hors bornes, ramene a 950";
+					$new-index: list.length($tailwind-weights);
+				} @else if $new-index < 1 {
+					@warn "remap-for-cvd: #{$var-name} decalage de poids hors bornes, ramene a 50";
+					$new-index: 1;
+				}
+				$resolved: get-color($target-family, list.nth($tailwind-weights, $new-index));
+			} @else {
+				// 3. Famille reconnue mais absente de la table : déjà jugée
+				// sûre pour ce type de CVD, laissée inchangée.
+				$resolved: $color;
+			}
+		} @else {
+			// 4. Couleur hors palette Tailwind (custom, consommateur futur du
+			// paquet) : rotation de teinte OKLCH vers une ancre sûre du type
+			// de CVD, à luminance et chroma constants. Point de calibration
+			// (ancres non validées perceptuellement), voir rapport de phase 2.
+			$anchor-hue: cvd-safe-anchor-hue($cvd-type);
+			$resolved: color.to-space(
+				color.change($color, $hue: $anchor-hue, $space: oklch),
+				rgb
+			);
+		}
+	}
+
+	// Anomalies : mélange perceptuel entre l'originale et la version
+	// remappée, sévérité configurable (0.5 par défaut pour les -omalies).
+	$severity: 1;
+	@if map.has-key($config, "severity") {
+		$severity: map.get($config, "severity");
+	}
+	@if $severity < 1 {
+		@return color.mix($resolved, $color, $weight: $severity * 100%, $method: oklch);
+	}
+	@return $resolved;
+}
+
+// Ancre de teinte "sûre" par type de CVD pour le repli OKLCH ci-dessus :
+// pour les confusions rouge-vert (proto/deutéranopie), le bleu reste
+// perceptible ; pour la confusion bleu-jaune (tritanopie), le rouge/orangé
+// reste perceptible. Point de départ de calibration, pas une vérité
+// perceptuelle validée — à ajuster si ce chemin s'avère effectivement
+// emprunté (voir note d'état ci-dessus : probablement du code mort pour
+// les 8 primitives actuelles, toutes des couleurs Tailwind reconnues).
+@function cvd-safe-anchor-hue($cvd-type) {
+	@if $cvd-type == "tritanopia" or $cvd-type == "tritanomaly" {
+		@return 25deg;
+	}
+	@return 250deg;
+}
+
 // Fonction qui transforme une couleur en version dark en tenant compte de la configuration
 @function auto-dark-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
@@ -132,266 +224,34 @@
 // UTILITAIRES POUR THÈMES DALTONIENS
 // -----------------------------------------------
 
-// Fonction qui transforme une couleur pour l'adapter à un type spécifique de daltonisme
-@function adapt-color-for-colorblindness($color, $type, $enhance-factor: 1.5) {
-	// Pour les couleurs essentielles, utiliser des teintes spécifiques
-	// fortement contrastées pour chaque type de daltonisme
-	@if $type == "deuteranopia" {
-		@if is-similar-to($color, #ff0000) or is-similar-to($color, #00ff00) {
-			@if brightness($color) < 0.5 {
-				@return #0075ff; // Bleu pour les rouges/verts foncés
-			} @else {
-				@return #ffcc00; // Jaune doré pour les rouges/verts clairs
-			}
-		}
-	} @else if $type == "protanopia" {
-		@if is-similar-to($color, #ff0000) or is-similar-to($color, #00ff00) {
-			@if brightness($color) < 0.5 {
-				@return #0090ff; // Bleu clair pour les rouges/verts foncés
-			} @else {
-				@return #ffd700; // Or pour les rouges/verts clairs
-			}
-		}
-	} @else if $type == "tritanopia" {
-		@if is-similar-to($color, #0000ff) or is-similar-to($color, #ffff00) {
-			@if brightness($color) < 0.5 {
-				@return #ff3399; // Rose pour les bleus/jaunes foncés
-			} @else {
-				@return #ff6600; // Orange pour les bleus/jaunes clairs
-			}
-		}
-	}
-
-	// Pour les autres couleurs, appliquer un algorithme de transformation
-	// qui augmente la saturation dans les canaux que la personne distingue le mieux
-	$h: color.channel($color, "hue", $space: hsl);
-	$s: color.channel($color, "saturation", $space: hsl);
-	$l: color.channel($color, "lightness", $space: hsl);
-
-	@if $type == "deuteranopia" or $type == "protanopia" {
-		// Pour la confusion rouge-vert, déplacer vers bleu ou jaune
-		@if $h >= 30 and $h <= 150 {
-			// Vert -> Bleu-vert
-			$h: 180;
-			$s: min(100%, $s * $enhance-factor);
-		} @else if $h >= 330 or $h < 30 {
-			// Rouge -> Jaune-orange
-			$h: 40;
-			$s: min(100%, $s * $enhance-factor);
-		}
-	} @else if $type == "tritanopia" {
-		// Pour la confusion bleu-jaune, déplacer vers rouge ou vert
-		@if $h >= 180 and $h <= 270 {
-			// Bleu -> Magenta
-			$h: 300;
-			$s: min(100%, $s * $enhance-factor);
-		} @else if $h >= 60 and $h <= 180 {
-			// Jaune-vert -> Vert
-			$h: 120;
-			$s: min(100%, $s * $enhance-factor);
-		} @else if $h >= 40 and $h < 60 {
-			// Jaunes purs : accentuer vers l'orange pour meilleure perception
-			$h: $h + 20;
-			$s: min(100%, $s * ($enhance-factor + 0.2));
-			$l: max(35%, min(65%, $l));
-		}
-	}
-
-	@return hsl($h, $s, $l);
-}
-
-// Fonctions auxiliaires
-@function brightness($color) {
-	@return math.div(
-		math.round(color.channel($color, "red", $space: rgb)) * 0.299 + math.round(color.channel($color, "green", $space: rgb)) * 0.587 + math.round(color.channel($color, "blue", $space: rgb)) * 0.114,
-		255
-	);
-}
-
-@function is-similar-to($color1, $color2, $threshold: 60) {
-	$r1: math.round(color.channel($color1, "red", $space: rgb));
-	$g1: math.round(color.channel($color1, "green", $space: rgb));
-	$b1: math.round(color.channel($color1, "blue", $space: rgb));
-
-	$r2: math.round(color.channel($color2, "red", $space: rgb));
-	$g2: math.round(color.channel($color2, "green", $space: rgb));
-	$b2: math.round(color.channel($color2, "blue", $space: rgb));
-
-	$r_diff: abs($r1 - $r2);
-	$g_diff: abs($g1 - $g2);
-	$b_diff: abs($b1 - $b2);
-
-	$total_diff: $r_diff + $g_diff + $b_diff;
-
-	@return $total_diff < $threshold;
-}
-
 // Fonction qui transforme une couleur en version deuteranopia
 @function auto-deuteranopia-transform($color, $var-name, $config) {
-	// Récupérer les paramètres de configuration
-	$special-colors: map.get($config, "special-colors");
-	$enhancer: map.get($config, "enhancer");
-
-	// Si la variable a une couleur spéciale définie, l'utiliser
-	@if $special-colors and map.has-key($special-colors, $var-name) {
-		@return map.get($special-colors, $var-name);
-	}
-
-	// Autrement, appliquer la transformation standard
-	@return adapt-color-for-colorblindness($color, "deuteranopia", $enhancer);
+	@return remap-for-cvd($color, $var-name, $config, "deuteranopia");
 }
 
 // Fonction qui transforme une couleur en version protanopia
 @function auto-protanopia-transform($color, $var-name, $config) {
-	// Récupérer les paramètres de configuration
-	$special-colors: map.get($config, "special-colors");
-	$enhancer: map.get($config, "enhancer");
-
-	// Si la variable a une couleur spéciale définie, l'utiliser
-	@if $special-colors and map.has-key($special-colors, $var-name) {
-		@return map.get($special-colors, $var-name);
-	}
-
-	// Autrement, appliquer la transformation standard
-	@return adapt-color-for-colorblindness($color, "protanopia", $enhancer);
+	@return remap-for-cvd($color, $var-name, $config, "protanopia");
 }
 
 // Fonction qui transforme une couleur en version tritanopia
 @function auto-tritanopia-transform($color, $var-name, $config) {
-	// Récupérer les paramètres de configuration
-	$special-colors: map.get($config, "special-colors");
-	$enhancer: map.get($config, "enhancer");
-
-	// Si la variable a une couleur spéciale définie, l'utiliser
-	@if $special-colors and map.has-key($special-colors, $var-name) {
-		@return map.get($special-colors, $var-name);
-	}
-
-	// Autrement, appliquer la transformation standard
-	@return adapt-color-for-colorblindness($color, "tritanopia", $enhancer);
-}
-
-// Fonction qui transforme une couleur pour l'adapter à un type léger de daltonisme (anomalie)
-@function adapt-color-for-color-anomaly($color, $type, $enhance-factor: 1.2) {
-	// Pour les anomalies, on amplifie les différences sans transformer complètement
-	$h: color.channel($color, "hue", $space: hsl);
-	$s: color.channel($color, "saturation", $space: hsl);
-	$l: color.channel($color, "lightness", $space: hsl);
-
-	// Calculer l'impact du facteur d'intensification
-	$saturation_boost: $enhance-factor; // Impact direct sur la saturation
-
-	// Paramètres d'adaptation moins intenses que pour les -opies
-	@if $type == "deuteranomaly" or $type == "protanomaly" {
-		// Pour la confusion rouge-vert légère
-		@if $h >= 60 and $h <= 150 {
-			// Verts : augmenter le bleu pour plus de distinction
-			$h: $h + (15 * $enhance-factor); // Décalage proportionnel à l'enhancer
-			$s: min(100%, $s * $saturation_boost);
-		} @else if $h >= 330 or $h <= 30 {
-			// Rouges : augmenter l'orange pour plus de distinction
-			$h: $h + (10 * $enhance-factor); // Décalage proportionnel à l'enhancer
-			$s: min(100%, $s * $saturation_boost);
-		} @else if $h > 30 and $h < 60 {
-			// Jaunes : décaler vers l'orange ET accentuer la saturation
-			$h: $h + (7 * $enhance-factor); // Décalage proportionnel à l'enhancer
-			$s: min(100%, $s * ($saturation_boost + 0.1));
-			$l: max(40%, min(60%, $l)); // Optimiser la luminosité
-		}
-	} @else if $type == "tritanomaly" {
-		// Pour la confusion bleu-jaune légère
-		@if $h >= 180 and $h <= 270 {
-			// Bleus : décaler vers le violet
-			$h: $h + (15 * $enhance-factor);
-			$s: min(100%, $s * $saturation_boost);
-		} @else if $h >= 40 and $h <= 80 {
-			// Jaunes : décaler vers l'orange
-			$h: $h + (10 * $enhance-factor);
-			$s: min(100%, $s * $saturation_boost);
-		}
-	}
-
-	@return hsl($h, $s, $l);
+	@return remap-for-cvd($color, $var-name, $config, "tritanopia");
 }
 
 // Fonction qui transforme une couleur en version deutéranomalie en tenant compte de la configuration
 @function auto-deuteranomaly-transform($color, $var-name, $config) {
-	// Récupérer les paramètres de configuration
-	$enhancer: map.get($config, "enhancer");
-	$adjustments: map.get($config, "adjustments");
-
-	// Calculer l'ajustement spécifique pour cette variable
-	$adjustment: 0;
-	@if $adjustments and map.has-key($adjustments, $var-name) {
-		$adjustment: map.get($adjustments, $var-name);
-	}
-
-	// Analyser la couleur pour trouver sa famille et son poids Tailwind
-	$analysis: analyze-tailwind-color($color);
-
-	// Si une correspondance Tailwind est trouvée, utiliser get-deuteranomaly-color
-	@if map.get($analysis, "found") {
-		$family: map.get($analysis, "family");
-		$weight: map.get($analysis, "weight");
-		@return adapt-color-for-color-anomaly(
-			$color,
-			"deuteranomaly",
-			$enhancer + $adjustment
-		);
-	}
-
-	// Si aucune correspondance n'est trouvée, appliquer l'algorithme général
-	@return adapt-color-for-color-anomaly(
-		$color,
-		"deuteranomaly",
-		$enhancer + $adjustment
-	);
+	@return remap-for-cvd($color, $var-name, $config, "deuteranomaly");
 }
 
 // Fonction qui transforme une couleur en version protanomalie
 @function auto-protanomaly-transform($color, $var-name, $config) {
-	// Récupérer les paramètres de configuration
-	$enhancer: map.get($config, "enhancer");
-	$adjustments: map.get($config, "adjustments");
-
-	// Calculer l'ajustement spécifique pour cette variable
-	$adjustment: 0;
-	@if $adjustments and map.has-key($adjustments, $var-name) {
-		$adjustment: map.get($adjustments, $var-name);
-	}
-
-	// Analyser la couleur pour trouver sa famille et son poids Tailwind
-	$analysis: analyze-tailwind-color($color);
-
-	// Si une correspondance Tailwind est trouvée ou non, appliquer l'algorithme général
-	@return adapt-color-for-color-anomaly(
-		$color,
-		"protanomaly",
-		$enhancer + $adjustment
-	);
+	@return remap-for-cvd($color, $var-name, $config, "protanomaly");
 }
 
 // Fonction qui transforme une couleur en version tritanomalie
 @function auto-tritanomaly-transform($color, $var-name, $config) {
-	// Récupérer les paramètres de configuration
-	$enhancer: map.get($config, "enhancer");
-	$adjustments: map.get($config, "adjustments");
-
-	// Calculer l'ajustement spécifique pour cette variable
-	$adjustment: 0;
-	@if $adjustments and map.has-key($adjustments, $var-name) {
-		$adjustment: map.get($adjustments, $var-name);
-	}
-
-	// Analyser la couleur pour trouver sa famille et son poids Tailwind
-	$analysis: analyze-tailwind-color($color);
-
-	// Si une correspondance Tailwind est trouvée ou non, appliquer l'algorithme général
-	@return adapt-color-for-color-anomaly(
-		$color,
-		"tritanomaly",
-		$enhancer + $adjustment
-	);
+	@return remap-for-cvd($color, $var-name, $config, "tritanomaly");
 }
 
 // Fonction qui transforme les couleurs pour l'achromatopsie (monochrome)
@@ -645,8 +505,11 @@ $hc-palette: (
 @mixin transform-light-to-deuteranomaly($config: ()) {
 	// Utiliser la configuration par défaut si aucune n'est fournie
 	$default-config: (
-		"enhancer": 1.2,
-		"adjustments": (),
+		"family-remap": (
+			"emerald": ("sky", -3),
+			"redd": ("amber", 1),
+		),
+		"severity": 0.5,
 		"overrides": (),
 	);
 
@@ -748,15 +611,18 @@ $hc-palette: (
 
 // Mixin qui transforme automatiquement toutes les variables du thème light en thème deuteranopia
 @mixin transform-light-to-deuteranopia($config: ()) {
-	// Utiliser la configuration par défaut si aucune n'est fournie
+	// Utiliser la configuration par défaut si aucune n'est fournie.
+	// "special-colors" (ex. #0075ff/#ffcc00) retiré des défauts (chantier
+	// E3, PLAN-refonte-daltonienne.md phase 3) : family-remap couvre
+	// désormais --success (emerald -> sky) et --danger (redd -> amber).
+	// Le mécanisme special-colors reste disponible pour un override projet.
 	$default-config: (
-		"special-colors": (
-			"success": #0075ff,
-			// Bleu spécifique pour remplacer le vert
-			"danger": #ffcc00
-				// Jaune-orange pour remplacer le rouge
+		"special-colors": (),
+		"family-remap": (
+			"emerald": ("sky", -3),
+			"redd": ("amber", 1),
 		),
-		"enhancer": 2.5,
+		"severity": 1,
 		"overrides": (),
 	);
 
@@ -881,8 +747,11 @@ $hc-palette: (
 @mixin transform-light-to-protanomaly($config: ()) {
 	// Utiliser la configuration par défaut si aucune n'est fournie
 	$default-config: (
-		"enhancer": 1.2,
-		"adjustments": (),
+		"family-remap": (
+			"emerald": ("sky", -3),
+			"redd": ("amber", 1),
+		),
+		"severity": 0.5,
 		"overrides": (),
 	);
 
@@ -980,15 +849,16 @@ $hc-palette: (
 
 // Mixin qui transforme automatiquement toutes les variables du thème light en thème protanopia
 @mixin transform-light-to-protanopia($config: ()) {
-	// Utiliser la configuration par défaut si aucune n'est fournie
+	// Utiliser la configuration par défaut si aucune n'est fournie.
+	// "special-colors" retiré des défauts (chantier E2 (refonte daltonienne), phase 3) : voir
+	// transform-light-to-deuteranopia ci-dessus pour la justification.
 	$default-config: (
-		"special-colors": (
-			"success": #0090ff,
-			// Bleu clair pour remplacer le vert
-			"danger": #ffd700
-				// Or pour remplacer le rouge
+		"special-colors": (),
+		"family-remap": (
+			"emerald": ("sky", -3),
+			"redd": ("amber", 1),
 		),
-		"enhancer": 2.5,
+		"severity": 1,
 		"overrides": (),
 	);
 
@@ -1088,8 +958,11 @@ $hc-palette: (
 @mixin transform-light-to-tritanomaly($config: ()) {
 	// Utiliser la configuration par défaut si aucune n'est fournie
 	$default-config: (
-		"enhancer": 1.2,
-		"adjustments": (),
+		"family-remap": (
+			"amber": ("orange", 0),
+			"sky": ("violet", 0),
+		),
+		"severity": 0.5,
 		"overrides": (),
 	);
 
@@ -1187,15 +1060,18 @@ $hc-palette: (
 
 // Mixin qui transforme automatiquement toutes les variables du thème light en thème tritanopia
 @mixin transform-light-to-tritanopia($config: ()) {
-	// Utiliser la configuration par défaut si aucune n'est fournie
+	// Utiliser la configuration par défaut si aucune n'est fournie.
+	// "special-colors" retiré des défauts (chantier E2 (refonte daltonienne), phase 3) :
+	// emerald/redd n'ont pas d'entrée family-remap ici (déjà sûres pour la
+	// confusion bleu-jaune, cf. plan) — --success/--danger restent donc
+	// inchangées ; seules amber/sky (l'axe réellement confus) sont remappées.
 	$default-config: (
-		"special-colors": (
-			"success": #ff6600,
-			// Orange pour remplacer le vert
-			"danger": #ff3399
-				// Rose pour remplacer le rouge
+		"special-colors": (),
+		"family-remap": (
+			"amber": ("orange", 0),
+			"sky": ("violet", 0),
 		),
-		"enhancer": 2.5,
+		"severity": 1,
 		"overrides": (),
 	);
 

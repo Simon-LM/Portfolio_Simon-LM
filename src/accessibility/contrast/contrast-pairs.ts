@@ -2,6 +2,7 @@
 
 import type { ThemeOption } from "../../config/themes";
 import type { ContrastLevel } from "./wcag";
+import type { CvdTheme } from "./cvd-simulation";
 
 export type { ContrastLevel };
 
@@ -80,17 +81,26 @@ const rolePairs: ContrastPair[] = [
 				"src/components). Pre-existing since the role's introduction. " +
 				"anti-glare-light's ratio rose slightly (2.85 → 3.13, still " +
 				"non-compliant) after the chantier E2 OKLCH anti-glare rewrite " +
-				"(PLAN-revue-moteurs.md phase 3).",
+				"(PLAN-revue-moteurs.md phase 3). deuteranomaly/deuteranopia/" +
+				"protanomaly/protanopia's ratios dropped further (were 3.61/4.03/" +
+				"3.61/3.13) after the chantier E2 (refonte daltonienne) family-remap (emerald -> sky, " +
+				"weight shift -3): the shift was calibrated for the " +
+				"distinguish/link-vs-success pair (--link is already sky-900; " +
+				"emerald -> sky at shift 0 collided with it under CVD simulation, " +
+				"ΔE as low as 4.6 — see PLAN-refonte-daltonienne.md phase 3/4), " +
+				"which took priority since --success carries no live contrast " +
+				"impact today. tritanomaly/tritanopia/achromatopsia unaffected " +
+				"(emerald isn't remapped for tritan; achromatopsia unrelated).",
 			preexisting: true,
 			measured: {
 				light: 3.6079,
 				"anti-glare-light": 3.1323,
-				deuteranomaly: 3.6079,
-				deuteranopia: 4.0306,
-				protanomaly: 3.6079,
-				protanopia: 3.1254,
+				deuteranomaly: 2.333,
+				deuteranopia: 1.5964,
+				protanomaly: 2.333,
+				protanopia: 1.5964,
 				tritanomaly: 3.6079,
-				tritanopia: 2.8112,
+				tritanopia: 3.6079,
 				achromatopsia: 2.4167,
 			},
 		},
@@ -102,23 +112,19 @@ const rolePairs: ContrastPair[] = [
 		level: "text",
 		waiver: {
 			reason:
-				"red-600 (--danger) meets 4.5:1 against --bg-base in most themes, but " +
-				"the CVD-engine substitution colors (e.g. #ffcc00 in deuteranopia / " +
-				"protanopia, chosen for perceptual distinguishability for that vision " +
-				"deficiency, not for contrast) drop well below threshold; " +
-				"anti-glare-light's warmth shift also erodes the margin. --danger is " +
-				"currently unreferenced by any component. Pre-existing; candidate for " +
-				"PLAN-refonte-daltonienne.md. anti-glare-light's ratio rose (3.46 → " +
-				"3.94, still non-compliant) after the chantier E2 OKLCH anti-glare " +
-				"rewrite (PLAN-revue-moteurs.md phase 3).",
+				"anti-glare-light only, as of chantier E2 (refonte daltonienne, family-remap). The " +
+				"6 CVD-theme failures documented here since chantier E1 — the old " +
+				"CVD-engine substitution colors (e.g. #ffcc00 in deuteranopia, " +
+				"chosen for perceptual distinguishability, not contrast, as low as " +
+				"1.34:1) — are resolved: redd -> amber (+1 weight) now covers " +
+				"--danger in all 6 CVD themes, all >= 4.5:1 (PLAN-refonte-daltonienne.md " +
+				"phase 3). anti-glare-light's ratio rose (3.46 → 3.94, still " +
+				"non-compliant) after the chantier E2 OKLCH anti-glare rewrite " +
+				"(PLAN-revue-moteurs.md phase 3), unrelated to the CVD remap. " +
+				"--danger remains currently unreferenced by any component.",
 			preexisting: true,
 			measured: {
 				"anti-glare-light": 3.9425,
-				deuteranomaly: 3.333,
-				deuteranopia: 1.4477,
-				protanomaly: 3.2777,
-				protanopia: 1.343,
-				tritanopia: 3.2507,
 			},
 		},
 	},
@@ -246,3 +252,120 @@ const sitePairs: ContrastPair[] = [
 // The registry is extensible, never amputated: a pair that fails gets a
 // waiver (phase 3), it is never deleted.
 export const contrastPairs: readonly ContrastPair[] = [...rolePairs, ...sitePairs];
+
+// ---------------------------------------------------------------------
+// Distinguishability pairs (chantier E2 (refonte daltonienne), PLAN-refonte-daltonienne.md
+// phase 1) — a different question from the WCAG ratio pairs above: not
+// "is this readable against its background" but "do these two semantic
+// colors still look different from each other once CVD simulation is
+// applied". Measured in ΔE CIEDE2000 between the two colors *after*
+// simulateForCvdTheme(), not a contrast ratio — kept in a parallel
+// registry/type rather than folded into ContrastPair, since the two kinds
+// share nothing beyond id/waiver (no `level`, no WCAG threshold, no
+// `bg`/`fg` roles — two arbitrary colors and a CVD-only theme list).
+export type DistinguishabilityPair = {
+	/** Stable identifier, e.g. "distinguish/success-vs-danger". */
+	id: string;
+	/** Custom property name of the first color, e.g. "--success". */
+	colorA: string;
+	/** Custom property name of the second color. */
+	colorB: string;
+	/** Composite colorA over this custom property first (alpha channel). */
+	composeOverA?: string;
+	/** Composite colorB over this custom property first (alpha channel). */
+	composeOverB?: string;
+	/** CVD themes this pair is checked against (no non-CVD default). */
+	themes: readonly CvdTheme[];
+	/** Minimum ΔE CIEDE2000 required between the two simulated colors. */
+	minDeltaE: number;
+	waiver?: {
+		reason: string;
+		preexisting: boolean;
+		measured?: Record<string, number>;
+	};
+};
+
+const ALL_CVD_THEMES: readonly CvdTheme[] = [
+	"deuteranomaly",
+	"deuteranopia",
+	"protanomaly",
+	"protanopia",
+	"tritanomaly",
+	"tritanopia",
+	"achromatopsia",
+];
+
+// ΔE ≥ 20 is a calibration starting point (plan § phase 1), not a proven
+// threshold — Simon adjusts it during phase 4 validation.
+const DEFAULT_MIN_DELTA_E = 20;
+
+export const distinguishabilityPairs: readonly DistinguishabilityPair[] = [
+	{
+		// Waiver removed (chantier E2 (refonte daltonienne) phase 3): tritanopia's old
+		// special-colors for --success/--danger (#ff6600/#ff3399,
+		// hand-picked without a documented distinguishability check)
+		// collapsed to ΔE 6.81 under tritanopia simulation. Tritanopia's
+		// family-remap table doesn't touch emerald/redd (already safe for
+		// the blue-yellow confusion axis, per the plan), so dropping the
+		// special-colors default left --success/--danger at their plain
+		// emerald-600/red-600 values — which measure ΔE 69.66, a large
+		// improvement with zero design effort. All 7 CVD themes pass.
+		id: "distinguish/success-vs-danger",
+		colorA: "--success",
+		colorB: "--danger",
+		themes: ALL_CVD_THEMES,
+		minDeltaE: DEFAULT_MIN_DELTA_E,
+	},
+	{
+		id: "distinguish/accent-vs-danger",
+		colorA: "--accent",
+		colorB: "--danger",
+		themes: ALL_CVD_THEMES,
+		minDeltaE: DEFAULT_MIN_DELTA_E,
+	},
+	{
+		id: "distinguish/accent-vs-success",
+		colorA: "--accent",
+		colorB: "--success",
+		themes: ALL_CVD_THEMES,
+		minDeltaE: DEFAULT_MIN_DELTA_E,
+		waiver: {
+			reason:
+				"amber-300 (--accent, #fcd34d) and emerald-600 (--success, #059669) " +
+				"have similar BT.601 luma once desaturated to grayscale, so " +
+				"achromatopsia simulation collapses them close together (ΔE 16.75, " +
+				"just under the 20 threshold). --success is currently unreferenced " +
+				"by any component. Pre-existing; achromatopsia's own mechanism is " +
+				"explicitly out of scope for this refonte (kept as-is).",
+			preexisting: true,
+			measured: { achromatopsia: 16.7522 },
+		},
+	},
+	{
+		id: "distinguish/link-vs-success",
+		colorA: "--link",
+		colorB: "--success",
+		themes: ALL_CVD_THEMES,
+		minDeltaE: DEFAULT_MIN_DELTA_E,
+	},
+	{
+		id: "distinguish/link-vs-fg-base",
+		colorA: "--link",
+		colorB: "--fg-base",
+		themes: ALL_CVD_THEMES,
+		minDeltaE: DEFAULT_MIN_DELTA_E,
+		waiver: {
+			reason:
+				"sky-900 (--link, #0c4a6e) and gray-950 (--fg-base, #0c0a09) are " +
+				"both very dark colors with similar BT.601 luma, so achromatopsia " +
+				"simulation collapses them close together (ΔE 16.00, just under " +
+				"the 20 threshold) — a link rendered at body-text darkness reads " +
+				"as barely darker gray in full monochromacy. Achromatopsia's own " +
+				"mechanism is explicitly out of scope for this refonte (kept as-is); " +
+				"candidate for a future --link lightness adjustment if this matters " +
+				"in practice (links are also underlined/styled beyond color).",
+			preexisting: true,
+			measured: { achromatopsia: 15.9997 },
+		},
+	},
+];
