@@ -55,6 +55,82 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
   poids des anomalies résolu sur le mélange `severity` (leçon des
   waivers à 2.33). Thèmes tritan explicitement inchangés.
 
+### Changed (chantier E2 — refonte daltonienne, partie 2 exécutée)
+
+Ancres sémantiques pour les rôles statut implémentées sur la branche
+`refactor/theme-status-anchors` (5 commits, non mergée — **validation
+visuelle de Simon requise avant merge**). Exécutée par Claude (Opus),
+pas par l'IA d'exécution habituelle, à la demande de Simon.
+
+- **Phase 1 — seuils ΔE par classe de paire** (`contrast-pairs.ts`) : les
+  deux paires « lien » (`link-vs-success`, `link-vs-fg-base`) passent à
+  ΔE ≥ 12 ; les paires critiques (`success/danger`, `accent/statut`)
+  restent à 20. Justification WCAG 2.2 SC 1.4.1 : un lien n'est jamais
+  porté par la couleur seule (souligné ici). Le waiver achromatopsie de
+  `link-vs-fg-base` (16.00) devient caduc sous 12 et est retiré. CSS
+  byte-identique.
+- **Phase 2 — moteur** (`_theme-utils.scss`) : ajout des fonctions WCAG
+  Sass (`wcag-relative-luminance`, `wcag-contrast-ratio`, alignées culori :
+  seuil 0.04045, gamma 2.4) et de `resolve-status-color` /
+  `resolve-anchor-weight` (choisit dans la famille d'ancre le premier cran
+  Tailwind atteignant 4.5:1 sur le fond). Les 6 mixins CVD routent
+  `success`/`danger` par ce résolveur. CSS byte-identique (aucune config
+  n'a encore d'ancre).
+- **Phase 3 — bascule des 4 thèmes rouge-verts** :
+  - -opie (deutéranopie, protanopie) : `success → violet-600` (5.46:1),
+    `danger → orange-700` (4.96:1). `violet` et non `sky` car `--link`
+    occupe déjà sky-900 ; violet est perçu bleu sous CVD rouge-verte.
+  - -omalie (déficience légère) : teintes naturelles conservées, poids
+    corrigé seulement — `success → emerald-700` (5.25:1),
+    `danger → redd-600` (4.62:1).
+  - **Déviation mesurée du plan** : le plan résolvait le poids des -omalies
+    sur le *mélange severity* (ancre mixée à 50 % avec l'origine). Mesuré,
+    ce mélange OKLCH entre deux teintes quasi complémentaires (emerald +
+    violet) **sort du gamut sRGB** — Sass l'a sérialisé
+    `hsl(194, 257%, 19%)`, invalide et hors palette (viole la contrainte
+    « rester dans la palette »). Le résolveur renvoie donc une couleur
+    Tailwind **pure**, sans mélange ; la douceur des -omalies vient du
+    choix d'ancre (familles naturelles emerald/redd) et non d'un mélange.
+    Toutes les valeurs émises sont des couleurs Tailwind propres, in-gamut.
+  - Diff CSS strictement confiné à `--success`/`--danger` des 4 blocs
+    rouge-verts ; tritan et achromatopsie **byte-identiques** (vérifié).
+- **Phase 4 — vérifications** :
+  - **Contraste** : `role/success-on-bg-base` perd ses 4 entries
+    rouge-vertes (1.60/2.33 → 5.25–5.46, désormais conformes) ; le
+    mécanisme anti-zombie a forcé leur retrait. Restent waivés : light
+    (3.61), anti-glare-light (3.13), tritan (3.61) et achromatopsie (2.42),
+    tous hors périmètre. `role/danger-on-bg-base` : tous les thèmes CVD
+    conformes, seul anti-glare-light reste waivé (3.94).
+  - **Cohérence Sass/TypeScript** : ratios de `wcag-contrast-ratio` (Sass)
+    comparés à culori — correspondance exacte à 4+ décimales (violet-600
+    5.4562, orange-700 4.9582, emerald-700 5.2507, redd-600 4.6240).
+  - **Distinguabilité — ΔE avant (partie 1) → après (partie 2)** sous
+    simulation Machado :
+
+    | Thème | success/danger | link/success | accent/success |
+    | --- | --- | --- | --- |
+    | deutéranopie | 53.2 → 62.7 | 49.0 → **18.2** | 50.5 → 74.9 |
+    | deutéranomalie | 43.2 → 38.6 | 40.3 → 30.7 | 41.8 → 44.3 |
+    | protanopie | 56.4 → 59.4 | 47.1 → **19.0** | 47.6 → 73.5 |
+    | protanomalie | 45.7 → 41.3 | 42.1 → 32.3 | 38.2 → 41.0 |
+
+    Toutes les paires restent au-dessus de leur seuil (20 critiques,
+    12 lien). La seule qui se resserre nettement est `link/success` en
+    -opie (≈ 18-19) : violet est plus proche du lien sky-900 que ne
+    l'était sky-300 en partie 1 — coût assumé, couvert par le seuil 12
+    (liens soulignés, WCAG 1.4.1). `CONTRAST-REPORT.md` régénéré.
+- **Bilan** : le défaut d'origine (`--success` à 1.60:1) est résolu par
+  conception ; les rôles statut sont désormais une classe traitée par
+  ancres sémantiques, garantie de contraste ≥ 4.5:1 par construction.
+  609 tests, lint, `tsc`, `build` verts.
+
+**Point restant pour Simon** : validation visuelle des 4 thèmes
+rouge-verts (virage violet de `--success` en -opie surtout) avant merge.
+`--success`/`--danger` n'étant consommés par aucun composant du portfolio
+aujourd'hui, l'effet visuel se voit surtout via le panneau d'accessibilité
+et les futurs usages ; le vrai bénéfice est pour les consommateurs du
+paquet qui, eux, câbleront ces rôles.
+
 ## 2026-07-04
 
 ### Docs (chantier E2 (refonte daltonienne), phase 5 — finalisation)
