@@ -131,6 +131,26 @@ aujourd'hui, l'effet visuel se voit surtout via le panneau d'accessibilité
 et les futurs usages ; le vrai bénéfice est pour les consommateurs du
 paquet qui, eux, câbleront ces rôles.
 
+### Docs (partie 3 du plan daltonien rédigée)
+
+- [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) reçoit une
+  **partie 3 « robustesse »** (6 phases, branche
+  `refactor/theme-cvd-degradation`, à exécuter), issue de trois constats
+  des parties 1-2 : (1) **alerter plutôt que bloquer** — remplacer le
+  `@error` de `resolve-anchor-weight` par un meilleur effort + `@warn`,
+  prioriser la distinguabilité au-dessus d'un plancher de lisibilité
+  (défaut 3:1, arbitrage Simon) ; (2) **échelle de dégradation par classe**
+  — -omalie strictement in-palette, -opie autorisée à une couleur in-gamut
+  hors palette en recours (jamais hors gamut) ; (3) **garde anti-gamut
+  mécanique** (test scannant le CSS compilé) + **correction du gamut
+  tritan** — mesuré ce jour : le blend `severity` `amber → orange` de la
+  partie 1 produit **11 déclarations hors gamut** dans `tritanomaly`
+  (`--accent` `hsl(38, 100.8%, 69%)` etc.), à ramener in-gamut par
+  réduction de chroma OKLCH. Précision de conception inscrite au plan : le
+  moteur Sass ne pilote sa dégradation que par le **contraste**
+  (calculable) ; la **distinguabilité** reste vérifiée par la suite
+  TypeScript, la collision se corrigeant via `special-colors`.
+
 ## 2026-07-04
 
 ### Docs (chantier E2 (refonte daltonienne), phase 5 — finalisation)

@@ -7,12 +7,13 @@
 dédiée, un commit par phase, sortie brute des vérifications dans chaque
 rapport, arrêt en cas d'imprévu, entrées [CHANGELOG.md](./CHANGELOG.md).
 
-Deux parties, exécutables indépendamment :
+Trois parties, exécutables indépendamment :
 
 | Partie | Contenu | Statut |
 | --- | --- | --- |
 | [Partie 1](#partie-1--remap-de-familles-tailwind) | Remap de familles Tailwind + tests de distinguabilité | ✅ exécutée le 2026-07-04, mergée le 2026-07-05 (`d12264f`) |
 | [Partie 2](#partie-2--ancres-sémantiques-pour-les-rôles-statut) | Ancres sémantiques pour les rôles statut | ✅ exécutée le 2026-07-06 (branche `refactor/theme-status-anchors`), **validation visuelle de Simon requise avant merge** |
+| [Partie 3](#partie-3--robustesse--dégradation-gracieuse-garde-gamut-alerte-dev) | Dégradation gracieuse (alerte au lieu de blocage), garde anti-gamut, correction du gamut tritan | rédigée le 2026-07-06, à exécuter |
 
 ---
 
@@ -406,4 +407,233 @@ attente).
   high-contrast, l'anti-éblouissement.
 - Toute retouche du thème light/dark ou des valeurs de rôles hors CVD
   (le 3.61:1 de `success` en light est un sujet séparé, non traité ici).
+- L'export/packaging (chantiers E3+).
+
+---
+
+## Partie 3 — robustesse : dégradation gracieuse, garde-gamut, alerte dev
+
+> **Rédigée le 2026-07-06, à exécuter.** Origine : trois constats issus de
+> l'exécution des parties 1 et 2, actés avec Simon.
+>
+> 1. **Alerter plutôt que bloquer.** Aujourd'hui `resolve-anchor-weight`
+>    fait un `@error` (échec dur de compilation) si aucun poids n'atteint
+>    4.5:1. Pour un consommateur du paquet, casser le build est trop
+>    brutal : mieux vaut le **meilleur effort + un avertissement**, le dev
+>    décidant ensuite. Sur les thèmes CVD, confondre `success` et `danger`
+>    est pire que `success` à 4:1 : quand contraste et distinguabilité
+>    s'opposent, **prioriser la distinguabilité**, en gardant un plancher de
+>    lisibilité.
+> 2. **Rester dans la palette pour les -omalies, autoriser à en sortir pour
+>    les -opies** — mais *jamais* hors gamut sRGB (couleur invalide). « Hors
+>    palette » = couleur OKLCH calculée, valide et in-gamut, hors des poids
+>    Tailwind nommés. La sévérité de la déficience justifie l'intensité de
+>    l'intervention.
+> 3. **Le gamut résiduel de la tritanomalie.** Mesuré (2026-07-06) : le
+>    mélange `severity` OKLCH `amber → orange` de la partie 1 produit
+>    **11 déclarations hors gamut** dans le seul thème `tritanomaly`
+>    (`--accent` = `hsl(38, 100.8%, 69%)`, `--accent-strong` =
+>    `hsl(33.6, 103.8%, 48%)`, `--accent-soft` = `hsl(40.5, 103.4%, 90%)`,
+>    et 8 tokens de couche 3 qui en dérivent). Même classe de bug que celui
+>    éliminé pour le rouge-vert en partie 2, en plus discret (amber et
+>    orange sont proches en teinte). Le mélange `sky → violet` du lien, lui,
+>    reste in-gamut.
+
+Conception de référence : [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md)
+§ E2 et README § 4.3 / § 6.1.
+
+### ⛔ Prérequis bloquants (partie 3)
+
+1. **La partie 2 doit être mergée** : vérifier la présence de
+   `resolve-status-color` / `resolve-anchor-weight` et des fonctions WCAG
+   Sass dans `_theme-utils.scss` — sinon, arrêt.
+2. `pnpm build`/`lint`/`test` verts au départ.
+
+Branche : `refactor/theme-cvd-degradation`.
+
+### Le mécanisme cible (partie 3)
+
+**A. Garantie « aucune couleur hors gamut ».** Aucune valeur émise dans le
+CSS compilé ne doit sortir du gamut sRGB (une couleur hors gamut = CSS
+invalide, hors palette, non maîtrisé). Cette garantie devient **mécanique**
+(test, phase 1) et **appliquée** partout où un mélange OKLCH peut sortir du
+gamut (phase 3).
+
+**B. Échelle de dégradation du résolveur de statut**, du plus souhaitable
+au dernier recours, **consciente de la classe de déficience** :
+
+1. **Ancre in-palette** : premier poids Tailwind de la famille d'ancre qui
+   atteint le ratio cible (comportement actuel de `resolve-anchor-weight`).
+2. **-opie uniquement — couleur in-gamut calculée hors palette** : si aucun
+   poids in-palette n'atteint le ratio, calculer une couleur OKLCH (rotation
+   de teinte vers l'ancre sûre du type de CVD, lissée vers le gamut, poids
+   de lisibilité résolu par la luminance). Réservé aux -opies : en -omalie
+   on ne sort jamais de la palette (constat 2).
+3. **Dernier recours — meilleur effort + alerte** : si même (1)/(2)
+   n'atteignent pas le ratio cible, renvoyer la couleur au **plus fort
+   contraste disponible** (jamais d'échec dur), et `@warn` avec un message
+   actionnable. Si le contraste tombe **sous le plancher de lisibilité**
+   (défaut proposé **3:1** — *arbitrage Simon*), le signaler plus fort
+   (message distinct) : en dessous, la couleur est quasi invisible et
+   aucune distinguabilité ne rachète l'illisibilité.
+
+**Note d'implémentabilité importante.** Le moteur Sass ne peut vérifier que
+le **contraste** (calculable à la compilation). La **distinguabilité** (une
+ancre entre-t-elle en collision avec `--link` sous simulation ?) n'est
+mesurable qu'après compilation, par la suite TypeScript (simulation
+Machado). Donc :
+
+- Le déclenchement des barreaux (2) et (3) de l'échelle est piloté par le
+  **contraste** (ce que Sass sait faire). Pour la palette actuelle (fond
+  clair, le cran 950 atteint toujours un fort contraste), ces barreaux ne
+  se déclenchent **jamais** — ils sont *latents*, une robustesse pour les
+  palettes consommatrices contraintes, à tester par test unitaire du
+  résolveur (fond pathologique), pas via un thème du portfolio.
+- Le recours face à une **collision de distinguabilité** que les ancres
+  in-palette ne résolvent pas reste le mécanisme **`special-colors`**
+  (déjà en place, prioritaire) : override explicite, in-gamut, qui **peut**
+  être hors palette pour une -opie et **doit** rester dans la palette pour
+  une -omalie (à documenter, phase 4). La suite de distinguabilité signale
+  la collision ; le dev (ou la calibration) pose le `special-colors`.
+
+**C. L'alerte est d'abord portée par le rapport et la suite**, pas par le
+`@warn` Sass (qui défile dans les logs de build et se perd) : le
+`CONTRAST-REPORT.md` marque déjà les ratios sous seuil (⚠) et la suite de
+contrastes trace les manquements en waivers documentés. Le `@warn` reste un
+indice à la compilation ; la source de vérité pour le dev est le rapport +
+les tests. La philosophie « prévenir et tracer, ne pas bloquer » est déjà
+celle du système de waivers — la partie 3 l'étend au **côté compilation**.
+
+### Phase 0 — Préparation
+
+Arbre propre, branche, baseline CSS (`/tmp/cvd-degradation/phase0.css`),
+`pnpm build`/`lint`/`test` verts, prérequis vérifiés.
+
+### Phase 1 — Garde anti-gamut (test, additif)
+
+Filet de sécurité **avant** de toucher aux moteurs, comme les tests de
+distinguabilité de la partie 1. Aucune modification de `src/styles/`.
+
+1. Nouveau test (`src/accessibility/contrast/__tests__/gamut.test.ts`,
+   `/** @jest-environment node */`) : pour **chaque thème** et **chaque
+   custom property de couleur** émise dans le CSS compilé, parser la valeur
+   (culori) et vérifier qu'elle est **dans le gamut sRGB** — chaque canal
+   RGB dans [0, 1] à un epsilon près (culori `inGamut("rgb")` ou comparaison
+   directe des canaux). Étendre au besoin l'extraction
+   (`extract-themes.ts`) pour énumérer toutes les propriétés `--x: …` d'un
+   bloc `[data-theme]`, pas seulement celles du registre de paires.
+2. **Mécanisme de waiver identique à E1** (anti-zombie) : une propriété
+   hors gamut connue et documentée est waivée ; si elle repasse in-gamut, le
+   waiver devient obsolète et le test force son retrait.
+3. **Premier run = inventaire** : consignera les **11 déclarations hors
+   gamut de `tritanomaly`** (3 primitives racines — `--accent`,
+   `--accent-strong`, `--accent-soft` — issues du blend `amber → orange`, +
+   8 tokens de couche 3 dérivés). Les waiver avec `preexisting: true` et la
+   cause (mélange OKLCH partie 1) : le test passe, l'inventaire est acté.
+
+**Oracle** : CSS byte-identique à phase 0.
+**Commit** : `feat(theme): cvd-degradation phase 1 — sRGB gamut guard test`.
+
+### Phase 2 — Dégradation gracieuse du résolveur (Sass)
+
+Dans `_theme-utils.scss`, **sans changer le CSS émis pour le portfolio**
+(les nouveaux barreaux sont latents, cf. note d'implémentabilité) :
+
+1. Remplacer le `@error` de `resolve-anchor-weight` par un **meilleur
+   effort** : mémoriser, au fil de la boucle, le poids au plus fort ratio ;
+   si aucun n'atteint la cible, renvoyer ce meilleur poids et `@warn` avec
+   un message actionnable (rôle, famille, meilleur ratio obtenu, fond). Si
+   ce meilleur ratio est **< plancher de lisibilité** (constante
+   `$status-legibility-floor`, défaut 3, *arbitrage Simon*), `@warn` avec un
+   message distinct « quasi invisible ».
+2. Ajouter le barreau **-opie hors palette in-gamut** : nouveau paramètre
+   `$allow-off-palette` (vrai pour les -opies, faux pour les -omalies,
+   fixé au site d'appel selon le thème). Si vrai et qu'aucun poids
+   in-palette n'atteint la cible, calculer une couleur OKLCH par rotation de
+   teinte vers `cvd-safe-anchor-hue($cvd-type)`, **ramenée dans le gamut**
+   (helper `oklch-to-srgb-gamut`, cf. phase 3.1) et de luminance ajustée
+   pour la cible. Documenter que ce chemin est latent aujourd'hui.
+3. **Cible de contraste paramétrable** (constat annexe) : passer la cible
+   (défaut 4.5) en paramètre du résolveur plutôt que la câbler, pour les
+   futurs usages grand-texte/non-texte des rôles statut. Défaut inchangé →
+   sans effet sur le CSS actuel.
+4. **Tests unitaires du résolveur** (node, sur les fonctions Sass via
+   compilation d'un fichier de sonde, ou tests de non-régression du CSS) :
+   couvrir les barreaux latents avec un fond pathologique (ex. famille
+   d'ancre incapable d'atteindre la cible) — vérifier meilleur effort +
+   absence d'échec dur + in-gamut.
+
+**Oracle** : CSS byte-identique à phase 0 (barreaux latents non déclenchés).
+**Commit** : `feat(theme): cvd-degradation phase 2 — graceful fallback, dev warning`.
+
+### Phase 3 — Correction du gamut tritan (Sass)
+
+1. Helper **`oklch-to-srgb-gamut($color)`** : ramène une couleur dans le
+   gamut sRGB par **réduction de chroma OKLCH** (méthode standard : teinte
+   et lightness préservées, chroma réduite jusqu'à ce que les canaux RGB
+   soient dans [0, 255]) — supérieur à un simple clamp des canaux qui
+   distord la teinte. Boucle bornée en Sass ; tests unitaires (une couleur
+   déjà in-gamut est renvoyée inchangée ; une couleur hors gamut ressort
+   in-gamut, teinte préservée à un delta près).
+2. Appliquer ce helper à **la sortie du mélange `severity`** dans
+   `remap-for-cvd` (le seul endroit produisant du hors-gamut aujourd'hui) —
+   et, par cohérence défensive, à toute construction de couleur OKLCH du
+   moteur susceptible de sortir du gamut.
+3. Effet attendu : les **11 déclarations hors gamut de `tritanomaly`**
+   repassent in-gamut → les waiver de la phase 1 deviennent **obsolètes**,
+   le mécanisme anti-zombie force leur retrait (succès attendu).
+
+**Diff CSS attendu** : confiné au bloc `[data-theme="tritanomaly"]`
+(3 primitives + 8 tokens dérivés) ; chaque valeur devient une couleur
+in-gamut, teinte quasi inchangée (réduction de chroma minime, ~1–4 %).
+Sortie brute au rapport. **Changement de couleurs réelles → validation
+visuelle de Simon requise.**
+**Commit** : `refactor(theme): cvd-degradation phase 3 — gamut-map the tritan blend`.
+
+### Phase 4 — Vérifications et documentation de la politique
+
+1. **Garde anti-gamut** (phase 1) : plus aucune propriété hors gamut sur les
+   12 thèmes ; tous les waiver de phase 1 retirés (anti-zombie).
+2. **Suite de contrastes / distinguabilité** : inchangées et vertes ; le
+   diff tritan ne doit pas dégrader un ratio ou une paire (tableau
+   avant/après au rapport).
+3. **Cohérence Sass/TS** de `oklch-to-srgb-gamut` : comparer 2–3 couleurs
+   ramenées in-gamut côté Sass vs une implémentation culori de référence.
+4. Régénérer `CONTRAST-REPORT.md`.
+5. **Documenter la politique de palette par classe** (README § 6.1 et guide
+   § E2) : -omalie = strictement in-palette ; -opie = in-palette d'abord,
+   couleur in-gamut hors palette en recours ; `special-colors` = échappatoire
+   sanctionnée pour les collisions de distinguabilité (in-gamut ; hors
+   palette tolérée en -opie, pas en -omalie).
+6. **Validation visuelle de Simon** sur `tritanomaly`.
+
+**Commit** : `refactor(theme): cvd-degradation phase 4 — verification, waiver cleanup, docs`.
+
+### Phase 5 — Finalisation
+
+`pnpm build`/`lint`/`test` ; docs (README § 4.3 / § 6.1, guide § E2 :
+robustesse implémentée) ; changelog de synthèse (échelle de dégradation,
+garde-gamut, correction tritan, plancher de lisibilité retenu) ; rapport
+final (diffs bruts, inventaire gamut avant/après, décisions en attente).
+
+**Commit** : `docs(theme): cvd-degradation phase 5 — finalization`.
+
+### Points d'arbitrage laissés à Simon
+
+- **Plancher de lisibilité** (défaut proposé 3:1) : en dessous, `@warn`
+  « quasi invisible » — valeur à valider.
+- **Politique hors-palette pour les -opies** : autorisée (constat 2) —
+  confirmer, et confirmer que les -omalies restent strictement in-palette.
+- **Validation visuelle** de `tritanomaly` après correction du gamut.
+
+### Hors périmètre de la partie 3 (ne PAS faire)
+
+- La **distinguabilité côté Sass** (simulation Machado en Sass) : hors
+  scope — elle reste vérifiée par la suite TypeScript ; le résolveur ne
+  pilote sa dégradation que par le contraste.
+- `--warning` / `--info` : toujours des noms réservés, aucun code.
+- Le high-contrast, l'achromatopsie, l'anti-éblouissement, le thème
+  light/dark.
+- Le remap des rôles identitaires rouge-verts (inchangé) et les statuts
+  rouge-verts de la partie 2 (déjà in-palette, non retouchés).
 - L'export/packaging (chantiers E3+).
