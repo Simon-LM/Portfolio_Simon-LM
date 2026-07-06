@@ -22,6 +22,7 @@ mergée : rollup + src, datant d'avant plusieurs refontes du système).
 | --- | --- | --- |
 | **README.md** (ce fichier) | Conception : fonctionnement, architecture cible, décisions actées | vivant |
 | [CHANGELOG.md](./CHANGELOG.md) | Journal de toutes les modifications de la fonctionnalité | vivant |
+| [TODO.md](./TODO.md) | Checklist des travaux et décisions en suspens (fils qui pendent) | vivant |
 | [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) | Feuille de route vers le paquet open source (chantiers E1→E7) — c'est **la carte** qui ordonne les plans | vivant |
 | [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) | Plan d'exécution : fondations (rail, rôles, `@use`…) | ✅ exécuté le 2026-07-03 |
 | [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) | Plan d'exécution : chantier E1 — système de tests de contrastes | ✅ exécuté le 2026-07-04 |
