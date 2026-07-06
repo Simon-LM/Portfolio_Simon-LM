@@ -217,26 +217,44 @@
 // (cf. --success tombé à 1.60:1 en partie 1). Voir PLAN-refonte-daltonienne.md
 // partie 2 et GUIDE-extraction-paquet.md § E2.
 
+// Plancher de lisibilité (partie 3, arbitrage Simon) : en dessous de ce
+// ratio, une couleur est quasi invisible sur son fond et aucune
+// distinguabilité ne rachète l'illisibilité. Sert au seul message d'alerte
+// du meilleur effort ci-dessous — n'affecte pas la couleur retournée.
+$status-legibility-floor: 3 !default;
+
 // Choisit, dans la famille cible, le premier cran (poids Tailwind) qui
-// atteint 4.5:1 sur $bg. Fond clair : parcours du plus clair (50) au plus
-// foncé (950) — on retient donc la teinte la plus vive qui passe encore le
-// seuil. Fond sombre : sens inverse. @error explicite si aucun cran ne
-// convient. Renvoie toujours une couleur Tailwind pure (in-gamut, dans la
-// palette) : pas de mélange.
+// atteint $target-ratio sur $bg. Fond clair : parcours du plus clair (50) au
+// plus foncé (950) — on retient donc la teinte la plus vive qui passe encore
+// le seuil. Fond sombre : sens inverse. Renvoie toujours une couleur Tailwind
+// pure (in-gamut, dans la palette) : pas de mélange.
 //
-// NOTE (déviation mesurée du plan) : le plan prévoyait, pour les anomalies,
-// de résoudre le poids sur le *mélange severity* (anchor mixé à 50 % avec la
-// couleur d'origine). Mesure à l'appui, ce mélange OKLCH entre deux teintes
-// éloignées (ex. success emerald + ancre violet, quasi complémentaires)
-// sort du gamut sRGB — Sass l'a sérialisé en `hsl(194, 257%, 19%)`, couleur
-// invalide et hors palette, ce qui viole la contrainte « rester dans la
-// palette, ne pas enlaidir ». La finesse des thèmes -omalie est donc portée
-// par le *choix de l'ancre* (familles d'origine emerald/redd, corrigées en
-// poids) plutôt que par un mélange — voir les configs -omalie en phase 3 et
-// le rapport de phase 3.
-@function resolve-anchor-weight($target-family, $bg) {
+// Dégradation gracieuse (partie 3) : si aucun cran n'atteint la cible, on ne
+// bloque PAS le build (l'ancien `@error`) — on renvoie le cran au plus fort
+// contraste (« meilleur effort ») et on `@warn`. En dessous du plancher de
+// lisibilité, l'alerte est distincte (« quasi invisible »). Pour la palette
+// du portfolio (fond clair, cran 950 quasi noir), la cible est toujours
+// atteinte : ce chemin de repli est latent, c'est une robustesse pour les
+// palettes consommatrices.
+//
+// Volontairement PAS de chemin « couleur calculée hors palette » : mesuré, il
+// serait quasi inutile. Le contraste est dominé par la lightness, et la
+// palette couvre déjà toute l'échelle (50→950) ; si aucun cran n'atteint la
+// cible, c'est que le *fond* est de lightness moyenne — cas où AUCUNE teinte
+// n'y parvient (une couleur hors palette non plus). Le vrai motif pour sortir
+// de la palette est la *distinguabilité* (collision de teinte), non calculable
+// en Sass : son recours reste `special-colors` (in-gamut ; hors palette toléré
+// en -opie, pas en -omalie — cf. § 6.1). Voir le rapport de partie 3.
+//
+// NOTE (déviation mesurée, partie 2) : le plan prévoyait pour les anomalies un
+// mélange severity (anchor mixé à 50 % avec l'origine). Ce mélange OKLCH entre
+// teintes éloignées sortait du gamut sRGB — remplacé par une couleur Tailwind
+// pure ; la finesse des -omalies vient du choix d'ancre (emerald/redd).
+@function resolve-anchor-weight($target-family, $bg, $target-ratio: 4.5) {
 	$bg-lum: wcag-relative-luminance($bg);
 	$n: list.length($tailwind-weights);
+	$best: null;
+	$best-ratio: 0;
 	@for $i from 1 through $n {
 		$idx: $i;
 		@if $bg-lum < 0.5 {
@@ -244,11 +262,23 @@
 		}
 		$tw-weight: list.nth($tailwind-weights, $idx);
 		$candidate: get-color($target-family, $tw-weight);
-		@if wcag-contrast-ratio($candidate, $bg) >= 4.5 {
-			@return $candidate;
+		$ratio: wcag-contrast-ratio($candidate, $bg);
+		@if $ratio >= $target-ratio {
+			@return $candidate; // cas nominal : ancre in-palette conforme
+		}
+		@if $ratio > $best-ratio {
+			$best: $candidate;
+			$best-ratio: $ratio;
 		}
 	}
-	@error "resolve-anchor-weight: aucune teinte de #{$target-family} n'atteint 4.5:1 sur le fond du theme (#{$bg})";
+
+	// Aucun cran n'atteint la cible : meilleur effort + alerte, jamais d'échec.
+	@if $best-ratio < $status-legibility-floor {
+		@warn "resolve-anchor-weight: role statut sous le plancher de lisibilite (#{$status-legibility-floor}:1) — meilleur ratio #{$best-ratio}:1 pour la famille '#{$target-family}' sur #{$bg}. La couleur sera quasi invisible : ajuster la palette, le fond, ou poser une special-color.";
+	} @else {
+		@warn "resolve-anchor-weight: cible #{$target-ratio}:1 non atteinte pour la famille '#{$target-family}' sur #{$bg} ; meilleur effort #{$best-ratio}:1 retenu (in-palette).";
+	}
+	@return $best;
 }
 
 // Résolution d'un rôle statut. Priorité, cohérente avec remap-for-cvd :
