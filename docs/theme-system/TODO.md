@@ -18,19 +18,30 @@ rien oublier. Mettre à jour au fil de l'eau (cocher / retirer une fois fait).
 
 ## Micro-chantiers proposés (non planifiés, sous filet des tests)
 
-- [ ] **Corrections de rôles** (proposé après E1). Deux défauts de contraste
-      _réels mais masqués aujourd'hui_, protégés par la suite de contrastes
-      (le retrait des waivers sera forcé par l'anti-zombie). Détail complet
-      ci-dessous, section « Corrections de rôles ». Nécessite validation
-      visuelle du header en dark. Waivers concernés dans
-      `src/accessibility/contrast/contrast-pairs.ts` :
-  - `site/button-active-outline-on-panel-bg` (contour de bouton actif
-    invisible) ;
-  - `role/fg-on-accent-on-accent`, `site/header-text-on-header-bg`,
-    `site/header-text-role-on-header-bg`,
-    `site/header-blog-link-text-on-bg` (texte clair sur accent clair en
-    dark, masqué par des surcharges `.header` codées en dur dans
-    `_dark.scss`).
+- **Corrections de rôles** (proposé après E1) — partie 1/2 faite le
+  2026-07-07 (branche `refactor/theme-role-corrections`, changement visuel
+  nul). Fait :
+  - [x] Jeton mort `--color-button-active-outline` **supprimé** (+ sa paire
+        de contraste).
+  - [x] **Titre** du header corrigé (`--fg-on-accent` par luminance),
+        rustines `name`/`separator` retirées, waivers
+        `role/fg-on-accent-on-accent` + `site/header-text-on-header-bg`
+        levés.
+
+  Restant — **deux décisions visuelles pour Simon** (waivers
+  `site/header-text-role-on-header-bg` et `site/header-blog-link-text-on-bg`
+  conservés, rustines `.header` correspondantes conservées) :
+  - [ ] **Sous-titre du header** (`--color-header-text-role = fg-muted`) :
+        gris atténué (`gray-700`) en light, forcé near-black par rustine en
+        dark. Le rendre cohérent = l'ancrer à un gris atténué **fixe** (même
+        aspect atténué partout) → change légèrement le sous-titre en dark
+        (near-black → gris atténué). **Garder atténué partout, ou noir en
+        dark ?**
+  - [ ] **Lien blog** (`--color-header-blog-link-text = accent` amber) :
+        amber sur un chip `bg-emphasis` qui s'inverse (clair en dark) →
+        illisible, d'où la rustine near-black. **Le lien reste-t-il amber
+        (alors il faut figer/assombrir son chip), ou suit-il le chip
+        (perd l'amber) ?** Décision de style.
 
 ## Reporté explicitement (ne pas toucher sans décision)
 

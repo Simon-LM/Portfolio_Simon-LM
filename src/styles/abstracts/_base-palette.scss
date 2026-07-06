@@ -141,6 +141,17 @@ $colors: (
 	@return map.get(map.get($colors, $family), $weight);
 }
 
+// Vrai si la couleur est sombre (luminance BT.601 < 0.5). Placée ici (feuille
+// du graphe de modules) pour être accessible aussi bien à _theme-utils qu'à
+// _theme-variables (apply-roles s'en sert pour choisir l'encre sur l'accent).
+@function is-dark($color) {
+	$luminance: math.div(
+		math.round(color.channel($color, "red", $space: rgb)) * 0.299 + math.round(color.channel($color, "green", $space: rgb)) * 0.587 + math.round(color.channel($color, "blue", $space: rgb)) * 0.114,
+		255
+	);
+	@return $luminance < 0.5;
+}
+
 // Reproduces the exact clamped-lightness arithmetic of the deprecated
 // darken()/lighten() functions, which color.adjust() does not clamp on its
 // own (it can push $lightness below 0% or above 100%).

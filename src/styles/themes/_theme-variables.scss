@@ -55,7 +55,14 @@ $bg-inverse: $gray-950;
 $fg-base: $gray-950;
 $fg-muted: $gray-700;
 $fg-on-emphasis: $gray-50;
-$fg-on-accent: $gray-950;
+// Encre sur l'accent, choisie par luminance. --accent est figé clair partout
+// SAUF high-contrast (où il devient noir). Accent sombre (HC) → encre claire
+// (gray-950 = le jaune HC) ; accent clair → encre foncée : le gray-950 propre
+// du thème s'il est bien sombre (light, daltoniens, achromatopsie : aucun
+// changement), sinon (thèmes dark, où le rail décale gray-950 vers le clair)
+// une near-black constante. Corrige le clair-sur-clair du header en dark sans
+// rustine, et sans toucher les autres thèmes. Voir TODO.md.
+$fg-on-accent: if(sass(is-dark($accent)): $gray-950; else: if(sass(is-dark($gray-950)): $gray-950; else: get-color("stone", 950)));
 $border-subtle: $gray-500;
 $border-base: $gray-600;
 $border-strong: $gray-700;
@@ -164,7 +171,6 @@ $color-button-border: $border-subtle;
 $color-button-hover-bg: $link-hover;
 $color-button-hover-text: $fg-on-emphasis;
 $color-button-active-text: $fg-base;
-$color-button-active-outline: $accent;
 
 // Variables pour le curseur de taille de police
 $color-border: $border-subtle;
@@ -220,7 +226,10 @@ $color-accent-hover: $accent-strong; // sole visual change of this migration
 	$fg-base: $gray-950 !global;
 	$fg-muted: $gray-700 !global;
 	$fg-on-emphasis: $gray-50 !global;
-	$fg-on-accent: $gray-950 !global;
+	// Encre sur l'accent, choisie par luminance (cf. déclaration racine) :
+	// accent sombre (HC) → encre claire ; accent clair → gray-950 du thème s'il
+	// est sombre, sinon (thèmes dark) near-black constante.
+	$fg-on-accent: if(sass(is-dark($accent)): $gray-950; else: if(sass(is-dark($gray-950)): $gray-950; else: get-color("stone", 950))) !global;
 	$border-subtle: $gray-500 !global;
 	$border-base: $gray-600 !global;
 	$border-strong: $gray-700 !global;
@@ -331,7 +340,6 @@ $color-accent-hover: $accent-strong; // sole visual change of this migration
 	$color-button-hover-bg: $link-hover !global;
 	$color-button-hover-text: $fg-on-emphasis !global;
 	$color-button-active-text: $fg-base !global;
-	$color-button-active-outline: $accent !global;
 
 	// Variables pour le curseur de taille de police
 	$color-border: $border-subtle !global;

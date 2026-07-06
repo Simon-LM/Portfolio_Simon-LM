@@ -13,6 +13,39 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-07
+
+### Fixed / Removed (chantier « corrections de rôles » — partie 1/2)
+
+Branche `refactor/theme-role-corrections` (non mergée — validation visuelle
+de Simon requise, mais **changement visuel nul** attendu). Deux des trois
+symptômes du micro-chantier traités ; deux décisions restent (voir
+[TODO.md](./TODO.md)).
+
+- **Removed — jeton mort `--color-button-active-outline`** : émis mais
+  consommé par aucun composant (`var(--color-button-active-outline)`
+  introuvable). Retiré des 3 points SCSS + de son émission + de sa paire de
+  contraste `site/button-active-outline-on-panel-bg` (qui était le pire
+  waiver, 1.00:1 en high-contrast). Suppression parce que le jeton n'existe
+  plus, pas pour masquer un échec.
+- **Fixed — titre du header clair-sur-clair en dark** : `--fg-on-accent`
+  suivait le rail (`$gray-950`), qui s'inverse en dark → texte quasi-blanc
+  sur l'accent amber figé (~1.15:1), masqué par des rustines `.header`
+  codées en dur dans `_dark.scss`. Désormais choisi **par luminance** :
+  accent sombre (high-contrast) → encre claire ; accent clair → le
+  `gray-950` du thème s'il est sombre (light/daltoniens/achromatopsie :
+  inchangés), sinon (thèmes dark) une near-black constante. `is-dark()`
+  déplacée dans `_base-palette.scss` pour être accessible à `apply-roles`.
+  Rustines `name`/`separator` retirées ; waivers `role/fg-on-accent-on-accent`
+  et `site/header-text-on-header-bg` obsolètes (13.70:1 en dark) → retirés
+  par l'anti-zombie. Diff CSS = jeton mort (12 thèmes) + `--color-header-text`
+  dark/anti-glare-dark passant de near-blanc à `#0c0a09` (identique au rendu
+  masqué → **invisible**). 601 tests, build/lint/tsc verts.
+- **Restant (décisions visuelles)** : le **sous-titre** du header
+  (`--color-header-text-role = fg-muted`, gris atténué en light) et le
+  **lien blog** (`--color-header-blog-link-text = accent` amber) — toujours
+  waivés, rustines conservées. Cf. TODO.md.
+
 ## 2026-07-06
 
 ### Changed (chantier E2 — refonte daltonienne, partie 3 exécutée)
