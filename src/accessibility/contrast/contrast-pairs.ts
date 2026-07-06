@@ -81,24 +81,18 @@ const rolePairs: ContrastPair[] = [
 				"src/components). Pre-existing since the role's introduction. " +
 				"anti-glare-light's ratio rose slightly (2.85 → 3.13, still " +
 				"non-compliant) after the chantier E2 OKLCH anti-glare rewrite " +
-				"(PLAN-revue-moteurs.md phase 3). deuteranomaly/deuteranopia/" +
-				"protanomaly/protanopia's ratios dropped further (were 3.61/4.03/" +
-				"3.61/3.13) after the chantier E2 (refonte daltonienne) family-remap (emerald -> sky, " +
-				"weight shift -3): the shift was calibrated for the " +
-				"distinguish/link-vs-success pair (--link is already sky-900; " +
-				"emerald -> sky at shift 0 collided with it under CVD simulation, " +
-				"ΔE as low as 4.6 — see PLAN-refonte-daltonienne.md phase 3/4), " +
-				"which took priority since --success carries no live contrast " +
-				"impact today. tritanomaly/tritanopia/achromatopsia unaffected " +
-				"(emerald isn't remapped for tritan; achromatopsia unrelated).",
+				"(PLAN-revue-moteurs.md phase 3). The 4 red-green CVD themes were " +
+				"resolved by chantier E2 (refonte daltonienne, part 2 — semantic " +
+				"status anchors): --success now resolves to a weight guaranteeing " +
+				">= 4.5:1 (violet-600 = 5.46:1 in the -opias, emerald-700 = 5.25:1 " +
+				"in the -omalies), so their entries are gone. Remaining waived " +
+				"themes are the non-CVD light/anti-glare-light and the tritan/" +
+				"achromatopsia themes, where --success keeps its emerald-600 value " +
+				"(tritan doesn't remap emerald; achromatopsia is out of scope).",
 			preexisting: true,
 			measured: {
 				light: 3.6079,
 				"anti-glare-light": 3.1323,
-				deuteranomaly: 2.333,
-				deuteranopia: 1.5964,
-				protanomaly: 2.333,
-				protanopia: 1.5964,
 				tritanomaly: 3.6079,
 				tritanopia: 3.6079,
 				achromatopsia: 2.4167,
@@ -112,16 +106,18 @@ const rolePairs: ContrastPair[] = [
 		level: "text",
 		waiver: {
 			reason:
-				"anti-glare-light only, as of chantier E2 (refonte daltonienne, family-remap). The " +
+				"anti-glare-light only, as of chantier E2 (refonte daltonienne). The " +
 				"6 CVD-theme failures documented here since chantier E1 — the old " +
 				"CVD-engine substitution colors (e.g. #ffcc00 in deuteranopia, " +
 				"chosen for perceptual distinguishability, not contrast, as low as " +
-				"1.34:1) — are resolved: redd -> amber (+1 weight) now covers " +
-				"--danger in all 6 CVD themes, all >= 4.5:1 (PLAN-refonte-daltonienne.md " +
-				"phase 3). anti-glare-light's ratio rose (3.46 → 3.94, still " +
-				"non-compliant) after the chantier E2 OKLCH anti-glare rewrite " +
-				"(PLAN-revue-moteurs.md phase 3), unrelated to the CVD remap. " +
-				"--danger remains currently unreferenced by any component.",
+				"1.34:1) — are resolved: --danger now resolves to a weight " +
+				">= 4.5:1 in all 6 CVD themes (orange-700 = 4.96:1 in the -opias " +
+				"via the part-2 semantic status anchor, redd-600 = 4.62:1 kept in " +
+				"the -omalies, amber-based in tritan). anti-glare-light's ratio " +
+				"rose (3.46 → 3.94, still non-compliant) after the chantier E2 " +
+				"OKLCH anti-glare rewrite (PLAN-revue-moteurs.md phase 3), " +
+				"unrelated to the CVD work. --danger remains currently " +
+				"unreferenced by any component.",
 			preexisting: true,
 			measured: {
 				"anti-glare-light": 3.9425,
@@ -296,8 +292,21 @@ const ALL_CVD_THEMES: readonly CvdTheme[] = [
 ];
 
 // ΔE ≥ 20 is a calibration starting point (plan § phase 1), not a proven
-// threshold — Simon adjusts it during phase 4 validation.
+// threshold — Simon adjusts it during phase 4 validation. This is the
+// threshold for the critical pairs, where confusing the two colors is a
+// genuine information loss: success vs danger above all, and each status
+// role vs the accent.
 const DEFAULT_MIN_DELTA_E = 20;
+
+// Lower threshold for pairs where one member is `--link` (PLAN-refonte-
+// daltonienne.md part 2, phase 1). A link is never conveyed by color alone:
+// WCAG 2.2 SC 1.4.1 (Use of Color) requires an additional cue, and this
+// site underlines links — so a link merely *approaching* the hue of a
+// status color, or of body text, is not the same order of failure as
+// confusing success with danger. Keeping these pairs at 20 is what forced
+// the part-1 calibration into the contrast-destroying `emerald → sky (-3)`
+// weight shift; 12 keeps a visible separation without over-constraining.
+const LINK_PAIR_MIN_DELTA_E = 12;
 
 export const distinguishabilityPairs: readonly DistinguishabilityPair[] = [
 	{
@@ -346,26 +355,18 @@ export const distinguishabilityPairs: readonly DistinguishabilityPair[] = [
 		colorA: "--link",
 		colorB: "--success",
 		themes: ALL_CVD_THEMES,
-		minDeltaE: DEFAULT_MIN_DELTA_E,
+		minDeltaE: LINK_PAIR_MIN_DELTA_E,
 	},
 	{
 		id: "distinguish/link-vs-fg-base",
 		colorA: "--link",
 		colorB: "--fg-base",
 		themes: ALL_CVD_THEMES,
-		minDeltaE: DEFAULT_MIN_DELTA_E,
-		waiver: {
-			reason:
-				"sky-900 (--link, #0c4a6e) and gray-950 (--fg-base, #0c0a09) are " +
-				"both very dark colors with similar BT.601 luma, so achromatopsia " +
-				"simulation collapses them close together (ΔE 16.00, just under " +
-				"the 20 threshold) — a link rendered at body-text darkness reads " +
-				"as barely darker gray in full monochromacy. Achromatopsia's own " +
-				"mechanism is explicitly out of scope for this refonte (kept as-is); " +
-				"candidate for a future --link lightness adjustment if this matters " +
-				"in practice (links are also underlined/styled beyond color).",
-			preexisting: true,
-			measured: { achromatopsia: 15.9997 },
-		},
+		// Was waived at ΔE 16.00 for achromatopsia against the old 20
+		// threshold; under LINK_PAIR_MIN_DELTA_E (12) that measurement now
+		// passes, so the waiver is gone (keeping it would trip the
+		// anti-zombie check). sky-900 vs gray-950 under monochromacy stays a
+		// link-class pair: both dark, but the link is also underlined.
+		minDeltaE: LINK_PAIR_MIN_DELTA_E,
 	},
 ];

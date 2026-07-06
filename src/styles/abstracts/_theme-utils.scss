@@ -81,6 +81,22 @@
 	@return ("family": null, "weight": null, "found": false);
 }
 
+// Ramène une couleur dans le gamut sRGB si elle en sort, par la méthode
+// standard CSS Color 4 `local-minde` (réduction de chroma OKLCH à teinte et
+// lightness quasi constantes — bien supérieure à un simple clamp des canaux,
+// qui distord la teinte). Une couleur déjà in-gamut est renvoyée **telle
+// quelle** (sérialisation inchangée) : le helper ne modifie donc que les
+// couleurs réellement hors gamut, sans diff parasite sur les couleurs
+// valides. Motivation : un mélange OKLCH entre deux teintes éloignées peut
+// sortir du gamut ; le navigateur le clampe alors silencieusement, distordant
+// la couleur (garde-fou mécanique : gamut.test.ts). Partie 3.
+@function gamut-map-srgb($color) {
+	@if color.is-in-gamut($color, $space: rgb) {
+		@return $color;
+	}
+	@return color.to-gamut($color, $space: rgb, $method: local-minde);
+}
+
 // -----------------------------------------------
 // MOTEUR DE REMAP DALTONIEN (CVD) — chantier E2 (refonte daltonienne)
 // -----------------------------------------------
@@ -141,7 +157,7 @@
 			// (ancres non validées perceptuellement), voir rapport de phase 2.
 			$anchor-hue: cvd-safe-anchor-hue($cvd-type);
 			$resolved: color.to-space(
-				color.change($color, $hue: $anchor-hue, $space: oklch),
+				gamut-map-srgb(color.change($color, $hue: $anchor-hue, $space: oklch)),
 				rgb
 			);
 		}
@@ -154,7 +170,11 @@
 		$severity: map.get($config, "severity");
 	}
 	@if $severity < 1 {
-		@return color.mix($resolved, $color, $weight: $severity * 100%, $method: oklch);
+		// Le mélange OKLCH peut sortir du gamut sRGB (teintes éloignées) —
+		// ramené in-gamut sans distordre la teinte (partie 3).
+		@return gamut-map-srgb(
+			color.mix($resolved, $color, $weight: $severity * 100%, $method: oklch)
+		);
 	}
 	@return $resolved;
 }
@@ -171,6 +191,133 @@
 		@return 25deg;
 	}
 	@return 250deg;
+}
+
+// -----------------------------------------------
+// MATH WCAG (support du résolveur de statut ci-dessous)
+// -----------------------------------------------
+// Luminance relative et ratio de contraste WCAG 2.x
+// (https://www.w3.org/TR/WCAG21/#dfn-relative-luminance et #dfn-contrast-ratio),
+// réimplémentés en Sass pour que le moteur puisse choisir un poids qui
+// *garantit* le ratio à la compilation. Constantes alignées sur culori
+// (seuil 0.04045, gamma 2.4), la bibliothèque de la suite TypeScript, pour
+// que les ratios Sass et TS coïncident (vérification croisée en phase 4).
+@function wcag-linearize($c) {
+	@if $c <= 0.04045 {
+		@return math.div($c, 12.92);
+	}
+	@return math.pow(math.div($c + 0.055, 1.055), 2.4);
+}
+
+@function wcag-relative-luminance($color) {
+	$r: wcag-linearize(math.div(color.channel($color, "red", $space: rgb), 255));
+	$g: wcag-linearize(math.div(color.channel($color, "green", $space: rgb), 255));
+	$b: wcag-linearize(math.div(color.channel($color, "blue", $space: rgb), 255));
+	@return 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
+}
+
+@function wcag-contrast-ratio($a, $b) {
+	$la: wcag-relative-luminance($a);
+	$lb: wcag-relative-luminance($b);
+	$lighter: max($la, $lb);
+	$darker: min($la, $lb);
+	@return math.div($lighter + 0.05, $darker + 0.05);
+}
+
+// -----------------------------------------------
+// RÉSOLVEUR DE RÔLES STATUT (CVD) — chantier E2 (refonte daltonienne, partie 2)
+// -----------------------------------------------
+// Les rôles statut (--success, --danger) ont une sémantique universelle
+// (vert = OK, rouge = problème) : le paquet leur applique une ANCRE de teinte
+// par type de CVD (déficience rouge-verte : success -> bleu, danger -> orange,
+// le duo sûr canonique) puis résout le POIDS automatiquement pour garantir le
+// ratio WCAG texte (>= 4.5:1) sur le fond du thème. Découple les deux
+// contraintes — teinte = distinguabilité, poids = contraste — là où le
+// décalage de poids fixe des tables family-remap les faisait s'affronter
+// (cf. --success tombé à 1.60:1 en partie 1). Voir PLAN-refonte-daltonienne.md
+// partie 2 et GUIDE-extraction-paquet.md § E2.
+
+// Plancher de lisibilité (partie 3, arbitrage Simon) : en dessous de ce
+// ratio, une couleur est quasi invisible sur son fond et aucune
+// distinguabilité ne rachète l'illisibilité. Sert au seul message d'alerte
+// du meilleur effort ci-dessous — n'affecte pas la couleur retournée.
+$status-legibility-floor: 3 !default;
+
+// Choisit, dans la famille cible, le premier cran (poids Tailwind) qui
+// atteint $target-ratio sur $bg. Fond clair : parcours du plus clair (50) au
+// plus foncé (950) — on retient donc la teinte la plus vive qui passe encore
+// le seuil. Fond sombre : sens inverse. Renvoie toujours une couleur Tailwind
+// pure (in-gamut, dans la palette) : pas de mélange.
+//
+// Dégradation gracieuse (partie 3) : si aucun cran n'atteint la cible, on ne
+// bloque PAS le build (l'ancien `@error`) — on renvoie le cran au plus fort
+// contraste (« meilleur effort ») et on `@warn`. En dessous du plancher de
+// lisibilité, l'alerte est distincte (« quasi invisible »). Pour la palette
+// du portfolio (fond clair, cran 950 quasi noir), la cible est toujours
+// atteinte : ce chemin de repli est latent, c'est une robustesse pour les
+// palettes consommatrices.
+//
+// Volontairement PAS de chemin « couleur calculée hors palette » : mesuré, il
+// serait quasi inutile. Le contraste est dominé par la lightness, et la
+// palette couvre déjà toute l'échelle (50→950) ; si aucun cran n'atteint la
+// cible, c'est que le *fond* est de lightness moyenne — cas où AUCUNE teinte
+// n'y parvient (une couleur hors palette non plus). Le vrai motif pour sortir
+// de la palette est la *distinguabilité* (collision de teinte), non calculable
+// en Sass : son recours reste `special-colors` (in-gamut ; hors palette toléré
+// en -opie, pas en -omalie — cf. § 6.1). Voir le rapport de partie 3.
+//
+// NOTE (déviation mesurée, partie 2) : le plan prévoyait pour les anomalies un
+// mélange severity (anchor mixé à 50 % avec l'origine). Ce mélange OKLCH entre
+// teintes éloignées sortait du gamut sRGB — remplacé par une couleur Tailwind
+// pure ; la finesse des -omalies vient du choix d'ancre (emerald/redd).
+@function resolve-anchor-weight($target-family, $bg, $target-ratio: 4.5) {
+	$bg-lum: wcag-relative-luminance($bg);
+	$n: list.length($tailwind-weights);
+	$best: null;
+	$best-ratio: 0;
+	@for $i from 1 through $n {
+		$idx: $i;
+		@if $bg-lum < 0.5 {
+			$idx: $n - $i + 1; // fond sombre : parcourir 950 -> 50
+		}
+		$tw-weight: list.nth($tailwind-weights, $idx);
+		$candidate: get-color($target-family, $tw-weight);
+		$ratio: wcag-contrast-ratio($candidate, $bg);
+		@if $ratio >= $target-ratio {
+			@return $candidate; // cas nominal : ancre in-palette conforme
+		}
+		@if $ratio > $best-ratio {
+			$best: $candidate;
+			$best-ratio: $ratio;
+		}
+	}
+
+	// Aucun cran n'atteint la cible : meilleur effort + alerte, jamais d'échec.
+	@if $best-ratio < $status-legibility-floor {
+		@warn "resolve-anchor-weight: role statut sous le plancher de lisibilite (#{$status-legibility-floor}:1) — meilleur ratio #{$best-ratio}:1 pour la famille '#{$target-family}' sur #{$bg}. La couleur sera quasi invisible : ajuster la palette, le fond, ou poser une special-color.";
+	} @else {
+		@warn "resolve-anchor-weight: cible #{$target-ratio}:1 non atteinte pour la famille '#{$target-family}' sur #{$bg} ; meilleur effort #{$best-ratio}:1 retenu (in-palette).";
+	}
+	@return $best;
+}
+
+// Résolution d'un rôle statut. Priorité, cohérente avec remap-for-cvd :
+// special-colors (override projet) > ancre sémantique > comportement
+// partie 1 (remap-for-cvd, pour les rôles non-statut ou les thèmes sans
+// ancre configurée, ex. tritan).
+@function resolve-status-color($color, $var-name, $config, $bg, $cvd-type) {
+	$special-colors: map.get($config, "special-colors");
+	$status-anchors: map.get($config, "status-anchors");
+
+	@if $status-anchors and
+		map.has-key($status-anchors, $var-name) and
+		not ($special-colors and map.has-key($special-colors, $var-name))
+	{
+		@return resolve-anchor-weight(map.get($status-anchors, $var-name), $bg);
+	}
+
+	// Pas d'ancre configurée pour ce rôle : comportement partie 1 inchangé.
+	@return remap-for-cvd($color, $var-name, $config, $cvd-type);
 }
 
 // Fonction qui transforme une couleur en version dark en tenant compte de la configuration
@@ -505,9 +652,17 @@ $hc-palette: (
 @mixin transform-light-to-deuteranomaly($config: ()) {
 	// Utiliser la configuration par défaut si aucune n'est fournie
 	$default-config: (
-		"family-remap": (
-			"emerald": ("sky", -3),
-			"redd": ("amber", 1),
+		// Rôles statut résolus par ancres sémantiques (partie 2, phase 3).
+		// Déficience LÉGÈRE (-omalie) : la discrimination rouge-vert est
+		// réduite, pas absente — on garde les teintes naturelles (success
+		// vert, danger rouge) et le résolveur ne corrige que le POIDS pour
+		// atteindre >= 4.5:1 (emerald-600 -> emerald-700 ; redd-600 tient
+		// déjà). Plus doux et plus « attendu » que le remap complet des
+		// -opies, et mesuré distinguable sous simulation (voir rapport de
+		// phase 3). accent/link ne sont pas remappés (déjà sûrs).
+		"status-anchors": (
+			"success": "emerald",
+			"danger": "redd",
 		),
 		"severity": 0.5,
 		"overrides": (),
@@ -591,15 +746,19 @@ $hc-palette: (
 		"link-hover",
 		$config
 	) !global;
-	$success: auto-deuteranomaly-transform(
+	$success: resolve-status-color(
 		$success,
 		"success",
-		$config
+		$config,
+		$gray-50,
+		"deuteranomaly"
 	) !global;
-	$danger: auto-deuteranomaly-transform(
+	$danger: resolve-status-color(
 		$danger,
 		"danger",
-		$config
+		$config,
+		$gray-50,
+		"deuteranomaly"
 	) !global;
 
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
@@ -618,9 +777,17 @@ $hc-palette: (
 	// Le mécanisme special-colors reste disponible pour un override projet.
 	$default-config: (
 		"special-colors": (),
-		"family-remap": (
-			"emerald": ("sky", -3),
-			"redd": ("amber", 1),
+		// Rôles statut résolus par ancres sémantiques (partie 2, phase 3) :
+		// success -> famille bleue, danger -> famille orange, poids
+		// auto-résolu pour >= 4.5:1. Remplace l'ancien family-remap
+		// emerald->sky(-3)/redd->amber(+1) dont le décalage fixe écrasait le
+		// contraste de --success (1.60:1). `sky` (bleu « naturel ») est déjà
+		// pris par --link ; `violet` est perçu bleu sous CVD rouge-verte et
+		// laisse le lien distinguable. accent/link ne sont pas remappés
+		// (déjà sûrs sur l'axe rouge-vert), d'où l'absence de family-remap.
+		"status-anchors": (
+			"success": "violet",
+			"danger": "orange",
 		),
 		"severity": 1,
 		"overrides": (),
@@ -725,15 +892,19 @@ $hc-palette: (
 		"link-hover",
 		$config
 	) !global;
-	$success: auto-deuteranopia-transform(
+	$success: resolve-status-color(
 		$success,
 		"success",
-		$config
+		$config,
+		$gray-50,
+		"deuteranopia"
 	) !global;
-	$danger: auto-deuteranopia-transform(
+	$danger: resolve-status-color(
 		$danger,
 		"danger",
-		$config
+		$config,
+		$gray-50,
+		"deuteranopia"
 	) !global;
 
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
@@ -747,9 +918,17 @@ $hc-palette: (
 @mixin transform-light-to-protanomaly($config: ()) {
 	// Utiliser la configuration par défaut si aucune n'est fournie
 	$default-config: (
-		"family-remap": (
-			"emerald": ("sky", -3),
-			"redd": ("amber", 1),
+		// Rôles statut résolus par ancres sémantiques (partie 2, phase 3).
+		// Déficience LÉGÈRE (-omalie) : la discrimination rouge-vert est
+		// réduite, pas absente — on garde les teintes naturelles (success
+		// vert, danger rouge) et le résolveur ne corrige que le POIDS pour
+		// atteindre >= 4.5:1 (emerald-600 -> emerald-700 ; redd-600 tient
+		// déjà). Plus doux et plus « attendu » que le remap complet des
+		// -opies, et mesuré distinguable sous simulation (voir rapport de
+		// phase 3). accent/link ne sont pas remappés (déjà sûrs).
+		"status-anchors": (
+			"success": "emerald",
+			"danger": "redd",
 		),
 		"severity": 0.5,
 		"overrides": (),
@@ -829,15 +1008,19 @@ $hc-palette: (
 		"link-hover",
 		$config
 	) !global;
-	$success: auto-protanomaly-transform(
+	$success: resolve-status-color(
 		$success,
 		"success",
-		$config
+		$config,
+		$gray-50,
+		"protanomaly"
 	) !global;
-	$danger: auto-protanomaly-transform(
+	$danger: resolve-status-color(
 		$danger,
 		"danger",
-		$config
+		$config,
+		$gray-50,
+		"protanomaly"
 	) !global;
 
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
@@ -854,9 +1037,17 @@ $hc-palette: (
 	// transform-light-to-deuteranopia ci-dessus pour la justification.
 	$default-config: (
 		"special-colors": (),
-		"family-remap": (
-			"emerald": ("sky", -3),
-			"redd": ("amber", 1),
+		// Rôles statut résolus par ancres sémantiques (partie 2, phase 3) :
+		// success -> famille bleue, danger -> famille orange, poids
+		// auto-résolu pour >= 4.5:1. Remplace l'ancien family-remap
+		// emerald->sky(-3)/redd->amber(+1) dont le décalage fixe écrasait le
+		// contraste de --success (1.60:1). `sky` (bleu « naturel ») est déjà
+		// pris par --link ; `violet` est perçu bleu sous CVD rouge-verte et
+		// laisse le lien distinguable. accent/link ne sont pas remappés
+		// (déjà sûrs sur l'axe rouge-vert), d'où l'absence de family-remap.
+		"status-anchors": (
+			"success": "violet",
+			"danger": "orange",
 		),
 		"severity": 1,
 		"overrides": (),
@@ -936,15 +1127,19 @@ $hc-palette: (
 		"link-hover",
 		$config
 	) !global;
-	$success: auto-protanopia-transform(
+	$success: resolve-status-color(
 		$success,
 		"success",
-		$config
+		$config,
+		$gray-50,
+		"protanopia"
 	) !global;
-	$danger: auto-protanopia-transform(
+	$danger: resolve-status-color(
 		$danger,
 		"danger",
-		$config
+		$config,
+		$gray-50,
+		"protanopia"
 	) !global;
 
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
@@ -1040,15 +1235,19 @@ $hc-palette: (
 		"link-hover",
 		$config
 	) !global;
-	$success: auto-tritanomaly-transform(
+	$success: resolve-status-color(
 		$success,
 		"success",
-		$config
+		$config,
+		$gray-50,
+		"tritanomaly"
 	) !global;
-	$danger: auto-tritanomaly-transform(
+	$danger: resolve-status-color(
 		$danger,
 		"danger",
-		$config
+		$config,
+		$gray-50,
+		"tritanomaly"
 	) !global;
 
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
@@ -1149,15 +1348,19 @@ $hc-palette: (
 		"link-hover",
 		$config
 	) !global;
-	$success: auto-tritanopia-transform(
+	$success: resolve-status-color(
 		$success,
 		"success",
-		$config
+		$config,
+		$gray-50,
+		"tritanopia"
 	) !global;
-	$danger: auto-tritanopia-transform(
+	$danger: resolve-status-color(
 		$danger,
 		"danger",
-		$config
+		$config,
+		$gray-50,
+		"tritanopia"
 	) !global;
 
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés

@@ -205,9 +205,13 @@ a conduit à la décision « ancres sémantiques » ci-dessous, qui le résout
 par conception. Détail complet, tableaux avant/après et diffs bruts :
 voir [CHANGELOG.md](./CHANGELOG.md).
 
-**Ancres sémantiques pour les rôles statut — acté le 2026-07-06, à
-implémenter (plan rédigé :
-[PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) partie 2).** Le cas `success` à 1.60:1 a
+**Ancres sémantiques pour les rôles statut — acté le 2026-07-06,
+✅ implémenté le 2026-07-06** (plan
+[PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) partie 2,
+branche `refactor/theme-status-anchors`, validation visuelle de Simon
+requise avant merge ; résolveur `resolve-status-color` dans
+`_theme-utils.scss`, -opies → violet-600/orange-700, -omalies →
+emerald-700/redd-600, tous ≥ 4.5:1). Le cas `success` à 1.60:1 a
 révélé un défaut de conception du remap pour une classe précise de
 rôles : un décalage de poids fixe sert deux contraintes à la fois
 (distinguabilité CVD *et* contraste WCAG), et finit par sacrifier l'une
@@ -250,6 +254,29 @@ Les entrées statut des tables `family-remap` (ex. `emerald → sky (-3)`)
 disparaîtront au profit de ce mécanisme ; les tables restent pour les
 rôles identitaires, et la suite E1 + ΔE reste la garantie finale sur la
 palette réelle de chaque consommateur.
+
+**Robustesse — ✅ implémenté le 2026-07-06** (plan
+[PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) partie 3,
+branche `refactor/theme-cvd-degradation`, validation visuelle de Simon
+requise avant merge) : trois garanties issues des parties 1-2.
+
+1. **Garde anti-gamut mécanique** (`gamut.test.ts`) : aucune couleur émise
+   ne sort du gamut sRGB, sur les 12 thèmes. A révélé et corrigé
+   **11 déclarations hors gamut** en `tritanomaly` (mélange OKLCH
+   `amber → orange` de la partie 1), ramenées in-gamut par réduction de
+   chroma standard (`gamut-map-srgb` → `color.to-gamut(..., local-minde)`),
+   écart perceptuel négligeable (ΔE < 1).
+2. **Dégradation gracieuse** : `resolve-anchor-weight` ne casse plus le
+   build (`@error` → meilleur effort + `@warn`), avec un plancher de
+   lisibilité (défaut 3:1). Chemin latent pour le portfolio, robustesse
+   pour les palettes consommatrices.
+3. **Politique de palette par classe** (README § 6.1) : -omalie strictement
+   in-palette ; -opie autorisée à une couleur in-gamut hors palette ;
+   `special-colors` = recours sanctionné pour les collisions de
+   distinguabilité (non calculables en Sass). Déviation mesurée assumée :
+   le chemin « couleur calculée hors palette » automatique n'a **pas** été
+   construit (le contraste étant dominé par la lightness et la palette
+   couvrant déjà toute l'échelle, il serait quasi inutile).
 
 ### E3 — Monorepo et extraction de la face SCSS
 
