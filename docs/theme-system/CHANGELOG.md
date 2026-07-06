@@ -41,6 +41,19 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
   chantier E2 (moteurs + refonte daltonienne) mergé dans `main` le
   2026-07-05 (`d12264f`) après validation visuelle de Simon et revue
   indépendante.
+- **Plan d'exécution rédigé** :
+  [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md)
+  restructuré en deux parties — partie 1 (remap de familles, exécutée et
+  mergée) conservée pour référence ; **partie 2 « ancres sémantiques pour
+  les rôles statut »** ajoutée (6 phases, branche
+  `refactor/theme-status-anchors`). Points de départ mesurés contre le
+  CSS compilé de main + simulation Machado : `success → violet` (poids
+  auto attendu violet-600, 5.46:1, ΔE success/link 18.0 — sky écarté car
+  occupé par le lien, sky-700 ne serait qu'à ΔE 9.4) ; `danger → orange`
+  (poids auto attendu orange-700, 4.96:1). Seuils ΔE par classe de paire
+  proposés (20 critiques / 12 paires lien, arbitrage Simon en phase 1) ;
+  poids des anomalies résolu sur le mélange `severity` (leçon des
+  waivers à 2.33). Thèmes tritan explicitement inchangés.
 
 ## 2026-07-04
 

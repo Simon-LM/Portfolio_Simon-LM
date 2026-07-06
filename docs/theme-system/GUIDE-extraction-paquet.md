@@ -206,7 +206,8 @@ par conception. Détail complet, tableaux avant/après et diffs bruts :
 voir [CHANGELOG.md](./CHANGELOG.md).
 
 **Ancres sémantiques pour les rôles statut — acté le 2026-07-06, à
-implémenter (futur plan d'exécution).** Le cas `success` à 1.60:1 a
+implémenter (plan rédigé :
+[PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) partie 2).** Le cas `success` à 1.60:1 a
 révélé un défaut de conception du remap pour une classe précise de
 rôles : un décalage de poids fixe sert deux contraintes à la fois
 (distinguabilité CVD *et* contraste WCAG), et finit par sacrifier l'une

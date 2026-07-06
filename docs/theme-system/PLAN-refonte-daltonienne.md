@@ -1,16 +1,34 @@
 <!-- @format -->
 
-# Plan d'exécution — refonte du mécanisme daltonien (remap de familles Tailwind)
+# Plan d'exécution — refonte du mécanisme daltonien
 
 **Document d'exécution destiné à une IA.** Mêmes règles générales que
 [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) : branche
 dédiée, un commit par phase, sortie brute des vérifications dans chaque
 rapport, arrêt en cas d'imprévu, entrées [CHANGELOG.md](./CHANGELOG.md).
+
+Deux parties, exécutables indépendamment :
+
+| Partie | Contenu | Statut |
+| --- | --- | --- |
+| [Partie 1](#partie-1--remap-de-familles-tailwind) | Remap de familles Tailwind + tests de distinguabilité | ✅ exécutée le 2026-07-04, mergée le 2026-07-05 (`d12264f`) |
+| [Partie 2](#partie-2--ancres-sémantiques-pour-les-rôles-statut) | Ancres sémantiques pour les rôles statut | actée le 2026-07-06, à exécuter |
+
+---
+
+## Partie 1 — remap de familles Tailwind
+
+> ✅ **Exécutée le 2026-07-04** (branche `refactor/theme-cvd-remap`,
+> 5 commits), **mergée le 2026-07-05** après validation visuelle de Simon
+> et revue indépendante. Conservée ci-dessous pour référence — résultats
+> détaillés dans le [CHANGELOG.md](./CHANGELOG.md) et le
+> [guide § E2](./GUIDE-extraction-paquet.md).
+
 Conception de référence : [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md)
 § E2 (mécanisme acté le 2026-07-03 : remap de familles à poids constant,
 garde-fous mesurés) et chapitre tests de contrastes.
 
-## ⛔ Prérequis bloquants
+### ⛔ Prérequis bloquants (partie 1)
 
 1. **Le chantier E1 ([PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md))
    doit être mergé** : cette refonte modifie les couleurs de 7 thèmes ; la
@@ -23,7 +41,7 @@ garde-fous mesurés) et chapitre tests de contrastes.
 
 Branche : `refactor/theme-cvd-remap`.
 
-## Le mécanisme cible (rappel de conception)
+### Le mécanisme cible (rappel de conception, partie 1)
 
 Pour chaque type de déficience, une **table de remap de familles Tailwind**
 avec décalage de poids optionnel par entrée :
@@ -55,7 +73,7 @@ thèmes daltoniens non monochromes, l'intensité fait la différence.
 
 L'achromatopsie n'est **pas** concernée (mécanisme séparé, conservé).
 
-## Phase 0 — Préparation
+### Phase 0 — Préparation
 
 Arbre propre, branche, baseline CSS
 (`/tmp/cvd-remap/phase0.css`), `pnpm build`/`lint`/`test` verts. Vérifier
@@ -63,7 +81,7 @@ la présence de la suite de contrastes (`src/accessibility/contrast/`) et du
 [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) — sinon, prérequis 1 non rempli :
 arrêt.
 
-## Phase 1 — Tests de distinguabilité par simulation CVD (additif)
+### Phase 1 — Tests de distinguabilité par simulation CVD (additif)
 
 Étend le système E1 **avant** de toucher aux moteurs, pour disposer du
 filet complet. Aucune modification de `src/styles/` dans cette phase.
@@ -100,7 +118,7 @@ filet complet. Aucune modification de `src/styles/` dans cette phase.
 **Oracle** : CSS byte-identique à phase 0.
 **Commit** : `feat(theme): cvd phase 1 — simulation-based distinguishability tests`.
 
-## Phase 2 — Le moteur de remap (Sass)
+### Phase 2 — Le moteur de remap (Sass)
 
 Dans `_theme-utils.scss` :
 
@@ -123,7 +141,7 @@ Dans `_theme-utils.scss` :
 mais aucun thème ne l'utilise encore).
 **Commit** : `feat(theme): cvd phase 2 — family-remap engine`.
 
-## Phase 3 — Tables par défaut et bascule des 6 thèmes
+### Phase 3 — Tables par défaut et bascule des 6 thèmes
 
 1. Si nécessaire, **étendre la palette** (`_base-palette.scss`) avec des
    familles Tailwind supplémentaires (données pures, addition sans risque :
@@ -152,7 +170,7 @@ chaque valeur changée doit être une couleur de palette Tailwind (ou un
 mélange OKLCH pour les anomalies). Sortie brute au rapport.
 **Commit** : `refactor(theme): cvd phase 3 — default remap tables, switch themes`.
 
-## Phase 4 — Vérifications et arbitrages
+### Phase 4 — Vérifications et arbitrages
 
 1. **Suite de contrastes** : les waivers `preexisting` liés aux couleurs
    CVD (ex. erreur deutéranopie `#ffcc00` à 1.45:1) doivent devenir
@@ -168,15 +186,216 @@ mélange OKLCH pour les anomalies). Sortie brute au rapport.
 
 **Commit** : `refactor(theme): cvd phase 4 — verification, waiver cleanup, report`.
 
-## Phase 5 — Finalisation
+### Phase 5 — Finalisation
 
 `pnpm build`/`lint`/`test` ; docs (README § 4.3 et § 6, guide E2 : refonte
 faite) ; changelog de synthèse ; rapport final (diffs bruts, tableau ΔE
 avant/après, waivers retirés/ajoutés, décisions en attente).
 
-## Hors périmètre (ne PAS faire)
+### Hors périmètre de la partie 1 (ne PAS faire)
 
 - Le moteur high-contrast et l'achromatopsie.
 - Le moteur anti-éblouissement (chantier E2, plan séparé).
 - Toute retouche du thème light/dark ou des rôles.
+- L'export/packaging (chantiers E3+).
+
+---
+
+## Partie 2 — ancres sémantiques pour les rôles statut
+
+> **Actée le 2026-07-06, à exécuter.** Conception de référence :
+> [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E2
+> (évolution « ancres sémantiques », actée le 2026-07-06) et README § 6.1.
+
+**Origine.** La partie 1 a remonté un arbitrage : `role/success-on-bg-base`
+régressé jusqu'à 1.60:1 en deutér/protanopie, parce qu'un décalage de poids
+fixe (`emerald → sky (-3)`) servait deux contraintes à la fois — la
+distinguabilité CVD *et* le contraste WCAG — et a sacrifié la seconde à la
+première. La partie 2 corrige le défaut par conception, pour la classe de
+rôles où c'est possible : les **rôles statut**, dont la sémantique est
+quasi universelle d'un projet à l'autre (vert = OK, rouge = problème).
+
+### ⛔ Prérequis bloquants (partie 2)
+
+1. **La partie 1 doit être mergée** (fait le 2026-07-05) : vérifier la
+   présence de `remap-for-cvd` dans `_theme-utils.scss` et de la suite de
+   distinguabilité (`src/accessibility/contrast/cvd-simulation.ts`,
+   `__tests__/distinguishability.test.ts`) — sinon, arrêt.
+2. `pnpm build`/`lint`/`test` verts au départ.
+
+Branche : `refactor/theme-status-anchors`.
+
+### Le mécanisme cible (partie 2)
+
+**Périmètre : les rôles statut uniquement** — `--success` et `--danger`.
+(`--warning` et `--info` sont des noms réservés de la future API, même
+classe et même mécanisme le jour venu — **aucun code pour eux dans ce
+chantier**.) Les rôles identitaires (`accent`, `link`, `focus-ring`…)
+restent adaptés par les tables `family-remap` de la partie 1.
+
+1. **Ancres sémantiques par type de CVD** (connaissance de domaine livrée
+   par le futur paquet, conventions établies de conception daltonienne) :
+   - déficiences **rouge-vertes** (deutéranopie, protanopie et leurs
+     anomalies) : `success` → ancre **bleue**, `danger` → ancre **orange**
+     (la paire bleu/orange est le duo sûr canonique) ;
+   - **tritanopie/tritanomalie** : rouge et vert restent bien perçus — les
+     statuts **gardent leurs familles d'origine** (aucun changement).
+
+   L'ancre désigne une *famille de la palette du projet* (configuration
+   par thème, voir phase 3) — jamais une couleur hors palette : les
+   contraintes de conception n° 1 et n° 2 du guide s'appliquent.
+
+2. **Poids auto-résolu par la contrainte de contraste.** La teinte vient de
+   l'ancre (distinguabilité) ; le poids est **calculé** : le premier cran
+   de la famille cible dont la couleur *finale* satisfait le ratio WCAG
+   texte (≥ 4.5:1) contre le `$bg-base` du thème. Précisions d'algorithme :
+   - fond clair (luminance > 0.5) : parcourir les poids du plus clair
+     (50) au plus foncé (950), retenir le premier conforme ; fond sombre :
+     sens inverse. `@error` explicite si aucun cran ne passe ;
+   - pour les **anomalies**, la couleur finale est le mélange `severity`
+     (mécanisme de la partie 1, conservé) — le poids est résolu sur le
+     **résultat du mélange**, pas sur la couleur cible pure, sinon le
+     mélange peut repasser sous le seuil (les waivers actuels à 2.33 en
+     -omalies viennent de là) ;
+   - nécessite des fonctions Sass `wcag-relative-luminance()` /
+     `wcag-contrast-ratio()` (formule WCAG 2.x, `math.pow` pour la
+     linéarisation des canaux). Vérification croisée en phase 4 : les
+     ratios calculés côté Sass doivent correspondre à ceux mesurés par la
+     suite TypeScript (même formule des deux côtés).
+
+3. **Seuils ΔE par classe de paire** dans la suite de distinguabilité. Le
+   seuil unique (≥ 20) sur-contraint la paire `link`/`success` : WCAG 1.4.1
+   impose déjà que les liens ne reposent jamais sur la couleur seule
+   (soulignement) — confondre la couleur d'un lien et celle d'un statut
+   n'est pas un échec du même ordre que confondre succès et danger. C'est
+   ce sur-poids qui avait produit le décalage `-3` destructeur de
+   contraste en partie 1.
+
+### Phase 0 — Préparation
+
+Arbre propre, branche, baseline CSS (`/tmp/status-anchors/phase0.css`),
+`pnpm build`/`lint`/`test` verts, prérequis vérifiés.
+
+### Phase 1 — Seuils ΔE par classe de paire (tests, additif)
+
+Aucune modification de `src/styles/` dans cette phase.
+
+1. Ajouter un champ `threshold?: number` aux paires `distinguishability`
+   du registre (défaut : 20, comportement inchangé pour les paires non
+   annotées).
+2. Défauts proposés (**calibration — les valeurs finales sont l'arbitrage
+   de Simon**, à lui présenter dans le rapport de phase avec les ΔE
+   mesurés) :
+
+   | Paire | Seuil proposé | Justification |
+   | --- | --- | --- |
+   | `--success` / `--danger` | 20 (inchangé) | paire critique — l'échec majeur |
+   | `--accent` / `--danger` | 20 (inchangé) | statut vs identité, porteur de sens |
+   | `--accent` / `--success` | 20 (inchangé) | idem |
+   | `--link` / `--success` | 12 | WCAG 1.4.1 : lien souligné, jamais couleur seule |
+   | `--link` / `--fg-base` | 12 | idem |
+
+3. Documenter la justification WCAG 1.4.1 en commentaire du registre.
+
+**Oracle** : CSS byte-identique à phase 0.
+**Commit** : `feat(theme): status-anchors phase 1 — per-pair-class ΔE thresholds`.
+
+### Phase 2 — Le résolveur de statut (Sass)
+
+Dans `_theme-utils.scss` :
+
+1. `wcag-relative-luminance($color)` et `wcag-contrast-ratio($a, $b)`
+   (formule WCAG 2.x exacte, en commentaire la référence).
+2. `resolve-status-color($color, $var-name, $config, $bg)` : lit la clé de
+   config `"status-anchors"` (map `rôle → famille cible`) ; si le rôle y
+   figure → poids auto-résolu selon l'algorithme ci-dessus (mélange
+   `severity` inclus pour les anomalies) ; sinon → comportement partie 1
+   inchangé (`remap-for-cvd`). Les `special-colors` restent prioritaires
+   sur tout (mécanisme conservé).
+3. Brancher la résolution des primitives `$success`/`$danger` des 6 mixins
+   CVD sur `resolve-status-color` — **sans aucune clé `status-anchors`
+   dans les configs à ce stade** : le chemin nouveau existe mais n'est
+   emprunté par personne.
+
+**Oracle** : CSS byte-identique (aucune config ne déclare d'ancre).
+**Commit** : `feat(theme): status-anchors phase 2 — status resolver, WCAG math in Sass`.
+
+### Phase 3 — Bascule des 4 thèmes rouge-verts
+
+1. Dans `_deuteranopia.scss`, `_deuteranomaly.scss`, `_protanopia.scss`,
+   `_protanomaly.scss` : **retirer les entrées statut des tables
+   `family-remap`** (`emerald → sky (-3)`, `redd → amber (+1)`) et ajouter
+   la config d'ancres. Point de départ **mesuré le 2026-07-06** (contre le
+   CSS compilé de main, simulation Machado — calibration, la validation
+   finale appartient à Simon et aux tests) :
+
+   ```scss
+   "status-anchors": (
+     "success": "violet",  // ancre bleue ; sky est occupé par le lien
+     "danger": "orange",
+   ),
+   ```
+
+   - `success` → violet, poids auto attendu **violet-600** (5.46:1 sur
+     `#fafaf9` ; ΔE simulés : success/danger 59.5 (deutér) / 58.0
+     (protan), success/link 18.0 / 18.1, success/accent 76.4 / 75.4).
+     Pourquoi pas `sky`, l'ancre bleue « naturelle » : le lien est déjà
+     sky-900, et sky-700 (premier cran ≥ 4.5:1) ne serait qu'à **ΔE 9.4**
+     du lien sous simulation — sous tous les seuils. `violet` est perçu
+     bleu sous CVD rouge-verte : l'ancre est respectée *dans* la palette
+     disponible.
+   - `danger` → orange, poids auto attendu **orange-700** (4.96:1 ; ΔE
+     danger/link 48.1 / 40.0, danger/accent 37.0 / 46.4). Alternative si
+     le rendu déplaît : `amber` (+ poids auto → amber-700, 4.81:1 mesuré
+     en partie 1) — mais amber est la famille de l'accent, orange évite
+     le partage.
+   - anomalies : mêmes ancres, `severity` conservée — poids résolu sur le
+     mélange (cf. mécanisme cible).
+2. **Tritanopie/tritanomalie : ne rien changer.** Vérifier explicitement
+   que les deux blocs tritan du CSS compilé sont byte-identiques à la
+   baseline.
+
+**Diff CSS attendu** : confiné aux 4 blocs `[data-theme]` rouge-verts, et
+aux seules propriétés dérivées de `success`/`danger`. Sortie brute au
+rapport.
+**Commit** : `refactor(theme): status-anchors phase 3 — switch red-green themes`.
+
+### Phase 4 — Vérifications et arbitrages
+
+1. **Suite de contrastes** : le waiver `role/success-on-bg-base` doit
+   devenir *obsolète* pour deutéranopie/protanopie (1.60:1 → ≥ 4.5:1
+   attendu) — le mécanisme anti-zombie forcera son retrait : c'est le
+   succès attendu de la partie 2. Vérifier aussi les entrées -omalies
+   (2.33 aujourd'hui). Tout nouveau waiver = arbitrage à remonter à Simon.
+2. **Cohérence Sass/TypeScript** : comparer 3-4 ratios calculés par
+   `wcag-contrast-ratio()` (via `@debug` ou rapport de compilation) aux
+   ratios mesurés par la suite — ils doivent coïncider à l'arrondi près.
+3. **Suite de distinguabilité** : tableau ΔE avant/après par paire et par
+   thème au rapport ; les seuils par classe (phase 1) s'appliquent.
+4. Régénérer `CONTRAST-REPORT.md`.
+5. **Validation visuelle de Simon** sur les 4 thèmes rouge-verts
+   (« améliorer les contrastes sans enlaidir ») — captures ou instructions
+   de comparaison avant/après.
+
+**Commit** : `refactor(theme): status-anchors phase 4 — verification, waiver cleanup, report`.
+
+### Phase 5 — Finalisation
+
+`pnpm build`/`lint`/`test` ; docs (README § 4.3 et § 6.1, guide § E2 :
+évolution implémentée) ; changelog de synthèse ; rapport final (diffs
+bruts, tableau ΔE avant/après, waivers retirés/ajoutés, décisions en
+attente).
+
+**Commit** : `docs(theme): status-anchors phase 5 — finalization`.
+
+### Hors périmètre de la partie 2 (ne PAS faire)
+
+- `--warning` / `--info` : noms réservés, **aucun code** (ni rôle, ni
+  ancre, ni test) tant que l'API ne les définit pas.
+- Les tables `family-remap` des rôles identitaires (`accent`, `link`…) —
+  seules les entrées statut sont retirées.
+- Les thèmes tritan (statuts inchangés), l'achromatopsie, le
+  high-contrast, l'anti-éblouissement.
+- Toute retouche du thème light/dark ou des valeurs de rôles hors CVD
+  (le 3.61:1 de `success` en light est un sujet séparé, non traité ici).
 - L'export/packaging (chantiers E3+).

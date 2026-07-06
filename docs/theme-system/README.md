@@ -27,7 +27,7 @@ mergée : rollup + src, datant d'avant plusieurs refontes du système).
 | [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) | Plan d'exécution : chantier E1 — système de tests de contrastes | ✅ exécuté le 2026-07-04 |
 | [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) | Artefact généré : matrice de contraste WCAG des 40 paires × 12 thèmes | vivant (régénéré par `pnpm contrast:report`) |
 | [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) | Plan d'exécution : chantier E2 — corrections moteurs + OKLCH anti-glare | ✅ exécuté le 2026-07-04, mergé le 2026-07-05 |
-| [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : remap de familles Tailwind + tests de distinguabilité | ✅ exécuté le 2026-07-04, mergé le 2026-07-05 (`d12264f`) |
+| [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : partie 1 remap de familles + tests de distinguabilité ; partie 2 ancres sémantiques des rôles statut | partie 1 ✅ mergée le 2026-07-05 (`d12264f`) ; partie 2 rédigée le 2026-07-06, à exécuter |
 
 Principe : **un chantier = un plan = une branche = une exécution par IA**,
 avec revue avant merge. Le guide donne l'ordre ; chaque plan est autonome.
