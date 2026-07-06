@@ -95,7 +95,7 @@ rapport), [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) généré et commité. 33
 d'arbitrage par Simon (voir CHANGELOG phase 5 pour la liste triée par
 gravité). CSS compilé resté strictement byte-identique du début à la fin.
 
-### E2 — Revue des moteurs anti-glare / daltoniens (in situ) — exécuté le 2026-07-04, merge en attente
+### E2 — Revue des moteurs anti-glare / daltoniens (in situ) — ✅ fait (mergé le 2026-07-05)
 
 Plan d'exécution : [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md)
 (corrections mécaniques : passe unique anti-glare à couverture totale,
@@ -103,7 +103,7 @@ Plan d'exécution : [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md)
 validée par les tests de contraste (E1, idéalement livrés avant) + validation
 visuelle de Simon. Sortie : moteurs stables, prêts à être figés dans une API.
 
-Résultat (branche `refactor/theme-engines`, non mergée) : phase 1 (corrections
+Résultat (branche `refactor/theme-engines`, mergée) : phase 1 (corrections
 API/dead-code, CSS byte-identique — un item du plan, la syntaxe `if()`, n'a
 pas été appliqué tel quel car il introduisait une régression avec Dart Sass
 1.101, voir CHANGELOG) ; phase 2 (passe unique anti-glare, couverture des
@@ -112,8 +112,8 @@ en OKLCH, seuil clair recalibré de 92% à 85% pour rester proche du rendu
 HSL précédent, seuil sombre inchangé) ; phase 4 (overlay `backdrop-filter`
 supprimé, effet mesuré comme négligeable). Diff CSS cumulé strictement
 confiné aux blocs `anti-glare-light`/`anti-glare-dark`, `CONTRAST-REPORT.md`
-tenu à jour à chaque phase colorée. **Validation visuelle de Simon requise
-avant merge** (phases 2, 3 et 4 changent des couleurs réelles).
+tenu à jour à chaque phase colorée. Validation visuelle de Simon faite,
+branche mergée dans main.
 
 **Évolutions du mécanisme — actées par Simon le 2026-07-03**, avec ses
 contraintes de conception, qui priment :
@@ -183,7 +183,8 @@ dès maintenant ; la refonte daltonienne (points 2 et 3) attend le chantier
 E1 (les tests de distinguabilité en sont le filet de sécurité) et recevra
 son propre plan.
 
-**Refonte daltonienne — exécutée le 2026-07-04, merge en attente**
+**Refonte daltonienne — exécutée le 2026-07-04, mergée le 2026-07-05
+(`d12264f`) après validation visuelle de Simon et revue indépendante**
 (branche `refactor/theme-cvd-remap`, plan
 [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md), 5 phases,
 un commit chacune) : `remap-for-cvd()` implémente exactement le
@@ -197,14 +198,57 @@ des résultats : le pire cas historique (`#ffcc00` à 1.34:1 en
 protanopie) est résolu, `role/danger-on-bg-base` passe de 6 thèmes
 daltoniens waivés à 0 ; `distinguish/success-vs-danger` (le seul échec
 de distinguabilité de l'inventaire de phase 1, tritanopie ΔE 6.81) est
-résolu à ΔE 69.66. Point d'arbitrage laissé à Simon :
-`role/success-on-bg-base` régresse en contraste WCAG dans 4 thèmes
-(jusqu'à 1.60:1) car la calibration a priorisé la distinguabilité CVD —
-sans impact aujourd'hui, `--success` n'étant consommé par aucun
-composant. Détail complet, tableaux avant/après et diffs bruts : voir
-[CHANGELOG.md](./CHANGELOG.md). **Validation visuelle de Simon requise
-avant merge**, comme pour le reste d'E2 (phases 3 et 4 changent des
-couleurs réelles dans les 6 thèmes daltoniens).
+résolu à ΔE 69.66. Le point d'arbitrage remonté par l'exécution —
+`role/success-on-bg-base` régressé en contraste WCAG dans 4 thèmes
+(jusqu'à 1.60:1), la calibration ayant priorisé la distinguabilité CVD —
+a conduit à la décision « ancres sémantiques » ci-dessous, qui le résout
+par conception. Détail complet, tableaux avant/après et diffs bruts :
+voir [CHANGELOG.md](./CHANGELOG.md).
+
+**Ancres sémantiques pour les rôles statut — acté le 2026-07-06, à
+implémenter (futur plan d'exécution).** Le cas `success` à 1.60:1 a
+révélé un défaut de conception du remap pour une classe précise de
+rôles : un décalage de poids fixe sert deux contraintes à la fois
+(distinguabilité CVD *et* contraste WCAG), et finit par sacrifier l'une
+à l'autre. La réponse actée exploite une propriété que Simon a pointée :
+les rôles **statut** — `--success` et `--danger` aujourd'hui,
+`--warning` et `--info` réservés pour l'extension future de l'API, même
+classe, même mécanisme — portent une sémantique quasi universelle
+(vert = OK, rouge = problème, températures comparables d'un projet à
+l'autre). Le paquet peut donc embarquer pour eux une vraie connaissance
+de domaine, là où il n'a aucune légitimité sur les rôles identitaires
+(`accent`, `link`…) :
+
+1. **Ancres de teinte par type de CVD, livrées par le paquet** — les
+   conventions établies de conception daltonienne : en déficience
+   rouge-verte (deutér/protanopie et anomalies), `success` migre vers
+   une ancre **bleue** et `danger` vers une ancre **orange** (la paire
+   bleu/orange est le duo sûr canonique) ; en tritanopie, rouge et vert
+   restent bien perçus — les statuts gardent leurs familles, c'est le
+   couple bleu/jaune qu'il faut éclater (déjà couvert par les tables).
+   La résolution reste **dans la palette du projet** : l'ancre désigne
+   la famille du consommateur la plus proche (configurable), jamais une
+   couleur hors palette — contraintes n° 1 et n° 2 respectées.
+2. **Poids auto-résolu par la contrainte de contraste** : la teinte est
+   choisie par l'ancre (distinguabilité), le poids est calculé — premier
+   cran de la famille cible qui atteint le ratio WCAG requis sur le fond
+   du thème (luminance relative calculable en Sass à la compilation).
+   Les deux contraintes sont découplées : un rôle statut ne peut plus
+   sortir sous le seuil par construction.
+3. **Seuils ΔE par classe de paire** dans la suite de distinguabilité :
+   `success`/`danger` est la paire critique (confondre les deux est
+   l'échec d'accessibilité majeur) et garde un seuil élevé ;
+   `link`/statut peut porter un seuil réduit — WCAG 1.4.1 impose déjà
+   que les liens ne reposent jamais sur la couleur seule (soulignement),
+   la confusion lien/statut n'est donc pas un échec du même ordre. C'est
+   ce sur-poids de `link`/`success` qui avait poussé la calibration vers
+   le décalage destructeur de contraste. Valeurs des seuils : arbitrage
+   de Simon au moment du plan.
+
+Les entrées statut des tables `family-remap` (ex. `emerald → sky (-3)`)
+disparaîtront au profit de ce mécanisme ; les tables restent pour les
+rôles identitaires, et la suite E1 + ΔE reste la garantie finale sur la
+palette réelle de chaque consommateur.
 
 ### E3 — Monorepo et extraction de la face SCSS
 

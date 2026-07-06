@@ -26,8 +26,8 @@ mergée : rollup + src, datant d'avant plusieurs refontes du système).
 | [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) | Plan d'exécution : fondations (rail, rôles, `@use`…) | ✅ exécuté le 2026-07-03 |
 | [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) | Plan d'exécution : chantier E1 — système de tests de contrastes | ✅ exécuté le 2026-07-04 |
 | [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) | Artefact généré : matrice de contraste WCAG des 40 paires × 12 thèmes | vivant (régénéré par `pnpm contrast:report`) |
-| [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) | Plan d'exécution : chantier E2 — corrections moteurs + OKLCH anti-glare | exécuté le 2026-07-04 sur `refactor/theme-engines`, **validation visuelle de Simon requise avant merge** |
-| [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : remap de familles Tailwind + tests de distinguabilité | exécuté le 2026-07-04 sur `refactor/theme-cvd-remap`, **validation visuelle de Simon requise avant merge** |
+| [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) | Plan d'exécution : chantier E2 — corrections moteurs + OKLCH anti-glare | ✅ exécuté le 2026-07-04, mergé le 2026-07-05 |
+| [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : remap de familles Tailwind + tests de distinguabilité | ✅ exécuté le 2026-07-04, mergé le 2026-07-05 (`d12264f`) |
 
 Principe : **un chantier = un plan = une branche = une exécution par IA**,
 avec revue avant merge. Le guide donne l'ordre ; chaque plan est autonome.
@@ -447,6 +447,20 @@ Base proposée (valeurs light du portfolio — vocabulaire affinable) :
 | `focus-ring`         | sky-900      | outline et fond de focus                            |
 | `success`            | emerald-600  | validations                                         |
 | `danger`             | redd-600     | erreurs                                             |
+
+**Les rôles statut, une classe à part (acté le 2026-07-06).** `success`
+et `danger` — et, réservés pour l'extension future de l'API, `warning`
+et `info` — se distinguent des rôles identitaires (`accent`, `link`…) :
+leur sémantique est une convention quasi universelle (vert = OK,
+rouge = problème), identique d'un projet à l'autre. Le paquet embarque
+donc pour eux des **ancres sémantiques par type de daltonisme**
+(déficience rouge-verte : `success` → ancre bleue, `danger` → ancre
+orange — la paire sûre canonique ; tritanopie : rouge/vert conservés),
+résolues dans la palette du projet avec un **poids auto-calculé** pour
+satisfaire le ratio WCAG sur le fond du thème. Les rôles identitaires,
+eux, restent adaptés par les tables de remap configurables par projet.
+Mécanisme détaillé et arbitrages restants :
+[GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E2.
 
 **Couche 3 — les tokens de composants (hors paquet).**
 

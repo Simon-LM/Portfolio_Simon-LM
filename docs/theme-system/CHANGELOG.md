@@ -13,6 +13,35 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-06
+
+### Docs (décision de conception — ancres sémantiques pour les rôles statut)
+
+- **Décision actée par Simon** à la suite de l'arbitrage
+  `role/success-on-bg-base` (1.60:1 en deutér/protanopie, remonté par la
+  refonte daltonienne) : les rôles **statut** — `--success` et
+  `--danger`, plus `--warning` et `--info` réservés pour l'extension
+  future de l'API — forment une classe à part dans le moteur daltonien.
+  Leur sémantique étant quasi universelle d'un projet à l'autre, le
+  paquet embarquera des **ancres de teinte par type de CVD**
+  (rouge-vert : success → bleu, danger → orange ; tritanopie :
+  rouge/vert conservés), résolues dans la palette du projet avec un
+  **poids auto-calculé** par la contrainte de contraste WCAG — les deux
+  contraintes (distinguabilité/contraste) sont ainsi découplées, là où
+  le décalage de poids fixe des tables les faisait s'affronter. Les
+  seuils ΔE de la suite de distinguabilité deviendront **par classe de
+  paire** (`success`/`danger` critique, `link`/statut réduit — WCAG
+  1.4.1 couvrant déjà les liens par le soulignement) ; valeurs à
+  arbitrer par Simon au moment du plan d'exécution.
+- Conception détaillée :
+  [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E2 ;
+  résumé dans le README § 6.1. Aucun changement de code ni de CSS —
+  futur plan d'exécution dédié.
+- Statuts mis à jour dans le README (carte des documents) et le guide :
+  chantier E2 (moteurs + refonte daltonienne) mergé dans `main` le
+  2026-07-05 (`d12264f`) après validation visuelle de Simon et revue
+  indépendante.
+
 ## 2026-07-04
 
 ### Docs (chantier E2 (refonte daltonienne), phase 5 — finalisation)
