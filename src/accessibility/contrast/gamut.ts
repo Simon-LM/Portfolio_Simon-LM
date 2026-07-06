@@ -60,37 +60,10 @@ export type GamutWaiver = {
 // waivers — with the same anti-zombie rule: once a declaration returns
 // in-gamut, its waiver here is obsolete and the guard test forces its removal.
 //
-// All 11 entries are in `tritanomaly`, deriving from 3 root primitives
-// (`--accent`, `--accent-strong`, `--accent-soft`) produced by the part-1
-// `amber → orange` severity-0.5 OKLCH blend (amber and orange are close in
-// hue, so the excursion is small — s ≈ 101–104% — unlike the near-
-// complementary red-green case fixed in part 2). To be resolved by
-// PLAN-refonte-daltonienne.md part 3 phase 3 (chroma-reduction gamut mapping).
-const TRITANOMALY_BLEND_REASON =
-	"tritanomaly's part-1 amber→orange severity (0.5) OKLCH blend leaves the " +
-	"sRGB gamut (s ≈ 101–104%); the browser clamps it, slightly distorting the " +
-	"color. Pre-existing since chantier E2 part 1. To be gamut-mapped in " +
-	"PLAN-refonte-daltonienne.md part 3 phase 3.";
-
-const TRITANOMALY_OUT_OF_GAMUT_PROPS = [
-	"--accent",
-	"--accent-strong",
-	"--accent-soft",
-	"--color-header-bg",
-	"--color-header-blog-link-text",
-	"--color-skills-icon-bg",
-	"--color-portfolio-tag-bg",
-	"--color-bottom-footer-title",
-	"--color-button-active-outline",
-	"--color-accent",
-	"--color-accent-hover",
-];
-
-export const gamutWaivers: readonly GamutWaiver[] = TRITANOMALY_OUT_OF_GAMUT_PROPS.map(
-	(prop) => ({
-		theme: "tritanomaly",
-		prop,
-		reason: TRITANOMALY_BLEND_REASON,
-		preexisting: true,
-	}),
-);
+// Currently empty: the only out-of-gamut declarations at introduction (11 in
+// `tritanomaly`, from the part-1 amber→orange severity-0.5 OKLCH blend) were
+// resolved in PLAN-refonte-daltonienne.md part 3 phase 3 — the severity blend
+// is now gamut-mapped (chroma reduction, `gamut-map-srgb` in _theme-utils.scss),
+// so the guard passes with zero waivers. Any future out-of-gamut value must be
+// fixed at the source or, if genuinely intentional, waived here with a reason.
+export const gamutWaivers: readonly GamutWaiver[] = [];

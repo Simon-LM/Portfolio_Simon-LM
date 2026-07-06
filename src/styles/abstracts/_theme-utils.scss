@@ -81,6 +81,22 @@
 	@return ("family": null, "weight": null, "found": false);
 }
 
+// Ramène une couleur dans le gamut sRGB si elle en sort, par la méthode
+// standard CSS Color 4 `local-minde` (réduction de chroma OKLCH à teinte et
+// lightness quasi constantes — bien supérieure à un simple clamp des canaux,
+// qui distord la teinte). Une couleur déjà in-gamut est renvoyée **telle
+// quelle** (sérialisation inchangée) : le helper ne modifie donc que les
+// couleurs réellement hors gamut, sans diff parasite sur les couleurs
+// valides. Motivation : un mélange OKLCH entre deux teintes éloignées peut
+// sortir du gamut ; le navigateur le clampe alors silencieusement, distordant
+// la couleur (garde-fou mécanique : gamut.test.ts). Partie 3.
+@function gamut-map-srgb($color) {
+	@if color.is-in-gamut($color, $space: rgb) {
+		@return $color;
+	}
+	@return color.to-gamut($color, $space: rgb, $method: local-minde);
+}
+
 // -----------------------------------------------
 // MOTEUR DE REMAP DALTONIEN (CVD) — chantier E2 (refonte daltonienne)
 // -----------------------------------------------
@@ -141,7 +157,7 @@
 			// (ancres non validées perceptuellement), voir rapport de phase 2.
 			$anchor-hue: cvd-safe-anchor-hue($cvd-type);
 			$resolved: color.to-space(
-				color.change($color, $hue: $anchor-hue, $space: oklch),
+				gamut-map-srgb(color.change($color, $hue: $anchor-hue, $space: oklch)),
 				rgb
 			);
 		}
@@ -154,7 +170,11 @@
 		$severity: map.get($config, "severity");
 	}
 	@if $severity < 1 {
-		@return color.mix($resolved, $color, $weight: $severity * 100%, $method: oklch);
+		// Le mélange OKLCH peut sortir du gamut sRGB (teintes éloignées) —
+		// ramené in-gamut sans distordre la teinte (partie 3).
+		@return gamut-map-srgb(
+			color.mix($resolved, $color, $weight: $severity * 100%, $method: oklch)
+		);
 	}
 	@return $resolved;
 }
