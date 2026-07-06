@@ -27,7 +27,7 @@ mergée : rollup + src, datant d'avant plusieurs refontes du système).
 | [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) | Plan d'exécution : chantier E1 — système de tests de contrastes | ✅ exécuté le 2026-07-04 |
 | [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) | Artefact généré : matrice de contraste WCAG des 40 paires × 12 thèmes | vivant (régénéré par `pnpm contrast:report`) |
 | [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) | Plan d'exécution : chantier E2 — corrections moteurs + OKLCH anti-glare | ✅ exécuté le 2026-07-04, mergé le 2026-07-05 |
-| [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : partie 1 remap de familles + tests de distinguabilité ; partie 2 ancres sémantiques des rôles statut | partie 1 ✅ mergée le 2026-07-05 (`d12264f`) ; partie 2 rédigée le 2026-07-06, à exécuter |
+| [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : partie 1 remap de familles + tests de distinguabilité ; partie 2 ancres sémantiques des rôles statut | partie 1 ✅ mergée le 2026-07-05 (`d12264f`) ; partie 2 ✅ exécutée le 2026-07-06 (branche `refactor/theme-status-anchors`), **validation visuelle requise avant merge** |
 
 Principe : **un chantier = un plan = une branche = une exécution par IA**,
 avec revue avant merge. Le guide donne l'ordre ; chaque plan est autonome.
@@ -193,24 +193,33 @@ Cas particulier : les thèmes anti-glare se **composent** —
   de la variable (`_bg`, `_text`, `link`, `title`, `hover`…) ou, à défaut, de
   la luminance (`is-dark()`).
 - **Daltonismes (les 6 thèmes non-achromatopsie)**
-  (`transform-light-to-{deuter,prot,trit}{anopia,anomaly}`) — réécrit
-  chantier E2/refonte daltonienne, 2026-07-04 : `remap-for-cvd()` résout
-  chaque primitive en cascade — (1) `special-colors` explicite (prioritaire,
-  mécanisme conservé mais vide par défaut désormais), (2) famille Tailwind
-  reconnue **et** présente dans la table `family-remap` du thème →
-  substitution vers la famille cible à poids décalé (ex. deutéranopie/
-  protanopie : `emerald → sky (-3)`, `redd → amber (+1)` ; tritanopie :
-  `amber → orange (0)`, `sky → violet (0)`), (3) famille reconnue mais
-  absente de la table → laissée inchangée (déjà jugée sûre pour ce type de
-  CVD), (4) couleur hors palette → repli par rotation de teinte OKLCH vers
-  une ancre fixe (calibration non validée, probablement du code mort pour
-  les primitives actuelles). Les anomalies (`-omaly`) réutilisent la table
-  de leur `-opie`, avec un mélange perceptuel OKLCH (`severity: 0.5`) entre
-  couleur originale et couleur remappée. L'ancien mécanisme à fenêtres de
-  teinte HSL (`adapt-color-for-colorblindness`/`adapt-color-for-color-anomaly`)
-  est purgé (plus aucun appelant, confirmé par grep). Garanties vérifiées
+  (`transform-light-to-{deuter,prot,trit}{anopia,anomaly}`) — deux
+  mécanismes, selon la classe de rôle :
+  - **Rôles identitaires** (`accent`, `link`…) via `remap-for-cvd()`
+    (chantier E2/refonte daltonienne partie 1, 2026-07-04) : cascade —
+    (1) `special-colors` explicite (prioritaire, vide par défaut),
+    (2) famille Tailwind reconnue **et** présente dans la table
+    `family-remap` du thème → substitution à poids décalé (tritanopie :
+    `amber → orange (0)`, `sky → violet (0)` ; les tables rouge-vertes ne
+    remappent aucun rôle identitaire, `accent`/`link` étant déjà sûrs),
+    (3) famille reconnue mais absente → inchangée, (4) hors palette → repli
+    par rotation de teinte OKLCH. Anomalies : mélange perceptuel OKLCH
+    (`severity: 0.5`) entre original et remappé (n'agit plus que sur les
+    tritan, seuls thèmes gardant un `family-remap` non vide).
+  - **Rôles statut** (`success`, `danger`) via `resolve-status-color()`
+    (partie 2, 2026-07-06) : ancre sémantique par type de CVD, poids
+    auto-résolu pour garantir 4.5:1 sur le fond — déficience rouge-verte
+    -opie : `success → violet-600`, `danger → orange-700` ; -omalie
+    (légère) : teintes naturelles corrigées en poids, `success → emerald-700`,
+    `danger → redd-600` ; tritanopie : inchangés (rouge/vert bien perçus).
+    Priorité `special-colors` conservée. Voir § 6.1 (« rôles statut, une
+    classe à part »).
+  L'ancien mécanisme à fenêtres de teinte HSL
+  (`adapt-color-for-colorblindness`/`adapt-color-for-color-anomaly`) est
+  purgé (plus aucun appelant, confirmé par grep). Garanties vérifiées
   mécaniquement par le système de tests de contrastes (§ 6, chantier E1) :
-  ratio WCAG **et** distinguabilité ΔE CIEDE2000 sous simulation CVD
+  ratio WCAG (aussi calculé côté Sass par `wcag-contrast-ratio()`, aligné
+  culori) **et** distinguabilité ΔE CIEDE2000 sous simulation CVD
   (`src/accessibility/contrast/cvd-simulation.ts`, matrices de Machado et
   al. 2009).
 - **Achromatopsie** (`transform-light-to-achromatopsia`) : conversion des
@@ -448,17 +457,21 @@ Base proposée (valeurs light du portfolio — vocabulaire affinable) :
 | `success`            | emerald-600  | validations                                         |
 | `danger`             | redd-600     | erreurs                                             |
 
-**Les rôles statut, une classe à part (acté le 2026-07-06).** `success`
-et `danger` — et, réservés pour l'extension future de l'API, `warning`
-et `info` — se distinguent des rôles identitaires (`accent`, `link`…) :
-leur sémantique est une convention quasi universelle (vert = OK,
-rouge = problème), identique d'un projet à l'autre. Le paquet embarque
-donc pour eux des **ancres sémantiques par type de daltonisme**
-(déficience rouge-verte : `success` → ancre bleue, `danger` → ancre
-orange — la paire sûre canonique ; tritanopie : rouge/vert conservés),
-résolues dans la palette du projet avec un **poids auto-calculé** pour
-satisfaire le ratio WCAG sur le fond du thème. Les rôles identitaires,
-eux, restent adaptés par les tables de remap configurables par projet.
+**Les rôles statut, une classe à part (acté et implémenté le
+2026-07-06).** `success` et `danger` — et, réservés pour l'extension
+future de l'API, `warning` et `info` — se distinguent des rôles
+identitaires (`accent`, `link`…) : leur sémantique est une convention
+quasi universelle (vert = OK, rouge = problème), identique d'un projet à
+l'autre. Le paquet embarque donc pour eux des **ancres sémantiques par
+type de daltonisme** (déficience rouge-verte : `success` → ancre bleue,
+`danger` → ancre orange — la paire sûre canonique ; tritanopie :
+rouge/vert conservés), résolues dans la palette du projet avec un
+**poids auto-calculé** pour satisfaire le ratio WCAG sur le fond du
+thème. Les rôles identitaires, eux, restent adaptés par les tables de
+remap configurables par projet. Implémenté dans le résolveur Sass
+`resolve-status-color` (voir § 4.3) ; les -opies vont à l'ancre pleine
+(ex. `violet-600`, `orange-700` dans ce portfolio), les -omalies gardent
+la teinte naturelle corrigée en poids (`emerald-700`, `redd-600`).
 Mécanisme détaillé et arbitrages restants :
 [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E2.
 

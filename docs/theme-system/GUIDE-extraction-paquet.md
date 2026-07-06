@@ -205,9 +205,13 @@ a conduit à la décision « ancres sémantiques » ci-dessous, qui le résout
 par conception. Détail complet, tableaux avant/après et diffs bruts :
 voir [CHANGELOG.md](./CHANGELOG.md).
 
-**Ancres sémantiques pour les rôles statut — acté le 2026-07-06, à
-implémenter (plan rédigé :
-[PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) partie 2).** Le cas `success` à 1.60:1 a
+**Ancres sémantiques pour les rôles statut — acté le 2026-07-06,
+✅ implémenté le 2026-07-06** (plan
+[PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) partie 2,
+branche `refactor/theme-status-anchors`, validation visuelle de Simon
+requise avant merge ; résolveur `resolve-status-color` dans
+`_theme-utils.scss`, -opies → violet-600/orange-700, -omalies →
+emerald-700/redd-600, tous ≥ 4.5:1). Le cas `success` à 1.60:1 a
 révélé un défaut de conception du remap pour une classe précise de
 rôles : un décalage de poids fixe sert deux contraintes à la fois
 (distinguabilité CVD *et* contraste WCAG), et finit par sacrifier l'une

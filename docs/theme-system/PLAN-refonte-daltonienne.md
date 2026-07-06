@@ -12,7 +12,7 @@ Deux parties, exécutables indépendamment :
 | Partie | Contenu | Statut |
 | --- | --- | --- |
 | [Partie 1](#partie-1--remap-de-familles-tailwind) | Remap de familles Tailwind + tests de distinguabilité | ✅ exécutée le 2026-07-04, mergée le 2026-07-05 (`d12264f`) |
-| [Partie 2](#partie-2--ancres-sémantiques-pour-les-rôles-statut) | Ancres sémantiques pour les rôles statut | actée le 2026-07-06, à exécuter |
+| [Partie 2](#partie-2--ancres-sémantiques-pour-les-rôles-statut) | Ancres sémantiques pour les rôles statut | ✅ exécutée le 2026-07-06 (branche `refactor/theme-status-anchors`), **validation visuelle de Simon requise avant merge** |
 
 ---
 
@@ -203,9 +203,17 @@ avant/après, waivers retirés/ajoutés, décisions en attente).
 
 ## Partie 2 — ancres sémantiques pour les rôles statut
 
-> **Actée le 2026-07-06, à exécuter.** Conception de référence :
-> [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E2
-> (évolution « ancres sémantiques », actée le 2026-07-06) et README § 6.1.
+> ✅ **Exécutée le 2026-07-06** (branche `refactor/theme-status-anchors`,
+> 5 commits, non mergée) — **validation visuelle de Simon requise avant
+> merge**. Conception de référence :
+> [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E2 et
+> README § 6.1. Deux ajustements mesurés en cours d'exécution, détaillés
+> dans le [CHANGELOG.md](./CHANGELOG.md) : (1) le champ de seuil ΔE existait
+> déjà par paire (`minDeltaE`), pas de nouveau champ `threshold` à ajouter ;
+> (2) le mélange `severity` prévu pour les -omalies sortait du gamut sRGB
+> (mélange OKLCH emerald+violet) — remplacé par une résolution en couleur
+> Tailwind pure, la douceur des -omalies venant du choix d'ancre (teintes
+> naturelles emerald/redd conservées).
 
 **Origine.** La partie 1 a remonté un arbitrage : `role/success-on-bg-base`
 régressé jusqu'à 1.60:1 en deutér/protanopie, parce qu'un décalage de poids
