@@ -217,12 +217,24 @@
 // (cf. --success tombé à 1.60:1 en partie 1). Voir PLAN-refonte-daltonienne.md
 // partie 2 et GUIDE-extraction-paquet.md § E2.
 
-// Choisit, dans la famille cible, le premier cran dont la couleur *finale*
-// (après mélange severity pour les anomalies) atteint 4.5:1 sur $bg. Fond
-// clair : parcours du plus clair (50) au plus foncé (950) — on retient donc
-// la teinte la plus vive qui passe encore le seuil. Fond sombre : sens
-// inverse. @error explicite si aucun cran ne convient.
-@function resolve-anchor-weight($color, $target-family, $bg, $severity) {
+// Choisit, dans la famille cible, le premier cran (poids Tailwind) qui
+// atteint 4.5:1 sur $bg. Fond clair : parcours du plus clair (50) au plus
+// foncé (950) — on retient donc la teinte la plus vive qui passe encore le
+// seuil. Fond sombre : sens inverse. @error explicite si aucun cran ne
+// convient. Renvoie toujours une couleur Tailwind pure (in-gamut, dans la
+// palette) : pas de mélange.
+//
+// NOTE (déviation mesurée du plan) : le plan prévoyait, pour les anomalies,
+// de résoudre le poids sur le *mélange severity* (anchor mixé à 50 % avec la
+// couleur d'origine). Mesure à l'appui, ce mélange OKLCH entre deux teintes
+// éloignées (ex. success emerald + ancre violet, quasi complémentaires)
+// sort du gamut sRGB — Sass l'a sérialisé en `hsl(194, 257%, 19%)`, couleur
+// invalide et hors palette, ce qui viole la contrainte « rester dans la
+// palette, ne pas enlaidir ». La finesse des thèmes -omalie est donc portée
+// par le *choix de l'ancre* (familles d'origine emerald/redd, corrigées en
+// poids) plutôt que par un mélange — voir les configs -omalie en phase 3 et
+// le rapport de phase 3.
+@function resolve-anchor-weight($target-family, $bg) {
 	$bg-lum: wcag-relative-luminance($bg);
 	$n: list.length($tailwind-weights);
 	@for $i from 1 through $n {
@@ -231,12 +243,9 @@
 			$idx: $n - $i + 1; // fond sombre : parcourir 950 -> 50
 		}
 		$tw-weight: list.nth($tailwind-weights, $idx);
-		$final: get-color($target-family, $tw-weight);
-		@if $severity < 1 {
-			$final: color.mix($final, $color, $weight: $severity * 100%, $method: oklch);
-		}
-		@if wcag-contrast-ratio($final, $bg) >= 4.5 {
-			@return $final;
+		$candidate: get-color($target-family, $tw-weight);
+		@if wcag-contrast-ratio($candidate, $bg) >= 4.5 {
+			@return $candidate;
 		}
 	}
 	@error "resolve-anchor-weight: aucune teinte de #{$target-family} n'atteint 4.5:1 sur le fond du theme (#{$bg})";
@@ -254,12 +263,7 @@
 		map.has-key($status-anchors, $var-name) and
 		not ($special-colors and map.has-key($special-colors, $var-name))
 	{
-		$target-family: map.get($status-anchors, $var-name);
-		$severity: 1;
-		@if map.has-key($config, "severity") {
-			$severity: map.get($config, "severity");
-		}
-		@return resolve-anchor-weight($color, $target-family, $bg, $severity);
+		@return resolve-anchor-weight(map.get($status-anchors, $var-name), $bg);
 	}
 
 	// Pas d'ancre configurée pour ce rôle : comportement partie 1 inchangé.
@@ -598,9 +602,17 @@ $hc-palette: (
 @mixin transform-light-to-deuteranomaly($config: ()) {
 	// Utiliser la configuration par défaut si aucune n'est fournie
 	$default-config: (
-		"family-remap": (
-			"emerald": ("sky", -3),
-			"redd": ("amber", 1),
+		// Rôles statut résolus par ancres sémantiques (partie 2, phase 3).
+		// Déficience LÉGÈRE (-omalie) : la discrimination rouge-vert est
+		// réduite, pas absente — on garde les teintes naturelles (success
+		// vert, danger rouge) et le résolveur ne corrige que le POIDS pour
+		// atteindre >= 4.5:1 (emerald-600 -> emerald-700 ; redd-600 tient
+		// déjà). Plus doux et plus « attendu » que le remap complet des
+		// -opies, et mesuré distinguable sous simulation (voir rapport de
+		// phase 3). accent/link ne sont pas remappés (déjà sûrs).
+		"status-anchors": (
+			"success": "emerald",
+			"danger": "redd",
 		),
 		"severity": 0.5,
 		"overrides": (),
@@ -715,9 +727,17 @@ $hc-palette: (
 	// Le mécanisme special-colors reste disponible pour un override projet.
 	$default-config: (
 		"special-colors": (),
-		"family-remap": (
-			"emerald": ("sky", -3),
-			"redd": ("amber", 1),
+		// Rôles statut résolus par ancres sémantiques (partie 2, phase 3) :
+		// success -> famille bleue, danger -> famille orange, poids
+		// auto-résolu pour >= 4.5:1. Remplace l'ancien family-remap
+		// emerald->sky(-3)/redd->amber(+1) dont le décalage fixe écrasait le
+		// contraste de --success (1.60:1). `sky` (bleu « naturel ») est déjà
+		// pris par --link ; `violet` est perçu bleu sous CVD rouge-verte et
+		// laisse le lien distinguable. accent/link ne sont pas remappés
+		// (déjà sûrs sur l'axe rouge-vert), d'où l'absence de family-remap.
+		"status-anchors": (
+			"success": "violet",
+			"danger": "orange",
 		),
 		"severity": 1,
 		"overrides": (),
@@ -848,9 +868,17 @@ $hc-palette: (
 @mixin transform-light-to-protanomaly($config: ()) {
 	// Utiliser la configuration par défaut si aucune n'est fournie
 	$default-config: (
-		"family-remap": (
-			"emerald": ("sky", -3),
-			"redd": ("amber", 1),
+		// Rôles statut résolus par ancres sémantiques (partie 2, phase 3).
+		// Déficience LÉGÈRE (-omalie) : la discrimination rouge-vert est
+		// réduite, pas absente — on garde les teintes naturelles (success
+		// vert, danger rouge) et le résolveur ne corrige que le POIDS pour
+		// atteindre >= 4.5:1 (emerald-600 -> emerald-700 ; redd-600 tient
+		// déjà). Plus doux et plus « attendu » que le remap complet des
+		// -opies, et mesuré distinguable sous simulation (voir rapport de
+		// phase 3). accent/link ne sont pas remappés (déjà sûrs).
+		"status-anchors": (
+			"success": "emerald",
+			"danger": "redd",
 		),
 		"severity": 0.5,
 		"overrides": (),
@@ -959,9 +987,17 @@ $hc-palette: (
 	// transform-light-to-deuteranopia ci-dessus pour la justification.
 	$default-config: (
 		"special-colors": (),
-		"family-remap": (
-			"emerald": ("sky", -3),
-			"redd": ("amber", 1),
+		// Rôles statut résolus par ancres sémantiques (partie 2, phase 3) :
+		// success -> famille bleue, danger -> famille orange, poids
+		// auto-résolu pour >= 4.5:1. Remplace l'ancien family-remap
+		// emerald->sky(-3)/redd->amber(+1) dont le décalage fixe écrasait le
+		// contraste de --success (1.60:1). `sky` (bleu « naturel ») est déjà
+		// pris par --link ; `violet` est perçu bleu sous CVD rouge-verte et
+		// laisse le lien distinguable. accent/link ne sont pas remappés
+		// (déjà sûrs sur l'axe rouge-vert), d'où l'absence de family-remap.
+		"status-anchors": (
+			"success": "violet",
+			"danger": "orange",
 		),
 		"severity": 1,
 		"overrides": (),
