@@ -173,6 +173,99 @@
 	@return 250deg;
 }
 
+// -----------------------------------------------
+// MATH WCAG (support du résolveur de statut ci-dessous)
+// -----------------------------------------------
+// Luminance relative et ratio de contraste WCAG 2.x
+// (https://www.w3.org/TR/WCAG21/#dfn-relative-luminance et #dfn-contrast-ratio),
+// réimplémentés en Sass pour que le moteur puisse choisir un poids qui
+// *garantit* le ratio à la compilation. Constantes alignées sur culori
+// (seuil 0.04045, gamma 2.4), la bibliothèque de la suite TypeScript, pour
+// que les ratios Sass et TS coïncident (vérification croisée en phase 4).
+@function wcag-linearize($c) {
+	@if $c <= 0.04045 {
+		@return math.div($c, 12.92);
+	}
+	@return math.pow(math.div($c + 0.055, 1.055), 2.4);
+}
+
+@function wcag-relative-luminance($color) {
+	$r: wcag-linearize(math.div(color.channel($color, "red", $space: rgb), 255));
+	$g: wcag-linearize(math.div(color.channel($color, "green", $space: rgb), 255));
+	$b: wcag-linearize(math.div(color.channel($color, "blue", $space: rgb), 255));
+	@return 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
+}
+
+@function wcag-contrast-ratio($a, $b) {
+	$la: wcag-relative-luminance($a);
+	$lb: wcag-relative-luminance($b);
+	$lighter: max($la, $lb);
+	$darker: min($la, $lb);
+	@return math.div($lighter + 0.05, $darker + 0.05);
+}
+
+// -----------------------------------------------
+// RÉSOLVEUR DE RÔLES STATUT (CVD) — chantier E2 (refonte daltonienne, partie 2)
+// -----------------------------------------------
+// Les rôles statut (--success, --danger) ont une sémantique universelle
+// (vert = OK, rouge = problème) : le paquet leur applique une ANCRE de teinte
+// par type de CVD (déficience rouge-verte : success -> bleu, danger -> orange,
+// le duo sûr canonique) puis résout le POIDS automatiquement pour garantir le
+// ratio WCAG texte (>= 4.5:1) sur le fond du thème. Découple les deux
+// contraintes — teinte = distinguabilité, poids = contraste — là où le
+// décalage de poids fixe des tables family-remap les faisait s'affronter
+// (cf. --success tombé à 1.60:1 en partie 1). Voir PLAN-refonte-daltonienne.md
+// partie 2 et GUIDE-extraction-paquet.md § E2.
+
+// Choisit, dans la famille cible, le premier cran dont la couleur *finale*
+// (après mélange severity pour les anomalies) atteint 4.5:1 sur $bg. Fond
+// clair : parcours du plus clair (50) au plus foncé (950) — on retient donc
+// la teinte la plus vive qui passe encore le seuil. Fond sombre : sens
+// inverse. @error explicite si aucun cran ne convient.
+@function resolve-anchor-weight($color, $target-family, $bg, $severity) {
+	$bg-lum: wcag-relative-luminance($bg);
+	$n: list.length($tailwind-weights);
+	@for $i from 1 through $n {
+		$idx: $i;
+		@if $bg-lum < 0.5 {
+			$idx: $n - $i + 1; // fond sombre : parcourir 950 -> 50
+		}
+		$tw-weight: list.nth($tailwind-weights, $idx);
+		$final: get-color($target-family, $tw-weight);
+		@if $severity < 1 {
+			$final: color.mix($final, $color, $weight: $severity * 100%, $method: oklch);
+		}
+		@if wcag-contrast-ratio($final, $bg) >= 4.5 {
+			@return $final;
+		}
+	}
+	@error "resolve-anchor-weight: aucune teinte de #{$target-family} n'atteint 4.5:1 sur le fond du theme (#{$bg})";
+}
+
+// Résolution d'un rôle statut. Priorité, cohérente avec remap-for-cvd :
+// special-colors (override projet) > ancre sémantique > comportement
+// partie 1 (remap-for-cvd, pour les rôles non-statut ou les thèmes sans
+// ancre configurée, ex. tritan).
+@function resolve-status-color($color, $var-name, $config, $bg, $cvd-type) {
+	$special-colors: map.get($config, "special-colors");
+	$status-anchors: map.get($config, "status-anchors");
+
+	@if $status-anchors and
+		map.has-key($status-anchors, $var-name) and
+		not ($special-colors and map.has-key($special-colors, $var-name))
+	{
+		$target-family: map.get($status-anchors, $var-name);
+		$severity: 1;
+		@if map.has-key($config, "severity") {
+			$severity: map.get($config, "severity");
+		}
+		@return resolve-anchor-weight($color, $target-family, $bg, $severity);
+	}
+
+	// Pas d'ancre configurée pour ce rôle : comportement partie 1 inchangé.
+	@return remap-for-cvd($color, $var-name, $config, $cvd-type);
+}
+
 // Fonction qui transforme une couleur en version dark en tenant compte de la configuration
 @function auto-dark-transform($color, $var-name, $config) {
 	// Récupérer les paramètres de configuration
@@ -591,15 +684,19 @@ $hc-palette: (
 		"link-hover",
 		$config
 	) !global;
-	$success: auto-deuteranomaly-transform(
+	$success: resolve-status-color(
 		$success,
 		"success",
-		$config
+		$config,
+		$gray-50,
+		"deuteranomaly"
 	) !global;
-	$danger: auto-deuteranomaly-transform(
+	$danger: resolve-status-color(
 		$danger,
 		"danger",
-		$config
+		$config,
+		$gray-50,
+		"deuteranomaly"
 	) !global;
 
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
@@ -725,15 +822,19 @@ $hc-palette: (
 		"link-hover",
 		$config
 	) !global;
-	$success: auto-deuteranopia-transform(
+	$success: resolve-status-color(
 		$success,
 		"success",
-		$config
+		$config,
+		$gray-50,
+		"deuteranopia"
 	) !global;
-	$danger: auto-deuteranopia-transform(
+	$danger: resolve-status-color(
 		$danger,
 		"danger",
-		$config
+		$config,
+		$gray-50,
+		"deuteranopia"
 	) !global;
 
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
@@ -829,15 +930,19 @@ $hc-palette: (
 		"link-hover",
 		$config
 	) !global;
-	$success: auto-protanomaly-transform(
+	$success: resolve-status-color(
 		$success,
 		"success",
-		$config
+		$config,
+		$gray-50,
+		"protanomaly"
 	) !global;
-	$danger: auto-protanomaly-transform(
+	$danger: resolve-status-color(
 		$danger,
 		"danger",
-		$config
+		$config,
+		$gray-50,
+		"protanomaly"
 	) !global;
 
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
@@ -936,15 +1041,19 @@ $hc-palette: (
 		"link-hover",
 		$config
 	) !global;
-	$success: auto-protanopia-transform(
+	$success: resolve-status-color(
 		$success,
 		"success",
-		$config
+		$config,
+		$gray-50,
+		"protanopia"
 	) !global;
-	$danger: auto-protanopia-transform(
+	$danger: resolve-status-color(
 		$danger,
 		"danger",
-		$config
+		$config,
+		$gray-50,
+		"protanopia"
 	) !global;
 
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
@@ -1040,15 +1149,19 @@ $hc-palette: (
 		"link-hover",
 		$config
 	) !global;
-	$success: auto-tritanomaly-transform(
+	$success: resolve-status-color(
 		$success,
 		"success",
-		$config
+		$config,
+		$gray-50,
+		"tritanomaly"
 	) !global;
-	$danger: auto-tritanomaly-transform(
+	$danger: resolve-status-color(
 		$danger,
 		"danger",
-		$config
+		$config,
+		$gray-50,
+		"tritanomaly"
 	) !global;
 
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
@@ -1149,15 +1262,19 @@ $hc-palette: (
 		"link-hover",
 		$config
 	) !global;
-	$success: auto-tritanopia-transform(
+	$success: resolve-status-color(
 		$success,
 		"success",
-		$config
+		$config,
+		$gray-50,
+		"tritanopia"
 	) !global;
-	$danger: auto-tritanopia-transform(
+	$danger: resolve-status-color(
 		$danger,
 		"danger",
-		$config
+		$config,
+		$gray-50,
+		"tritanopia"
 	) !global;
 
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
