@@ -13,7 +13,7 @@ Trois parties, exécutables indépendamment :
 | --- | --- | --- |
 | [Partie 1](#partie-1--remap-de-familles-tailwind) | Remap de familles Tailwind + tests de distinguabilité | ✅ exécutée le 2026-07-04, mergée le 2026-07-05 (`d12264f`) |
 | [Partie 2](#partie-2--ancres-sémantiques-pour-les-rôles-statut) | Ancres sémantiques pour les rôles statut | ✅ exécutée le 2026-07-06 (branche `refactor/theme-status-anchors`), **validation visuelle de Simon requise avant merge** |
-| [Partie 3](#partie-3--robustesse--dégradation-gracieuse-garde-gamut-alerte-dev) | Dégradation gracieuse (alerte au lieu de blocage), garde anti-gamut, correction du gamut tritan | rédigée le 2026-07-06, à exécuter |
+| [Partie 3](#partie-3--robustesse--dégradation-gracieuse-garde-gamut-alerte-dev) | Dégradation gracieuse (alerte au lieu de blocage), garde anti-gamut, correction du gamut tritan | ✅ exécutée le 2026-07-06 (branche `refactor/theme-cvd-degradation`), **validation visuelle de Simon requise avant merge** |
 
 ---
 
@@ -413,8 +413,20 @@ attente).
 
 ## Partie 3 — robustesse : dégradation gracieuse, garde-gamut, alerte dev
 
-> **Rédigée le 2026-07-06, à exécuter.** Origine : trois constats issus de
-> l'exécution des parties 1 et 2, actés avec Simon.
+> ✅ **Exécutée le 2026-07-06** (branche `refactor/theme-cvd-degradation`,
+> non mergée) — **validation visuelle de Simon requise avant merge**. Trois
+> déviations mesurées, détaillées dans le [CHANGELOG.md](./CHANGELOG.md) :
+> (1) le gamut-mapping utilise le built-in standard `color.to-gamut(...,
+> local-minde)` de Dart Sass 1.101 plutôt qu'un helper de réduction de
+> chroma maison ; (2) la garde anti-gamut inspecte la **chaîne brute** émise
+> (culori clampe au parsing, donc ne détecte pas le hors-gamut) ; (3) le
+> chemin « couleur calculée hors palette » (barreau 2 de l'échelle) n'a
+> **pas** été construit — mesuré quasi inutile (contraste dominé par la
+> lightness, palette couvrant déjà toute l'échelle), l'asymétrie de politique
+> par classe étant portée par `special-colors` + la doc.
+>
+> **Origine.** Trois constats issus de l'exécution des parties 1 et 2, actés
+> avec Simon.
 >
 > 1. **Alerter plutôt que bloquer.** Aujourd'hui `resolve-anchor-weight`
 >    fait un `@error` (échec dur de compilation) si aucun poids n'atteint

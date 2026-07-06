@@ -15,6 +15,53 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-06
 
+### Changed (chantier E2 — refonte daltonienne, partie 3 exécutée)
+
+Robustesse du moteur daltonien, branche `refactor/theme-cvd-degradation`
+(5 commits, non mergée — **validation visuelle de Simon requise avant
+merge**, thème `tritanomaly`). Exécutée par Claude (Opus).
+
+- **Phase 1 — garde anti-gamut** (`gamut.test.ts`, `gamut.ts`, additif) :
+  scanne chaque custom property de couleur des 12 thèmes (+ `:root`) dans le
+  CSS compilé et échoue si une valeur sort du gamut sRGB (hsl s/l hors
+  [0,100], canal rgb hors [0,255]). Détection sur la **chaîne brute** :
+  culori clampe ces valeurs au parsing, donc son `inGamut` ne les voit pas.
+  Premier run = inventaire : **11 déclarations hors gamut** en `tritanomaly`
+  (3 primitives racines + 8 tokens dérivés), waivées (anti-zombie). CSS
+  byte-identique.
+- **Phase 2 — dégradation gracieuse** (`_theme-utils.scss`) :
+  `resolve-anchor-weight` ne fait plus d'`@error` (échec dur du build) si
+  aucun poids n'atteint la cible — il renvoie le cran au plus fort contraste
+  (« meilleur effort ») et `@warn` (message distinct sous le plancher de
+  lisibilité `$status-legibility-floor`, défaut 3:1). Cible de contraste
+  paramétrable (défaut 4.5). Chemin latent pour le portfolio → CSS
+  byte-identique ; test unitaire via sondes Sass compilées (nominal +
+  absence d'échec dur). **Déviation assumée** : pas de chemin « couleur
+  calculée hors palette » — mesuré quasi inutile (le contraste est dominé
+  par la lightness, la palette couvre déjà 50→950 ; si aucun cran ne passe,
+  le fond est de lightness moyenne, cas où aucune teinte ne passe non plus).
+  Le motif réel pour sortir de la palette (distinguabilité) n'étant pas
+  calculable en Sass, son recours reste `special-colors`.
+- **Phase 3 — correction du gamut tritan** (`_theme-utils.scss`) : helper
+  `gamut-map-srgb` (built-in Dart Sass 1.101 `color.to-gamut(..., $method:
+  local-minde)` — réduction de chroma standard CSS Color 4, teinte
+  préservée) appliqué à la sortie du mélange `severity` et, défensivement,
+  au repli OKLCH. Court-circuit si déjà in-gamut → **pas de re-sérialisation
+  parasite** (les couleurs valides des autres thèmes restent identiques).
+  Les 11 valeurs `tritanomaly` repassent in-gamut ; waivers de phase 1
+  retirés (anti-zombie). **Écart perceptuel négligeable** : ΔE 0.15 / 0.92 /
+  0.41 entre le rendu clampé d'avant et le gamut-mapping. Diff CSS confiné à
+  `[data-theme="tritanomaly"]` (11 propriétés).
+- **Phases 4-5 — vérifications, docs, finalisation** : garde anti-gamut à
+  zéro waiver sur les 12 thèmes ; suites contraste/distinguabilité
+  inchangées ; `CONTRAST-REPORT.md` régénéré (léger ajustement des ratios
+  liés à l'accent en `tritanomaly`, ΔE < 1) ; politique de palette par
+  classe documentée (README § 6.1, guide § E2). Build/lint/test/tsc verts.
+
+**Point restant pour Simon** : validation visuelle de `tritanomaly` (le
+virage de couleur est imperceptible, ΔE < 1 — le navigateur affichait déjà
+la version clampée) ; arbitrage du plancher de lisibilité (3:1).
+
 ### Docs (décision de conception — ancres sémantiques pour les rôles statut)
 
 - **Décision actée par Simon** à la suite de l'arbitrage

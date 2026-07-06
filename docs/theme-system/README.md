@@ -27,7 +27,7 @@ mergée : rollup + src, datant d'avant plusieurs refontes du système).
 | [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) | Plan d'exécution : chantier E1 — système de tests de contrastes | ✅ exécuté le 2026-07-04 |
 | [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) | Artefact généré : matrice de contraste WCAG des 40 paires × 12 thèmes | vivant (régénéré par `pnpm contrast:report`) |
 | [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) | Plan d'exécution : chantier E2 — corrections moteurs + OKLCH anti-glare | ✅ exécuté le 2026-07-04, mergé le 2026-07-05 |
-| [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : partie 1 remap de familles + tests de distinguabilité ; partie 2 ancres sémantiques des rôles statut | partie 1 ✅ mergée le 2026-07-05 (`d12264f`) ; partie 2 ✅ exécutée le 2026-07-06 (branche `refactor/theme-status-anchors`), **validation visuelle requise avant merge** |
+| [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : P1 remap de familles + tests de distinguabilité ; P2 ancres sémantiques des rôles statut ; P3 robustesse (dégradation gracieuse, garde-gamut) | P1 ✅ mergée le 2026-07-05 (`d12264f`) ; P2 ✅ et P3 ✅ exécutées le 2026-07-06 (branches `refactor/theme-status-anchors` puis `refactor/theme-cvd-degradation`), **validation visuelle requise avant merge** |
 
 Principe : **un chantier = un plan = une branche = une exécution par IA**,
 avec revue avant merge. Le guide donne l'ordre ; chaque plan est autonome.
@@ -205,7 +205,10 @@ Cas particulier : les thèmes anti-glare se **composent** —
     (3) famille reconnue mais absente → inchangée, (4) hors palette → repli
     par rotation de teinte OKLCH. Anomalies : mélange perceptuel OKLCH
     (`severity: 0.5`) entre original et remappé (n'agit plus que sur les
-    tritan, seuls thèmes gardant un `family-remap` non vide).
+    tritan, seuls thèmes gardant un `family-remap` non vide), **ramené dans
+    le gamut sRGB** par réduction de chroma (`gamut-map-srgb`, partie 3) —
+    un mélange OKLCH entre teintes éloignées peut sortir du gamut, que le
+    navigateur clamperait sinon silencieusement.
   - **Rôles statut** (`success`, `danger`) via `resolve-status-color()`
     (partie 2, 2026-07-06) : ancre sémantique par type de CVD, poids
     auto-résolu pour garantir 4.5:1 sur le fond — déficience rouge-verte
@@ -221,7 +224,10 @@ Cas particulier : les thèmes anti-glare se **composent** —
   ratio WCAG (aussi calculé côté Sass par `wcag-contrast-ratio()`, aligné
   culori) **et** distinguabilité ΔE CIEDE2000 sous simulation CVD
   (`src/accessibility/contrast/cvd-simulation.ts`, matrices de Machado et
-  al. 2009).
+  al. 2009), **et** appartenance au gamut sRGB (partie 3, `gamut.test.ts` :
+  aucune couleur émise ne sort du gamut, sur les 12 thèmes). Robustesse
+  (partie 3) : le résolveur de statut n'échoue jamais en dur — s'il ne peut
+  atteindre la cible de contraste, il renvoie le meilleur effort et `@warn`.
 - **Achromatopsie** (`transform-light-to-achromatopsia`) : conversion des
   familles de gris vers `neutral` (`convert-to-neutral-gray`), et des
   couleurs vers un gris de luminance équivalente (`get-adjusted-gray`, qui
@@ -474,6 +480,19 @@ remap configurables par projet. Implémenté dans le résolveur Sass
 la teinte naturelle corrigée en poids (`emerald-700`, `redd-600`).
 Mécanisme détaillé et arbitrages restants :
 [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E2.
+
+**Politique de palette par classe de déficience (partie 3).** La sévérité
+justifie l'intensité de l'intervention : une **-omalie** (déficience
+légère) reste **strictement dans la palette** (couleur Tailwind pure) ; une
+**-opie** (déficience complète) peut, si besoin, employer une couleur
+**in-gamut hors palette** — jamais hors gamut sRGB, qui serait du CSS
+invalide clampé par le navigateur (garanti par `gamut.test.ts`). En
+pratique, le moteur ne pilote sa dégradation que par le **contraste**
+(calculable en Sass) ; le vrai motif pour sortir de la palette — une
+**collision de distinguabilité** (teinte trop proche d'un autre rôle sous
+simulation) — n'étant vérifiable qu'après compilation (suite TypeScript),
+son recours sanctionné est une **`special-colors`** explicite : in-gamut,
+tolérée hors palette en -opie, à garder dans la palette en -omalie.
 
 **Couche 3 — les tokens de composants (hors paquet).**
 
