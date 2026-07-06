@@ -296,8 +296,21 @@ const ALL_CVD_THEMES: readonly CvdTheme[] = [
 ];
 
 // ΔE ≥ 20 is a calibration starting point (plan § phase 1), not a proven
-// threshold — Simon adjusts it during phase 4 validation.
+// threshold — Simon adjusts it during phase 4 validation. This is the
+// threshold for the critical pairs, where confusing the two colors is a
+// genuine information loss: success vs danger above all, and each status
+// role vs the accent.
 const DEFAULT_MIN_DELTA_E = 20;
+
+// Lower threshold for pairs where one member is `--link` (PLAN-refonte-
+// daltonienne.md part 2, phase 1). A link is never conveyed by color alone:
+// WCAG 2.2 SC 1.4.1 (Use of Color) requires an additional cue, and this
+// site underlines links — so a link merely *approaching* the hue of a
+// status color, or of body text, is not the same order of failure as
+// confusing success with danger. Keeping these pairs at 20 is what forced
+// the part-1 calibration into the contrast-destroying `emerald → sky (-3)`
+// weight shift; 12 keeps a visible separation without over-constraining.
+const LINK_PAIR_MIN_DELTA_E = 12;
 
 export const distinguishabilityPairs: readonly DistinguishabilityPair[] = [
 	{
@@ -346,26 +359,18 @@ export const distinguishabilityPairs: readonly DistinguishabilityPair[] = [
 		colorA: "--link",
 		colorB: "--success",
 		themes: ALL_CVD_THEMES,
-		minDeltaE: DEFAULT_MIN_DELTA_E,
+		minDeltaE: LINK_PAIR_MIN_DELTA_E,
 	},
 	{
 		id: "distinguish/link-vs-fg-base",
 		colorA: "--link",
 		colorB: "--fg-base",
 		themes: ALL_CVD_THEMES,
-		minDeltaE: DEFAULT_MIN_DELTA_E,
-		waiver: {
-			reason:
-				"sky-900 (--link, #0c4a6e) and gray-950 (--fg-base, #0c0a09) are " +
-				"both very dark colors with similar BT.601 luma, so achromatopsia " +
-				"simulation collapses them close together (ΔE 16.00, just under " +
-				"the 20 threshold) — a link rendered at body-text darkness reads " +
-				"as barely darker gray in full monochromacy. Achromatopsia's own " +
-				"mechanism is explicitly out of scope for this refonte (kept as-is); " +
-				"candidate for a future --link lightness adjustment if this matters " +
-				"in practice (links are also underlined/styled beyond color).",
-			preexisting: true,
-			measured: { achromatopsia: 15.9997 },
-		},
+		// Was waived at ΔE 16.00 for achromatopsia against the old 20
+		// threshold; under LINK_PAIR_MIN_DELTA_E (12) that measurement now
+		// passes, so the waiver is gone (keeping it would trip the
+		// anti-zombie check). sky-900 vs gray-950 under monochromacy stays a
+		// link-class pair: both dark, but the link is also underlined.
+		minDeltaE: LINK_PAIR_MIN_DELTA_E,
 	},
 ];
