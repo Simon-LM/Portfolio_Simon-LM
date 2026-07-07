@@ -2,6 +2,25 @@
 
 @use "base/normalize" as *;
 
+// Configuration du paquet de thèmes (E3 phase 5) : le `with()` doit porter
+// sur le PREMIER chargement du module state de toute la compilation — avant
+// theme-utils, qui le charge en interne. Valeurs = la palette du portfolio
+// (identiques aux défauts du paquet, qui servent de gabarit aux autres
+// projets consommateurs).
+@use "a11y-prefs/scss/state" with (
+	$gray-family: "stone",
+	$primitives: (
+		"accent": ("amber", 300),
+		"accent-strong": ("amber", 500),
+		"accent-ink": ("amber", 950),
+		"accent-soft": ("amber", 100),
+		"link": ("sky", 900),
+		"link-hover": ("sky", 800),
+		"success": ("emerald", 700),
+		"danger": ("redd", 600),
+	)
+);
+
 @use "a11y-prefs/scss/base-palette" as *;
 @use "a11y-prefs/scss/theme-utils" as *;
 @use "abstracts/theme-system" as *;
