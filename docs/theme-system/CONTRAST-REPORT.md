@@ -2,7 +2,7 @@
 
 # Contrast report — WCAG 2.2 matrix
 
-Generated on: 2026-07-06 — regenerate with `pnpm contrast:report`.
+Generated on: 2026-07-07 — regenerate with `pnpm contrast:report`.
 This file is a generated artifact (chantier E1,
 [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md)); do not edit by hand.
 
@@ -50,8 +50,8 @@ applied), ⚠ waived (see reason below). Cell value is the measured ratio.
 | `site/main-text-on-main-bg` (text ≥ 4.5) | ✓ 18.92 | ✓ 8.18 | ✓ 16.32 | ✓ 8.17 | ✓ 19.56 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.97 |
 | `site/hero-text-on-hero-bg` (text ≥ 4.5) | ✓ 18.92 | ✓ 8.18 | ✓ 16.32 | ✓ 8.17 | ✓ 19.56 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.92 | ✓ 18.97 |
 | `site/header-text-on-header-bg` (text ≥ 4.5) | ✓ 13.70 | ✓ 13.70 | ✓ 12.49 | ✓ 13.71 | ✓ 17.52 | ✓ 13.70 | ✓ 13.70 | ✓ 13.70 | ✓ 13.70 | ✓ 12.63 | ✓ 11.71 | ✓ 15.72 |
-| `site/header-text-role-on-header-bg` (text ≥ 4.5) | ✓ 7.12 | ⚠ 1.38 | ✓ 6.49 | ⚠ 1.38 | ✓ 17.52 | ✓ 7.12 | ✓ 7.12 | ✓ 7.12 | ✓ 7.12 | ✓ 6.57 | ✓ 6.09 | ✓ 8.23 |
-| `site/header-blog-link-text-on-bg` (text ≥ 4.5) | ✓ 7.12 | ⚠ 1.38 | ✓ 6.49 | ⚠ 1.38 | ✓ 19.56 | ✓ 7.12 | ✓ 7.12 | ✓ 7.12 | ✓ 7.12 | ✓ 6.57 | ✓ 6.09 | ✓ 8.23 |
+| `site/header-text-role-on-header-bg` (text ≥ 4.5) | ✓ 7.12 | ✓ 7.12 | ✓ 6.49 | ✓ 7.13 | ✓ 17.52 | ✓ 7.12 | ✓ 7.12 | ✓ 7.12 | ✓ 7.12 | ✓ 6.57 | ✓ 6.09 | ✓ 8.23 |
+| `site/header-blog-link-text-on-bg` (text ≥ 4.5) | ✓ 9.84 | ✓ 9.84 | ✓ 8.49 | ✓ 9.85 | ✓ 19.56 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.93 |
 | `site/lang-toggle-text-activated-on-bg` (text ≥ 4.5) | ✓ 9.84 | ✓ 9.84 | ✓ 8.49 | ✓ 9.85 | ✓ 19.56 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.93 |
 | `site/lang-toggle-text-disabled-on-bg` (text ≥ 4.5) | ✓ 9.84 | ✓ 9.84 | ✓ 8.49 | ✓ 9.85 | ✓ 19.56 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.93 |
 | `site/collapse-title-on-bg-title` (text ≥ 4.5) | ✓ 9.84 | ✓ 9.84 | ✓ 8.49 | ✓ 9.85 | ✓ 19.56 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.93 |
@@ -81,15 +81,3 @@ applied), ⚠ waived (see reason below). Cell value is the measured ratio.
 - Threshold: 4.5:1 (text)
 - Measured: `anti-glare-light`: 3.9425:1
 - Reason: anti-glare-light only, as of chantier E2 (refonte daltonienne). The 6 CVD-theme failures documented here since chantier E1 — the old CVD-engine substitution colors (e.g. #ffcc00 in deuteranopia, chosen for perceptual distinguishability, not contrast, as low as 1.34:1) — are resolved: --danger now resolves to a weight >= 4.5:1 in all 6 CVD themes (orange-700 = 4.96:1 in the -opias via the part-2 semantic status anchor, redd-600 = 4.62:1 kept in the -omalies, amber-based in tritan). anti-glare-light's ratio rose (3.46 → 3.94, still non-compliant) after the chantier E2 OKLCH anti-glare rewrite (PLAN-revue-moteurs.md phase 3), unrelated to the CVD work. --danger remains currently unreferenced by any component.
-
-### `site/header-text-role-on-header-bg`
-
-- Threshold: 4.5:1 (text)
-- Measured: `dark`: 1.3806:1, `anti-glare-dark`: 1.3816:1
-- Reason: --color-header-text-role = --fg-muted, which inverts to near-white (#fafaf9) in the dark-based themes, rendered on --color-header-bg = --accent, which stays a fixed light amber (#fcd34d) in every theme — near-white on light-amber in dark-based themes. Same two resolved colors (swapped) as site/header-blog-link-text-on-bg, hence the matching ratios. Pre-existing. anti-glare-dark's ratio shifted slightly (1.42 -> 1.38) after the chantier E2 OKLCH anti-glare rewrite (PLAN-revue-moteurs.md phase 3).
-
-### `site/header-blog-link-text-on-bg`
-
-- Threshold: 4.5:1 (text)
-- Measured: `dark`: 1.3806:1, `anti-glare-dark`: 1.3816:1
-- Reason: --color-header-blog-link-text = --accent (fixed light amber #fcd34d in every theme) on --color-header-blog-link-bg = --bg-emphasis, which inverts to near-white (#fafaf9) in the dark-based themes — light amber on near-white. Same two resolved colors (swapped) as site/header-text-role-on-header-bg. Pre-existing. anti-glare-dark's ratio shifted slightly (1.42 -> 1.38) after the chantier E2 OKLCH anti-glare rewrite (PLAN-revue-moteurs.md phase 3).

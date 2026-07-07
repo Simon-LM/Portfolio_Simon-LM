@@ -54,20 +54,8 @@
 
 	// Surcharges manuelles après l'automatisation si nécessaire
 
-	// Rustines résiduelles (cf. TODO.md « corrections de rôles »). Le titre
-	// (name/separator = --color-header-text = fg-on-accent) est désormais
-	// correct par construction (encre fixe near-black), donc plus de rustine
-	// pour lui. Restent le sous-titre (--color-header-text-role = fg-muted) et
-	// le lien blog (--color-header-blog-link-text = accent), non encore
-	// corrigés au niveau des rôles — décisions visuelles en attente.
-	.header {
-		&__title {
-			&-role {
-				color: var(--constant-near-black);
-			}
-		}
-		&__blog-link {
-			color: var(--constant-near-black) !important;
-		}
-	}
+	// Plus aucune rustine .header : le titre (fg-on-accent), le sous-titre
+	// (gris atténué fixe) et le lien blog (fg-on-emphasis, suit son chip)
+	// sont corrects par construction depuis le chantier « corrections de
+	// rôles » (2026-07-07) — voir docs/theme-system/CHANGELOG.md.
 }

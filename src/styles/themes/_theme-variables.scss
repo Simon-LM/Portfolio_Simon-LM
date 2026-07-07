@@ -76,9 +76,19 @@ $color-pages-title: $fg-base;
 // Variables d'entête
 $color-header-bg: $accent;
 $color-header-text: $fg-on-accent;
-$color-header-text-role: $fg-muted;
+// Sous-titre : gris atténué FIXE (décision Simon 2026-07-07) — même aspect
+// atténué dans tous les thèmes, posé sur l'accent figé clair. Même logique
+// par luminance que $fg-on-accent : accent sombre → atténué du thème ;
+// accent clair → le gray-700 du thème s'il est sombre, sinon (thèmes dark,
+// rail inversé) le stone-700 constant. (High-contrast re-surcharge de toute
+// façon ses jetons header dans _high-contrast.scss.)
+$color-header-text-role: if(sass(is-dark($accent)): $fg-muted; else: if(sass(is-dark($gray-700)): $gray-700; else: get-color("stone", 700)));
 $color-header-blog-link-bg: $bg-emphasis;
-$color-header-blog-link-text: $accent;
+// Lien blog : suit son chip (décision Simon 2026-07-07) — texte = rôle
+// fg-on-emphasis, la paire fg-on-emphasis/bg-emphasis étant garantie par la
+// suite de contrastes dans les 12 thèmes. (Anciennement $accent, illisible
+// en dark où le chip s'inverse en clair — rustine supprimée.)
+$color-header-blog-link-text: $fg-on-emphasis;
 
 // Sélecteur de langue
 $color-lang-toggle-bg: $bg-base;
@@ -251,9 +261,11 @@ $color-accent-hover: $accent-strong; // sole visual change of this migration
 	// Variables d'entête
 	$color-header-bg: $accent !global;
 	$color-header-text: $fg-on-accent !global;
-	$color-header-text-role: $fg-muted !global;
+	// Sous-titre : gris atténué fixe par luminance (cf. déclaration racine).
+	$color-header-text-role: if(sass(is-dark($accent)): $fg-muted; else: if(sass(is-dark($gray-700)): $gray-700; else: get-color("stone", 700))) !global;
 	$color-header-blog-link-bg: $bg-emphasis !global;
-	$color-header-blog-link-text: $accent !global;
+	// Lien blog : suit son chip (rôle fg-on-emphasis, paire testée partout).
+	$color-header-blog-link-text: $fg-on-emphasis !global;
 
 	// Sélecteur de langue
 	$color-lang-toggle-bg: $bg-base !global;

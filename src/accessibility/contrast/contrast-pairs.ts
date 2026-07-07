@@ -124,45 +124,16 @@ const sitePairs: ContrastPair[] = [
 	// role-corrections chantier fixed --fg-on-accent by luminance: now 13.70:1
 	// in dark, compliant everywhere.
 	{ id: "site/header-text-on-header-bg", fg: "--color-header-text", bg: "--color-header-bg", level: "text" },
-	// fg-muted rendered on the accent background — sensitive pair (small
-	// role/primitive contrast margin by construction, see README §6.1).
-	{
-		id: "site/header-text-role-on-header-bg",
-		fg: "--color-header-text-role",
-		bg: "--color-header-bg",
-		level: "text",
-		waiver: {
-			reason:
-				"--color-header-text-role = --fg-muted, which inverts to near-white " +
-				"(#fafaf9) in the dark-based themes, rendered on --color-header-bg = " +
-				"--accent, which stays a fixed light amber (#fcd34d) in every theme — " +
-				"near-white on light-amber in dark-based themes. Same two resolved " +
-				"colors (swapped) as site/header-blog-link-text-on-bg, hence the " +
-				"matching ratios. Pre-existing. anti-glare-dark's ratio shifted " +
-				"slightly (1.42 -> 1.38) after the chantier E2 OKLCH anti-glare " +
-				"rewrite (PLAN-revue-moteurs.md phase 3).",
-			preexisting: true,
-			measured: { dark: 1.3806, "anti-glare-dark": 1.3816 },
-		},
-	},
-	{
-		id: "site/header-blog-link-text-on-bg",
-		fg: "--color-header-blog-link-text",
-		bg: "--color-header-blog-link-bg",
-		level: "text",
-		waiver: {
-			reason:
-				"--color-header-blog-link-text = --accent (fixed light amber #fcd34d " +
-				"in every theme) on --color-header-blog-link-bg = --bg-emphasis, which " +
-				"inverts to near-white (#fafaf9) in the dark-based themes — light " +
-				"amber on near-white. Same two resolved colors (swapped) as " +
-				"site/header-text-role-on-header-bg. Pre-existing. anti-glare-dark's " +
-				"ratio shifted slightly (1.42 -> 1.38) after the chantier E2 OKLCH " +
-				"anti-glare rewrite (PLAN-revue-moteurs.md phase 3).",
-			preexisting: true,
-			measured: { dark: 1.3806, "anti-glare-dark": 1.3816 },
-		},
-	},
+	// Was waived (fg-muted inverting to near-white on the fixed light accent
+	// in dark-based themes) until the role-corrections chantier anchored the
+	// subtitle to a fixed muted gray chosen by luminance (Simon's call:
+	// atténué partout) — now 7.12:1 in dark, compliant everywhere.
+	{ id: "site/header-text-role-on-header-bg", fg: "--color-header-text-role", bg: "--color-header-bg", level: "text" },
+	// Was waived (amber accent on the inverting bg-emphasis chip) until the
+	// role-corrections chantier rewired the blog-link text to fg-on-emphasis
+	// (Simon's call: the link follows its chip) — the fg-on-emphasis/
+	// bg-emphasis pair is already guaranteed in all 12 themes; 9.84:1 in dark.
+	{ id: "site/header-blog-link-text-on-bg", fg: "--color-header-blog-link-text", bg: "--color-header-blog-link-bg", level: "text" },
 	{ id: "site/lang-toggle-text-activated-on-bg", fg: "--color-lang-toggle-text-activated", bg: "--color-lang-toggle-bg-activated", level: "text" },
 	{ id: "site/lang-toggle-text-disabled-on-bg", fg: "--color-lang-toggle-text-disabled", bg: "--color-lang-toggle-bg", level: "text" },
 	{ id: "site/collapse-title-on-bg-title", fg: "--color-collapse-title", bg: "--color-collapse-bg-title", level: "text" },

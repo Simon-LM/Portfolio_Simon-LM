@@ -15,6 +15,34 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-07
 
+### Changed (chantier « corrections de rôles » — partie 2/2, décisions de Simon)
+
+Même branche `refactor/theme-role-corrections` (2ᵉ commit). Les deux
+décisions visuelles ont été tranchées par Simon : sous-titre « gris
+atténué », lien blog « suit son chip ».
+
+- **Sous-titre du header** (`--color-header-text-role`) : ancré à un gris
+  atténué **fixe** choisi par luminance (même logique que `fg-on-accent` :
+  accent sombre → `$fg-muted` du thème ; accent clair → le `gray-700` du
+  thème s'il est sombre, sinon `stone-700` constant). **Changement visuel :
+  en dark/anti-glare-dark uniquement**, le sous-titre passe de near-black
+  (rustine) à `stone-700` (gris atténué, 7.12:1 sur l'accent). Light,
+  daltoniens, achromatopsie (garde son `neutral-700`), high-contrast
+  (surcharges propres dans `_high-contrast.scss`) : inchangés.
+- **Lien blog** (`--color-header-blog-link-text`) : recâblé de `$accent`
+  vers **`$fg-on-emphasis`** — le texte suit son chip (`bg-emphasis`), et la
+  paire `fg-on-emphasis`/`bg-emphasis` est déjà garantie par la suite dans
+  les 12 thèmes. **Changement visuel : en light et thèmes clairs**, le lien
+  passe d'amber à near-white sur le chip sombre ; **en dark**, near-black →
+  `#44403c` sur chip clair (9.84:1), quasi identique à l'ancienne rustine.
+- **Toutes les rustines `.header` de `_dark.scss` supprimées** — le header
+  est correct par construction dans les 12 thèmes.
+- **Les 2 derniers waivers header levés** (anti-zombie :
+  `site/header-text-role-on-header-bg` 1.38 → 7.12,
+  `site/header-blog-link-text-on-bg` 1.38 → 9.84). Avec la partie 1/2, le
+  chantier supprime au total **4 waivers + la paire du jeton mort** ; les
+  paires restent dans le registre, désormais conformes sans exception.
+
 ### Fixed / Removed (chantier « corrections de rôles » — partie 1/2)
 
 Branche `refactor/theme-role-corrections` (non mergée — validation visuelle

@@ -18,30 +18,20 @@ rien oublier. Mettre à jour au fil de l'eau (cocher / retirer une fois fait).
 
 ## Micro-chantiers proposés (non planifiés, sous filet des tests)
 
-- **Corrections de rôles** (proposé après E1) — partie 1/2 faite le
-  2026-07-07 (branche `refactor/theme-role-corrections`, changement visuel
-  nul). Fait :
+- [x] **Corrections de rôles** (proposé après E1) — **terminé le 2026-07-07**
+      (branche `refactor/theme-role-corrections`, 2 commits, en attente de
+      validation visuelle avant merge) :
   - [x] Jeton mort `--color-button-active-outline` **supprimé** (+ sa paire
         de contraste).
-  - [x] **Titre** du header corrigé (`--fg-on-accent` par luminance),
-        rustines `name`/`separator` retirées, waivers
-        `role/fg-on-accent-on-accent` + `site/header-text-on-header-bg`
-        levés.
-
-  Restant — **deux décisions visuelles pour Simon** (waivers
-  `site/header-text-role-on-header-bg` et `site/header-blog-link-text-on-bg`
-  conservés, rustines `.header` correspondantes conservées) :
-  - [ ] **Sous-titre du header** (`--color-header-text-role = fg-muted`) :
-        gris atténué (`gray-700`) en light, forcé near-black par rustine en
-        dark. Le rendre cohérent = l'ancrer à un gris atténué **fixe** (même
-        aspect atténué partout) → change légèrement le sous-titre en dark
-        (near-black → gris atténué). **Garder atténué partout, ou noir en
-        dark ?**
-  - [ ] **Lien blog** (`--color-header-blog-link-text = accent` amber) :
-        amber sur un chip `bg-emphasis` qui s'inverse (clair en dark) →
-        illisible, d'où la rustine near-black. **Le lien reste-t-il amber
-        (alors il faut figer/assombrir son chip), ou suit-il le chip
-        (perd l'amber) ?** Décision de style.
+  - [x] **Titre** du header corrigé (`--fg-on-accent` par luminance) —
+        changement visuel nul.
+  - [x] **Sous-titre** ancré à un gris atténué fixe (décision Simon :
+        « gris atténué ») — en dark, passe de near-black à `stone-700`.
+  - [x] **Lien blog** recâblé sur `fg-on-emphasis` (décision Simon : « suit
+        son chip ») — en light, passe d'amber à near-white sur chip sombre ;
+        en dark, quasi identique à l'ancienne rustine.
+  - [x] Toutes les rustines `.header` de `_dark.scss` supprimées ; les
+        4 waivers header/accent levés (anti-zombie).
 
 ## Reporté explicitement (ne pas toucher sans décision)
 
