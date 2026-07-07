@@ -303,19 +303,19 @@ palette/rail/rôles/moteurs/émetteur. Le portfolio consomme :
 
 Tout ce qui est configurable porte `!default`. Oracle : CSS identique.
 
-### E4 — Extraction du runtime React
+### E4 — Extraction du runtime React — ✅ exécuté le 2026-07-07
 
-**Plan rédigé le 2026-07-07 :
-[PLAN-extraction-runtime.md](./PLAN-extraction-runtime.md)** (4 phases,
-branche `feat/e4-runtime`, oracles : CSS strictement byte-identique +
-chaîne anti-FOUC byte-identique + comportement inchangé). Périmètre
-staged : E4 déplace `THEMES`/`useTheme`/`usePrefersDarkMode`/
-`themeInitScript()` dans `packages/a11y-prefs/react` tels quels
-(paramétrables, défauts = les 12) ; la **généralisation
-`usePreference(key, applyFn)`** décrite ci-dessous est reportée à E5, où
-les autres préférences (zoom, polices…) en auront réellement besoin —
-même logique de staging qu'E3. `src/config/themes.ts` devient un
-ré-export (pas supprimé : zéro churn chez les importeurs).
+**Plan : [PLAN-extraction-runtime.md](./PLAN-extraction-runtime.md)**
+(4 phases, branche `feat/e4-runtime`, smoke + revue avant merge).
+Résultat : `packages/a11y-prefs/react` expose `THEMES`/`ThemeOption`,
+`useTheme` (paramétrable, défaut = les 12), `usePrefersDarkMode` et
+`themeInitScript()` (chaîne anti-FOUC byte-identique au littéral
+historique) ; les fichiers portfolio sont des shims de ré-export (zéro
+churn). Leçon d'exécution : frontière RSC — le hook porte désormais
+`"use client"` et le paquet expose des exports granulaires
+`./react/*` pour que les modules de données restent importables côté
+serveur. La **généralisation `usePreference(key, applyFn)`** ci-dessous
+reste reportée à E5, où les autres préférences en auront besoin.
 
 Le cœur préférences (persistance localStorage, application DOM, anti-FOUC,
 sécurité SSR) devient générique : `usePreference(key, applyFn)` ;
