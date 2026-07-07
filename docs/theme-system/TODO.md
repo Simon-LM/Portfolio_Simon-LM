@@ -47,12 +47,10 @@ rien oublier. Mettre à jour au fil de l'eau (cocher / retirer une fois fait).
       E3 ») : `--color-hero-bg`, `--color-hero-text` (+ leur paire de
       contraste), `--color-collapse-border`, `--color-section-even-card-bg`,
       `--constant-success-color`.
-- [ ] **Question ouverte — toast de succès du formulaire contact** : son
-      `color: var(--color-success)` (fantôme, retiré) suggère qu'il devait
-      être **vert** ; il a toujours hérité de la couleur de texte normale.
-      Le remettre en vert = décision visuelle de Simon, et attention :
-      emerald-600 ferait 3.61:1 en light (sous 4.5) — il faudrait
-      emerald-700 ou le futur `--success` corrigé.
+- [x] **Toast de succès du formulaire contact** — décidé et fait le
+      2026-07-07 : rôle `--success` passé à **emerald-700** (5.25:1) et le
+      toast câblé sur `var(--success)` (vert thématisé dans les 12 thèmes,
+      premier consommateur du rôle). Waiver réduit à l'achromatopsie seule.
 
 ## Reporté explicitement (ne pas toucher sans décision)
 

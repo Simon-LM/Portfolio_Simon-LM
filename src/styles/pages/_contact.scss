@@ -308,11 +308,10 @@
 
 			&[data-type="success"] {
 				background: var(--color-main-bg);
-				// (color: var(--color-success) retiré 2026-07-07 : jamais émise,
-				// inerte — le toast hérite depuis toujours de la couleur de texte
-				// normale. L'intention d'origine était sans doute un vert : à
-				// décider, voir docs/theme-system/TODO.md — emerald-600 serait
-				// sous 4.5:1 en light)
+				// Rôle statut thématisé (décision Simon 2026-07-07 : vert
+				// emerald-700) — garanti >= 4.5:1 sur bg-base dans les 12 thèmes
+				// par la paire role/success-on-bg-base de la suite de contrastes.
+				color: var(--success);
 			}
 
 			// &[data-type="error"] {

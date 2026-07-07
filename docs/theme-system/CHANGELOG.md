@@ -15,6 +15,26 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-07
 
+### Changed (`--success` → emerald-700, toast de succès du contact câblé)
+
+Décision de Simon (« emerald-700 ») en réponse à la question ouverte du
+nettoyage : le toast de succès du formulaire contact devait être vert.
+
+- **Rôle `--success` : emerald-600 → emerald-700** (`#047857`, 5.25:1 sur
+  `bg-base` en light — emerald-600 était sous le seuil texte depuis
+  l'origine, 3.61:1). Effets par thème : light/tritan 5.25, anti-glare-light
+  4.56, dark 9.75 (vert pâle décalé), ancres CVD rouge-vertes inchangées
+  (résolues indépendamment), achromatopsie inchangée (même gris quantifié,
+  2.42 — seule entrée restante du waiver), high-contrast inchangé.
+- **Toast `[data-type="success"]` du contact : `color: var(--success)`** —
+  premier consommateur du rôle, garanti par la paire
+  `role/success-on-bg-base` dans les 12 thèmes. **Changement visuel** : le
+  message de succès du formulaire s'affiche désormais en vert (au lieu de
+  la couleur de texte héritée).
+- Waiver `role/success-on-bg-base` réduit à la seule achromatopsie
+  (anti-zombie : 4 entrées levées). 589 tests, build/lint/tsc verts,
+  rapport régénéré.
+
 ### Removed (nettoyage jetons morts + variables fantômes — suites de l'audit)
 
 Branche `chore/theme-token-cleanup`, mandat de Simon (« tout sauf E3 »).

@@ -43,7 +43,7 @@ applied), ⚠ waived (see reason below). Cell value is the measured ratio.
 | `role/link-on-bg-subtle` (text ≥ 4.5) | ✓ 7.53 | ✓ 11.43 | ✓ 6.44 | ✓ 11.44 | ✓ 16.75 | ✓ 7.53 | ✓ 7.53 | ✓ 7.53 | ✓ 7.53 | ✓ 8.03 | ✓ 8.72 | ✓ 8.23 |
 | `role/link-on-bg-container` (text ≥ 4.5) | ✓ 6.35 | ✓ 11.43 | ✓ 5.98 | ✓ 11.44 | ✓ 16.75 | ✓ 6.35 | ✓ 6.35 | ✓ 6.35 | ✓ 6.35 | ✓ 6.77 | ✓ 7.35 | ✓ 6.99 |
 | `role/link-hover-on-bg-base` (text ≥ 4.5) | ✓ 7.24 | ✓ 8.95 | ✓ 6.25 | ✓ 8.95 | ✓ 21.00 | ✓ 7.24 | ✓ 7.24 | ✓ 7.24 | ✓ 7.24 | ✓ 7.79 | ✓ 8.60 | ✓ 9.93 |
-| `role/success-on-bg-base` (text ≥ 4.5) | ⚠ 3.61 | ✓ 9.75 | ⚠ 3.13 | ✓ 9.75 | ✓ 15.30 | ✓ 5.25 | ✓ 5.46 | ✓ 5.25 | ✓ 5.46 | ⚠ 3.61 | ⚠ 3.61 | ⚠ 2.42 |
+| `role/success-on-bg-base` (text ≥ 4.5) | ✓ 5.25 | ✓ 9.75 | ✓ 4.56 | ✓ 9.75 | ✓ 15.30 | ✓ 5.25 | ✓ 5.46 | ✓ 5.25 | ✓ 5.46 | ✓ 5.25 | ✓ 5.25 | ⚠ 2.42 |
 | `role/danger-on-bg-base` (text ≥ 4.5) | ✓ 4.62 | ✓ 9.39 | ⚠ 3.94 | ✓ 9.39 | ✓ 5.25 | ✓ 4.62 | ✓ 4.96 | ✓ 4.62 | ✓ 4.96 | ✓ 4.62 | ✓ 4.62 | ✓ 17.18 |
 | `role/focus-ring-on-bg-base` (non-text ≥ 3) | ✓ 9.06 | ✓ 7.74 | ✓ 7.82 | ✓ 7.74 | ✓ 16.75 | ✓ 9.06 | ✓ 9.06 | ✓ 9.06 | ✓ 9.06 | ✓ 9.65 | ✓ 10.49 | ✓ 9.93 |
 | `role/border-strong-on-bg-base` (non-text ≥ 3) | ✓ 9.84 | ✓ 9.84 | ✓ 8.49 | ✓ 9.85 | ✓ 19.56 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.84 | ✓ 9.93 |
@@ -72,8 +72,8 @@ applied), ⚠ waived (see reason below). Cell value is the measured ratio.
 ### `role/success-on-bg-base`
 
 - Threshold: 4.5:1 (text)
-- Measured: `light`: 3.6079:1, `anti-glare-light`: 3.1323:1, `tritanomaly`: 3.6079:1, `tritanopia`: 3.6079:1, `achromatopsia`: 2.4167:1
-- Reason: emerald-600 (--success) is chosen for semantic recognizability, not for WCAG contrast against --bg-base; --success is currently unreferenced by any component (no var(--success) in src/styles or src/components). Pre-existing since the role's introduction. anti-glare-light's ratio rose slightly (2.85 → 3.13, still non-compliant) after the chantier E2 OKLCH anti-glare rewrite (PLAN-revue-moteurs.md phase 3). The 4 red-green CVD themes were resolved by chantier E2 (refonte daltonienne, part 2 — semantic status anchors): --success now resolves to a weight guaranteeing >= 4.5:1 (violet-600 = 5.46:1 in the -opias, emerald-700 = 5.25:1 in the -omalies), so their entries are gone. Remaining waived themes are the non-CVD light/anti-glare-light and the tritan/achromatopsia themes, where --success keeps its emerald-600 value (tritan doesn't remap emerald; achromatopsia is out of scope).
+- Measured: `achromatopsia`: 2.4167:1
+- Reason: achromatopsia only. --success was bumped emerald-600 → emerald-700 (Simon's call, 2026-07-07) when the contact success toast was wired to var(--success): light/anti-glare-light/tritan now pass (5.25 / 4.56 / 5.25). Achromatopsia is unchanged: its engine requantizes luminance onto the neutral rail and emerald-600 and emerald-700 land on the same gray (#a3a3a3, 2.42:1). Achromatopsia's own mechanism is explicitly out of scope (kept as-is); candidate for a darker neutral quantization if the role's use grows.
 
 ### `role/danger-on-bg-base`
 
