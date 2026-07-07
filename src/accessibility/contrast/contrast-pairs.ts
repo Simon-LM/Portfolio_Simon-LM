@@ -61,26 +61,16 @@ const rolePairs: ContrastPair[] = [
 		level: "text",
 		waiver: {
 			reason:
-				"emerald-600 (--success) is chosen for semantic recognizability, not " +
-				"for WCAG contrast against --bg-base; --success is currently " +
-				"unreferenced by any component (no var(--success) in src/styles or " +
-				"src/components). Pre-existing since the role's introduction. " +
-				"anti-glare-light's ratio rose slightly (2.85 → 3.13, still " +
-				"non-compliant) after the chantier E2 OKLCH anti-glare rewrite " +
-				"(PLAN-revue-moteurs.md phase 3). The 4 red-green CVD themes were " +
-				"resolved by chantier E2 (refonte daltonienne, part 2 — semantic " +
-				"status anchors): --success now resolves to a weight guaranteeing " +
-				">= 4.5:1 (violet-600 = 5.46:1 in the -opias, emerald-700 = 5.25:1 " +
-				"in the -omalies), so their entries are gone. Remaining waived " +
-				"themes are the non-CVD light/anti-glare-light and the tritan/" +
-				"achromatopsia themes, where --success keeps its emerald-600 value " +
-				"(tritan doesn't remap emerald; achromatopsia is out of scope).",
+				"achromatopsia only. --success was bumped emerald-600 → emerald-700 " +
+				"(Simon's call, 2026-07-07) when the contact success toast was wired " +
+				"to var(--success): light/anti-glare-light/tritan now pass (5.25 / " +
+				"4.56 / 5.25). Achromatopsia is unchanged: its engine requantizes " +
+				"luminance onto the neutral rail and emerald-600 and emerald-700 " +
+				"land on the same gray (#a3a3a3, 2.42:1). Achromatopsia's own " +
+				"mechanism is explicitly out of scope (kept as-is); candidate for a " +
+				"darker neutral quantization if the role's use grows.",
 			preexisting: true,
 			measured: {
-				light: 3.6079,
-				"anti-glare-light": 3.1323,
-				tritanomaly: 3.6079,
-				tritanopia: 3.6079,
 				achromatopsia: 2.4167,
 			},
 		},

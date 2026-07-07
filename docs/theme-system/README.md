@@ -461,7 +461,7 @@ Base proposée (valeurs light du portfolio — vocabulaire affinable) :
 | `link`               | sky-900      | liens, bouton À propos                              |
 | `link-hover`         | sky-800      | hover des liens                                     |
 | `focus-ring`         | sky-900      | outline et fond de focus                            |
-| `success`            | emerald-600  | validations                                         |
+| `success`            | emerald-700  | validations (toast succès du contact) — 700 depuis le 2026-07-07, ≥ 4.5:1 |
 | `danger`             | redd-600     | erreurs                                             |
 
 **Les rôles statut, une classe à part (acté et implémenté le
