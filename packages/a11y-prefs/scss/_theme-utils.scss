@@ -5,7 +5,10 @@
 @use "sass:math";
 @use "sass:color";
 @use "base-palette" as *;
-@use "../themes/theme-variables" as *;
+// TEMPORAIRE (E3 phase 3, résorbé en phase 4) : l'état mutable vit encore
+// côté portfolio — le paquet y remonte par chemin relatif le temps de la
+// scission rail/rôles vs couche 3.
+@use "../../../src/styles/themes/theme-variables" as *;
 /**
  * Utilitaires pour la gestion des thèmes
  * - Accès simplifié aux couleurs Tailwind

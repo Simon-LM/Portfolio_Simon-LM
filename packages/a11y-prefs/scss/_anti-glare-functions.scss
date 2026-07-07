@@ -3,7 +3,10 @@
 @use "sass:meta";
 @use "sass:math";
 @use "sass:color";
-@use "../themes/theme-variables" as *;
+// TEMPORAIRE (E3 phase 3, résorbé en phase 4) : l'état mutable vit encore
+// côté portfolio — le paquet y remonte par chemin relatif le temps de la
+// scission rail/rôles vs couche 3.
+@use "../../../src/styles/themes/theme-variables" as *;
 
 // Fonction transformatrice pour réduction d'éblouissement et halos
 @function transform-for-anti-glare($color, $mode: "light") {

@@ -1,8 +1,8 @@
 /** @format */
 
 @use "sass:map";
-@use "../abstracts/base-palette" as *;
-@use "../abstracts/theme-utils" as *;
+@use "a11y-prefs/scss/base-palette" as *;
+@use "a11y-prefs/scss/theme-utils" as *;
 @use "../themes/theme-variables" as *;
 @use "light" as *;
 
