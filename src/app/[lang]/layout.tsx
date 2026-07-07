@@ -4,6 +4,7 @@ import { Metadata } from "next";
 import Script from "next/script";
 import { LanguageSync } from "../../components/LanguageSync";
 import { THEMES } from "@/config/themes";
+import { themeInitScript } from "a11y-prefs/react/themeInitScript";
 
 const metadata = {
 	fr: {
@@ -75,25 +76,13 @@ export default async function LangLayout({
 			{/* Sync Zustand language store with URL lang to prevent hydration mismatch */}
 			<LanguageSync lang={lang as "fr" | "en"} />
 
-			{/* Script pour définir le thème - pas besoin d'être dans head */}
+			{/* Script anti-FOUC : chaîne générée par le paquet (E4 phase 3),
+			    byte-identique au littéral historique — oracle vérifié. */}
 			<Script
 				id="theme-script"
 				strategy="beforeInteractive"
 				dangerouslySetInnerHTML={{
-					__html: `
-				(function() {
-					try {
-						var savedTheme = localStorage.getItem('theme');
-						if (savedTheme && ${JSON.stringify(THEMES)}.includes(savedTheme)) {
-							document.documentElement.setAttribute('data-theme', savedTheme);
-						} else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-							document.documentElement.setAttribute('data-theme', 'dark');
-						} else {
-							document.documentElement.setAttribute('data-theme', 'light');
-						}
-					} catch (e) {}
-				})();
-			  `,
+					__html: themeInitScript(THEMES),
 				}}
 			/>
 
