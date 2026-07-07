@@ -358,14 +358,8 @@ $status-legibility-floor: 3 !default;
 // UTILITAIRES POUR THÈME À FORT CONTRASTE
 // -----------------------------------------------
 
-// Fonction pour déterminer si une couleur est sombre ou claire
-@function is-dark($color) {
-	$luminance: math.div(
-		math.round(color.channel($color, "red", $space: rgb)) * 0.299 + math.round(color.channel($color, "green", $space: rgb)) * 0.587 + math.round(color.channel($color, "blue", $space: rgb)) * 0.114,
-		255
-	);
-	@return $luminance < 0.5;
-}
+// Note : is-dark() a été déplacée dans _base-palette.scss (utilisée aussi par
+// apply-roles côté _theme-variables).
 
 // -----------------------------------------------
 // UTILITAIRES POUR THÈMES DALTONIENS

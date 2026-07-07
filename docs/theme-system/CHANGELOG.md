@@ -13,6 +13,100 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-07
+
+### Fixed (lien blog — restauration du design d'origine de Simon)
+
+Après deux corrections insuffisantes (recâblage `fg-on-emphasis` = lien
+blanc en light, rejeté « extrêmement moche » ; puis amber-en-light seulement,
+toujours faux en dark), l'intention réelle a été clarifiée par Simon et
+**vérifiée par compilation de la version pré-chantiers** (`4bf78f0`) :
+
+- **Découverte importante** : le chip quasi-blanc du lien blog en dark est
+  un **défaut antérieur à tous les chantiers 2026-07** — la version
+  pré-fondations compilait déjà `--color-header-blog-link-bg: #fafaf9` en
+  dark (l'automatisation light→dark inversait le gris du chip), la rustine
+  `_dark.scss` ne noircissait que le texte, et ce rendu erroné est parti en
+  production. Le design voulu : **chip grisé + texte amber dans les deux
+  modes**, comme en light.
+- **Correctif** : `--color-header-blog-link-bg` par luminance —
+  `bg-emphasis` du thème s'il est sombre (light, daltoniens, achromatopsie :
+  inchangés), sinon `stone-700` constant (thèmes dark : même grisé qu'en
+  light) ; `--color-header-blog-link-text: $accent` (amber partout, décliné
+  par thème : orange-300 en tritanopie, etc.). Hover : `--off-white` →
+  `--constant-off-white` dans `_header.scss` (l'inversion du rail aurait
+  rendu le hover gris-sur-gris en dark). Le logo LostInTab retrouve son
+  fond grisé. High-contrast intact (surcharges propres).
+- **Résultat** : light et dark identiques (`#44403c` + `#fcd34d`, 7.12:1),
+  paire verte dans les 12 thèmes (6.09–19.56) sans waiver, aucune rustine.
+  601 tests, build/lint/tsc verts.
+- **Sous-titre** : conservé en gris atténué (validé par Simon — cohérent
+  avec l'aspect atténué du light).
+- Leçons : (1) les arbitrages visuels doivent être présentés en rendu
+  concret avant/après par thème, jamais en termes de câblage ; (2) « le
+  rendu actuel » n'est pas une référence fiable — le design de référence est
+  celui de Simon, à lui faire confirmer quand un doute existe (ici le rendu
+  déployé était lui-même déjà cassé).
+
+### Changed (chantier « corrections de rôles » — partie 2/2, décisions de Simon)
+
+Même branche `refactor/theme-role-corrections` (2ᵉ commit). Les deux
+décisions visuelles ont été tranchées par Simon : sous-titre « gris
+atténué », lien blog « suit son chip ».
+
+- **Sous-titre du header** (`--color-header-text-role`) : ancré à un gris
+  atténué **fixe** choisi par luminance (même logique que `fg-on-accent` :
+  accent sombre → `$fg-muted` du thème ; accent clair → le `gray-700` du
+  thème s'il est sombre, sinon `stone-700` constant). **Changement visuel :
+  en dark/anti-glare-dark uniquement**, le sous-titre passe de near-black
+  (rustine) à `stone-700` (gris atténué, 7.12:1 sur l'accent). Light,
+  daltoniens, achromatopsie (garde son `neutral-700`), high-contrast
+  (surcharges propres dans `_high-contrast.scss`) : inchangés.
+- **Lien blog** (`--color-header-blog-link-text`) : recâblé de `$accent`
+  vers **`$fg-on-emphasis`** — le texte suit son chip (`bg-emphasis`), et la
+  paire `fg-on-emphasis`/`bg-emphasis` est déjà garantie par la suite dans
+  les 12 thèmes. **Changement visuel : en light et thèmes clairs**, le lien
+  passe d'amber à near-white sur le chip sombre ; **en dark**, near-black →
+  `#44403c` sur chip clair (9.84:1), quasi identique à l'ancienne rustine.
+- **Toutes les rustines `.header` de `_dark.scss` supprimées** — le header
+  est correct par construction dans les 12 thèmes.
+- **Les 2 derniers waivers header levés** (anti-zombie :
+  `site/header-text-role-on-header-bg` 1.38 → 7.12,
+  `site/header-blog-link-text-on-bg` 1.38 → 9.84). Avec la partie 1/2, le
+  chantier supprime au total **4 waivers + la paire du jeton mort** ; les
+  paires restent dans le registre, désormais conformes sans exception.
+
+### Fixed / Removed (chantier « corrections de rôles » — partie 1/2)
+
+Branche `refactor/theme-role-corrections` (non mergée — validation visuelle
+de Simon requise, mais **changement visuel nul** attendu). Deux des trois
+symptômes du micro-chantier traités ; deux décisions restent (voir
+[TODO.md](./TODO.md)).
+
+- **Removed — jeton mort `--color-button-active-outline`** : émis mais
+  consommé par aucun composant (`var(--color-button-active-outline)`
+  introuvable). Retiré des 3 points SCSS + de son émission + de sa paire de
+  contraste `site/button-active-outline-on-panel-bg` (qui était le pire
+  waiver, 1.00:1 en high-contrast). Suppression parce que le jeton n'existe
+  plus, pas pour masquer un échec.
+- **Fixed — titre du header clair-sur-clair en dark** : `--fg-on-accent`
+  suivait le rail (`$gray-950`), qui s'inverse en dark → texte quasi-blanc
+  sur l'accent amber figé (~1.15:1), masqué par des rustines `.header`
+  codées en dur dans `_dark.scss`. Désormais choisi **par luminance** :
+  accent sombre (high-contrast) → encre claire ; accent clair → le
+  `gray-950` du thème s'il est sombre (light/daltoniens/achromatopsie :
+  inchangés), sinon (thèmes dark) une near-black constante. `is-dark()`
+  déplacée dans `_base-palette.scss` pour être accessible à `apply-roles`.
+  Rustines `name`/`separator` retirées ; waivers `role/fg-on-accent-on-accent`
+  et `site/header-text-on-header-bg` obsolètes (13.70:1 en dark) → retirés
+  par l'anti-zombie. Diff CSS = jeton mort (12 thèmes) + `--color-header-text`
+  dark/anti-glare-dark passant de near-blanc à `#0c0a09` (identique au rendu
+  masqué → **invisible**). 601 tests, build/lint/tsc verts.
+- **Restant (décisions visuelles)** : le **sous-titre** du header
+  (`--color-header-text-role = fg-muted`, gris atténué en light) et le
+  **lien blog** (`--color-header-blog-link-text = accent` amber) — toujours
+  waivés, rustines conservées. Cf. TODO.md.
+
 ## 2026-07-06
 
 ### Changed (chantier E2 — refonte daltonienne, partie 3 exécutée)

@@ -18,19 +18,22 @@ rien oublier. Mettre à jour au fil de l'eau (cocher / retirer une fois fait).
 
 ## Micro-chantiers proposés (non planifiés, sous filet des tests)
 
-- [ ] **Corrections de rôles** (proposé après E1). Deux défauts de contraste
-      _réels mais masqués aujourd'hui_, protégés par la suite de contrastes
-      (le retrait des waivers sera forcé par l'anti-zombie). Détail complet
-      ci-dessous, section « Corrections de rôles ». Nécessite validation
-      visuelle du header en dark. Waivers concernés dans
-      `src/accessibility/contrast/contrast-pairs.ts` :
-  - `site/button-active-outline-on-panel-bg` (contour de bouton actif
-    invisible) ;
-  - `role/fg-on-accent-on-accent`, `site/header-text-on-header-bg`,
-    `site/header-text-role-on-header-bg`,
-    `site/header-blog-link-text-on-bg` (texte clair sur accent clair en
-    dark, masqué par des surcharges `.header` codées en dur dans
-    `_dark.scss`).
+- [x] **Corrections de rôles** (proposé après E1) — **terminé le 2026-07-07**
+      (branche `refactor/theme-role-corrections`, 2 commits, en attente de
+      validation visuelle avant merge) :
+  - [x] Jeton mort `--color-button-active-outline` **supprimé** (+ sa paire
+        de contraste).
+  - [x] **Titre** du header corrigé (`--fg-on-accent` par luminance) —
+        changement visuel nul.
+  - [x] **Sous-titre** ancré à un gris atténué fixe (décision Simon :
+        « gris atténué ») — en dark, passe de near-black à `stone-700`.
+  - [x] **Lien blog** : design d'origine de Simon restauré — **chip grisé +
+        texte amber dans les deux modes** (light et dark identiques :
+        `#44403c` + `#fcd34d`). Le chip quasi-blanc en dark était un défaut
+        antérieur aux chantiers (inversion automatique du gris, partie en
+        prod), pas le design voulu. Sans rustine, paire verte partout.
+  - [x] Toutes les rustines `.header` de `_dark.scss` supprimées ; les
+        4 waivers header/accent levés (anti-zombie).
 
 ## Reporté explicitement (ne pas toucher sans décision)
 

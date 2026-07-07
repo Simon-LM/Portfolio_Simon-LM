@@ -55,7 +55,14 @@ $bg-inverse: $gray-950;
 $fg-base: $gray-950;
 $fg-muted: $gray-700;
 $fg-on-emphasis: $gray-50;
-$fg-on-accent: $gray-950;
+// Encre sur l'accent, choisie par luminance. --accent est figé clair partout
+// SAUF high-contrast (où il devient noir). Accent sombre (HC) → encre claire
+// (gray-950 = le jaune HC) ; accent clair → encre foncée : le gray-950 propre
+// du thème s'il est bien sombre (light, daltoniens, achromatopsie : aucun
+// changement), sinon (thèmes dark, où le rail décale gray-950 vers le clair)
+// une near-black constante. Corrige le clair-sur-clair du header en dark sans
+// rustine, et sans toucher les autres thèmes. Voir TODO.md.
+$fg-on-accent: if(sass(is-dark($accent)): $gray-950; else: if(sass(is-dark($gray-950)): $gray-950; else: get-color("stone", 950)));
 $border-subtle: $gray-500;
 $border-base: $gray-600;
 $border-strong: $gray-700;
@@ -69,8 +76,21 @@ $color-pages-title: $fg-base;
 // Variables d'entête
 $color-header-bg: $accent;
 $color-header-text: $fg-on-accent;
-$color-header-text-role: $fg-muted;
-$color-header-blog-link-bg: $bg-emphasis;
+// Sous-titre : gris atténué FIXE (décision Simon 2026-07-07) — même aspect
+// atténué dans tous les thèmes, posé sur l'accent figé clair. Même logique
+// par luminance que $fg-on-accent : accent sombre → atténué du thème ;
+// accent clair → le gray-700 du thème s'il est sombre, sinon (thèmes dark,
+// rail inversé) le stone-700 constant. (High-contrast re-surcharge de toute
+// façon ses jetons header dans _high-contrast.scss.)
+$color-header-text-role: if(sass(is-dark($accent)): $fg-muted; else: if(sass(is-dark($gray-700)): $gray-700; else: get-color("stone", 700)));
+// Lien blog (design de Simon, restauré le 2026-07-07) : chip GRISÉ + texte
+// AMBER dans tous les modes, y compris dark. L'automatisation dark
+// inversait le chip vers du quasi-blanc depuis l'origine (défaut antérieur
+// aux chantiers 2026-07, parti en prod) et une rustine noircissait le texte.
+// Chip par luminance : bg-emphasis du thème s'il est sombre (light,
+// daltoniens, achromatopsie : inchangés), sinon stone-700 constant (thèmes
+// dark : même grisé qu'en light). High-contrast garde ses surcharges.
+$color-header-blog-link-bg: if(sass(is-dark($bg-emphasis)): $bg-emphasis; else: get-color("stone", 700));
 $color-header-blog-link-text: $accent;
 
 // Sélecteur de langue
@@ -164,7 +184,6 @@ $color-button-border: $border-subtle;
 $color-button-hover-bg: $link-hover;
 $color-button-hover-text: $fg-on-emphasis;
 $color-button-active-text: $fg-base;
-$color-button-active-outline: $accent;
 
 // Variables pour le curseur de taille de police
 $color-border: $border-subtle;
@@ -220,7 +239,10 @@ $color-accent-hover: $accent-strong; // sole visual change of this migration
 	$fg-base: $gray-950 !global;
 	$fg-muted: $gray-700 !global;
 	$fg-on-emphasis: $gray-50 !global;
-	$fg-on-accent: $gray-950 !global;
+	// Encre sur l'accent, choisie par luminance (cf. déclaration racine) :
+	// accent sombre (HC) → encre claire ; accent clair → gray-950 du thème s'il
+	// est sombre, sinon (thèmes dark) near-black constante.
+	$fg-on-accent: if(sass(is-dark($accent)): $gray-950; else: if(sass(is-dark($gray-950)): $gray-950; else: get-color("stone", 950))) !global;
 	$border-subtle: $gray-500 !global;
 	$border-base: $gray-600 !global;
 	$border-strong: $gray-700 !global;
@@ -242,8 +264,10 @@ $color-accent-hover: $accent-strong; // sole visual change of this migration
 	// Variables d'entête
 	$color-header-bg: $accent !global;
 	$color-header-text: $fg-on-accent !global;
-	$color-header-text-role: $fg-muted !global;
-	$color-header-blog-link-bg: $bg-emphasis !global;
+	// Sous-titre : gris atténué fixe par luminance (cf. déclaration racine).
+	$color-header-text-role: if(sass(is-dark($accent)): $fg-muted; else: if(sass(is-dark($gray-700)): $gray-700; else: get-color("stone", 700))) !global;
+	// Lien blog : chip grisé + texte amber dans tous les modes (cf. racine).
+	$color-header-blog-link-bg: if(sass(is-dark($bg-emphasis)): $bg-emphasis; else: get-color("stone", 700)) !global;
 	$color-header-blog-link-text: $accent !global;
 
 	// Sélecteur de langue
@@ -331,7 +355,6 @@ $color-accent-hover: $accent-strong; // sole visual change of this migration
 	$color-button-hover-bg: $link-hover !global;
 	$color-button-hover-text: $fg-on-emphasis !global;
 	$color-button-active-text: $fg-base !global;
-	$color-button-active-outline: $accent !global;
 
 	// Variables pour le curseur de taille de police
 	$color-border: $border-subtle !global;

@@ -42,25 +42,11 @@ const rolePairs: ContrastPair[] = [
 	{ id: "role/fg-on-emphasis-on-bg-emphasis", fg: "--fg-on-emphasis", bg: "--bg-emphasis", level: "text" },
 	{ id: "role/fg-on-emphasis-on-bg-emphasis-strong", fg: "--fg-on-emphasis", bg: "--bg-emphasis-strong", level: "text" },
 	{ id: "role/fg-on-emphasis-on-bg-inverse", fg: "--fg-on-emphasis", bg: "--bg-inverse", level: "text" },
-	{
-		id: "role/fg-on-accent-on-accent",
-		fg: "--fg-on-accent",
-		bg: "--accent",
-		level: "text",
-		waiver: {
-			reason:
-				"--accent is intentionally NOT inverted between light and dark themes " +
-				"(#fcd34d in both), but --fg-on-accent inverts together with the rest " +
-				"of the text roles (near-black #0c0a09 in light, near-white #e7e5e4 in " +
-				"dark) — in the dark-based themes this puts light text on a background " +
-				"that stayed light. Pre-existing since the role layer was introduced " +
-				"(fondations migration); same root cause as site/header-text-on-header-bg. " +
-				"anti-glare-dark's ratio shifted slightly (1.18 → 1.15) after the " +
-				"chantier E2 OKLCH anti-glare rewrite (PLAN-revue-moteurs.md phase 3).",
-			preexisting: true,
-			measured: { dark: 1.1484, "anti-glare-dark": 1.1459 },
-		},
-	},
+	// Was waived (light text on the fixed light --accent in dark-based themes)
+	// until the role-corrections chantier tied --fg-on-accent to the theme's
+	// dark rail endpoint by luminance instead of the inverting $gray-950: now
+	// 13.70:1 in dark, compliant in all 12 themes.
+	{ id: "role/fg-on-accent-on-accent", fg: "--fg-on-accent", bg: "--accent", level: "text" },
 	{ id: "role/accent-ink-on-accent-soft", fg: "--accent-ink", bg: "--accent-soft", level: "text" },
 	{ id: "role/accent-ink-on-bg-base", fg: "--accent-ink", bg: "--bg-base", level: "text" },
 	{ id: "role/accent-ink-on-bg-subtle", fg: "--accent-ink", bg: "--bg-subtle", level: "text" },
@@ -134,60 +120,20 @@ const rolePairs: ContrastPair[] = [
 const sitePairs: ContrastPair[] = [
 	{ id: "site/main-text-on-main-bg", fg: "--color-main-text", bg: "--color-main-bg", level: "text" },
 	{ id: "site/hero-text-on-hero-bg", fg: "--color-hero-text", bg: "--color-hero-bg", level: "text" },
-	{
-		id: "site/header-text-on-header-bg",
-		fg: "--color-header-text",
-		bg: "--color-header-bg",
-		level: "text",
-		waiver: {
-			reason:
-				"--color-header-text = --fg-on-accent, --color-header-bg = --accent — " +
-				"identical pair and root cause as role/fg-on-accent-on-accent. " +
-				"anti-glare-dark's ratio shifted slightly (1.18 -> 1.15) after the " +
-				"chantier E2 OKLCH anti-glare rewrite (PLAN-revue-moteurs.md phase 3).",
-			preexisting: true,
-			measured: { dark: 1.1484, "anti-glare-dark": 1.1459 },
-		},
-	},
-	// fg-muted rendered on the accent background — sensitive pair (small
-	// role/primitive contrast margin by construction, see README §6.1).
-	{
-		id: "site/header-text-role-on-header-bg",
-		fg: "--color-header-text-role",
-		bg: "--color-header-bg",
-		level: "text",
-		waiver: {
-			reason:
-				"--color-header-text-role = --fg-muted, which inverts to near-white " +
-				"(#fafaf9) in the dark-based themes, rendered on --color-header-bg = " +
-				"--accent, which stays a fixed light amber (#fcd34d) in every theme — " +
-				"near-white on light-amber in dark-based themes. Same two resolved " +
-				"colors (swapped) as site/header-blog-link-text-on-bg, hence the " +
-				"matching ratios. Pre-existing. anti-glare-dark's ratio shifted " +
-				"slightly (1.42 -> 1.38) after the chantier E2 OKLCH anti-glare " +
-				"rewrite (PLAN-revue-moteurs.md phase 3).",
-			preexisting: true,
-			measured: { dark: 1.3806, "anti-glare-dark": 1.3816 },
-		},
-	},
-	{
-		id: "site/header-blog-link-text-on-bg",
-		fg: "--color-header-blog-link-text",
-		bg: "--color-header-blog-link-bg",
-		level: "text",
-		waiver: {
-			reason:
-				"--color-header-blog-link-text = --accent (fixed light amber #fcd34d " +
-				"in every theme) on --color-header-blog-link-bg = --bg-emphasis, which " +
-				"inverts to near-white (#fafaf9) in the dark-based themes — light " +
-				"amber on near-white. Same two resolved colors (swapped) as " +
-				"site/header-text-role-on-header-bg. Pre-existing. anti-glare-dark's " +
-				"ratio shifted slightly (1.42 -> 1.38) after the chantier E2 OKLCH " +
-				"anti-glare rewrite (PLAN-revue-moteurs.md phase 3).",
-			preexisting: true,
-			measured: { dark: 1.3806, "anti-glare-dark": 1.3816 },
-		},
-	},
+	// Was waived (same root cause as role/fg-on-accent-on-accent) until the
+	// role-corrections chantier fixed --fg-on-accent by luminance: now 13.70:1
+	// in dark, compliant everywhere.
+	{ id: "site/header-text-on-header-bg", fg: "--color-header-text", bg: "--color-header-bg", level: "text" },
+	// Was waived (fg-muted inverting to near-white on the fixed light accent
+	// in dark-based themes) until the role-corrections chantier anchored the
+	// subtitle to a fixed muted gray chosen by luminance (Simon's call:
+	// atténué partout) — now 7.12:1 in dark, compliant everywhere.
+	{ id: "site/header-text-role-on-header-bg", fg: "--color-header-text-role", bg: "--color-header-bg", level: "text" },
+	// Was waived (amber accent on the inverting bg-emphasis chip) until the
+	// role-corrections chantier rewired the blog-link text to fg-on-emphasis
+	// (Simon's call: the link follows its chip) — the fg-on-emphasis/
+	// bg-emphasis pair is already guaranteed in all 12 themes; 9.84:1 in dark.
+	{ id: "site/header-blog-link-text-on-bg", fg: "--color-header-blog-link-text", bg: "--color-header-blog-link-bg", level: "text" },
 	{ id: "site/lang-toggle-text-activated-on-bg", fg: "--color-lang-toggle-text-activated", bg: "--color-lang-toggle-bg-activated", level: "text" },
 	{ id: "site/lang-toggle-text-disabled-on-bg", fg: "--color-lang-toggle-text-disabled", bg: "--color-lang-toggle-bg", level: "text" },
 	{ id: "site/collapse-title-on-bg-title", fg: "--color-collapse-title", bg: "--color-collapse-bg-title", level: "text" },
@@ -209,44 +155,16 @@ const sitePairs: ContrastPair[] = [
 		composeOver: "--bg-base", // --color-tooltip-bg carries alpha (rgba(bg-inverse, 0.9))
 	},
 	{ id: "site/scroll-progress-indicator-on-bg-base", fg: "--color-scroll-progress-indicator", bg: "--bg-base", level: "non-text" },
-	{
-		id: "site/button-active-outline-on-panel-bg",
-		fg: "--color-button-active-outline",
-		bg: "--color-panel-bg",
-		level: "non-text",
-		waiver: {
-			reason:
-				"--color-button-active-outline = --accent, --color-panel-bg = " +
-				"--bg-base. In high-contrast both resolve to the exact same value " +
-				"(#000000) — the outline is literally indistinguishable from its " +
-				"background (ratio 1.0:1). In the other light-based themes --accent " +
-				"stays a light amber against a near-white --bg-base, inherently under " +
-				"the 3:1 non-text threshold; dark-based themes pass because --bg-base " +
-				"itself becomes dark there. Pre-existing; a higher-contrast role " +
-				"(--accent-strong) already exists but is not wired to this token. " +
-				"anti-glare-light's ratio dropped slightly (1.38 → 1.31) after " +
-				"chantier E2: phase 2 gave this pair its first-ever anti-glare " +
-				"attenuation (previously unattenuated, matching `light`), then the " +
-				"phase 3 OKLCH rewrite settled it at 1.31 — see PLAN-revue-moteurs.md.",
-			preexisting: true,
-			measured: {
-				light: 1.3806,
-				"anti-glare-light": 1.307,
-				"high-contrast": 1.0,
-				deuteranomaly: 1.128,
-				deuteranopia: 1.18,
-				protanomaly: 1.128,
-				protanopia: 1.18,
-				tritanomaly: 1.0241,
-				tritanopia: 1.0579,
-				achromatopsia: 1.2069,
-			},
-		},
-	},
+	// site/button-active-outline-on-panel-bg removed with the dead
+	// --color-button-active-outline custom property (role-corrections
+	// chantier): it was emitted but consumed by no component, and was the
+	// worst waiver (1.00:1 in high-contrast). Removed because the token is
+	// gone, not to hide a failure.
 ];
 
-// The registry is extensible, never amputated: a pair that fails gets a
-// waiver (phase 3), it is never deleted.
+// The registry is extensible: a pair that fails gets a waiver (phase 3), it
+// is never deleted to hide a failure — the only removals are pairs whose
+// underlying custom property no longer exists (dead code).
 export const contrastPairs: readonly ContrastPair[] = [...rolePairs, ...sitePairs];
 
 // ---------------------------------------------------------------------

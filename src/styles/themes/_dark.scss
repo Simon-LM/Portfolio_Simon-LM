@@ -54,20 +54,8 @@
 
 	// Surcharges manuelles après l'automatisation si nécessaire
 
-	.header {
-		&__title {
-			&-name {
-				color: var(--constant-near-black);
-			}
-			&-separator {
-				color: var(--constant-near-black);
-			}
-			&-role {
-				color: var(--constant-near-black);
-			}
-		}
-		&__blog-link {
-			color: var(--constant-near-black) !important;
-		}
-	}
+	// Plus aucune rustine .header : le titre (fg-on-accent), le sous-titre
+	// (gris atténué fixe) et le lien blog (fg-on-emphasis, suit son chip)
+	// sont corrects par construction depuis le chantier « corrections de
+	// rôles » (2026-07-07) — voir docs/theme-system/CHANGELOG.md.
 }
