@@ -127,6 +127,12 @@ import type { NextConfig } from "next/types";
 
 const nextConfig: NextConfig = {
 	reactStrictMode: true,
+	// Résolution des @use "a11y-prefs/scss/…" (paquet du workspace pnpm,
+	// symlinké dans node_modules) — Dart Sass ne résout pas les modules
+	// Node par défaut. Chantier E3, docs/theme-system/PLAN-extraction-monorepo.md.
+	sassOptions: {
+		includePaths: ["node_modules"],
+	},
 	// Dev-server only: without this, Next.js rejects the HMR WebSocket handshake
 	// when the dev server is reached via a LAN IP instead of localhost, which
 	// leaves useSyncExternalStore-based "mounted" hooks stuck at false (skeleton

@@ -10,6 +10,9 @@ export type ThemeVars = Map<string, string>;
 export type ThemeVarsMap = Map<ThemeOption, ThemeVars>;
 
 const MAIN_SCSS = path.resolve(__dirname, "../../styles/main.scss");
+// Résout les @use "a11y-prefs/scss/…" (paquet du workspace, symlinké dans
+// node_modules) — chantier E3.
+const NODE_MODULES = path.resolve(__dirname, "../../../node_modules");
 
 // Matches the *bare* `[data-theme="x"]` selector emitted by
 // generate-theme-css-vars() — never a descendant selector like
@@ -42,7 +45,7 @@ type Extracted = {
 };
 
 function compileAndExtract(): Extracted {
-	const result = compile(MAIN_SCSS, { style: "expanded" });
+	const result = compile(MAIN_SCSS, { style: "expanded", loadPaths: [NODE_MODULES] });
 	const root = postcss.parse(result.css);
 
 	const themeVars: ThemeVarsMap = new Map();

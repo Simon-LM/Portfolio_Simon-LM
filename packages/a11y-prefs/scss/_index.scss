@@ -1,0 +1,5 @@
+// Point d'entrée public du paquet (plan E3). Rempli en phase 3 :
+// @forward de la palette, de l'état/rôles et des moteurs. La résolution
+// `@use "a11y-prefs/scss/…"` a été prouvée en phase 1 par les trois canaux
+// de compilation (CLI sass --load-path, Next sassOptions.includePaths,
+// extract-themes loadPaths).
