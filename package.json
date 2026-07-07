@@ -22,7 +22,8 @@
 		],
 		"moduleNameMapper": {
 			"\\.(css|less|scss|sass)$": "identity-obj-proxy",
-			"^@/(.*)$": "<rootDir>/src/$1"
+			"^@/(.*)$": "<rootDir>/src/$1",
+			"^a11y-prefs/react$": "<rootDir>/packages/a11y-prefs/react/index.ts"
 		},
 		"transform": {
 			"^.+\\.(js|jsx|ts|tsx)$": [
