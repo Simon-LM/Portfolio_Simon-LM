@@ -26,9 +26,9 @@ mergée : rollup + src, datant d'avant plusieurs refontes du système).
 | [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) | Feuille de route vers le paquet open source (chantiers E1→E7) — c'est **la carte** qui ordonne les plans | vivant |
 | [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) | Plan d'exécution : fondations (rail, rôles, `@use`…) | ✅ exécuté le 2026-07-03 |
 | [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) | Plan d'exécution : chantier E1 — système de tests de contrastes | ✅ exécuté le 2026-07-04 |
-| [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) | Artefact généré : matrice de contraste WCAG des 40 paires × 12 thèmes | vivant (régénéré par `pnpm contrast:report`) |
+| [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) | Artefact généré : matrice de contraste WCAG (39 paires × 12 thèmes) + distinguabilité CVD (5 paires ΔE) | vivant (régénéré par `pnpm contrast:report`) |
 | [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) | Plan d'exécution : chantier E2 — corrections moteurs + OKLCH anti-glare | ✅ exécuté le 2026-07-04, mergé le 2026-07-05 |
-| [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : P1 remap de familles + tests de distinguabilité ; P2 ancres sémantiques des rôles statut ; P3 robustesse (dégradation gracieuse, garde-gamut) | P1 ✅ mergée le 2026-07-05 (`d12264f`) ; P2 ✅ et P3 ✅ exécutées le 2026-07-06 (branches `refactor/theme-status-anchors` puis `refactor/theme-cvd-degradation`), **validation visuelle requise avant merge** |
+| [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : P1 remap de familles + tests de distinguabilité ; P2 ancres sémantiques des rôles statut ; P3 robustesse (dégradation gracieuse, garde-gamut) | P1 ✅ mergée le 2026-07-05 (`d12264f`) ; P2 ✅ et P3 ✅ mergées le 2026-07-06 (`5c8dce9`) après validation visuelle |
 
 Principe : **un chantier = un plan = une branche = une exécution par IA**,
 avec revue avant merge. Le guide donne l'ordre ; chaque plan est autonome.
@@ -68,20 +68,20 @@ COMPILATION (Sass)                          RUNTIME (navigateur)
 
 ## 2. Les 12 thèmes
 
-| Thème              | Public visé                             | Méthode de génération                                              |
-| ------------------ | --------------------------------------- | ------------------------------------------------------------------ |
-| `light`            | défaut                                  | référence : couleurs définies à la main depuis la palette Tailwind |
-| `dark`             | préférence sombre                       | décalage des poids Tailwind en miroir autour du pivot 500          |
-| `anti-glare-light` | photophobie, kératocône, DMLA, aniridie | thème light complet → transformation HSL anti-éblouissement        |
-| `anti-glare-dark`  | idem, base sombre                       | thème dark complet → transformation HSL anti-éblouissement         |
-| `high-contrast`    | fortes pertes de vision                 | réduction à une palette fixe de couleurs pures, choisie par rôle   |
-| `deuteranopia`     | daltonisme rouge-vert (complet)         | couleurs spéciales fixes + déplacement de teintes HSL              |
-| `protanopia`       | daltonisme rouge (complet)              | idem, teintes cibles différentes                                   |
-| `tritanopia`       | daltonisme bleu-jaune (complet)         | idem, teintes cibles différentes                                   |
-| `deuteranomaly`    | daltonisme rouge-vert (léger)           | amplification des différences (teinte + saturation)                |
-| `protanomaly`      | daltonisme rouge (léger)                | idem                                                               |
-| `tritanomaly`      | daltonisme bleu-jaune (léger)           | idem                                                               |
-| `achromatopsia`    | vision monochrome                       | conversion en gris `neutral` de luminance équivalente              |
+| Thème              | Public visé                             | Méthode de génération *(à jour au 2026-07-07)*                                                       |
+| ------------------ | --------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `light`            | défaut                                  | référence : couleurs définies à la main depuis la palette Tailwind                                    |
+| `dark`             | préférence sombre                       | décalage des poids Tailwind en miroir autour du pivot 500                                             |
+| `anti-glare-light` | photophobie, kératocône, DMLA, aniridie | thème light complet → atténuation perceptuelle **OKLCH** (lightness plafonnée, chroma réduite)        |
+| `anti-glare-dark`  | idem, base sombre                       | thème dark complet → idem (noirs relevés)                                                             |
+| `high-contrast`    | fortes pertes de vision                 | réduction à une palette fixe de couleurs pures, choisie par rôle                                      |
+| `deuteranopia`     | daltonisme rouge-vert (complet)         | **ancres sémantiques statut** (success→violet, danger→orange, poids auto ≥ 4.5:1) ; gris/accent/liens intacts (déjà sûrs) |
+| `protanopia`       | daltonisme rouge (complet)              | idem                                                                                                   |
+| `tritanopia`       | daltonisme bleu-jaune (complet)         | **remap de familles Tailwind** (`amber → orange`, `sky → violet`) ; statuts intacts (rouge/vert bien perçus) |
+| `deuteranomaly`    | daltonisme rouge-vert (léger)           | ancres statut douces : teintes naturelles corrigées en poids (emerald-700, redd-600)                  |
+| `protanomaly`      | daltonisme rouge (léger)                | idem                                                                                                   |
+| `tritanomaly`      | daltonisme bleu-jaune (léger)           | tables tritan avec mélange perceptuel OKLCH (`severity: 0.5`), ramené dans le gamut sRGB              |
+| `achromatopsia`    | vision monochrome                       | conversion en gris `neutral` de luminance équivalente                                                 |
 
 ## 3. Cartographie des fichiers
 
@@ -92,7 +92,7 @@ COMPILATION (Sass)                          RUNTIME (navigateur)
 | `src/styles/abstracts/_base-palette.scss`                                                     | Palettes Tailwind (`$colors`) : neutral, stone, slate, amber, sky, redd, emerald — 11 poids chacune (50→950) ; `get-color()` ; `adjust-lightness-clamped()` (remplacement borné de `darken`/`lighten`)  |
 | `src/styles/themes/_theme-variables.scss`                                                     | État mutable du module (rail 11 crans, primitives, ~15 rôles, ~70 tokens de couche 3, déclarés à la racine — requis par `@use`) + `define-base-colors()`, `apply-roles()`, `apply-theme-variables()`   |
 | `src/styles/abstracts/_theme-utils.scss`                                                      | Le cœur (~1500 lignes) : `get-dark-color`, `analyze-tailwind-color`, et tous les moteurs de transformation par thème (`transform-light-to-*`)                                                          |
-| `src/styles/abstracts/_anti-glare-functions.scss`                                             | Transformation anti-éblouissement (HSL) + overlay `body::before` en `backdrop-filter`                                                                                                                  |
+| `src/styles/abstracts/_anti-glare-functions.scss`                                             | Transformation anti-éblouissement perceptuelle (OKLCH, depuis E2 2026-07-04 ; l'overlay `backdrop-filter` a été supprimé)                                                                              |
 | `src/styles/themes/_light.scss`, `_dark.scss`, `_high-contrast.scss`, `_deuteranopia.scss`, … | Un fichier par thème : mixin `X-theme-variables()` = reset light → transformation configurée → surcharges manuelles                                                                                    |
 | `src/styles/abstracts/_theme-system.scss`                                                     | Point d'assemblage : `generate-theme-css-vars()` (snapshot des globales Sass → custom properties) + les 12 blocs `[data-theme]`, `:root` et `@media (prefers-color-scheme: dark)`                      |
 | `src/styles/main.scss`                                                                        | Point d'entrée : `@use` chaque partial (migré depuis `@import` en phase 5), dans l'ordre d'émission CSS d'origine                                                                                       |
@@ -707,18 +707,19 @@ et le [CHANGELOG](./CHANGELOG.md) du 2026-07-03, phases 1 à 7)*
 
 ### Qualité perceptive et conformité
 
-- **Vérification automatique des contrastes** : les thèmes étant générés,
-  rien ne garantit aujourd'hui que chaque paire texte/fond issue d'une
-  transformation respecte WCAG. Un test (unitaire ou script de build) qui
-  parcourt les paires connues des 12 thèmes et vérifie les ratios serait le
-  meilleur filet de sécurité du projet.
-- **Exposer `--success-color`/`--error-color` thématisées** (point n° 11) ou
-  documenter explicitement le choix des constantes.
+- **Vérification automatique des contrastes** *(fait — chantier E1,
+  2026-07-04 : suite WCAG + distinguabilité ΔE sous simulation CVD + garde
+  anti-gamut, `src/accessibility/contrast/`)*.
+- **Exposer `--success-color`/`--error-color` thématisées** *(fait —
+  fondations phase 6 : `--success`/`--danger` émis thématisés ; les
+  constantes conservées à dessein)*.
 - **Support de `prefers-contrast` et `forced-colors`** : respecter les
-  préférences système au même titre que `prefers-color-scheme`.
-- Étudier des espaces colorimétriques perceptuels (**OKLCH** via
-  `color.oklch` de Sass ou CSS natif) pour des transformations dark /
-  anti-glare plus fiables que les décalages de poids et le HSL.
+  préférences système au même titre que `prefers-color-scheme`. *(reste à
+  faire)*
+- Espaces colorimétriques perceptuels (**OKLCH**) *(fait — E2 2026-07-04 :
+  anti-glare réécrit en OKLCH ; repli OKLCH du moteur daltonien ;
+  gamut-mapping `local-minde`. Le décalage de poids du dark reste en
+  géométrie Tailwind, à dessein)*.
 
 ### Packaging (objectif final)
 

@@ -35,6 +35,26 @@ rien oublier. Mettre à jour au fil de l'eau (cocher / retirer une fois fait).
   - [x] Toutes les rustines `.header` de `_dark.scss` supprimées ; les
         4 waivers header/accent levés (anti-zombie).
 
+## Trouvailles de la relecture du 2026-07-07 (audit émis/consommés)
+
+- [ ] **Micro-chantier « variables fantômes »** — 5 `var(--x)` consommés
+      mais jamais émis (la couleur tombe en héritage ; tous antérieurs à la
+      référence `918526f`) : `--color-bg-light`
+      (`_privacy-policy.scss:28`), `--color-button-bg` +
+      `--color-button-text` (`_accessibility-menu.scss:58-59`),
+      `--color-success` (`_contact.scss:311` — message de succès du
+      formulaire ; le câbler sur `--success` rendrait enfin le rôle
+      consommé), `--color-text` (`_accessibility-menu.scss:301`),
+      `--color-text-secondary` (`_skills.scss:141`). À câbler sur les rôles
+      existants, sous protection de la suite de contrastes. (3 autres ont un
+      fallback et fonctionnent : `--color-divider`, `--color-input-bg`,
+      `--color-text-secondary` côté menu — nettoyage cosmétique.)
+- [ ] **Arbitrage Simon — 5 jetons émis mais jamais consommés** (même cas
+      que feu `--color-button-active-outline`) : `--color-hero-bg`,
+      `--color-hero-text` (leur paire est pourtant testée), 
+      `--color-collapse-border`, `--color-section-even-card-bg`,
+      `--constant-success-color`. Supprimer, ou garder si usage prévu.
+
 ## Reporté explicitement (ne pas toucher sans décision)
 
 - [ ] **Réécriture déclarative du thème high-contrast** — reportée à

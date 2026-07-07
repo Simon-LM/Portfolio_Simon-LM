@@ -206,10 +206,10 @@ par conception. Détail complet, tableaux avant/après et diffs bruts :
 voir [CHANGELOG.md](./CHANGELOG.md).
 
 **Ancres sémantiques pour les rôles statut — acté le 2026-07-06,
-✅ implémenté le 2026-07-06** (plan
+✅ implémenté et mergé le 2026-07-06 (`5c8dce9`)** (plan
 [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) partie 2,
 branche `refactor/theme-status-anchors`, validation visuelle de Simon
-requise avant merge ; résolveur `resolve-status-color` dans
+faite ; résolveur `resolve-status-color` dans
 `_theme-utils.scss`, -opies → violet-600/orange-700, -omalies →
 emerald-700/redd-600, tous ≥ 4.5:1). Le cas `success` à 1.60:1 a
 révélé un défaut de conception du remap pour une classe précise de
@@ -255,10 +255,10 @@ disparaîtront au profit de ce mécanisme ; les tables restent pour les
 rôles identitaires, et la suite E1 + ΔE reste la garantie finale sur la
 palette réelle de chaque consommateur.
 
-**Robustesse — ✅ implémenté le 2026-07-06** (plan
+**Robustesse — ✅ implémenté et mergé le 2026-07-06 (`5c8dce9`)** (plan
 [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) partie 3,
 branche `refactor/theme-cvd-degradation`, validation visuelle de Simon
-requise avant merge) : trois garanties issues des parties 1-2.
+faite) : trois garanties issues des parties 1-2.
 
 1. **Garde anti-gamut mécanique** (`gamut.test.ts`) : aucune couleur émise
    ne sort du gamut sRGB, sur les 12 thèmes. A révélé et corrigé

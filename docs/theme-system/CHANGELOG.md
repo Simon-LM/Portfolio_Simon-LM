@@ -15,6 +15,28 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-07
 
+### Docs (relecture complète post-merges + audit émis/consommés)
+
+- **Relecture générale** demandée par Simon (docs + code) après le merge de
+  role-corrections (`a97d699`). Verdict code : sain (moteurs, runtime,
+  suites). Statuts périmés corrigés dans les docs :
+  - carte des documents du README (P2/P3 daltoniennes : mergées `5c8dce9`,
+    plus « validation requise ») ; idem en-têtes du plan daltonien et
+    mentions du guide § E2 ;
+  - README § 2 : méthodes de génération des 12 thèmes mises à jour
+    (ancres statut, remap tritan, OKLCH anti-glare — les descriptions
+    dataient d'avant les refontes) ;
+  - README § 3 : ligne `_anti-glare-functions.scss` (OKLCH, overlay
+    supprimé) ; carte : CONTRAST-REPORT = 39 paires WCAG + 5 ΔE ;
+  - README § 7 « Qualité perceptive » : 3 pistes marquées faites (tests de
+    contrastes = E1, exposition `--success`/`--danger`, OKLCH) — reste
+    `prefers-contrast`/`forced-colors`.
+- **Audit émis/consommés** (nouveau, scan du CSS compilé vs `var()` du
+  code) : 5 variables fantômes consommées mais jamais émises (couleur en
+  héritage — antérieures à la référence `918526f`) et 5 jetons émis jamais
+  consommés. Consignés dans [TODO.md](./TODO.md) (micro-chantier + arbitrage
+  Simon), aucun changement de code dans cette entrée.
+
 ### Fixed (lien blog — restauration du design d'origine de Simon)
 
 Après deux corrections insuffisantes (recâblage `fg-on-emphasis` = lien

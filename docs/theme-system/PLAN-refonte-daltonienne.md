@@ -12,8 +12,8 @@ Trois parties, exécutables indépendamment :
 | Partie | Contenu | Statut |
 | --- | --- | --- |
 | [Partie 1](#partie-1--remap-de-familles-tailwind) | Remap de familles Tailwind + tests de distinguabilité | ✅ exécutée le 2026-07-04, mergée le 2026-07-05 (`d12264f`) |
-| [Partie 2](#partie-2--ancres-sémantiques-pour-les-rôles-statut) | Ancres sémantiques pour les rôles statut | ✅ exécutée le 2026-07-06 (branche `refactor/theme-status-anchors`), **validation visuelle de Simon requise avant merge** |
-| [Partie 3](#partie-3--robustesse--dégradation-gracieuse-garde-gamut-alerte-dev) | Dégradation gracieuse (alerte au lieu de blocage), garde anti-gamut, correction du gamut tritan | ✅ exécutée le 2026-07-06 (branche `refactor/theme-cvd-degradation`), **validation visuelle de Simon requise avant merge** |
+| [Partie 2](#partie-2--ancres-sémantiques-pour-les-rôles-statut) | Ancres sémantiques pour les rôles statut | ✅ exécutée le 2026-07-06, mergée le 2026-07-06 (`5c8dce9`) après validation visuelle |
+| [Partie 3](#partie-3--robustesse--dégradation-gracieuse-garde-gamut-alerte-dev) | Dégradation gracieuse (alerte au lieu de blocage), garde anti-gamut, correction du gamut tritan | ✅ exécutée le 2026-07-06, mergée le 2026-07-06 (`5c8dce9`) après validation visuelle |
 
 ---
 
@@ -205,8 +205,8 @@ avant/après, waivers retirés/ajoutés, décisions en attente).
 ## Partie 2 — ancres sémantiques pour les rôles statut
 
 > ✅ **Exécutée le 2026-07-06** (branche `refactor/theme-status-anchors`,
-> 5 commits, non mergée) — **validation visuelle de Simon requise avant
-> merge**. Conception de référence :
+> 5 commits), **mergée le 2026-07-06** (`5c8dce9`) après validation
+> visuelle de Simon. Conception de référence :
 > [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E2 et
 > README § 6.1. Deux ajustements mesurés en cours d'exécution, détaillés
 > dans le [CHANGELOG.md](./CHANGELOG.md) : (1) le champ de seuil ΔE existait
@@ -413,8 +413,8 @@ attente).
 
 ## Partie 3 — robustesse : dégradation gracieuse, garde-gamut, alerte dev
 
-> ✅ **Exécutée le 2026-07-06** (branche `refactor/theme-cvd-degradation`,
-> non mergée) — **validation visuelle de Simon requise avant merge**. Trois
+> ✅ **Exécutée le 2026-07-06** (branche `refactor/theme-cvd-degradation`),
+> **mergée le 2026-07-06** (`5c8dce9`) après validation visuelle. Trois
 > déviations mesurées, détaillées dans le [CHANGELOG.md](./CHANGELOG.md) :
 > (1) le gamut-mapping utilise le built-in standard `color.to-gamut(...,
 > local-minde)` de Dart Sass 1.101 plutôt qu'un helper de réduction de
