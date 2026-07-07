@@ -55,8 +55,8 @@
 
 	&__close-footer-button {
 		padding: 0.5rem 1rem;
-		background: var(--color-button-bg);
-		color: var(--color-button-text);
+		// (background/color en var(--color-button-bg/-text) retirés
+		// 2026-07-07 : jamais émises -> déclarations inertes, rendu inchangé)
 		border: 1px solid var(--color-button-border);
 		border-radius: 0.25rem;
 		font-size: 0.9rem;
@@ -88,7 +88,9 @@
 		font-weight: 600;
 		margin: 0;
 		padding-bottom: 0.25rem;
-		border-bottom: 0.0625rem solid var(--color-divider, var(--gray-400));
+		// var(--color-divider) n'a jamais été émise : c'était toujours le
+		// fallback qui s'appliquait — simplifié 2026-07-07, rendu inchangé.
+		border-bottom: 0.0625rem solid var(--gray-400);
 	}
 
 	// Groupe avec label
@@ -156,7 +158,9 @@
 
 	&__help-description {
 		font-size: 0.75rem;
-		color: var(--color-text-secondary, var(--gray-700));
+		// var(--color-text-secondary) n'a jamais été émise : fallback simplifié
+		// 2026-07-07, rendu inchangé.
+		color: var(--gray-700);
 		margin: 0 0 0.5rem 0;
 		font-style: italic;
 	}
@@ -172,7 +176,9 @@
 		padding: 0.5rem;
 		border-radius: 0.25rem;
 		border: 0.0625rem solid var(--color-button-border, var(--color-main-text)); // 1px
-		background-color: var(--color-input-bg, var(--off-white));
+		// var(--color-input-bg) n'a jamais été émise : fallback simplifié
+		// 2026-07-07, rendu inchangé.
+		background-color: var(--off-white);
 		color: var(--color-main-text);
 		font-size: 0.875rem; // 14px
 		width: 100%;
@@ -298,7 +304,7 @@
 	}
 
 	&__slider-label {
-		color: var(--color-text);
+		// (color: var(--color-text) retiré 2026-07-07 : jamais émise, inerte)
 		font-size: 0.8rem;
 		flex-shrink: 0;
 		min-width: 1rem;

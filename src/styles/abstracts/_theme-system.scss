@@ -61,9 +61,11 @@
 	--border-strong: #{$border-strong};
 	--focus-ring: #{$focus-ring};
 
-	// Couleurs fonctionnelles constantes (non thématisées, cf. README § 5.11)
+	// Couleur fonctionnelle constante (non thématisée, cf. README § 5.11).
+	// (--constant-success-color supprimée 2026-07-07 : plus consommée nulle
+	// part — audit émis/consommés ; à recréer si le toast de succès du
+	// formulaire redevient vert, cf. TODO.md)
 	--constant-error-color: #dc2626; // Rouge d'erreur fixe
-	--constant-success-color: #059669; // Vert de succès fixe
 
 	// Variables dérivées - déclarées explicitement
 	--color-main-bg: #{$color-main-bg};
@@ -91,14 +93,11 @@
 	--color-collapse-title: #{$color-collapse-title};
 	--color-collapse-bg: #{$color-collapse-bg};
 	--color-collapse-bg-title: #{$color-collapse-bg-title};
-	--color-collapse-border: #{$color-collapse-border};
 
 	--color-section-bg-even: #{$color-section-bg-even};
 	--color-section-bg-odd: #{$color-section-bg-odd};
 	--color-section-title: #{$color-section-title};
-	--color-hero-bg: #{$color-hero-bg};
 	--color-hero-title: #{$color-hero-title};
-	--color-hero-text: #{$color-hero-text};
 
 	--color-about-overlay-bg: #{$color-about-overlay-bg};
 	--color-about-overlay-text: #{$color-about-overlay-text};
@@ -112,7 +111,6 @@
 	--color-skills-presentation-link-hover-text: #{$color-skills-presentation-link-hover-text};
 
 	--color-section-card-bg: #{$color-section-card-bg};
-	--color-section-even-card-bg: #{$color-section-even-card-bg};
 	--color-section-odd-card-bg: #{$color-section-odd-card-bg};
 
 	--color-portfolio-tag-bg: #{$color-portfolio-tag-bg};

@@ -119,7 +119,10 @@ const rolePairs: ContrastPair[] = [
 // for its own layer-3 tokens.
 const sitePairs: ContrastPair[] = [
 	{ id: "site/main-text-on-main-bg", fg: "--color-main-text", bg: "--color-main-bg", level: "text" },
-	{ id: "site/hero-text-on-hero-bg", fg: "--color-hero-text", bg: "--color-hero-bg", level: "text" },
+	// site/hero-text-on-hero-bg removed with the dead --color-hero-bg/-text
+	// custom properties (2026-07-07 emitted/consumed audit): emitted but
+	// consumed by no component (the hero section renders on --color-main-bg).
+	// Removed because the tokens are gone, not to hide a failure.
 	// Was waived (same root cause as role/fg-on-accent-on-accent) until the
 	// role-corrections chantier fixed --fg-on-accent by luminance: now 13.70:1
 	// in dark, compliant everywhere.

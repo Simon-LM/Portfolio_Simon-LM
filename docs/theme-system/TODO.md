@@ -37,23 +37,22 @@ rien oublier. Mettre à jour au fil de l'eau (cocher / retirer une fois fait).
 
 ## Trouvailles de la relecture du 2026-07-07 (audit émis/consommés)
 
-- [ ] **Micro-chantier « variables fantômes »** — 5 `var(--x)` consommés
-      mais jamais émis (la couleur tombe en héritage ; tous antérieurs à la
-      référence `918526f`) : `--color-bg-light`
-      (`_privacy-policy.scss:28`), `--color-button-bg` +
-      `--color-button-text` (`_accessibility-menu.scss:58-59`),
-      `--color-success` (`_contact.scss:311` — message de succès du
-      formulaire ; le câbler sur `--success` rendrait enfin le rôle
-      consommé), `--color-text` (`_accessibility-menu.scss:301`),
-      `--color-text-secondary` (`_skills.scss:141`). À câbler sur les rôles
-      existants, sous protection de la suite de contrastes. (3 autres ont un
-      fallback et fonctionnent : `--color-divider`, `--color-input-bg`,
-      `--color-text-secondary` côté menu — nettoyage cosmétique.)
-- [ ] **Arbitrage Simon — 5 jetons émis mais jamais consommés** (même cas
-      que feu `--color-button-active-outline`) : `--color-hero-bg`,
-      `--color-hero-text` (leur paire est pourtant testée), 
-      `--color-collapse-border`, `--color-section-even-card-bg`,
-      `--constant-success-color`. Supprimer, ou garder si usage prévu.
+- [x] **Micro-chantier « variables fantômes »** — fait le 2026-07-07
+      (branche `chore/theme-token-cleanup`) : les 5 déclarations inertes
+      **retirées** (rendu strictement inchangé — elles ne faisaient rien,
+      la couleur héritée s'appliquait déjà) et les 3 fallbacks simplifiés
+      (`--color-divider`/`--color-input-bg`/`--color-text-secondary` →
+      leur fallback directement).
+- [x] **5 jetons émis jamais consommés supprimés** (mandat « tout sauf
+      E3 ») : `--color-hero-bg`, `--color-hero-text` (+ leur paire de
+      contraste), `--color-collapse-border`, `--color-section-even-card-bg`,
+      `--constant-success-color`.
+- [ ] **Question ouverte — toast de succès du formulaire contact** : son
+      `color: var(--color-success)` (fantôme, retiré) suggère qu'il devait
+      être **vert** ; il a toujours hérité de la couleur de texte normale.
+      Le remettre en vert = décision visuelle de Simon, et attention :
+      emerald-600 ferait 3.61:1 en light (sous 4.5) — il faudrait
+      emerald-700 ou le futur `--success` corrigé.
 
 ## Reporté explicitement (ne pas toucher sans décision)
 
