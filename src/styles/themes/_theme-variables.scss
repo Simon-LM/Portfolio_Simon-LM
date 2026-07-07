@@ -84,11 +84,13 @@ $color-header-text: $fg-on-accent;
 // façon ses jetons header dans _high-contrast.scss.)
 $color-header-text-role: if(sass(is-dark($accent)): $fg-muted; else: if(sass(is-dark($gray-700)): $gray-700; else: get-color("stone", 700)));
 $color-header-blog-link-bg: $bg-emphasis;
-// Lien blog : suit son chip (décision Simon 2026-07-07) — texte = rôle
-// fg-on-emphasis, la paire fg-on-emphasis/bg-emphasis étant garantie par la
-// suite de contrastes dans les 12 thèmes. (Anciennement $accent, illisible
-// en dark où le chip s'inverse en clair — rustine supprimée.)
-$color-header-blog-link-text: $fg-on-emphasis;
+// Lien blog : AMBER sur son chip sombre — l'esthétique voulue par Simon
+// (décision finale 2026-07-07, après un premier essai fg-on-emphasis jugé
+// moche : le lien perdait son amber en light). Par luminance : chip sombre
+// (light, daltoniens, achromatopsie) → $accent ; chip clair (thèmes dark,
+// bg-emphasis inversé) → near-black constant, reproduisant à l'identique le
+// rendu de l'ancienne rustine _dark.scss, mais sans rustine.
+$color-header-blog-link-text: if(sass(is-dark($bg-emphasis)): $accent; else: get-color("stone", 950));
 
 // Sélecteur de langue
 $color-lang-toggle-bg: $bg-base;
@@ -264,8 +266,8 @@ $color-accent-hover: $accent-strong; // sole visual change of this migration
 	// Sous-titre : gris atténué fixe par luminance (cf. déclaration racine).
 	$color-header-text-role: if(sass(is-dark($accent)): $fg-muted; else: if(sass(is-dark($gray-700)): $gray-700; else: get-color("stone", 700))) !global;
 	$color-header-blog-link-bg: $bg-emphasis !global;
-	// Lien blog : suit son chip (rôle fg-on-emphasis, paire testée partout).
-	$color-header-blog-link-text: $fg-on-emphasis !global;
+	// Lien blog : amber sur chip sombre, near-black sur chip clair (cf. racine).
+	$color-header-blog-link-text: if(sass(is-dark($bg-emphasis)): $accent; else: get-color("stone", 950)) !global;
 
 	// Sélecteur de langue
 	$color-lang-toggle-bg: $bg-base !global;

@@ -15,6 +15,25 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-07
 
+### Fixed (corrections de rôles — retour de l'amber du lien blog, décision finale)
+
+Correction esthétique après validation visuelle de Simon : le recâblage du
+lien blog sur `fg-on-emphasis` (entrée ci-dessous) lui faisait perdre son
+**amber** en light — « très moche en blanc ». Décision finale :
+
+- **Lien blog** (`--color-header-blog-link-text`) : **amber restauré**, par
+  luminance du chip — chip sombre (light, daltoniens, achromatopsie) →
+  `$accent` (le rendu d'origine) ; chip clair (thèmes dark, `bg-emphasis`
+  inversé) → `stone-950` constant, soit **exactement** le rendu de
+  l'ancienne rustine (`#0c0a09`). Ratios : 7.12:1 en light (amber sur chip),
+  18.92:1 en dark. Aucune rustine, paire toujours sans waiver.
+- **Sous-titre** : conservé en gris atténué (validé par Simon — cohérent
+  avec l'aspect atténué du light).
+- Leçon : mes deux questions d'arbitrage avaient mal exposé les conséquences
+  *visuelles* des options ; les prochains choix de ce type seront présentés
+  avec le rendu concret (avant/après par thème) plutôt qu'en termes de
+  câblage.
+
 ### Changed (chantier « corrections de rôles » — partie 2/2, décisions de Simon)
 
 Même branche `refactor/theme-role-corrections` (2ᵉ commit). Les deux

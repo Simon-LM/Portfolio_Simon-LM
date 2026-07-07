@@ -27,9 +27,11 @@ rien oublier. Mettre à jour au fil de l'eau (cocher / retirer une fois fait).
         changement visuel nul.
   - [x] **Sous-titre** ancré à un gris atténué fixe (décision Simon :
         « gris atténué ») — en dark, passe de near-black à `stone-700`.
-  - [x] **Lien blog** recâblé sur `fg-on-emphasis` (décision Simon : « suit
-        son chip ») — en light, passe d'amber à near-white sur chip sombre ;
-        en dark, quasi identique à l'ancienne rustine.
+  - [x] **Lien blog** : **amber conservé** (décision finale de Simon après
+        vue du rendu — le premier essai `fg-on-emphasis` le passait en blanc,
+        rejeté) ; par luminance du chip : amber sur chip sombre, near-black
+        (`stone-950`) sur chip clair en dark — rendu identique à l'origine,
+        sans rustine.
   - [x] Toutes les rustines `.header` de `_dark.scss` supprimées ; les
         4 waivers header/accent levés (anti-zombie).
 
