@@ -3,6 +3,7 @@
 @use "sass:map";
 @use "a11y-prefs/scss/base-palette" as *;
 @use "a11y-prefs/scss/theme-utils" as *;
+@use "a11y-prefs/scss/state" as *;
 @use "../themes/theme-variables" as *;
 @use "light" as *;
 

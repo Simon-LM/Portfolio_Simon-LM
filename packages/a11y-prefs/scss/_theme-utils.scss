@@ -5,10 +5,7 @@
 @use "sass:math";
 @use "sass:color";
 @use "base-palette" as *;
-// TEMPORAIRE (E3 phase 3, résorbé en phase 4) : l'état mutable vit encore
-// côté portfolio — le paquet y remonte par chemin relatif le temps de la
-// scission rail/rôles vs couche 3.
-@use "../../../src/styles/themes/theme-variables" as *;
+@use "state" as *;
 /**
  * Utilitaires pour la gestion des thèmes
  * - Accès simplifié aux couleurs Tailwind
@@ -1536,26 +1533,20 @@ $hc-palette: (
 		$accent-soft: get-adjusted-gray($accent-soft, $adjustment) !global;
 	}
 
-	// Variables de liens aussi avec get-adjusted-gray
+	// Variables de liens aussi avec get-adjusted-gray. (Les écritures
+	// directes de couche 3 — $color-link, $color-focus-* — qui doublaient
+	// ces transforms étaient des écritures mortes depuis les fondations :
+	// apply-theme-variables les re-dérivait des primitives juste après.
+	// Purgées en E3 phase 4, le paquet ne touche plus que couches 1 et 2.)
 	@if not map.has-key($special-colors, "link") {
 		$adjustment: map.get($adjustments, "link") or 0;
 		$link: get-adjusted-gray($link, $adjustment) !global;
-		$color-focus-outline: get-adjusted-gray(
-			$color-focus-outline,
-			$adjustment
-		) !global;
-		$color-focus-bg: get-adjusted-gray($color-focus-bg, $adjustment) !global;
-		$color-link: get-adjusted-gray($color-link, $adjustment) !global;
 	}
 
 	@if not map.has-key($special-colors, "link-hover") {
 		$adjustment: map.get($adjustments, "link-hover") or 0;
 		$link-hover: get-adjusted-gray(
 			$link-hover,
-			$adjustment
-		) !global;
-		$color-link-hover: get-adjusted-gray(
-			$color-link-hover,
 			$adjustment
 		) !global;
 	}

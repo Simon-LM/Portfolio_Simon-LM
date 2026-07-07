@@ -1,0 +1,135 @@
+// -----------------------------------------------
+// MODULE-LEVEL STATE — single source of mutable theme state (couches 1+2).
+// -----------------------------------------------
+// Extrait du portfolio en E3 phase 4 (docs/theme-system/PLAN-extraction-
+// monorepo.md) : le paquet possède le rail, les primitives et les rôles ;
+// les ~70 tokens de couche 3 restent déclarés côté consommateur
+// (src/styles/themes/_theme-variables.scss pour le portfolio).
+//
+// Under the Sass module system, a `!global` assignment inside a mixin can
+// only re-assign a variable that already exists at the root of the module
+// where it's declared — it can no longer create one. So every variable the
+// mixins below reassign is declared here first, initialized to its light
+// value. Re-including define-base-colors()/apply-roles() resets this state
+// to light before each theme's transformation runs.
+
+@use "base-palette" as *;
+
+// Full numeric rail — 11 Tailwind weights of the reference "stone" family
+$gray-50: get-color("stone", 50); // #fafaf9
+$gray-100: get-color("stone", 100); // #f5f5f4
+$gray-200: get-color("stone", 200); // #e7e5e4
+$gray-300: get-color("stone", 300); // #d6d3d1
+$gray-400: get-color("stone", 400); // #a8a29e
+$gray-500: get-color("stone", 500); // #78716c
+$gray-600: get-color("stone", 600); // #57534e
+$gray-700: get-color("stone", 700); // #44403c
+$gray-800: get-color("stone", 800); // #292524
+$gray-900: get-color("stone", 900); // #1c1917
+$gray-950: get-color("stone", 950); // #0c0a09
+
+// Semantic aliases for the rail endpoints (kept for the ~35 component
+// call sites; re-synced after every theme transformation)
+$off-white: $gray-50;
+$near-black: $gray-950;
+
+// Couleurs sémantiques (layer 1 primitives, transformed directly by engines)
+$accent: get-color("amber", 300); // #fcd34d
+$accent-strong: get-color("amber", 500); // #f59e0b
+$accent-ink: get-color("amber", 950); // #451a03
+$accent-soft: get-color("amber", 100); // #fef3c7
+$link: get-color("sky", 900); // #0c4a6e
+$link-hover: get-color("sky", 800); // #075985
+// emerald-700 (décision Simon 2026-07-07) : 5.25:1 sur bg-base en light —
+// emerald-600 (3.61:1) était sous le seuil texte 4.5:1 depuis l'origine.
+$success: get-color("emerald", 700); // #047857
+$danger: get-color("redd", 600); // #dc2626
+
+// -----------------------------------------------
+// LAYER 2 — ROLE TOKENS (the package's public API)
+// -----------------------------------------------
+// Pure aliases of rail slots / color primitives: engines transform the
+// rail and primitives, then roles and layer-3 tokens re-derive from them.
+$bg-base: $gray-50;
+$bg-subtle: $gray-200;
+$bg-container: $gray-300;
+$bg-container-high: $gray-400;
+$bg-emphasis: $gray-700;
+$bg-emphasis-strong: $gray-800;
+$bg-inverse: $gray-950;
+$fg-base: $gray-950;
+$fg-muted: $gray-700;
+$fg-on-emphasis: $gray-50;
+// Encre sur l'accent, choisie par luminance. --accent est figé clair partout
+// SAUF high-contrast (où il devient noir). Accent sombre (HC) → encre claire
+// (gray-950 = le jaune HC) ; accent clair → encre foncée : le gray-950 propre
+// du thème s'il est bien sombre (light, daltoniens, achromatopsie : aucun
+// changement), sinon (thèmes dark, où le rail décale gray-950 vers le clair)
+// une near-black constante. Corrige le clair-sur-clair du header en dark sans
+// rustine, et sans toucher les autres thèmes. Voir docs/theme-system/TODO.md.
+$fg-on-accent: if(sass(is-dark($accent)): $gray-950; else: if(sass(is-dark($gray-950)): $gray-950; else: get-color("stone", 950)));
+$border-subtle: $gray-500;
+$border-base: $gray-600;
+$border-strong: $gray-700;
+$focus-ring: $link;
+
+// -----------------------------------------------
+// DÉFINITION DES COULEURS DE BASE
+// -----------------------------------------------
+@mixin define-base-colors() {
+	// Full numeric rail — 11 Tailwind weights of the reference "stone" family
+	$gray-50: get-color("stone", 50) !global; // #fafaf9
+	$gray-100: get-color("stone", 100) !global; // #f5f5f4
+	$gray-200: get-color("stone", 200) !global; // #e7e5e4
+	$gray-300: get-color("stone", 300) !global; // #d6d3d1
+	$gray-400: get-color("stone", 400) !global; // #a8a29e
+	$gray-500: get-color("stone", 500) !global; // #78716c
+	$gray-600: get-color("stone", 600) !global; // #57534e
+	$gray-700: get-color("stone", 700) !global; // #44403c
+	$gray-800: get-color("stone", 800) !global; // #292524
+	$gray-900: get-color("stone", 900) !global; // #1c1917
+	$gray-950: get-color("stone", 950) !global; // #0c0a09
+
+	// Semantic aliases for the rail endpoints (kept for the ~35 component
+	// call sites; re-synced after every theme transformation)
+	$off-white: $gray-50 !global;
+	$near-black: $gray-950 !global;
+
+	// Couleurs sémantiques
+	$accent: get-color("amber", 300) !global; // #fcd34d
+	$accent-strong: get-color("amber", 500) !global; // #f59e0b
+	$accent-ink: get-color("amber", 950) !global; // #451a03
+	$accent-soft: get-color("amber", 100) !global; // #fef3c7
+	$link: get-color("sky", 900) !global; // #0c4a6e
+	$link-hover: get-color("sky", 800) !global; // #075985
+	$success: get-color("emerald", 700) !global; // #047857 (cf. déclaration racine)
+	$danger: get-color("redd", 600) !global; // #dc2626
+}
+
+// -----------------------------------------------
+// LAYER 2 — ROLE TOKENS
+// -----------------------------------------------
+// Called by each engine after transformation; the consumer's theme files
+// then derive their layer-3 tokens (apply-theme-variables, portfolio-side).
+@mixin apply-roles() {
+	$bg-base: $gray-50 !global;
+	$bg-subtle: $gray-200 !global;
+	$bg-container: $gray-300 !global;
+	$bg-container-high: $gray-400 !global;
+	$bg-emphasis: $gray-700 !global;
+	$bg-emphasis-strong: $gray-800 !global;
+	$bg-inverse: $gray-950 !global;
+	$fg-base: $gray-950 !global;
+	$fg-muted: $gray-700 !global;
+	$fg-on-emphasis: $gray-50 !global;
+	// Encre sur l'accent, choisie par luminance (cf. déclaration racine) :
+	// accent sombre (HC) → encre claire ; accent clair → gray-950 du thème s'il
+	// est sombre, sinon (thèmes dark) near-black constante.
+	$fg-on-accent: if(sass(is-dark($accent)): $gray-950; else: if(sass(is-dark($gray-950)): $gray-950; else: get-color("stone", 950))) !global;
+	$border-subtle: $gray-500 !global;
+	$border-base: $gray-600 !global;
+	$border-strong: $gray-700 !global;
+	$focus-ring: $link !global;
+	// accent, accent-strong, accent-soft, accent-ink, link, link-hover,
+	// success, danger are primitives transformed directly by the engines.
+}
