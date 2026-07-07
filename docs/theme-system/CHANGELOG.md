@@ -15,6 +15,31 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-07
 
+### Removed (nettoyage jetons morts + variables fantômes — suites de l'audit)
+
+Branche `chore/theme-token-cleanup`, mandat de Simon (« tout sauf E3 »).
+**Rendu strictement inchangé** : uniquement des déclarations inertes et des
+jetons jamais consommés. Vérifié : diff CSS = 79 suppressions + 3
+réécritures équivalentes (fallbacks), re-scan émis/consommés à zéro des
+deux côtés, 589 tests (la paire hero retirée = −12), build/lint/tsc verts.
+
+- **5 déclarations fantômes retirées** (elles référençaient des custom
+  properties jamais émises → déjà sans effet, la couleur héritée
+  s'appliquait) : `_privacy-policy.scss` (`--color-bg-light`),
+  `_accessibility-menu.scss` (`--color-button-bg`, `--color-button-text`,
+  `--color-text`), `_contact.scss` (`--color-success` — voir la question
+  « toast vert » au [TODO.md](./TODO.md)), `_skills.scss`
+  (`--color-text-secondary`). 3 fallbacks simplifiés en leur valeur
+  effective (`--color-divider`→`--gray-400`, `--color-input-bg`→
+  `--off-white`, `--color-text-secondary`→`--gray-700`).
+- **5 jetons émis jamais consommés supprimés** (défs, assignations,
+  émissions) : `--color-hero-bg`, `--color-hero-text` (+ leur paire
+  `site/hero-text-on-hero-bg` du registre — retirée parce que les jetons
+  n'existent plus, pas pour masquer un échec ; le héros s'affiche sur
+  `--color-main-bg`), `--color-collapse-border`,
+  `--color-section-even-card-bg`, `--constant-success-color` (à recréer si
+  le toast de succès redevient vert).
+
 ### Docs (relecture complète post-merges + audit émis/consommés)
 
 - **Relecture générale** demandée par Simon (docs + code) après le merge de

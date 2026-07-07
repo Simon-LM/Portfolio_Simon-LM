@@ -25,7 +25,9 @@
 		padding: 1rem;
 		border: 1px solid var(--color-border);
 		border-radius: 0.25rem;
-		background-color: var(--color-bg-light);
+		// (background-color: var(--color-bg-light) retiré 2026-07-07 : custom
+		// property jamais émise -> déclaration inerte, le fond a toujours été
+		// transparent — rendu inchangé)
 
 		iframe {
 			width: 100%;

@@ -138,7 +138,8 @@
 		margin: 0 auto;
 		text-align: center;
 		font-size: 0.95rem;
-		color: var(--color-text-secondary);
+		// (color: var(--color-text-secondary) retiré 2026-07-07 : jamais
+		// émise -> inerte, la couleur héritée s'appliquait déjà)
 		font-style: italic;
 	}
 

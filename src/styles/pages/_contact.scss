@@ -308,7 +308,11 @@
 
 			&[data-type="success"] {
 				background: var(--color-main-bg);
-				color: var(--color-success);
+				// (color: var(--color-success) retiré 2026-07-07 : jamais émise,
+				// inerte — le toast hérite depuis toujours de la couleur de texte
+				// normale. L'intention d'origine était sans doute un vert : à
+				// décider, voir docs/theme-system/TODO.md — emerald-600 serait
+				// sous 4.5:1 en light)
 			}
 
 			// &[data-type="error"] {

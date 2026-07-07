@@ -111,15 +111,15 @@ $color-scroll-progress-indicator-active: $link;
 $color-collapse-title: $fg-on-emphasis;
 $color-collapse-bg: $bg-container;
 $color-collapse-bg-title: $bg-emphasis;
-$color-collapse-border: $border-strong;
+// ($color-collapse-border, $color-hero-bg, $color-hero-text supprimés
+// 2026-07-07 : émis mais consommés par aucun composant — audit
+// émis/consommés, voir CHANGELOG)
 
 // Sections et héros
 $color-section-bg-even: $bg-base;
 $color-section-bg-odd: $bg-subtle;
 $color-section-title: $accent-ink;
-$color-hero-bg: $bg-base;
 $color-hero-title: $fg-base;
-$color-hero-text: $fg-base;
 
 // Section À propos
 $color-about-overlay-bg: $bg-inverse;
@@ -134,9 +134,9 @@ $color-skills-icon-text: $accent-ink;
 $color-skills-presentation-link-hover-bg: $link;
 $color-skills-presentation-link-hover-text: $fg-on-emphasis;
 
-// Cartes et sections
+// Cartes et sections ($color-section-even-card-bg supprimé 2026-07-07 :
+// jamais consommé)
 $color-section-card-bg: $bg-container;
-$color-section-even-card-bg: $bg-container;
 $color-section-odd-card-bg: $bg-container-high;
 
 // Étiquettes de portfolio
@@ -288,15 +288,12 @@ $color-accent-hover: $accent-strong; // sole visual change of this migration
 	$color-collapse-title: $fg-on-emphasis !global;
 	$color-collapse-bg: $bg-container !global;
 	$color-collapse-bg-title: $bg-emphasis !global;
-	$color-collapse-border: $border-strong !global;
 
 	// Sections et héros
 	$color-section-bg-even: $bg-base !global;
 	$color-section-bg-odd: $bg-subtle !global;
 	$color-section-title: $accent-ink !global;
-	$color-hero-bg: $bg-base !global;
 	$color-hero-title: $fg-base !global;
-	$color-hero-text: $fg-base !global;
 
 	// Section À propos
 	$color-about-overlay-bg: $bg-inverse !global;
@@ -313,7 +310,6 @@ $color-accent-hover: $accent-strong; // sole visual change of this migration
 
 	// Cartes et sections
 	$color-section-card-bg: $bg-container !global;
-	$color-section-even-card-bg: $bg-container !global;
 	$color-section-odd-card-bg: $bg-container-high !global;
 
 	// Étiquettes de portfolio
