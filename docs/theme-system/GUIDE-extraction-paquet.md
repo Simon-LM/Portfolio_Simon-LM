@@ -278,14 +278,17 @@ faite) : trois garanties issues des parties 1-2.
    construit (le contraste étant dominé par la lightness et la palette
    couvrant déjà toute l'échelle, il serait quasi inutile).
 
-### E3 — Monorepo et extraction de la face SCSS
+### E3 — Monorepo et extraction de la face SCSS — ✅ exécuté le 2026-07-07
 
-**Plan rédigé le 2026-07-07 :
-[PLAN-extraction-monorepo.md](./PLAN-extraction-monorepo.md)** (6 phases,
-branche `feat/e3-monorepo`, nom de travail `a11y-prefs`, oracle CSS
-byte-identique de bout en bout ; la configuration `with()` y est staged :
-`$gray-family` + primitives en phase 5, le registre `$roles`/`$themes`
-complet reporté — voir le plan).
+**Plan : [PLAN-extraction-monorepo.md](./PLAN-extraction-monorepo.md)**
+(6 phases, branche `feat/e3-monorepo`, revue avant merge). Résultat : le
+workspace pnpm existe, `packages/a11y-prefs/scss/` contient palette, état
+(couches 1+2, configurable `with($gray-family, $primitives)`), moteurs et
+anti-glare ; le portfolio ne garde que sa couche 3, ses 12 fichiers de
+thèmes (= configs) et l'assemblage. Inversion de dépendance acquise : les
+moteurs s'arrêtent aux rôles. CSS identique (modulo duplication des
+pragmas `/** @format */`, documentée). Le registre `$roles`/`$themes`
+complet reste pour une itération ultérieure, comme prévu.
 
 `pnpm-workspace.yaml`, création du paquet, déplacement de
 palette/rail/rôles/moteurs/émetteur. Le portfolio consomme :

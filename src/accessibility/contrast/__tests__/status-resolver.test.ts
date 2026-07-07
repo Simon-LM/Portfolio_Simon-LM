@@ -16,11 +16,13 @@ const projectRoot = path.resolve(__dirname, "../../../..");
 function compileProbe(body: string): { css: string; warnings: string[] } {
 	const warnings: string[] = [];
 	const src =
-		`@use "src/styles/abstracts/base-palette" as *;\n` +
-		`@use "src/styles/abstracts/theme-utils" as tu;\n` +
+		`@use "a11y-prefs/scss/base-palette" as *;\n` +
+		`@use "a11y-prefs/scss/theme-utils" as tu;\n` +
 		`a { ${body} }`;
 	const result = compileString(src, {
-		loadPaths: [projectRoot],
+		// node_modules résout le paquet du workspace (E3) ; projectRoot reste
+		// nécessaire pour le chemin temporaire du paquet vers l'état portfolio.
+		loadPaths: [projectRoot, path.join(projectRoot, "node_modules")],
 		url: pathToFileURL(path.join(projectRoot, "__status_resolver_probe__.scss")),
 		logger: {
 			warn(message) {

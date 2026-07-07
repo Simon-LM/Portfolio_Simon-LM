@@ -1,0 +1,162 @@
+// -----------------------------------------------
+// MODULE-LEVEL STATE — single source of mutable theme state (couches 1+2).
+// -----------------------------------------------
+// Extrait du portfolio en E3 phase 4 (docs/theme-system/PLAN-extraction-
+// monorepo.md) : le paquet possède le rail, les primitives et les rôles ;
+// les ~70 tokens de couche 3 restent déclarés côté consommateur
+// (src/styles/themes/_theme-variables.scss pour le portfolio).
+//
+// Under the Sass module system, a `!global` assignment inside a mixin can
+// only re-assign a variable that already exists at the root of the module
+// where it's declared — it can no longer create one. So every variable the
+// mixins below reassign is declared here first, initialized to its light
+// value. Re-including define-base-colors()/apply-roles() resets this state
+// to light before each theme's transformation runs.
+
+@use "sass:map";
+@use "sass:list";
+@use "base-palette" as *;
+
+// -----------------------------------------------
+// CONFIGURATION DU CONSOMMATEUR (E3 phase 5)
+// -----------------------------------------------
+// Chaque projet configure sa palette au premier chargement du module :
+//   @use "a11y-prefs/scss/state" with ($gray-family: …, $primitives: (…));
+// Contrat (README § 6.1) : la famille du rail et celles des primitives
+// doivent respecter la géométrie Tailwind 11 poids de base-palette.
+// Défauts = les valeurs light du portfolio.
+$gray-family: "stone" !default;
+$primitives: (
+	"accent": ("amber", 300),
+	"accent-strong": ("amber", 500),
+	"accent-ink": ("amber", 950),
+	"accent-soft": ("amber", 100),
+	"link": ("sky", 900),
+	"link-hover": ("sky", 800),
+	// emerald-700 (décision Simon 2026-07-07) : 5.25:1 sur bg-base en light.
+	"success": ("emerald", 700),
+	"danger": ("redd", 600),
+) !default;
+
+// Résout une primitive configurée (famille, poids) en couleur.
+@function resolved-primitive($name) {
+	$entry: map.get($primitives, $name);
+	@return get-color(list.nth($entry, 1), list.nth($entry, 2));
+}
+
+// Full numeric rail — 11 Tailwind weights of the configured gray family
+$gray-50: get-color($gray-family, 50);
+$gray-100: get-color($gray-family, 100);
+$gray-200: get-color($gray-family, 200);
+$gray-300: get-color($gray-family, 300);
+$gray-400: get-color($gray-family, 400);
+$gray-500: get-color($gray-family, 500);
+$gray-600: get-color($gray-family, 600);
+$gray-700: get-color($gray-family, 700);
+$gray-800: get-color($gray-family, 800);
+$gray-900: get-color($gray-family, 900);
+$gray-950: get-color($gray-family, 950);
+
+// Semantic aliases for the rail endpoints (kept for the ~35 component
+// call sites; re-synced after every theme transformation)
+$off-white: $gray-50;
+$near-black: $gray-950;
+
+// Couleurs sémantiques (layer 1 primitives, transformed directly by engines)
+$accent: resolved-primitive("accent");
+$accent-strong: resolved-primitive("accent-strong");
+$accent-ink: resolved-primitive("accent-ink");
+$accent-soft: resolved-primitive("accent-soft");
+$link: resolved-primitive("link");
+$link-hover: resolved-primitive("link-hover");
+$success: resolved-primitive("success");
+$danger: resolved-primitive("danger");
+
+// -----------------------------------------------
+// LAYER 2 — ROLE TOKENS (the package's public API)
+// -----------------------------------------------
+// Pure aliases of rail slots / color primitives: engines transform the
+// rail and primitives, then roles and layer-3 tokens re-derive from them.
+$bg-base: $gray-50;
+$bg-subtle: $gray-200;
+$bg-container: $gray-300;
+$bg-container-high: $gray-400;
+$bg-emphasis: $gray-700;
+$bg-emphasis-strong: $gray-800;
+$bg-inverse: $gray-950;
+$fg-base: $gray-950;
+$fg-muted: $gray-700;
+$fg-on-emphasis: $gray-50;
+// Encre sur l'accent, choisie par luminance. --accent est figé clair partout
+// SAUF high-contrast (où il devient noir). Accent sombre (HC) → encre claire
+// (gray-950 = le jaune HC) ; accent clair → encre foncée : le gray-950 propre
+// du thème s'il est bien sombre (light, daltoniens, achromatopsie : aucun
+// changement), sinon (thèmes dark, où le rail décale gray-950 vers le clair)
+// une near-black constante. Corrige le clair-sur-clair du header en dark sans
+// rustine, et sans toucher les autres thèmes. Voir docs/theme-system/TODO.md.
+$fg-on-accent: if(sass(is-dark($accent)): $gray-950; else: if(sass(is-dark($gray-950)): $gray-950; else: get-color($gray-family, 950)));
+$border-subtle: $gray-500;
+$border-base: $gray-600;
+$border-strong: $gray-700;
+$focus-ring: $link;
+
+// -----------------------------------------------
+// DÉFINITION DES COULEURS DE BASE
+// -----------------------------------------------
+@mixin define-base-colors() {
+	// Full numeric rail — 11 Tailwind weights of the configured gray family
+	$gray-50: get-color($gray-family, 50) !global;
+	$gray-100: get-color($gray-family, 100) !global;
+	$gray-200: get-color($gray-family, 200) !global;
+	$gray-300: get-color($gray-family, 300) !global;
+	$gray-400: get-color($gray-family, 400) !global;
+	$gray-500: get-color($gray-family, 500) !global;
+	$gray-600: get-color($gray-family, 600) !global;
+	$gray-700: get-color($gray-family, 700) !global;
+	$gray-800: get-color($gray-family, 800) !global;
+	$gray-900: get-color($gray-family, 900) !global;
+	$gray-950: get-color($gray-family, 950) !global;
+
+	// Semantic aliases for the rail endpoints (kept for the ~35 component
+	// call sites; re-synced after every theme transformation)
+	$off-white: $gray-50 !global;
+	$near-black: $gray-950 !global;
+
+	// Couleurs sémantiques (configurées via $primitives)
+	$accent: resolved-primitive("accent") !global;
+	$accent-strong: resolved-primitive("accent-strong") !global;
+	$accent-ink: resolved-primitive("accent-ink") !global;
+	$accent-soft: resolved-primitive("accent-soft") !global;
+	$link: resolved-primitive("link") !global;
+	$link-hover: resolved-primitive("link-hover") !global;
+	$success: resolved-primitive("success") !global;
+	$danger: resolved-primitive("danger") !global;
+}
+
+// -----------------------------------------------
+// LAYER 2 — ROLE TOKENS
+// -----------------------------------------------
+// Called by each engine after transformation; the consumer's theme files
+// then derive their layer-3 tokens (apply-theme-variables, portfolio-side).
+@mixin apply-roles() {
+	$bg-base: $gray-50 !global;
+	$bg-subtle: $gray-200 !global;
+	$bg-container: $gray-300 !global;
+	$bg-container-high: $gray-400 !global;
+	$bg-emphasis: $gray-700 !global;
+	$bg-emphasis-strong: $gray-800 !global;
+	$bg-inverse: $gray-950 !global;
+	$fg-base: $gray-950 !global;
+	$fg-muted: $gray-700 !global;
+	$fg-on-emphasis: $gray-50 !global;
+	// Encre sur l'accent, choisie par luminance (cf. déclaration racine) :
+	// accent sombre (HC) → encre claire ; accent clair → gray-950 du thème s'il
+	// est sombre, sinon (thèmes dark) near-black constante.
+	$fg-on-accent: if(sass(is-dark($accent)): $gray-950; else: if(sass(is-dark($gray-950)): $gray-950; else: get-color($gray-family, 950))) !global;
+	$border-subtle: $gray-500 !global;
+	$border-base: $gray-600 !global;
+	$border-strong: $gray-700 !global;
+	$focus-ring: $link !global;
+	// accent, accent-strong, accent-soft, accent-ink, link, link-hover,
+	// success, danger are primitives transformed directly by the engines.
+}

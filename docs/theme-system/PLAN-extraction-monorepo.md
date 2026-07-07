@@ -10,7 +10,14 @@ vérifications dans chaque rapport, arrêt en cas d'imprévu, entrées
 README § 6 (architecture 3 couches, § 6.2 périmètre, § 6.3 distribution
 hybride).
 
-> **Statut : rédigé le 2026-07-07, à exécuter.**
+> **Statut : ✅ exécuté le 2026-07-07** (branche `feat/e3-monorepo`,
+> 6 commits, un par phase). Déviation mesurée et documentée : l'oracle
+> « byte-identique » est tenu **modulo la duplication des pragmas
+> `/** @format */`** (règle empirique établie par sondes : les commentaires
+> bruyants placés avant les `@use` d'un module sont ré-émis une fois par
+> importeur — la réorganisation des imports change leur nombre ; le spam de
+> pragmas baisse d'ailleurs de 80 à 68). Zéro changement de valeur ou de
+> règle CSS, prouvé par diff normalisé à chaque phase.
 
 ## ⛔ Prérequis bloquants
 

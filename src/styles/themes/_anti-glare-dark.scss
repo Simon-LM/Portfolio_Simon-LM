@@ -1,7 +1,8 @@
 /** @format */
-@use "../abstracts/base-palette" as *;
-@use "../abstracts/theme-utils" as *;
-@use "../abstracts/anti-glare-functions" as *;
+@use "a11y-prefs/scss/base-palette" as *;
+@use "a11y-prefs/scss/theme-utils" as *;
+@use "a11y-prefs/scss/anti-glare-functions" as *;
+@use "a11y-prefs/scss/state" as *;
 @use "../themes/theme-variables" as *;
 @use "dark" as *;
 
@@ -11,6 +12,10 @@
 
 	// Puis transformer toutes les variables pour réduire l'éblouissement
 	@include transform-theme-for-anti-glare("dark");
+
+	// Dériver la couche 3 depuis les rôles transformés (E3 phase 2 :
+	// l'appel a quitté le moteur — inversion de dépendance).
+	@include apply-theme-variables;
 
 	// Surcharges spécifiques après la transformation
 	.header {

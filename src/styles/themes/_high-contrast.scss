@@ -1,8 +1,9 @@
 /** @format */
 
 @use "sass:map";
-@use "../abstracts/base-palette" as *;
-@use "../abstracts/theme-utils" as *;
+@use "a11y-prefs/scss/base-palette" as *;
+@use "a11y-prefs/scss/theme-utils" as *;
+@use "a11y-prefs/scss/state" as *;
 @use "../themes/theme-variables" as *;
 @use "light" as *;
 
@@ -30,6 +31,11 @@
 			),
 		)
 	);
+
+	// Dériver la couche 3 depuis les rôles transformés (E3 phase 2 :
+	// l'appel a quitté le moteur — inversion de dépendance). Les surcharges
+	// header ci-dessous restent après, comme avant.
+	@include apply-theme-variables;
 
 	// Uniformiser tous les états de focus avec les états hover
 	*:focus-visible {

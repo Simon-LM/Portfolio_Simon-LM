@@ -1,6 +1,7 @@
 /** @format */
-@use "../abstracts/base-palette" as *;
-@use "../abstracts/theme-utils" as *;
+@use "a11y-prefs/scss/base-palette" as *;
+@use "a11y-prefs/scss/theme-utils" as *;
+@use "a11y-prefs/scss/state" as *;
 @use "../themes/theme-variables" as *;
 @use "light" as *;
 
@@ -12,6 +13,10 @@
 	// table par défaut de transform-light-to-deuteranopia dans
 	// _theme-utils.scss (emerald -> sky, redd -> amber).
 	@include transform-light-to-deuteranopia();
+
+	// Dériver la couche 3 depuis les rôles transformés (E3 phase 2 :
+	// l'appel a quitté le moteur — inversion de dépendance).
+	@include apply-theme-variables;
 
 	// Surcharges manuelles après l'automatisation si nécessaire
 }

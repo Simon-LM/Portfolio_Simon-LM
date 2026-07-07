@@ -29,7 +29,7 @@ mergée : rollup + src, datant d'avant plusieurs refontes du système).
 | [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) | Artefact généré : matrice de contraste WCAG (39 paires × 12 thèmes) + distinguabilité CVD (5 paires ΔE) | vivant (régénéré par `pnpm contrast:report`) |
 | [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) | Plan d'exécution : chantier E2 — corrections moteurs + OKLCH anti-glare | ✅ exécuté le 2026-07-04, mergé le 2026-07-05 |
 | [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : P1 remap de familles + tests de distinguabilité ; P2 ancres sémantiques des rôles statut ; P3 robustesse (dégradation gracieuse, garde-gamut) | P1 ✅ mergée le 2026-07-05 (`d12264f`) ; P2 ✅ et P3 ✅ mergées le 2026-07-06 (`5c8dce9`) après validation visuelle |
-| [PLAN-extraction-monorepo.md](./PLAN-extraction-monorepo.md) | Plan d'exécution : chantier E3 — workspace pnpm + extraction de la face SCSS dans `packages/a11y-prefs` (nom de travail) | rédigé le 2026-07-07, à exécuter |
+| [PLAN-extraction-monorepo.md](./PLAN-extraction-monorepo.md) | Plan d'exécution : chantier E3 — workspace pnpm + extraction de la face SCSS dans `packages/a11y-prefs` (nom de travail) | ✅ exécuté le 2026-07-07 (branche `feat/e3-monorepo`), **revue avant merge** |
 
 Principe : **un chantier = un plan = une branche = une exécution par IA**,
 avec revue avant merge. Le guide donne l'ordre ; chaque plan est autonome.
@@ -88,15 +88,23 @@ COMPILATION (Sass)                          RUNTIME (navigateur)
 
 ### Côté SCSS (compilation)
 
+Depuis E3 (2026-07-07), la face SCSS du moteur vit dans le **workspace
+pnpm** `packages/a11y-prefs/` (nom de travail — Simon fixera le nom
+définitif en E7) et le portfolio la consomme via
+`@use "a11y-prefs/scss/…"` (résolution : `sassOptions.includePaths` dans
+`next.config.ts`, `loadPaths` dans extract-themes, `--load-path` en CLI).
+
 | Fichier                                                                                       | Rôle                                                                                                                                                                              |
 | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/styles/abstracts/_base-palette.scss`                                                     | Palettes Tailwind (`$colors`) : neutral, stone, slate, amber, sky, redd, emerald — 11 poids chacune (50→950) ; `get-color()` ; `adjust-lightness-clamped()` (remplacement borné de `darken`/`lighten`)  |
-| `src/styles/themes/_theme-variables.scss`                                                     | État mutable du module (rail 11 crans, primitives, ~15 rôles, ~70 tokens de couche 3, déclarés à la racine — requis par `@use`) + `define-base-colors()`, `apply-roles()`, `apply-theme-variables()`   |
-| `src/styles/abstracts/_theme-utils.scss`                                                      | Le cœur (~1500 lignes) : `get-dark-color`, `analyze-tailwind-color`, et tous les moteurs de transformation par thème (`transform-light-to-*`)                                                          |
-| `src/styles/abstracts/_anti-glare-functions.scss`                                             | Transformation anti-éblouissement perceptuelle (OKLCH, depuis E2 2026-07-04 ; l'overlay `backdrop-filter` a été supprimé)                                                                              |
-| `src/styles/themes/_light.scss`, `_dark.scss`, `_high-contrast.scss`, `_deuteranopia.scss`, … | Un fichier par thème : mixin `X-theme-variables()` = reset light → transformation configurée → surcharges manuelles                                                                                    |
-| `src/styles/abstracts/_theme-system.scss`                                                     | Point d'assemblage : `generate-theme-css-vars()` (snapshot des globales Sass → custom properties) + les 12 blocs `[data-theme]`, `:root` et `@media (prefers-color-scheme: dark)`                      |
-| `src/styles/main.scss`                                                                        | Point d'entrée : `@use` chaque partial (migré depuis `@import` en phase 5), dans l'ordre d'émission CSS d'origine                                                                                       |
+| `packages/a11y-prefs/scss/_base-palette.scss` **(paquet)**                                    | Palettes Tailwind (`$colors`) : neutral, stone, slate, amber, sky, redd, emerald, orange, violet — 11 poids chacune ; `get-color()` ; `is-dark()` ; `adjust-lightness-clamped()`   |
+| `packages/a11y-prefs/scss/_state.scss` **(paquet)**                                           | État mutable couches 1+2 (rail 11 crans, primitives, ~15 rôles) + config consommateur (`$gray-family`, `$primitives` — `!default`, via `with()`) + `define-base-colors()`, `apply-roles()` |
+| `packages/a11y-prefs/scss/_theme-utils.scss` **(paquet)**                                     | Le cœur (~1500 lignes) : `get-dark-color`, `analyze-tailwind-color`, moteurs `transform-light-to-*`, remap CVD, ancres statut, math WCAG, gamut-mapping                            |
+| `packages/a11y-prefs/scss/_anti-glare-functions.scss` **(paquet)**                            | Transformation anti-éblouissement perceptuelle (OKLCH)                                                                                                                             |
+| `packages/a11y-prefs/scss/_index.scss` **(paquet)**                                           | Point d'entrée public (`@forward` des quatre modules)                                                                                                                              |
+| `src/styles/themes/_theme-variables.scss`                                                     | **Couche 3 du portfolio** : ~70 tokens de composants + `apply-theme-variables()` (dérivés des rôles du paquet)                                                                     |
+| `src/styles/themes/_light.scss`, `_dark.scss`, `_high-contrast.scss`, `_deuteranopia.scss`, … | Un fichier par thème (= **config du projet**) : reset light → transformation du paquet → `apply-theme-variables` → surcharges manuelles                                            |
+| `src/styles/abstracts/_theme-system.scss`                                                     | Point d'assemblage : `generate-theme-css-vars()` (snapshot des globales Sass → custom properties) + les 12 blocs `[data-theme]`, `:root` et `@media (prefers-color-scheme: dark)`  |
+| `src/styles/main.scss`                                                                        | Point d'entrée : porte la **configuration `with()`** du paquet (premier chargement du module state), puis `@use` chaque partial                                                    |
 
 ### Côté React (runtime)
 
