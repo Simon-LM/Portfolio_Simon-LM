@@ -31,6 +31,11 @@
 		)
 	);
 
+	// Dériver la couche 3 depuis les rôles transformés (E3 phase 2 :
+	// l'appel a quitté le moteur — inversion de dépendance). Les surcharges
+	// header ci-dessous restent après, comme avant.
+	@include apply-theme-variables;
+
 	// Uniformiser tous les états de focus avec les états hover
 	*:focus-visible {
 		outline: 3px solid #ffffff !important;

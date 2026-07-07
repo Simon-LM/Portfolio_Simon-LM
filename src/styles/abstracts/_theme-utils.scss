@@ -533,8 +533,9 @@ $status-legibility-floor: 3 !default;
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
 	@include apply-roles();
 
-	// Appliquer les variables dérivées
-	@include apply-theme-variables;
+	// Le moteur s'arrête aux rôles (couche 2) — inversion de dépendance E3
+	// phase 2 : la couche 3 est dérivée par le fichier de thème du
+	// consommateur (@include apply-theme-variables après le transform).
 }
 
 // Palette réduite de couleurs très vives pour le high contrast
@@ -638,8 +639,9 @@ $hc-palette: (
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
 	@include apply-roles();
 
-	// Appliquer les variables dérivées
-	@include apply-theme-variables;
+	// Le moteur s'arrête aux rôles (couche 2) — inversion de dépendance E3
+	// phase 2 : la couche 3 est dérivée par le fichier de thème du
+	// consommateur (@include apply-theme-variables après le transform).
 }
 
 // Mixin qui transforme automatiquement toutes les variables du thème light en thème deutéranomalie
@@ -758,8 +760,9 @@ $hc-palette: (
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
 	@include apply-roles();
 
-	// Appliquer les variables dérivées
-	@include apply-theme-variables;
+	// Le moteur s'arrête aux rôles (couche 2) — inversion de dépendance E3
+	// phase 2 : la couche 3 est dérivée par le fichier de thème du
+	// consommateur (@include apply-theme-variables après le transform).
 }
 
 // Mixin qui transforme automatiquement toutes les variables du thème light en thème deuteranopia
@@ -904,8 +907,9 @@ $hc-palette: (
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
 	@include apply-roles();
 
-	// Appliquer les variables dérivées
-	@include apply-theme-variables;
+	// Le moteur s'arrête aux rôles (couche 2) — inversion de dépendance E3
+	// phase 2 : la couche 3 est dérivée par le fichier de thème du
+	// consommateur (@include apply-theme-variables après le transform).
 }
 
 // Mixin qui transforme automatiquement toutes les variables du thème light en thème protanomalie
@@ -1020,8 +1024,9 @@ $hc-palette: (
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
 	@include apply-roles();
 
-	// Appliquer les variables dérivées
-	@include apply-theme-variables;
+	// Le moteur s'arrête aux rôles (couche 2) — inversion de dépendance E3
+	// phase 2 : la couche 3 est dérivée par le fichier de thème du
+	// consommateur (@include apply-theme-variables après le transform).
 }
 
 // Mixin qui transforme automatiquement toutes les variables du thème light en thème protanopia
@@ -1139,8 +1144,9 @@ $hc-palette: (
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
 	@include apply-roles();
 
-	// Appliquer les variables dérivées
-	@include apply-theme-variables;
+	// Le moteur s'arrête aux rôles (couche 2) — inversion de dépendance E3
+	// phase 2 : la couche 3 est dérivée par le fichier de thème du
+	// consommateur (@include apply-theme-variables après le transform).
 }
 
 // Mixin qui transforme automatiquement toutes les variables du thème light en thème tritanomalie
@@ -1247,8 +1253,9 @@ $hc-palette: (
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
 	@include apply-roles();
 
-	// Appliquer les variables dérivées
-	@include apply-theme-variables;
+	// Le moteur s'arrête aux rôles (couche 2) — inversion de dépendance E3
+	// phase 2 : la couche 3 est dérivée par le fichier de thème du
+	// consommateur (@include apply-theme-variables après le transform).
 }
 
 // Mixin qui transforme automatiquement toutes les variables du thème light en thème tritanopia
@@ -1360,8 +1367,9 @@ $hc-palette: (
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
 	@include apply-roles();
 
-	// Appliquer les variables dérivées
-	@include apply-theme-variables;
+	// Le moteur s'arrête aux rôles (couche 2) — inversion de dépendance E3
+	// phase 2 : la couche 3 est dérivée par le fichier de thème du
+	// consommateur (@include apply-theme-variables après le transform).
 }
 
 @function get-adjusted-gray-level($color, $adjustment: 0) {
@@ -1552,6 +1560,7 @@ $hc-palette: (
 	// Dériver les rôles (couche 2) depuis le rail et les primitives transformés
 	@include apply-roles();
 
-	// Appliquer les variables dérivées
-	@include apply-theme-variables;
+	// Le moteur s'arrête aux rôles (couche 2) — inversion de dépendance E3
+	// phase 2 : la couche 3 est dérivée par le fichier de thème du
+	// consommateur (@include apply-theme-variables après le transform).
 }

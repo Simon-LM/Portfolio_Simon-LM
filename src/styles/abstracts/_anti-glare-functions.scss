@@ -87,28 +87,10 @@
 	// anti-éblouissement.
 	@include apply-roles();
 
-	// Rederive layer-3 tokens (~70) from the anti-glared roles/primitives in
-	// a single pass: was previously ~25 tokens transformed a second time
-	// individually here (double attenuation) while ~45 others sharing the
-	// same roles (e.g. $color-lang-toggle-bg) were never attenuated at all.
-	@include apply-theme-variables;
-
-	// Ajustements spécifiques selon le mode
-	@if $mode == "light" {
-		// Mode clair: réduire les contrastes extrêmes
-		$color-collapse-border: rgba(
-			math.round(color.channel($gray-700, "red", $space: rgb)),
-			math.round(color.channel($gray-700, "green", $space: rgb)),
-			math.round(color.channel($gray-700, "blue", $space: rgb)),
-			0.7
-		) !global;
-	} @else {
-		// Mode sombre: adoucir les bordures pour éviter les halos
-		$color-collapse-border: rgba(
-			math.round(color.channel($gray-400, "red", $space: rgb)),
-			math.round(color.channel($gray-400, "green", $space: rgb)),
-			math.round(color.channel($gray-400, "blue", $space: rgb)),
-			0.4
-		) !global;
-	}
+	// Le moteur s'arrête aux rôles (couche 2) — inversion de dépendance E3
+	// phase 2 : la couche 3 est dérivée par le fichier de thème du
+	// consommateur (@include apply-theme-variables après le transform).
+	// (Le bloc « ajustements par mode » qui suivait assignait
+	// $color-collapse-border, jeton supprimé le 2026-07-07 comme jamais
+	// consommé : c'était devenu une écriture morte, purgée ici.)
 }

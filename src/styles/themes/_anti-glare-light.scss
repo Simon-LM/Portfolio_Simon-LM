@@ -12,6 +12,10 @@
 	// Puis transformer toutes les variables pour réduire l'éblouissement
 	@include transform-theme-for-anti-glare("light");
 
+	// Dériver la couche 3 depuis les rôles transformés (E3 phase 2 :
+	// l'appel a quitté le moteur — inversion de dépendance).
+	@include apply-theme-variables;
+
 	// Surcharges spécifiques après la transformation
 	.header {
 		&__lang-toggle {
