@@ -15,6 +15,49 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-07
 
+### Changed (chantier E3 exécuté — workspace pnpm + extraction SCSS)
+
+Branche `feat/e3-monorepo` (6 commits, un par phase — **revue avant
+merge**). Exécuté par Claude sur feu vert de Simon. **Zéro changement
+visuel** : CSS identique à la baseline, modulo une déviation mesurée et
+documentée (voir plus bas).
+
+- **Phase 1** : `pnpm-workspace.yaml` + `packages/a11y-prefs/` (nom de
+  travail, privé, lié via `"a11y-prefs": "workspace:*"`). Résolution
+  `@use "a11y-prefs/scss/…"` prouvée par sonde sur les trois canaux
+  (CLI `--load-path`, Next `sassOptions.includePaths`, extract-themes
+  `loadPaths`) **avant** tout déménagement.
+- **Phase 2 — inversion de dépendance** : les 9 moteurs
+  `transform-light-to-*` et l'anti-glare s'arrêtent désormais à
+  `apply-roles()` ; chacun des 11 fichiers de thèmes appelle
+  `apply-theme-variables` lui-même après son transform (ordre d'exécution
+  inchangé → byte-identique). Purge d'une écriture morte trouvée au
+  passage : le bloc « ajustements par mode » de l'anti-glare assignait
+  `$color-collapse-border`, jeton supprimé au nettoyage du 2026-07-07.
+- **Phase 3** : `git mv` de `_base-palette`, `_theme-utils`,
+  `_anti-glare-functions` vers `packages/a11y-prefs/scss/` ;
+  `_index.scss` public ; 16 consommateurs re-câblés.
+- **Phase 4 — scission de l'état** : `packages/a11y-prefs/scss/_state.scss`
+  possède couches 1+2 (rail, alias, primitives, rôles,
+  `define-base-colors`, `apply-roles`) ; le `_theme-variables.scss` du
+  portfolio ne garde que ses ~70 tokens de couche 3 +
+  `apply-theme-variables`. Plus aucun `@use` du paquet vers `src/`.
+  Purge des 4 écritures couche 3 mortes du moteur achromatopsie
+  (`$color-link`, `$color-focus-*` — écrasées par apply-theme-variables
+  depuis les fondations).
+- **Phase 5 — configuration** : `$gray-family` + map `$primitives` en
+  `!default` dans le paquet ; `main.scss` porte le `with()` du portfolio
+  (premier chargement du module state). Vérifié vivant : une config
+  alternative (`slate`) produit bien un rail slate.
+- **Déviation mesurée de l'oracle byte-identique** : les pragmas prettier
+  `/** @format */` placés avant les `@use` sont ré-émis **une fois par
+  importeur** (règle établie empiriquement par marqueurs-sondes) ; la
+  réorganisation des imports change leur nombre (80 → 68, moins de spam).
+  Diff normalisé (pragmas exclus) : **byte-identique** à chaque phase.
+  Zéro changement de valeur ou de règle.
+- 589 tests, lint, tsc, build Next et `contrast:report` verts à chaque
+  phase.
+
 ### Docs (plan E3 rédigé — extraction monorepo)
 
 - **[PLAN-extraction-monorepo.md](./PLAN-extraction-monorepo.md) créé**
