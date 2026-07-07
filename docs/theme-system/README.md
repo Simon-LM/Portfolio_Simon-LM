@@ -30,7 +30,7 @@ mergée : rollup + src, datant d'avant plusieurs refontes du système).
 | [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) | Plan d'exécution : chantier E2 — corrections moteurs + OKLCH anti-glare | ✅ exécuté le 2026-07-04, mergé le 2026-07-05 |
 | [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : P1 remap de familles + tests de distinguabilité ; P2 ancres sémantiques des rôles statut ; P3 robustesse (dégradation gracieuse, garde-gamut) | P1 ✅ mergée le 2026-07-05 (`d12264f`) ; P2 ✅ et P3 ✅ mergées le 2026-07-06 (`5c8dce9`) après validation visuelle |
 | [PLAN-extraction-monorepo.md](./PLAN-extraction-monorepo.md) | Plan d'exécution : chantier E3 — workspace pnpm + extraction de la face SCSS dans `packages/a11y-prefs` (nom de travail) | ✅ exécuté et mergé le 2026-07-07 (`812d5d5`) |
-| [PLAN-extraction-runtime.md](./PLAN-extraction-runtime.md) | Plan d'exécution : chantier E4 — extraction du runtime React (THEMES, useTheme, usePrefersDarkMode, anti-FOUC) | rédigé le 2026-07-07, à exécuter |
+| [PLAN-extraction-runtime.md](./PLAN-extraction-runtime.md) | Plan d'exécution : chantier E4 — extraction du runtime React (THEMES, useTheme, usePrefersDarkMode, anti-FOUC) | ✅ exécuté le 2026-07-07 (branche `feat/e4-runtime`), **smoke + revue avant merge** |
 
 Principe : **un chantier = un plan = une branche = une exécution par IA**,
 avec revue avant merge. Le guide donne l'ordre ; chaque plan est autonome.
@@ -109,13 +109,21 @@ définitif en E7) et le portfolio la consomme via
 
 ### Côté React (runtime)
 
-| Fichier                                                  | Rôle                                                                                                                                                                   |
-| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/config/themes.ts`                                   | Source unique de la liste des 12 thèmes (`THEMES` + type `ThemeOption` dérivé) ; consommé par `useTheme.ts`, `layout.tsx` et `AccessibilityMenu.tsx`                  |
-| `src/app/[lang]/layout.tsx`                              | Script inline `beforeInteractive` anti-FOUC : lit `localStorage.theme` (fallback `prefers-color-scheme`) et pose `data-theme` avant le premier paint                   |
-| `src/hooks/useTheme.ts`                                  | État React du thème : init paresseuse depuis localStorage/matchMedia, `setTheme()` (attribut + localStorage), `MutationObserver` de resynchronisation                  |
-| `src/components/accessibilityMenu/AccessibilityMenu.tsx` | UI de sélection : 3 axes (Mode light/dark, Confort high-contrast/anti-glare, Vision daltonisme), mémorisation du dernier thème de base (`lastBaseTheme`), reset global |
-| `src/hooks/usePrefersDarkMode.ts`                        | Abonnement à `prefers-color-scheme` via `useSyncExternalStore`                                                                                                         |
+Depuis E4 (2026-07-07), le runtime vit dans `packages/a11y-prefs/react/`
+(consommé en source TS : `transpilePackages` Next, `moduleNameMapper`
+Jest, React en peerDependency) ; les fichiers historiques du portfolio
+sont des **shims de ré-export** (les imports `@/config/themes`,
+`@/hooks/…` n'ont pas bougé).
+
+| Fichier | Rôle |
+| --- | --- |
+| `packages/a11y-prefs/react/themes.ts` **(paquet)** | Source unique de la liste des 12 thèmes (`THEMES` + type `ThemeOption`) — module de données pur, sûr côté Server Components |
+| `packages/a11y-prefs/react/useTheme.ts` **(paquet)** | État React du thème (`"use client"`) : init paresseuse localStorage/matchMedia, `setTheme()`, `MutationObserver` ; paramètre `themes` optionnel (défaut : les 12) |
+| `packages/a11y-prefs/react/usePrefersDarkMode.ts` **(paquet)** | Abonnement à `prefers-color-scheme` via `useSyncExternalStore` |
+| `packages/a11y-prefs/react/themeInitScript.ts` **(paquet)** | Génère la chaîne du script anti-FOUC (byte-identique au littéral historique) |
+| `src/config/themes.ts`, `src/hooks/useTheme.ts`, `src/hooks/usePrefersDarkMode.ts` | Shims de ré-export du paquet (compatibilité des chemins d'import) |
+| `src/app/[lang]/layout.tsx` | Injecte `themeInitScript(THEMES)` en `beforeInteractive` : pose `data-theme` avant le premier paint |
+| `src/components/accessibilityMenu/AccessibilityMenu.tsx` | UI de sélection : 3 axes (Mode, Confort, Vision), mémorisation du dernier thème de base (`lastBaseTheme`), reset global — scaffoldée en E6, reste projet |
 
 ### Fichiers hérités (code mort, non importés)
 

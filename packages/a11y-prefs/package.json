@@ -5,9 +5,15 @@
 	"description": "Accessible theme engines (working name — final name to be chosen at publication, chantier E7). SCSS face extracted from the portfolio, see docs/theme-system/GUIDE-extraction-paquet.md.",
 	"license": "MIT",
 	"exports": {
-		"./scss/*": "./scss/*"
+		"./scss/*": "./scss/*",
+		"./react": "./react/index.ts",
+		"./react/*": "./react/*.ts"
 	},
 	"files": [
-		"scss"
-	]
+		"scss",
+		"react"
+	],
+	"peerDependencies": {
+		"react": ">=18"
+	}
 }

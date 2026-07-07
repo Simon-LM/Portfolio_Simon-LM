@@ -9,7 +9,15 @@ vérifications dans chaque rapport, arrêt en cas d'imprévu, entrées
 [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E4 et
 README § 4.6 (runtime).
 
-> **Statut : rédigé le 2026-07-07, à exécuter.**
+> **Statut : ✅ exécuté le 2026-07-07** (branche `feat/e4-runtime`,
+> 4 commits). Oracles tenus : CSS strictement byte-identique, chaîne
+> anti-FOUC byte-identique (648 octets, générateur produit
+> programmatiquement depuis le littéral historique), 589 tests/tsc/lint/
+> build verts. Imprévu attrapé par le build et corrigé en phase 2 : la
+> frontière Server/Client Components — le barrel tirait le hook (client)
+> dans `layout.tsx` (serveur) via le shim ; résolu par `"use client"` sur
+> `useTheme`, exports granulaires `./react/*` et shim `themes` pointant
+> sur le module de données pur.
 
 ## ⛔ Prérequis bloquants
 
@@ -97,7 +105,7 @@ littéral anti-FOUC actuel (bloc `dangerouslySetInnerHTML` de
 ## Phase 2 — Liste des thèmes et hooks
 
 1. `packages/a11y-prefs/react/themes.ts` : `THEMES` (les 12, `as const`)
-   + `ThemeOption` — contenu déplacé depuis `src/config/themes.ts`.
+   et `ThemeOption` — contenu déplacé depuis `src/config/themes.ts`.
 2. `packages/a11y-prefs/react/useTheme.ts` et `usePrefersDarkMode.ts` :
    code déplacé tel quel, imports internes ajustés ; `useTheme` accepte
    `themes` optionnel (défaut `THEMES`).

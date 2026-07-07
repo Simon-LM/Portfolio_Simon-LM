@@ -15,6 +15,33 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-07
 
+### Changed (chantier E4 exécuté — runtime React dans le paquet)
+
+Branche `feat/e4-runtime` (4 commits — **smoke + revue avant merge**).
+Exécuté par Claude sur feu vert de Simon. **Aucun changement de
+comportement ni de rendu** attendu.
+
+- **Phase 1** : entrée `./react` du paquet (source TS, React en
+  peerDependency), `transpilePackages` Next, `moduleNameMapper` Jest —
+  résolution prouvée par sonde sur les trois canaux (Jest, tsc, build).
+- **Phase 2** : `THEMES`/`ThemeOption`, `useTheme` (paramètre `themes`,
+  défaut = les 12), `usePrefersDarkMode` déplacés dans
+  `packages/a11y-prefs/react` ; `src/config/themes.ts` et les deux hooks
+  du portfolio deviennent des shims de ré-export (les ~8 importeurs
+  inchangés). **Imprévu attrapé par le build Next et corrigé** :
+  frontière Server/Client Components — le barrel tirait le hook client
+  dans `layout.tsx` (serveur) via le shim ; résolu par `"use client"`
+  sur `useTheme` (il ne le portait pas et dépendait de ses importeurs),
+  exports granulaires `./react/*`, shim `themes` pointant sur le module
+  de données pur.
+- **Phase 3** : `themeInitScript(themes = THEMES)` dans le paquet ;
+  `layout.tsx` consomme la chaîne générée. Le générateur a été produit
+  **programmatiquement depuis le littéral historique** ; oracle vérifié :
+  chaîne **byte-identique** (648 octets) à la baseline de phase 0, script
+  présent dans la sortie RSC du build.
+- Oracles globaux : CSS strictement byte-identique, 589 tests, tsc,
+  lint, build Next verts à chaque phase.
+
 ### Docs (E3 mergé ; plan E4 rédigé — extraction du runtime React)
 
 - **E3 mergé dans `main`** (`812d5d5`) après validation de Simon

@@ -1,20 +1,8 @@
 /** @format */
-// Single source of truth for the theme list.
-// NOTE: the SCSS [data-theme] blocks in src/styles/abstracts/_theme-system.scss
-// must stay in sync manually until the system is extracted as a package.
-export const THEMES = [
-	"light",
-	"dark",
-	"anti-glare-light",
-	"anti-glare-dark",
-	"high-contrast",
-	"deuteranomaly",
-	"deuteranopia",
-	"protanomaly",
-	"protanopia",
-	"tritanomaly",
-	"tritanopia",
-	"achromatopsia",
-] as const;
-
-export type ThemeOption = (typeof THEMES)[number];
+// Ré-export du paquet (E4) : la source unique de la liste des thèmes vit
+// désormais dans packages/a11y-prefs/react/themes.ts. Ce shim préserve les
+// chemins d'import existants (@/config/themes) — zéro churn.
+// Import granulaire (module de données pur, sans hook) : ce shim est
+// consommé aussi par des Server Components (layout.tsx) — passer par le
+// barrel ./react tirerait les hooks client dans le graphe serveur.
+export { THEMES, type ThemeOption } from "a11y-prefs/react/themes";
