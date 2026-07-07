@@ -15,24 +15,38 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-07
 
-### Fixed (corrections de rôles — retour de l'amber du lien blog, décision finale)
+### Fixed (lien blog — restauration du design d'origine de Simon)
 
-Correction esthétique après validation visuelle de Simon : le recâblage du
-lien blog sur `fg-on-emphasis` (entrée ci-dessous) lui faisait perdre son
-**amber** en light — « très moche en blanc ». Décision finale :
+Après deux corrections insuffisantes (recâblage `fg-on-emphasis` = lien
+blanc en light, rejeté « extrêmement moche » ; puis amber-en-light seulement,
+toujours faux en dark), l'intention réelle a été clarifiée par Simon et
+**vérifiée par compilation de la version pré-chantiers** (`4bf78f0`) :
 
-- **Lien blog** (`--color-header-blog-link-text`) : **amber restauré**, par
-  luminance du chip — chip sombre (light, daltoniens, achromatopsie) →
-  `$accent` (le rendu d'origine) ; chip clair (thèmes dark, `bg-emphasis`
-  inversé) → `stone-950` constant, soit **exactement** le rendu de
-  l'ancienne rustine (`#0c0a09`). Ratios : 7.12:1 en light (amber sur chip),
-  18.92:1 en dark. Aucune rustine, paire toujours sans waiver.
+- **Découverte importante** : le chip quasi-blanc du lien blog en dark est
+  un **défaut antérieur à tous les chantiers 2026-07** — la version
+  pré-fondations compilait déjà `--color-header-blog-link-bg: #fafaf9` en
+  dark (l'automatisation light→dark inversait le gris du chip), la rustine
+  `_dark.scss` ne noircissait que le texte, et ce rendu erroné est parti en
+  production. Le design voulu : **chip grisé + texte amber dans les deux
+  modes**, comme en light.
+- **Correctif** : `--color-header-blog-link-bg` par luminance —
+  `bg-emphasis` du thème s'il est sombre (light, daltoniens, achromatopsie :
+  inchangés), sinon `stone-700` constant (thèmes dark : même grisé qu'en
+  light) ; `--color-header-blog-link-text: $accent` (amber partout, décliné
+  par thème : orange-300 en tritanopie, etc.). Hover : `--off-white` →
+  `--constant-off-white` dans `_header.scss` (l'inversion du rail aurait
+  rendu le hover gris-sur-gris en dark). Le logo LostInTab retrouve son
+  fond grisé. High-contrast intact (surcharges propres).
+- **Résultat** : light et dark identiques (`#44403c` + `#fcd34d`, 7.12:1),
+  paire verte dans les 12 thèmes (6.09–19.56) sans waiver, aucune rustine.
+  601 tests, build/lint/tsc verts.
 - **Sous-titre** : conservé en gris atténué (validé par Simon — cohérent
   avec l'aspect atténué du light).
-- Leçon : mes deux questions d'arbitrage avaient mal exposé les conséquences
-  *visuelles* des options ; les prochains choix de ce type seront présentés
-  avec le rendu concret (avant/après par thème) plutôt qu'en termes de
-  câblage.
+- Leçons : (1) les arbitrages visuels doivent être présentés en rendu
+  concret avant/après par thème, jamais en termes de câblage ; (2) « le
+  rendu actuel » n'est pas une référence fiable — le design de référence est
+  celui de Simon, à lui faire confirmer quand un doute existe (ici le rendu
+  déployé était lui-même déjà cassé).
 
 ### Changed (chantier « corrections de rôles » — partie 2/2, décisions de Simon)
 

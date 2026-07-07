@@ -27,11 +27,11 @@ rien oublier. Mettre à jour au fil de l'eau (cocher / retirer une fois fait).
         changement visuel nul.
   - [x] **Sous-titre** ancré à un gris atténué fixe (décision Simon :
         « gris atténué ») — en dark, passe de near-black à `stone-700`.
-  - [x] **Lien blog** : **amber conservé** (décision finale de Simon après
-        vue du rendu — le premier essai `fg-on-emphasis` le passait en blanc,
-        rejeté) ; par luminance du chip : amber sur chip sombre, near-black
-        (`stone-950`) sur chip clair en dark — rendu identique à l'origine,
-        sans rustine.
+  - [x] **Lien blog** : design d'origine de Simon restauré — **chip grisé +
+        texte amber dans les deux modes** (light et dark identiques :
+        `#44403c` + `#fcd34d`). Le chip quasi-blanc en dark était un défaut
+        antérieur aux chantiers (inversion automatique du gris, partie en
+        prod), pas le design voulu. Sans rustine, paire verte partout.
   - [x] Toutes les rustines `.header` de `_dark.scss` supprimées ; les
         4 waivers header/accent levés (anti-zombie).
 

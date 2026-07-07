@@ -159,7 +159,10 @@
 		background: var(--color-header-blog-link-bg);
 		&:hover {
 			opacity: 1;
-			color: var(--off-white) !important;
+			// Constante (pas --off-white, qui s'inverse en dark) : le chip du
+			// lien blog reste grisé dans tous les modes, le hover doit rester
+			// blanc-sur-gris partout.
+			color: var(--constant-off-white) !important;
 		}
 		&:focus-visible {
 			border-radius: 0.125rem;

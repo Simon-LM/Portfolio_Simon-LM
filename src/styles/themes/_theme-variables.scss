@@ -83,14 +83,15 @@ $color-header-text: $fg-on-accent;
 // rail inversé) le stone-700 constant. (High-contrast re-surcharge de toute
 // façon ses jetons header dans _high-contrast.scss.)
 $color-header-text-role: if(sass(is-dark($accent)): $fg-muted; else: if(sass(is-dark($gray-700)): $gray-700; else: get-color("stone", 700)));
-$color-header-blog-link-bg: $bg-emphasis;
-// Lien blog : AMBER sur son chip sombre — l'esthétique voulue par Simon
-// (décision finale 2026-07-07, après un premier essai fg-on-emphasis jugé
-// moche : le lien perdait son amber en light). Par luminance : chip sombre
-// (light, daltoniens, achromatopsie) → $accent ; chip clair (thèmes dark,
-// bg-emphasis inversé) → near-black constant, reproduisant à l'identique le
-// rendu de l'ancienne rustine _dark.scss, mais sans rustine.
-$color-header-blog-link-text: if(sass(is-dark($bg-emphasis)): $accent; else: get-color("stone", 950));
+// Lien blog (design de Simon, restauré le 2026-07-07) : chip GRISÉ + texte
+// AMBER dans tous les modes, y compris dark. L'automatisation dark
+// inversait le chip vers du quasi-blanc depuis l'origine (défaut antérieur
+// aux chantiers 2026-07, parti en prod) et une rustine noircissait le texte.
+// Chip par luminance : bg-emphasis du thème s'il est sombre (light,
+// daltoniens, achromatopsie : inchangés), sinon stone-700 constant (thèmes
+// dark : même grisé qu'en light). High-contrast garde ses surcharges.
+$color-header-blog-link-bg: if(sass(is-dark($bg-emphasis)): $bg-emphasis; else: get-color("stone", 700));
+$color-header-blog-link-text: $accent;
 
 // Sélecteur de langue
 $color-lang-toggle-bg: $bg-base;
@@ -265,9 +266,9 @@ $color-accent-hover: $accent-strong; // sole visual change of this migration
 	$color-header-text: $fg-on-accent !global;
 	// Sous-titre : gris atténué fixe par luminance (cf. déclaration racine).
 	$color-header-text-role: if(sass(is-dark($accent)): $fg-muted; else: if(sass(is-dark($gray-700)): $gray-700; else: get-color("stone", 700))) !global;
-	$color-header-blog-link-bg: $bg-emphasis !global;
-	// Lien blog : amber sur chip sombre, near-black sur chip clair (cf. racine).
-	$color-header-blog-link-text: if(sass(is-dark($bg-emphasis)): $accent; else: get-color("stone", 950)) !global;
+	// Lien blog : chip grisé + texte amber dans tous les modes (cf. racine).
+	$color-header-blog-link-bg: if(sass(is-dark($bg-emphasis)): $bg-emphasis; else: get-color("stone", 700)) !global;
+	$color-header-blog-link-text: $accent !global;
 
 	// Sélecteur de langue
 	$color-lang-toggle-bg: $bg-base !global;
