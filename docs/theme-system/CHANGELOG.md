@@ -15,6 +15,23 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-07
 
+### Docs (E3 mergé ; plan E4 rédigé — extraction du runtime React)
+
+- **E3 mergé dans `main`** (`812d5d5`) après validation de Simon
+  (`pnpm dev` fonctionnel, aucun impact visuel).
+- **[PLAN-extraction-runtime.md](./PLAN-extraction-runtime.md) créé**
+  (chantier E4, 4 phases, branche `feat/e4-runtime`). Périmètre :
+  `THEMES`/`ThemeOption`, `useTheme`, `usePrefersDarkMode` et le script
+  anti-FOUC (généré par `themeInitScript()`) déménagent dans
+  `packages/a11y-prefs/react` ; les fichiers portfolio deviennent des
+  ré-exports (zéro churn chez les ~8 importeurs). Oracles : CSS
+  strictement byte-identique, chaîne anti-FOUC byte-identique,
+  comportement inchangé. Outillage : `exports ./react` + peerDependency
+  React, `transpilePackages`, `moduleNameMapper` Jest. La généralisation
+  `usePreference(key, applyFn)` du guide est explicitement reportée à E5
+  (staging documenté). Hors périmètre : UI (E6), modules (E5),
+  dist/publication (E7).
+
 ### Changed (chantier E3 exécuté — workspace pnpm + extraction SCSS)
 
 Branche `feat/e3-monorepo` (6 commits, un par phase — **revue avant

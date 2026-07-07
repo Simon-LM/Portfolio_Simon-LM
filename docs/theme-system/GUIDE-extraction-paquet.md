@@ -305,6 +305,18 @@ Tout ce qui est configurable porte `!default`. Oracle : CSS identique.
 
 ### E4 — Extraction du runtime React
 
+**Plan rédigé le 2026-07-07 :
+[PLAN-extraction-runtime.md](./PLAN-extraction-runtime.md)** (4 phases,
+branche `feat/e4-runtime`, oracles : CSS strictement byte-identique +
+chaîne anti-FOUC byte-identique + comportement inchangé). Périmètre
+staged : E4 déplace `THEMES`/`useTheme`/`usePrefersDarkMode`/
+`themeInitScript()` dans `packages/a11y-prefs/react` tels quels
+(paramétrables, défauts = les 12) ; la **généralisation
+`usePreference(key, applyFn)`** décrite ci-dessous est reportée à E5, où
+les autres préférences (zoom, polices…) en auront réellement besoin —
+même logique de staging qu'E3. `src/config/themes.ts` devient un
+ré-export (pas supprimé : zéro churn chez les importeurs).
+
 Le cœur préférences (persistance localStorage, application DOM, anti-FOUC,
 sécurité SSR) devient générique : `usePreference(key, applyFn)` ;
 `useTheme` en est une instance. La liste des thèmes vit dans le paquet ;
