@@ -15,6 +15,22 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-07
 
+### Docs (plan E3 rédigé — extraction monorepo)
+
+- **[PLAN-extraction-monorepo.md](./PLAN-extraction-monorepo.md) créé**
+  (feu vert de Simon pour lancer l'extraction E3→E7). 6 phases, branche
+  `feat/e3-monorepo`, **oracle CSS byte-identique de bout en bout** (un
+  déménagement, pas une refonte). Points structurants : workspace pnpm +
+  paquet `packages/a11y-prefs` (nom de travail, décision finale = Simon en
+  E7) ; sonde de résolution Sass avant tout déplacement (`includePaths`
+  Next + `loadPaths` extract-themes + CLI) ; **phase 2 = inversion de
+  dépendance** (les moteurs s'arrêtent à `apply-roles()`, la couche 3 est
+  dérivée par les fichiers de thèmes du consommateur) ; scission de l'état
+  (rail/primitives/rôles → paquet, ~70 tokens couche 3 → portfolio) ;
+  configuration `with()` minimale (`$gray-family` + primitives), registre
+  complet reporté. Hors périmètre : runtime React (E4), modules (E5), CLI
+  (E6), publication (E7), suite de contrastes (reste côté portfolio).
+
 ### Changed (`--success` → emerald-700, toast de succès du contact câblé)
 
 Décision de Simon (« emerald-700 ») en réponse à la question ouverte du

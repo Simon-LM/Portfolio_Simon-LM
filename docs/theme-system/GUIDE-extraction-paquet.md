@@ -280,6 +280,13 @@ faite) : trois garanties issues des parties 1-2.
 
 ### E3 — Monorepo et extraction de la face SCSS
 
+**Plan rédigé le 2026-07-07 :
+[PLAN-extraction-monorepo.md](./PLAN-extraction-monorepo.md)** (6 phases,
+branche `feat/e3-monorepo`, nom de travail `a11y-prefs`, oracle CSS
+byte-identique de bout en bout ; la configuration `with()` y est staged :
+`$gray-family` + primitives en phase 5, le registre `$roles`/`$themes`
+complet reporté — voir le plan).
+
 `pnpm-workspace.yaml`, création du paquet, déplacement de
 palette/rail/rôles/moteurs/émetteur. Le portfolio consomme :
 
