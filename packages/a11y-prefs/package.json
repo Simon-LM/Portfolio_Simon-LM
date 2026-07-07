@@ -6,7 +6,8 @@
 	"license": "MIT",
 	"exports": {
 		"./scss/*": "./scss/*",
-		"./react": "./react/index.ts"
+		"./react": "./react/index.ts",
+		"./react/*": "./react/*.ts"
 	},
 	"files": [
 		"scss",
