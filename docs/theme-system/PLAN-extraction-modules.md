@@ -27,9 +27,13 @@ Branche : `feat/e5-modules`.
   Deca**.
 - **Exclues du paquet** :
   - **Sylexiad Sans/Serif** — EULA propriétaire (fév. 2022), pas de
-    redistribution publique. Reste au portfolio ; le paquet **recommande
-    aux consommateurs de la télécharger sur [sylexiad.com](https://www.sylexiad.com)**
-    et de la brancher via le point d'extension.
+    redistribution publique, donc **non embarquée**. Mais c'est la police
+    de corps **recommandée** pour le mode dyslexie : le paquet la
+    **recommande explicitement** (docs + `LICENSES/README`), invite à la
+    télécharger sur [sylexiad.com](https://www.sylexiad.com) et à la
+    brancher via le point d'extension. Andika est le **défaut OFL livré**
+    (fonctionne sans rien installer) ; Sylexiad est l'**upgrade
+    recommandé**.
   - **Tiresias Infofont** — GPL v3 (friction dans un paquet MIT) **et**
     absente du sélecteur actif du portfolio **et** police de signalétique
     (RNIB, étiquettes à 30-100 cm), pas de lecture web. Exclue.
@@ -95,9 +99,10 @@ avant/après. Localiser `@font-face`, classes de police, bloc
    Andika, Atkinson Hyperlegible Next, Lexend Giga, Lexend Deca. **Jamais
    Sylexiad, ni Tiresias, ni Raleway Dots.**
 2. `packages/a11y-prefs/fonts/LICENSES/` : un fichier OFL par famille
-   (copyright propre) + `README.md` récapitulatif de l'audit **incluant la
-   recommandation de télécharger Sylexiad sur sylexiad.com** pour qui la
-   veut.
+   (copyright propre) + `README.md` récapitulatif de l'audit qui
+   **recommande explicitement Sylexiad** comme police de corps du mode
+   dyslexie (à télécharger sur sylexiad.com et brancher via le point
+   d'extension), Andika restant le défaut OFL livré.
 3. Test anti-dérive (checksums) dans la suite Jest.
 4. `"files"` du package.json du paquet : ajouter `fonts`.
 
