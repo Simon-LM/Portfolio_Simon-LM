@@ -52,6 +52,19 @@ rien oublier. Mettre à jour au fil de l'eau (cocher / retirer une fois fait).
       toast câblé sur `var(--success)` (vert thématisé dans les 12 thèmes,
       premier consommateur du rôle). Waiver réduit à l'achromatopsie seule.
 
+## À optimiser plus tard (noté, pas urgent)
+
+- [ ] **Typographie du high-contrast** (2026-07-08) : aujourd'hui le
+      high-contrast change la police (**Atkinson Hyperlegible**) + ajoute
+      `letter-spacing: 0.02em`, mais **n'augmente PAS la taille** et met
+      `line-height: 1.5` (< base 1.6). Vérifié : ce bloc est
+      **byte-identique à la référence `918526f`** — les chantiers ne l'ont
+      pas cassé, la hausse de taille n'a simplement jamais été implémentée
+      (l'impression de « plus grand » vient de la grande hauteur d'x
+      d'Atkinson). À optimiser avec le même outil que la dyslexie :
+      **`font-size-adjust`** (normalisation de la hauteur d'x) + hausse de
+      taille + interligne renforcé. À faire après E5, validation visuelle.
+
 ## Reporté explicitement (ne pas toucher sans décision)
 
 - [ ] **Réécriture déclarative du thème high-contrast** — reportée à
