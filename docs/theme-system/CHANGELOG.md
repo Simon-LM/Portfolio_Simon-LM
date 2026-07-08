@@ -15,6 +15,33 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-08
 
+### Docs (plan E5 révisé — décisions polices + mode dyslexie configurable)
+
+Après une revue approfondie du code avec Simon (fonts, tailles,
+espacements), le plan E5 est révisé :
+
+- **Polices tranchées** : embarquées = OpenDyslexic, Andika, Atkinson,
+  Lexend Giga/Deca (OFL) ; **exclues** = Sylexiad (propriétaire),
+  **Tiresias** (GPLv3 + absente du sélecteur actif + police de
+  signalétique, pas de lecture web), **Raleway Dots** (absente du sélecteur
+  actif). Corps par défaut du mode dyslexie = **Andika** ; le portfolio
+  surcharge avec Sylexiad ; note « télécharger sur sylexiad.com » pour les
+  consommateurs.
+- **Bugs de dimensionnement constatés et intégrés au plan** : le mode
+  dyslexie **rétrécit** les paragraphes (police de substitution à petite
+  hauteur d'x, compensation commentée/perdue) ; le sélecteur individuel a
+  le même défaut. Fix : **`font-size-adjust`** (normalisation de la hauteur
+  d'x) + hausse ~+10 % du corps + espacements dyslexie (line-height ~1.7,
+  letter-spacing ~0.05em, word-spacing ~0.16em, BDA). **Le mode dyslexie
+  devient un module configurable à 3 niveaux** (titre/sous-titre/corps).
+- **Conséquence sur les oracles** : phases 1-3 = relocation byte-identique ;
+  **phase 4 = correction volontaire du rendu** (mode dyslexie + polices),
+  donc **hors oracle byte-identique, validation visuelle de Simon**.
+- **High-contrast** : vérifié byte-identique à la référence `918526f`
+  (change la police → Atkinson + letter-spacing, jamais augmenté la taille ;
+  les chantiers ne l'ont pas cassé). Optimisation typographique (taille,
+  espacements, `font-size-adjust`) **notée au TODO** pour après E5.
+
 ### Docs (E4 mergé ; audit licences polices + plan E5 rédigé)
 
 - **E4 mergé dans `main`** (`19df328`) après smoke de Simon.
