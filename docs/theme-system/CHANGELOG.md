@@ -13,6 +13,36 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-08
+
+### Docs (E4 mergé ; audit licences polices + plan E5 rédigé)
+
+- **E4 mergé dans `main`** (`19df328`) après smoke de Simon.
+- **Audit des licences des polices d'accessibilité** (bloquant avant
+  publication, jusque-là en suspens dans le TODO) réalisé :
+  - **SIL OFL, embarquables** : OpenDyslexic, Andika, Raleway Dots,
+    **Atkinson Hyperlegible Next** (confirmé Braille Institute 2025).
+  - **Sylexiad Sans/Serif : EULA propriétaire (fév. 2022)** — pas de
+    redistribution publique, webfonts « non téléchargeables
+    publiquement » exigé → **exclue du paquet** (reste au portfolio via
+    le point d'extension du sélecteur de police). Question séparée notée
+    pour Simon (les woff2 servis par le site sont techniquement
+    téléchargeables — hors chantier).
+  - **Tiresias Infofont : GPL v3 + exception d'embarquement (RNIB 2007)**
+    — redistribuable, mais GPL dans un paquet MIT = **arbitrage de
+    Simon** (inclure avec sa licence jointe, ou exclure).
+- **[PLAN-extraction-modules.md](./PLAN-extraction-modules.md) créé**
+  (chantier E5, 4 phases, branche `feat/e5-modules`) : polices
+  redistribuables + `LICENSES/` dans le paquet, modules SCSS opt-in
+  (`_a11y-fonts.scss`, `_motion.scss`), appliers DOM SSR-safe +
+  `usePreference` générique (reporté d'E4). Les stores zustand
+  (`fontSizeStore`, `dyslexicFontStore`) et le toggle motion restent au
+  portfolio et délèguent seulement l'application DOM — clés/formats
+  localStorage inchangés (zéro migration utilisateur). Oracles : CSS
+  identique modulo pragmas, comportement identique, test anti-dérive des
+  fichiers de polices. Hors périmètre : migration de `useTheme`/des
+  stores, UI (E6), dist/publication (E7).
+
 ## 2026-07-07
 
 ### Changed (chantier E4 exécuté — runtime React dans le paquet)

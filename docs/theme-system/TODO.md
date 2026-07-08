@@ -61,9 +61,18 @@ rien oublier. Mettre à jour au fil de l'eau (cocher / retirer une fois fait).
 
 ## Bloquant avant publication open source
 
-- [ ] **Audit des licences des polices d'accessibilité** embarquées
-      (Sylexiad, Tiresias, Atkinson Hyperlegible…) — à vérifier
-      impérativement avant toute publication du paquet.
+- [x] **Audit des licences des polices d'accessibilité** — fait le
+      2026-07-08 (détail dans le CHANGELOG et
+      [PLAN-extraction-modules.md](./PLAN-extraction-modules.md)) :
+      OpenDyslexic/Andika/Raleway Dots/Atkinson = OFL (embarquées) ;
+      **Sylexiad = EULA propriétaire → exclue** ; **Tiresias = GPLv3 →
+      arbitrage Simon** avant E5.
+- [ ] **Décision Simon — Tiresias Infofont** : GPL v3 + exception
+      d'embarquement. Redistribuable, mais GPL dans un paquet MIT.
+      Inclure (avec `LICENSES/Tiresias.txt`) ou exclure ?
+- [ ] **Question Simon — Sylexiad servie par le site** : l'EULA exige des
+      webfonts « non téléchargeables publiquement » ; les woff2 du
+      portfolio le sont techniquement. À trancher (hors chantier E5).
 
 ## Corrections de rôles — détail
 

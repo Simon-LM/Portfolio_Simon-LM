@@ -325,6 +325,19 @@ Le script anti-FOUC est *généré* par le paquet à partir de la même liste.
 
 ### E5 — Modules de préférences additionnels
 
+**Plan rédigé le 2026-07-07 :
+[PLAN-extraction-modules.md](./PLAN-extraction-modules.md)** (4 phases,
+branche `feat/e5-modules`, **audit de licences des polices fait et
+intégré** — voir le plan). Portée : polices redistribuables +
+`LICENSES/` dans le paquet, modules SCSS opt-in (a11y-fonts, motion),
+appliers DOM SSR-safe + `usePreference` générique (que E4 avait reporté
+ici) ; les stores zustand du portfolio restent, ils délèguent seulement
+l'application DOM (clés/formats localStorage inchangés). Résultat de
+l'audit : OFL pour OpenDyslexic/Andika/Raleway Dots/**Atkinson** →
+embarquées ; **Sylexiad = EULA propriétaire → exclue** (reste au
+portfolio via le point d'extension) ; **Tiresias = GPLv3+exception →
+arbitrage Simon** (inclure avec licence jointe, ou exclure).
+
 Un module = préférence + application DOM + CSS/contrat hôte, opt-in :
 
 - **Taille de texte** : `--font-size-factor` ; contrat hôte documenté
