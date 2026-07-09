@@ -38,6 +38,16 @@ corps Andika) — valeurs choisies à l'œil par Simon le 2026-07-09.
   `word-spacing: 0.064em` (mêmes ratios que le mode dyslexie). Titres
   inchangés (1.5) ; le reste de l'optimisation HC reste au TODO.
 
+Avant/après du corps du mode dyslexie :
+
+| Propriété (corps)  | Avant  | Après       |
+| ------------------ | ------ | ----------- |
+| `font-size-adjust` | —      | **0.56**    |
+| `line-height`      | 1.6    | **1.75**    |
+| `letter-spacing`   | 0.02em | **0.04em**  |
+| `word-spacing`     | —      | **0.128em** |
+| agrandissement     | —      | 1 (off)     |
+
 ### Added (preview visuelle versionnée)
 
 - `docs/theme-system/previews/` : comparateur interactif
