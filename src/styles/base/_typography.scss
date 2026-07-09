@@ -4,6 +4,7 @@
 // d'animations, émises via @include aux emplacements d'origine.
 @use "a11y-prefs/scss/modules/a11y-fonts" as *;
 @use "a11y-prefs/scss/modules/motion" as *;
+@use "a11y-prefs/scss/modules/dyslexia" as *;
 
 // @font-face {
 // 	font-family: "Inter";
@@ -198,6 +199,24 @@ html.high-contrast {
 		letter-spacing: 0.02em;
 		line-height: 1.5;
 	}
+
+	// Interligne et inter-mots du corps alignés sur le mode dyslexie
+	// (décision Simon, 2026-07-09 — fourchette recommandée 1.5-2.0 ;
+	// word-spacing = letter-spacing × 3.2, ratio BDA/WCAG). Les titres
+	// restent à 1.5 ; le reste de l'optimisation high-contrast est au TODO.
+	p,
+	span,
+	div,
+	li,
+	a,
+	input,
+	textarea,
+	button,
+	label,
+	select {
+		line-height: 1.75;
+		word-spacing: 0.064em;
+	}
 }
 
 // Classe pour la police dyslexique
@@ -321,13 +340,12 @@ html.sylexiad-serif-font {
 @include a11y-font-classes;
 
 html.dyslexia-optimized {
-	h1 {
-		font-family: "Lexend Giga", sans-serif !important;
-		font-weight: 600;
-		line-height: 1.3;
-		letter-spacing: -0.025em;
-	}
+	// Typographie 3 niveaux + correctif de taille (font-size-adjust) et
+	// espacements BDA, émis par le module du paquet (E5). Corps = Sylexiad,
+	// surcharge maison ; titre/sous-titre = Lexend Giga/Deca (défauts).
+	@include dyslexia-typography($body-font: "SylexiadSans");
 
+	// Surcharges site-spécifiques (header, navigation) — restent côté portfolio.
 	.header {
 		&__lang-button {
 			font-family: "Inter", sans-serif !important;
@@ -365,35 +383,6 @@ html.dyslexia-optimized {
 				font-family: "Lexend Deca", sans-serif !important;
 			}
 		}
-	}
-
-	// H2-H6 utilisent SylexiadSans
-	h2,
-	h3,
-	h4,
-	h5,
-	h6 {
-		font-family: "Lexend Deca", sans-serif !important;
-		font-weight: 600;
-		letter-spacing: -0.02em;
-	}
-
-	// Tous les autres textes utilisent SylexiadSerif
-	p,
-	div,
-	span,
-	nav,
-	li,
-	a,
-	input,
-	textarea,
-	button,
-	label,
-	select {
-		font-family: "SylexiadSans", sans-serif !important;
-		font-weight: 400;
-		line-height: 1.6;
-		letter-spacing: 0.02em;
 	}
 }
 
@@ -434,7 +423,7 @@ p {
 	font-family: "Inter", sans-serif;
 	font-weight: 400;
 	font-size: 1rem;
-	line-height: 1.6;
+	line-height: 1.5;
 	margin-bottom: 1.5rem;
 	color: var(--color-main-text);
 }
