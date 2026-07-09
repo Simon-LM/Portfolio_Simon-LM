@@ -1,0 +1,12 @@
+Lexend (Giga & Deca) — SIL Open Font License 1.1
+
+Copyright: The Lexend Project Authors
+Reserved Font Name(s): Lexend
+Source: https://github.com/googlefonts/lexend
+
+Cette police est distribuée sous la SIL Open Font License, Version 1.1.
+Le texte canonique de la licence est disponible sur
+https://openfontlicense.org et dans le dépôt source ci-dessus.
+
+⚠️ À FIGER AVANT PUBLICATION (E7) : remplacer ce fichier par l'OFL.txt
+canonique fourni par la source officielle de la police.
