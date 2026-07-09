@@ -1,5 +1,10 @@
 /** @format */
 
+// Modules opt-in du paquet (E5) : polices d'accessibilité + réduction
+// d'animations, émises via @include aux emplacements d'origine.
+@use "a11y-prefs/scss/modules/a11y-fonts" as *;
+@use "a11y-prefs/scss/modules/motion" as *;
+
 // @font-face {
 // 	font-family: "Inter";
 // 	font-style: normal;
@@ -86,43 +91,10 @@
 		url("/fonts/Quicksand-VariableFont_wght.ttf") format("truetype-variations");
 }
 
-//  Dyslexic font
-
-@font-face {
-	font-family: "OpenDyslexic";
-	src: url("/fonts/OpenDyslexic-Regular.woff2") format("woff2"),
-		url("/fonts/OpenDyslexic-Regular.otf") format("opentype");
-	font-weight: normal;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: "OpenDyslexic";
-	src: url("/fonts/OpenDyslexic-Bold.woff2") format("woff2"),
-		url("/fonts/OpenDyslexic-Bold.otf") format("opentype");
-	font-weight: bold;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: "OpenDyslexic";
-	src: url("/fonts/OpenDyslexic-Italic.woff2") format("woff2"),
-		url("/fonts/OpenDyslexic-Italic.otf") format("opentype");
-	font-weight: normal;
-	font-style: italic;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: "OpenDyslexic";
-	src: url("/fonts/OpenDyslexic-Bold-Italic.woff2") format("woff2"),
-		url("/fonts/OpenDyslexic-Bold-Italic.otf") format("opentype");
-	font-weight: bold;
-	font-style: italic;
-	font-display: swap;
-}
+// Polices d'accessibilité embarquées (OpenDyslexic, Andika, Atkinson)
+// émises par le module du paquet (E5). Sylexiad reste déclarée en propre
+// ci-dessous (non redistribuable).
+@include a11y-font-faces();
 
 // Sylexiad Sans Medium - Regular
 @font-face {
@@ -201,82 +173,8 @@
 	font-display: swap;
 }
 
-// Andika - Police SIL
-@font-face {
-	font-family: "Andika";
-	src: url("/fonts/Andika-Regular.woff2") format("woff2"),
-		url("/fonts/Andika-Regular.ttf") format("truetype");
-	font-weight: normal;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: "Andika";
-	src: url("/fonts/Andika-Bold.woff2") format("woff2"),
-		url("/fonts/Andika-Bold.ttf") format("truetype");
-	font-weight: bold;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: "Andika";
-	src: url("/fonts/Andika-Italic.woff2") format("woff2"),
-		url("/fonts/Andika-Italic.ttf") format("truetype");
-	font-weight: normal;
-	font-style: italic;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: "Andika";
-	src: url("/fonts/Andika-BoldItalic.woff2") format("woff2"),
-		url("/fonts/Andika-BoldItalic.ttf") format("truetype");
-	font-weight: bold;
-	font-style: italic;
-	font-display: swap;
-}
-
-// High contrast font
-
-@font-face {
-	font-family: "Atkinson Hyperlegible";
-	src: url("/fonts/AtkinsonHyperlegibleNextVF-Variable.woff2")
-			format("woff2-variations"),
-		url("/fonts/AtkinsonHyperlegibleNextVF-Variable.ttf")
-			format("truetype-variations");
-	font-weight: 100 900; // Plage de poids disponible
-	font-style: normal;
-	font-display: swap;
-}
-// Tiresias_Infont - Pour malvoyants
-@font-face {
-	font-family: "Tiresias";
-	src: url("/fonts/Tiresias_Infont.woff2") format("woff2"),
-		url("/fonts/Tiresias_Infont.ttf") format("truetype");
-	font-weight: normal;
-	font-style: normal;
-	font-display: swap;
-}
-@font-face {
-	font-family: "Tiresias";
-	src: url("/fonts/Tiresias_Infont_Italic.woff2") format("woff2"),
-		url("/fonts/Tiresias_Infont_Italic.ttf") format("truetype");
-	font-weight: normal;
-	font-style: italic;
-	font-display: swap;
-}
-
-// RalewayDots - Pour lecture simplifiée
-@font-face {
-	font-family: "RalewayDots";
-	src: url("/fonts/RalewayDots-Regular.woff2") format("woff2"),
-		url("/fonts/RalewayDots-Regular.ttf") format("truetype");
-	font-weight: normal;
-	font-style: normal;
-	font-display: swap;
-}
+// (Andika + Atkinson @font-face émis par a11y-font-faces ci-dessus, E5.
+// Tiresias + Raleway Dots retirés — code mort, non embarqués.)
 
 // Ajouter la classe pour le mode contraste élevé
 html.high-contrast {
@@ -418,97 +316,9 @@ html.sylexiad-serif-font {
 	}
 }
 
-html.atkinson-font {
-	p,
-	span,
-	div,
-	li,
-	h1,
-	h2,
-	h3,
-	h4,
-	h5,
-	h6,
-	a,
-	input,
-	textarea,
-	button,
-	label,
-	select {
-		font-family: "Atkinson Hyperlegible", sans-serif !important;
-		letter-spacing: 0.02em;
-		line-height: 1.5;
-	}
-}
-
-html.tiresias-font {
-	p,
-	span,
-	div,
-	li,
-	h1,
-	h2,
-	h3,
-	h4,
-	h5,
-	h6,
-	a,
-	input,
-	textarea,
-	button,
-	label,
-	select {
-		font-family: "Tiresias", sans-serif !important;
-		letter-spacing: 0.02em;
-		line-height: 1.5;
-	}
-}
-
-html.andika-font {
-	p,
-	span,
-	div,
-	li,
-	h1,
-	h2,
-	h3,
-	h4,
-	h5,
-	h6,
-	a,
-	input,
-	textarea,
-	button,
-	label,
-	select {
-		font-family: "Andika", sans-serif !important;
-		letter-spacing: 0.02em;
-		line-height: 1.5;
-	}
-}
-
-html.ralewaydots-font {
-	p,
-	span,
-	div,
-	li,
-	h1,
-	h2,
-	h3,
-	h4,
-	h5,
-	h6,
-	a,
-	input,
-	textarea,
-	button,
-	label,
-	select {
-		font-family: "RalewayDots", sans-serif !important;
-		letter-spacing: 0.04em;
-		line-height: 1.6;
-	}
-}
+// Classes .atkinson-font / .andika-font émises par le module du paquet
+// (E5) ; .tiresias-font / .ralewaydots-font retirées (code mort).
+@include a11y-font-classes;
 
 html.dyslexia-optimized {
 	h1 {
@@ -587,19 +397,8 @@ html.dyslexia-optimized {
 	}
 }
 
-// Classe pour réduire les animations
-html.reduce-motion {
-	*,
-	*::before,
-	*::after {
-		animation-duration: 0.001s !important;
-		animation-delay: 0s !important;
-		animation-iteration-count: 1 !important;
-		transition-duration: 0.001s !important;
-		transition-delay: 0s !important;
-		scroll-behavior: auto !important;
-	}
-}
+// Classe opt-in de réduction d'animations — module du paquet (E5).
+@include reduce-motion-class;
 
 // // // // // // // // // // // // // // //
 

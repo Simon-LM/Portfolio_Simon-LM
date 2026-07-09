@@ -1,0 +1,152 @@
+/** @format */
+
+// Module opt-in — polices d'accessibilité embarquées (chantier E5).
+// Le consommateur @use ce module puis @include les mixins où il veut
+// émettre les @font-face et les classes. Le chemin des assets est
+// configurable ($a11y-fonts-path) — défaut "/fonts", la valeur du
+// portfolio, pour un rendu identique.
+//
+// Polices livrées (OFL, cf. packages/a11y-prefs/fonts/LICENSES/) :
+// OpenDyslexic, Andika, Atkinson Hyperlegible Next. Lexend Giga/Deca sont
+// aussi livrées dans fonts/ mais restent déclarées côté consommateur (ce
+// sont souvent des polices de marque — le portfolio les a dans son bloc
+// marque). Sylexiad n'est PAS livrée (EULA propriétaire) : le consommateur
+// la branche via ses propres classes.
+
+$a11y-fonts-path: "/fonts" !default;
+
+// Émet les @font-face des polices d'accessibilité embarquées.
+@mixin a11y-font-faces($path: $a11y-fonts-path) {
+	//  Dyslexic font
+	@font-face {
+		font-family: "OpenDyslexic";
+		src: url("#{$path}/OpenDyslexic-Regular.woff2") format("woff2"),
+			url("#{$path}/OpenDyslexic-Regular.otf") format("opentype");
+		font-weight: normal;
+		font-style: normal;
+		font-display: swap;
+	}
+	@font-face {
+		font-family: "OpenDyslexic";
+		src: url("#{$path}/OpenDyslexic-Bold.woff2") format("woff2"),
+			url("#{$path}/OpenDyslexic-Bold.otf") format("opentype");
+		font-weight: bold;
+		font-style: normal;
+		font-display: swap;
+	}
+	@font-face {
+		font-family: "OpenDyslexic";
+		src: url("#{$path}/OpenDyslexic-Italic.woff2") format("woff2"),
+			url("#{$path}/OpenDyslexic-Italic.otf") format("opentype");
+		font-weight: normal;
+		font-style: italic;
+		font-display: swap;
+	}
+	@font-face {
+		font-family: "OpenDyslexic";
+		src: url("#{$path}/OpenDyslexic-Bold-Italic.woff2") format("woff2"),
+			url("#{$path}/OpenDyslexic-Bold-Italic.otf") format("opentype");
+		font-weight: bold;
+		font-style: italic;
+		font-display: swap;
+	}
+
+	// Andika - Police SIL
+	@font-face {
+		font-family: "Andika";
+		src: url("#{$path}/Andika-Regular.woff2") format("woff2"),
+			url("#{$path}/Andika-Regular.ttf") format("truetype");
+		font-weight: normal;
+		font-style: normal;
+		font-display: swap;
+	}
+	@font-face {
+		font-family: "Andika";
+		src: url("#{$path}/Andika-Bold.woff2") format("woff2"),
+			url("#{$path}/Andika-Bold.ttf") format("truetype");
+		font-weight: bold;
+		font-style: normal;
+		font-display: swap;
+	}
+	@font-face {
+		font-family: "Andika";
+		src: url("#{$path}/Andika-Italic.woff2") format("woff2"),
+			url("#{$path}/Andika-Italic.ttf") format("truetype");
+		font-weight: normal;
+		font-style: italic;
+		font-display: swap;
+	}
+	@font-face {
+		font-family: "Andika";
+		src: url("#{$path}/Andika-BoldItalic.woff2") format("woff2"),
+			url("#{$path}/Andika-BoldItalic.ttf") format("truetype");
+		font-weight: bold;
+		font-style: italic;
+		font-display: swap;
+	}
+
+	// Atkinson Hyperlegible Next (variable) - lisibilité / basse vision
+	@font-face {
+		font-family: "Atkinson Hyperlegible";
+		src: url("#{$path}/AtkinsonHyperlegibleNextVF-Variable.woff2")
+				format("woff2-variations"),
+			url("#{$path}/AtkinsonHyperlegibleNextVF-Variable.ttf")
+				format("truetype-variations");
+		font-weight: 100 900; // Plage de poids disponible
+		font-style: normal;
+		font-display: swap;
+	}
+}
+
+// Classes du sélecteur de police, partie générique (pose la police sur les
+// éléments sémantiques). Le consommateur peut ajouter ses surcharges
+// site-spécifiques par-dessus. La classe OpenDyslexic (.dyslexic-font)
+// porte des surcharges de layout propres au portfolio : elle reste côté
+// consommateur pour l'instant (généralisée au chantier suivant).
+@mixin a11y-font-classes {
+	html.atkinson-font {
+		p,
+		span,
+		div,
+		li,
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6,
+		a,
+		input,
+		textarea,
+		button,
+		label,
+		select {
+			font-family: "Atkinson Hyperlegible", sans-serif !important;
+			letter-spacing: 0.02em;
+			line-height: 1.5;
+		}
+	}
+
+	html.andika-font {
+		p,
+		span,
+		div,
+		li,
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6,
+		a,
+		input,
+		textarea,
+		button,
+		label,
+		select {
+			font-family: "Andika", sans-serif !important;
+			letter-spacing: 0.02em;
+			line-height: 1.5;
+		}
+	}
+}
