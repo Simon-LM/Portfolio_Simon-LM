@@ -2,6 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { applyAccessibilityFont } from "a11y-prefs/react/appliers";
 
 type DyslexicFontType =
 	| "none"
@@ -18,37 +19,23 @@ interface DyslexicFontState {
 	setFontType: (type: DyslexicFontType) => void;
 }
 
-const updateDyslexicFont = (type: DyslexicFontType) => {
-	if (typeof document !== "undefined") {
-		// Enlever TOUTES les classes de police
-		document.documentElement.classList.remove(
-			"dyslexic-font",
-			"sylexiad-font",
-			"sylexiad-serif-font",
-			"atkinson-font",
-			"andika-font",
-			"tiresias-font",
-			"ralewaydots-font"
-		);
-
-		// Ajouter la classe appropriée
-		if (type === "opendyslexic") {
-			document.documentElement.classList.add("dyslexic-font");
-		} else if (type === "sylexiad") {
-			document.documentElement.classList.add("sylexiad-font");
-		} else if (type === "sylexiad-serif") {
-			document.documentElement.classList.add("sylexiad-serif-font");
-		} else if (type === "atkinson") {
-			document.documentElement.classList.add("atkinson-font");
-		} else if (type === "andika") {
-			document.documentElement.classList.add("andika-font");
-		} else if (type === "tiresias") {
-			document.documentElement.classList.add("tiresias-font");
-		} else if (type === "ralewaydots") {
-			document.documentElement.classList.add("ralewaydots-font");
-		}
-	}
+// Correspondance type → classe DOM. Sylexiad reste ici (police du site, non
+// embarquée dans le paquet) ; tiresias/ralewaydots conservés pour un retrait
+// DOM identique même si leurs options ne sont plus offertes.
+const DYSLEXIC_FONT_CLASSES: Readonly<Record<string, string>> = {
+	opendyslexic: "dyslexic-font",
+	sylexiad: "sylexiad-font",
+	"sylexiad-serif": "sylexiad-serif-font",
+	atkinson: "atkinson-font",
+	andika: "andika-font",
+	tiresias: "tiresias-font",
+	ralewaydots: "ralewaydots-font",
 };
+
+// Délègue l'application DOM à l'applier du paquet (E5) — comportement
+// identique (retire toutes les classes, pose la bonne, SSR-safe).
+const updateDyslexicFont = (type: DyslexicFontType) =>
+	applyAccessibilityFont(type, DYSLEXIC_FONT_CLASSES);
 
 export const useDyslexicFontStore = create<DyslexicFontState>()(
 	persist(

@@ -11,6 +11,7 @@ import Link from "next/link";
 import { usePrefersDarkMode } from "../../hooks/usePrefersDarkMode";
 import { useFontSizeStore } from "@/store/fontSizeStore";
 import { useDyslexicFontStore } from "@/store/dyslexicFontStore";
+import { applyReduceMotion } from "a11y-prefs/react/appliers";
 import { FaUniversalAccess } from "react-icons/fa";
 import { useIsMounted } from "../../hooks/useIsMounted";
 import { ThemeOption } from "@/config/themes";
@@ -176,15 +177,10 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 	};
 
 	// Sync reduce-motion DOM class from state (correct effect direction: state → external system)
-	// reduceMotion is lazily initialised — this also applies the initial value on first render
+	// reduceMotion is lazily initialised — this also applies the initial value on first render.
+	// L'application DOM est déléguée à l'applier du paquet (E5) — comportement identique.
 	useEffect(() => {
-		if (typeof document !== "undefined") {
-			if (reduceMotion) {
-				document.documentElement.classList.add("reduce-motion");
-			} else {
-				document.documentElement.classList.remove("reduce-motion");
-			}
-		}
+		applyReduceMotion(reduceMotion);
 	}, [reduceMotion]);
 
 	// Labels selon la langue
