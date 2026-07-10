@@ -13,6 +13,27 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-10
+
+### Changed (sélecteur de police — même police partout + compensation)
+
+Design acté avec Simon : le sélecteur force **une police partout** (titres
+compris — c'est ce que demande l'utilisateur qui la choisit) ; la hiérarchie
+fine reste l'affaire du mode dyslexie. Smoke Simon : le rétrécissement
+d'Atkinson/Sylexiad au sélecteur est corrigé.
+
+- **Mixin `a11y-font-class`** (module `a11y-fonts` du paquet) : émet une
+  classe complète — police partout + `font-size-adjust` (défaut **0.56**,
+  passer `null` pour une police naturellement grande) + espacements du
+  corps alignés sur le mode dyslexie (ls 0.04em, ws 0.128em, lh 1.75) ;
+  titres inchangés (ls 0.02em, lh 1.5, paramétrables). Une ligne par
+  police pour le consommateur.
+- Les 5 classes régénérées par le mixin : Atkinson/Andika (paquet),
+  Sylexiad ×2 (portfolio, adjust 0.56), **OpenDyslexic sans adjust**
+  (naturellement grande, décision Simon ; titres ls 0.01em historique).
+  Surcharges site OpenDyslexic (header, nav) conservées à part.
+- Diff CSS confiné aux 5 classes `html.*-font`.
+
 ## 2026-07-09
 
 ### Changed (E5 phase 4 — correction volontaire du rendu, validée par Simon)

@@ -98,13 +98,28 @@ $a11y-fonts-path: "/fonts" !default;
 	}
 }
 
-// Classes du sélecteur de police, partie générique (pose la police sur les
-// éléments sémantiques). Le consommateur peut ajouter ses surcharges
-// site-spécifiques par-dessus. La classe OpenDyslexic (.dyslexic-font)
-// porte des surcharges de layout propres au portfolio : elle reste côté
-// consommateur pour l'instant (généralisée au chantier suivant).
-@mixin a11y-font-classes {
-	html.atkinson-font {
+// Classe du sélecteur de police : la police choisie s'applique PARTOUT
+// (titres compris) — c'est ce que demande l'utilisateur qui la choisit ; la
+// hiérarchie fine est l'affaire du mode dyslexie (module dyslexia). Design
+// acté avec Simon le 2026-07-10.
+//
+// Corps : `font-size-adjust` normalise la hauteur d'x (une police au petit
+// œil, Atkinson/Sylexiad…, cesse de paraître plus petite — passer null pour
+// une police naturellement grande comme OpenDyslexic) + espacements alignés
+// sur ceux du mode dyslexie (mêmes valeurs, validées visuellement).
+// Titres : espacements propres, inchangés par rapport à l'historique.
+@mixin a11y-font-class(
+	$class,
+	$font,
+	$fallback: sans-serif,
+	$font-size-adjust: 0.56,
+	$body-line-height: 1.75,
+	$body-letter-spacing: 0.04em,
+	$body-word-spacing: 0.128em,
+	$title-line-height: 1.5,
+	$title-letter-spacing: 0.02em
+) {
+	html.#{$class} {
 		p,
 		span,
 		div,
@@ -121,32 +136,43 @@ $a11y-fonts-path: "/fonts" !default;
 		button,
 		label,
 		select {
-			font-family: "Atkinson Hyperlegible", sans-serif !important;
-			letter-spacing: 0.02em;
-			line-height: 1.5;
+			font-family: $font, $fallback !important;
+			@if $font-size-adjust {
+				font-size-adjust: $font-size-adjust;
+			}
 		}
-	}
 
-	html.andika-font {
-		p,
-		span,
-		div,
-		li,
 		h1,
 		h2,
 		h3,
 		h4,
 		h5,
-		h6,
+		h6 {
+			letter-spacing: $title-letter-spacing;
+			line-height: $title-line-height;
+		}
+
+		p,
+		span,
+		div,
+		li,
 		a,
 		input,
 		textarea,
 		button,
 		label,
 		select {
-			font-family: "Andika", sans-serif !important;
-			letter-spacing: 0.02em;
-			line-height: 1.5;
+			letter-spacing: $body-letter-spacing;
+			line-height: $body-line-height;
+			word-spacing: $body-word-spacing;
 		}
 	}
+}
+
+// Les classes des polices embarquées. Le consommateur ajoute les siennes
+// avec a11y-font-class (ex. portfolio : Sylexiad, OpenDyslexic + surcharges
+// site-spécifiques par-dessus).
+@mixin a11y-font-classes {
+	@include a11y-font-class("atkinson-font", "Atkinson Hyperlegible");
+	@include a11y-font-class("andika-font", "Andika");
 }

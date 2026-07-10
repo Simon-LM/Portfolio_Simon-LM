@@ -219,37 +219,18 @@ html.high-contrast {
 	}
 }
 
-// Classe pour la police dyslexique
-// (l'ancienne compensation de taille commentée est remplacée par
-// font-size-adjust dans le mode dyslexie — module du paquet, E5 phase 4)
-html.dyslexic-font {
-	h1,
-	h2,
-	h3,
-	h4,
-	h5,
-	h6 {
-		font-family: "OpenDyslexic", sans-serif !important;
-		// letter-spacing: 0.025em;
-		letter-spacing: 0.01em;
-		line-height: 1.5;
-	}
-	p,
-	span,
-	div,
-	li,
-	a,
-	input,
-	textarea,
-	button,
-	label,
-	select {
-		font-family: "OpenDyslexic", sans-serif !important;
-		// letter-spacing: 0.025em;
-		letter-spacing: 0.01em;
-		line-height: 1.5;
-	}
+// Classe pour la police dyslexique — via le mixin du paquet (E5).
+// Pas de font-size-adjust : OpenDyslexic est naturellement grande (décision
+// Simon, 2026-07-10). Titres : letter-spacing historique 0.01em conservé.
+@include a11y-font-class(
+	"dyslexic-font",
+	"OpenDyslexic",
+	$font-size-adjust: null,
+	$title-letter-spacing: 0.01em
+);
 
+// Surcharges site-spécifiques OpenDyslexic (header, navigation).
+html.dyslexic-font {
 	.header {
 		&__lang-button {
 			font-family: "Inter", sans-serif !important;
@@ -287,51 +268,10 @@ html.dyslexic-font {
 	}
 }
 
-html.sylexiad-font {
-	p,
-	span,
-	div,
-	li,
-	h1,
-	h2,
-	h3,
-	h4,
-	h5,
-	h6,
-	a,
-	input,
-	textarea,
-	button,
-	label,
-	select {
-		font-family: "SylexiadSans", sans-serif !important;
-		letter-spacing: 0.02em;
-		line-height: 1.5;
-	}
-}
-
-html.sylexiad-serif-font {
-	p,
-	span,
-	div,
-	li,
-	h1,
-	h2,
-	h3,
-	h4,
-	h5,
-	h6,
-	a,
-	input,
-	textarea,
-	button,
-	label,
-	select {
-		font-family: "SylexiadSerif", serif !important;
-		letter-spacing: 0.02em;
-		line-height: 1.5;
-	}
-}
+// Classes Sylexiad (polices du site, hors paquet) — via le mixin du paquet :
+// font-size-adjust 0.56 corrige leur petite hauteur d'x (E5, 2026-07-10).
+@include a11y-font-class("sylexiad-font", "SylexiadSans");
+@include a11y-font-class("sylexiad-serif-font", "SylexiadSerif", $fallback: serif);
 
 // Classes .atkinson-font / .andika-font émises par le module du paquet
 // (E5) ; .tiresias-font / .ralewaydots-font retirées (code mort).
