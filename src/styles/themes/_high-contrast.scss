@@ -7,30 +7,41 @@
 @use "../themes/theme-variables" as *;
 @use "light" as *;
 
-@mixin high-contrast-theme-variables() {
+// Thème fort contraste, paramétré par variante (chantier HC, 2026-07-10).
+// Les défauts = la variante historique « jaune sur noir » (rendu
+// byte-identique). Les variantes (green/white/paper) rappellent ce mixin
+// avec leur carte — même mécanisme, seules les couleurs changent.
+@mixin high-contrast-theme-variables(
+	$colors: (
+		"background": #000000,
+		// Noir pur
+		"text": #ffff00,
+		// Jaune vif
+		"link": #00ffff,
+		// Cyan vif
+		"highlight": #bfff00,
+		// Vert-jaune
+		"action": #ffffff,
+		// Blanc pur
+		"success": #00ff00,
+		// Vert pur
+		"error": #ff0000,
+	),
+	// Focus : sur fond sombre, contour et remplissage blancs, texte noir.
+	// La variante papier (polarité inversée) passe le miroir.
+	$focus-outline: #ffffff,
+	$focus-bg: #ffffff,
+	$focus-text: #000000,
+	// Surcharges header (le fond suit "highlight" de la carte)
+	$header-text: #000000,
+	$header-blog-link-bg: #000000,
+	$header-blog-link-text: null // défaut : la couleur "text" de la carte
+) {
 	// D'abord appliquer les variables du thème light
 	@include light-theme-variables();
 
 	// Utiliser la transformation automatique avec les couleurs très contrastées
-	@include transform-light-to-high-contrast(
-		(
-			"colors": (
-				"background": #000000,
-				// Noir pur
-				"text": #ffff00,
-				// Jaune vif
-				"link": #00ffff,
-				// Cyan vif
-				"highlight": #bfff00,
-				// Vert-jaune
-				"action": #ffffff,
-				// Blanc pur
-				"success": #00ff00,
-				// Vert pur
-				"error": #ff0000,
-			),
-		)
-	);
+	@include transform-light-to-high-contrast(("colors": $colors));
 
 	// Dériver la couche 3 depuis les rôles transformés (E3 phase 2 :
 	// l'appel a quitté le moteur — inversion de dépendance). Les surcharges
@@ -39,8 +50,8 @@
 
 	// Uniformiser tous les états de focus avec les états hover
 	*:focus-visible {
-		outline: 3px solid #ffffff !important;
-		border-color: #ffffff !important;
+		outline: 3px solid $focus-outline !important;
+		border-color: $focus-outline !important;
 		box-shadow: none !important;
 	}
 
@@ -49,19 +60,22 @@
 	.button:focus-visible,
 	a:focus-visible,
 	.react-select__control:focus-visible {
-		background-color: #ffffff !important;
-		color: #000000 !important;
-		outline: 3px solid #ffffff !important;
+		background-color: $focus-bg !important;
+		color: $focus-text !important;
+		outline: 3px solid $focus-outline !important;
 		outline-offset: 0.25rem;
 	}
 
 	// Surcharges manuelles après l'automatisation si nécessaire
 
-	$color-header-bg: map.get($hc-palette, "highlight") !global;
-	$color-header-text: #000000 !global;
-	$color-header-text-role: #000000 !global;
-	$color-header-blog-link-bg: #000000 !global;
-	$color-header-blog-link-text: #ffff00 !global;
+	$color-header-bg: map.get($colors, "highlight") !global;
+	$color-header-text: $header-text !global;
+	$color-header-text-role: $header-text !global;
+	$color-header-blog-link-bg: $header-blog-link-bg !global;
+	$color-header-blog-link-text: if(
+		sass($header-blog-link-text != null): $header-blog-link-text;
+		else: map.get($colors, "text")
+	) !global;
 
 	.skills__icon-wrapper {
 		&.is-rotating {
