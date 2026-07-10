@@ -21,6 +21,14 @@ type Props = {
 	onClose?: () => void;
 };
 
+// Variantes du mode fort contraste (chantier HC) — « high-contrast » =
+// jaune sur noir, valeur historique conservée
+type HcVariant =
+	| "high-contrast"
+	| "high-contrast-green"
+	| "high-contrast-white"
+	| "high-contrast-paper";
+
 type OptionType = {
 	value: string;
 	label: string;
@@ -46,6 +54,18 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 	);
 	const colorVisionSelectRef = useRef<SelectInstance<OptionType> | null>(null);
 	const fontTypeSelectRef = useRef<SelectInstance<OptionType> | null>(null);
+	const hcVariantSelectRef = useRef<SelectInstance<OptionType> | null>(null);
+	// Dernière variante de fort contraste utilisée (patron ZoomText : le
+	// toggle réactive le dernier schéma choisi) — init paresseuse localStorage
+	const [hcVariant, setHcVariant] = useState<HcVariant>(() => {
+		if (typeof window === "undefined") return "high-contrast";
+		const saved = localStorage.getItem("hc-variant");
+		return saved === "high-contrast-green" ||
+			saved === "high-contrast-white" ||
+			saved === "high-contrast-paper"
+			? saved
+			: "high-contrast";
+	});
 
 	// Fonction pour basculer le mode dyslexie optimisé
 	const toggleDyslexicMode = () => {
@@ -107,13 +127,23 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 
 	useEffect(() => {
 		if (mounted && typeof document !== "undefined") {
-			if (theme === "high-contrast") {
+			// La classe typo s'applique à TOUTES les variantes de fort contraste
+			if (theme.startsWith("high-contrast")) {
 				document.documentElement.classList.add("high-contrast");
 			} else {
 				document.documentElement.classList.remove("high-contrast");
 			}
 		}
 	}, [mounted, theme]);
+
+	// Mémoriser la dernière variante de fort contraste utilisée (le toggle
+	// la réactivera). Appelée par le sélecteur de variante — pas d'effet,
+	// la règle du projet interdit setState dans un effet.
+	const selectHcVariant = (variant: HcVariant) => {
+		setHcVariant(variant);
+		localStorage.setItem("hc-variant", variant);
+		setTheme(variant);
+	};
 
 	// Fonction pour activer le mode anti-éblouissement
 	const activateAntiGlare = () => {
@@ -127,7 +157,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 		if (
 			currentTheme === "light" ||
 			currentTheme === "dark" ||
-			currentTheme === "high-contrast" ||
+			currentTheme.startsWith("high-contrast") ||
 			currentTheme === "anti-glare-light" ||
 			currentTheme === "anti-glare-dark"
 		) {
@@ -203,6 +233,18 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 					language === "fr"
 						? "Pour les fortes pertes de vision"
 						: "For severe vision loss",
+				variantLabel:
+					language === "fr" ? "Couleurs du contraste" : "Contrast colors",
+				variants: {
+					"high-contrast":
+						language === "fr" ? "Jaune sur noir" : "Yellow on black",
+					"high-contrast-green":
+						language === "fr" ? "Vert sur noir" : "Green on black",
+					"high-contrast-white":
+						language === "fr" ? "Blanc sur noir" : "White on black",
+					"high-contrast-paper":
+						language === "fr" ? "Noir sur blanc" : "Black on white",
+				} as Record<HcVariant, string>,
 			},
 			antiGlare: {
 				name: language === "fr" ? "Anti-éblouissement" : "Anti-glare",
@@ -285,6 +327,10 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 
 		// Réinitialiser le type de police
 		setFontType("none");
+
+		// Réinitialiser la variante de fort contraste mémorisée
+		setHcVariant("high-contrast");
+		localStorage.removeItem("hc-variant");
 
 		// Désactiver le mode dyslexie optimisé
 		if (isDyslexicMode) {
@@ -429,12 +475,90 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 					<div className="accessibility-menu__buttons-row">
 						<button
 							className={`accessibility-menu__button  accessibility-menu__high-contrast-button ${
-								theme === "high-contrast" ? "active" : ""
+								theme.startsWith("high-contrast") ? "active" : ""
 							}`}
-							onClick={() => setTheme("high-contrast")}>
+							onClick={() => setTheme(hcVariant)}>
 							{labels.visualHelps.highContrast.name}
 						</button>
 					</div>
+
+					{/* Sélecteur de variante — visible quand le fort contraste est actif */}
+					{theme.startsWith("high-contrast") && (
+						<div className="accessibility-menu__select-control">
+							<label
+								htmlFor="hc-variant-select"
+								className="accessibility-menu__group-label">
+								{labels.visualHelps.highContrast.variantLabel}
+							</label>
+
+							<Select
+								ref={hcVariantSelectRef}
+								inputId="hc-variant-select"
+								className="react-select-container"
+								classNamePrefix="react-select"
+								value={{
+									value: hcVariant,
+									label: labels.visualHelps.highContrast.variants[hcVariant],
+								}}
+								onChange={(option) => {
+									if (option) {
+										selectHcVariant((option as OptionType).value as HcVariant);
+									}
+								}}
+								options={(
+									[
+										"high-contrast",
+										"high-contrast-green",
+										"high-contrast-white",
+										"high-contrast-paper",
+									] as const
+								).map((variant) => ({
+									value: variant,
+									label: labels.visualHelps.highContrast.variants[variant],
+								}))}
+								aria-label={labels.visualHelps.highContrast.variantLabel}
+								styles={getSelectStyles()}
+								isSearchable={false}
+								menuPortalTarget={
+									typeof document !== "undefined" ? document.body : null
+								}
+								menuPosition="fixed"
+								menuShouldBlockScroll={true}
+								openMenuOnFocus={false}
+								closeMenuOnSelect={true}
+								onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
+									const menuOpen =
+										document.querySelector('[role="listbox"]') !== null;
+
+									// Si le menu est fermé et Enter ou Espace est pressé
+									if (!menuOpen && (e.key === "Enter" || e.key === " ")) {
+										e.preventDefault();
+
+										// Ouvrir le menu de manière fiable
+										if (hcVariantSelectRef.current) {
+											hcVariantSelectRef.current.openMenu("first");
+										}
+									}
+
+									// Si le menu est ouvert
+									if (menuOpen) {
+										// Pour Tab et Shift+Tab, simuler les flèches
+										if (e.key === "Tab") {
+											e.preventDefault();
+
+											// Simuler flèche bas ou haut selon Shift
+											const key = e.shiftKey ? "ArrowUp" : "ArrowDown";
+											const event = new KeyboardEvent("keydown", {
+												key,
+												bubbles: true,
+											});
+											e.currentTarget.dispatchEvent(event);
+										}
+									}
+								}}
+							/>
+						</div>
+					)}
 				</div>
 
 				{/* Sous-section Anti-éblouissement */}
