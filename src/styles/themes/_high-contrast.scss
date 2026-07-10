@@ -32,10 +32,14 @@
 	$focus-outline: #ffffff,
 	$focus-bg: #ffffff,
 	$focus-text: #000000,
-	// Surcharges header (le fond suit "highlight" de la carte)
+	// Surcharges header (le fond suit "highlight" de la carte).
+	// ⚠️ Surcharge LOCALE du portfolio (le lien blog LostInTab est un
+	// composant du site, pas du paquet) : par défaut le texte du chip prend
+	// la couleur du FOND du header — effet « transparence » (décision Simon,
+	// 2026-07-10), le libellé semble découpé dans le chip noir.
 	$header-text: #000000,
 	$header-blog-link-bg: #000000,
-	$header-blog-link-text: null // défaut : la couleur "text" de la carte
+	$header-blog-link-text: null // défaut : la couleur "highlight" de la carte
 ) {
 	// D'abord appliquer les variables du thème light
 	@include light-theme-variables();
@@ -74,7 +78,7 @@
 	$color-header-blog-link-bg: $header-blog-link-bg !global;
 	$color-header-blog-link-text: if(
 		sass($header-blog-link-text != null): $header-blog-link-text;
-		else: map.get($colors, "text")
+		else: map.get($colors, "highlight")
 	) !global;
 
 	.skills__icon-wrapper {
