@@ -54,15 +54,11 @@ rien oublier. Mettre à jour au fil de l'eau (cocher / retirer une fois fait).
 
 ## À optimiser plus tard (noté, pas urgent)
 
-- [ ] **Typographie du high-contrast** (2026-07-08, partiellement traité en
-      E5 phase 4 le 2026-07-09) : le high-contrast change la police
-      (**Atkinson Hyperlegible**) + `letter-spacing: 0.02em`. **Fait en E5** :
-      interligne du corps porté à `1.75` + `word-spacing: 0.064em` (ratio
-      ×3.2 BDA/WCAG, aligné sur le mode dyslexie ; décision Simon). **Reste
-      à faire** : `font-size-adjust` (normalisation de la hauteur d'x) +
-      éventuelle hausse de taille, et arbitrer l'interligne des titres
-      (restés à 1.5). Validation visuelle requise — la preview
-      `docs/theme-system/previews/` peut être étendue au HC.
+- [x] **Typographie du high-contrast** — soldé au chantier HC (2026-07-10) :
+      `html.high-contrast` passe par `a11y-font-class` (Atkinson partout,
+      `font-size-adjust: 0.56`, corps 0.04em/1.75/0.128em). Reste un seul
+      micro-arbitrage, non bloquant : l'interligne des TITRES en HC (1.5
+      aujourd'hui, cohérent avec les classes de police).
 
 ## Reporté explicitement (ne pas toucher sans décision)
 

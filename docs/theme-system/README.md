@@ -26,7 +26,7 @@ mergée : rollup + src, datant d'avant plusieurs refontes du système).
 | [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) | Feuille de route vers le paquet open source (chantiers E1→E7) — c'est **la carte** qui ordonne les plans | vivant |
 | [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) | Plan d'exécution : fondations (rail, rôles, `@use`…) | ✅ exécuté le 2026-07-03 |
 | [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) | Plan d'exécution : chantier E1 — système de tests de contrastes | ✅ exécuté le 2026-07-04 |
-| [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) | Artefact généré : matrice de contraste WCAG (39 paires × 12 thèmes) + distinguabilité CVD (5 paires ΔE) | vivant (régénéré par `pnpm contrast:report`) |
+| [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) | Artefact généré : matrice de contraste WCAG (39 paires × 15 thèmes) + distinguabilité CVD (5 paires ΔE) | vivant (régénéré par `pnpm contrast:report`) |
 | [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) | Plan d'exécution : chantier E2 — corrections moteurs + OKLCH anti-glare | ✅ exécuté le 2026-07-04, mergé le 2026-07-05 |
 | [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : P1 remap de familles + tests de distinguabilité ; P2 ancres sémantiques des rôles statut ; P3 robustesse (dégradation gracieuse, garde-gamut) | P1 ✅ mergée le 2026-07-05 (`d12264f`) ; P2 ✅ et P3 ✅ mergées le 2026-07-06 (`5c8dce9`) après validation visuelle |
 | [PLAN-extraction-monorepo.md](./PLAN-extraction-monorepo.md) | Plan d'exécution : chantier E3 — workspace pnpm + extraction de la face SCSS dans `packages/a11y-prefs` (nom de travail) | ✅ exécuté et mergé le 2026-07-07 (`812d5d5`) |
@@ -40,7 +40,7 @@ avec revue avant merge. Le guide donne l'ordre ; chaque plan est autonome.
 
 ## 1. Principe fondamental
 
-Les **12 thèmes ne sont pas écrits à la main : ils sont dérivés
+Les **15 thèmes ne sont pas écrits à la main : ils sont dérivés
 algorithmiquement du thème `light` à la compilation Sass**. Chaque thème est
 le résultat d'une transformation (décalage de poids Tailwind, rotation de
 teinte HSL, conversion en luminance…) appliquée aux couleurs du thème de
@@ -69,7 +69,7 @@ COMPILATION (Sass)                          RUNTIME (navigateur)
 └─────────────────────────────┘             └─────────────────────────────┘
 ```
 
-## 2. Les 12 thèmes
+## 2. Les 15 thèmes (12 + 3 variantes de fort contraste)
 
 | Thème              | Public visé                             | Méthode de génération *(à jour au 2026-07-07)*                                                       |
 | ------------------ | --------------------------------------- | ----------------------------------------------------------------------------------------------------- |
@@ -77,7 +77,10 @@ COMPILATION (Sass)                          RUNTIME (navigateur)
 | `dark`             | préférence sombre                       | décalage des poids Tailwind en miroir autour du pivot 500                                             |
 | `anti-glare-light` | photophobie, kératocône, DMLA, aniridie | thème light complet → atténuation perceptuelle **OKLCH** (lightness plafonnée, chroma réduite)        |
 | `anti-glare-dark`  | idem, base sombre                       | thème dark complet → idem (noirs relevés)                                                             |
-| `high-contrast`    | fortes pertes de vision                 | réduction à une palette fixe de couleurs pures, choisie par rôle                                      |
+| `high-contrast`    | fortes pertes de vision                 | réduction à une palette fixe de couleurs pures, choisie par rôle (variante **jaune sur noir**, défaut) |
+| `high-contrast-green` | idem, préférence « phosphore »       | même mécanisme, carte **vert sur noir** (chantier HC, 2026-07-10)                                     |
+| `high-contrast-white` | idem, contraste max sans teinte      | même mécanisme, carte **blanc sur noir** (action = jaune)                                             |
+| `high-contrast-paper` | idem, polarité positive              | même mécanisme, carte **noir sur blanc** (teintes système foncées, focus/header inversés)             |
 | `deuteranopia`     | daltonisme rouge-vert (complet)         | **ancres sémantiques statut** (success→violet, danger→orange, poids auto ≥ 4.5:1) ; gris/accent/liens intacts (déjà sûrs) |
 | `protanopia`       | daltonisme rouge (complet)              | idem                                                                                                   |
 | `tritanopia`       | daltonisme bleu-jaune (complet)         | **remap de familles Tailwind** (`amber → orange`, `sky → violet`) ; statuts intacts (rouge/vert bien perçus) |
@@ -122,7 +125,7 @@ sont des **shims de ré-export** (les imports `@/config/themes`,
 
 | Fichier | Rôle |
 | --- | --- |
-| `packages/a11y-prefs/react/themes.ts` **(paquet)** | Source unique de la liste des 12 thèmes (`THEMES` + type `ThemeOption`) — module de données pur, sûr côté Server Components |
+| `packages/a11y-prefs/react/themes.ts` **(paquet)** | Source unique de la liste des 15 thèmes (`THEMES` + type `ThemeOption`) — module de données pur, sûr côté Server Components |
 | `packages/a11y-prefs/react/useTheme.ts` **(paquet)** | État React du thème (`"use client"`) : init paresseuse localStorage/matchMedia, `setTheme()`, `MutationObserver` ; paramètre `themes` optionnel (défaut : les 12) |
 | `packages/a11y-prefs/react/usePrefersDarkMode.ts` **(paquet)** | Abonnement à `prefers-color-scheme` via `useSyncExternalStore` |
 | `packages/a11y-prefs/react/themeInitScript.ts` **(paquet)** | Génère la chaîne du script anti-FOUC (byte-identique au littéral historique) |
@@ -251,7 +254,7 @@ Cas particulier : les thèmes anti-glare se **composent** —
   culori) **et** distinguabilité ΔE CIEDE2000 sous simulation CVD
   (`src/accessibility/contrast/cvd-simulation.ts`, matrices de Machado et
   al. 2009), **et** appartenance au gamut sRGB (partie 3, `gamut.test.ts` :
-  aucune couleur émise ne sort du gamut, sur les 12 thèmes). Robustesse
+  aucune couleur émise ne sort du gamut, sur les 15 thèmes). Robustesse
   (partie 3) : le résolveur de statut n'échoue jamais en dur — s'il ne peut
   atteindre la cible de contraste, il renvoie le meilleur effort et `@warn`.
 - **Achromatopsie** (`transform-light-to-achromatopsia`) : conversion des
@@ -301,7 +304,7 @@ sémantique.
    (localStorage → matchMedia → `"light"`), `setTheme()` écrit l'attribut et
    localStorage, un `MutationObserver` resynchronise l'état si `data-theme`
    est modifié par un autre acteur.
-3. **`AccessibilityMenu`** : présente les 12 thèmes en 3 axes orthogonaux
+3. **`AccessibilityMenu`** : présente les 15 thèmes en 3 axes orthogonaux (les variantes HC via un sélecteur dédié)
    pour l'utilisateur (Mode, Contraste/Confort, Vision) alors que le modèle
    sous-jacent est plat (un seul `data-theme`). Une ref `lastBaseTheme`
    mémorise le dernier light/dark pour que « anti-glare » ou « retour à
