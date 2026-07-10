@@ -6,14 +6,17 @@
 // 2026-07-10) — le classique « phosphore » des télé-agrandisseurs. Seuls
 // texte (#00ff00, 15.3:1) et header (#99ff99, nuance pâle de la famille)
 // changent ; les rôles système (liens cyan, action blanche, statut,
-// focus blanc) restent communs aux variantes sur fond noir.
+// focus blanc) restent communs aux variantes sur fond noir. Header =
+// JAUNE VIF (19.6:1 avec le texte noir) : hiérarchisation par bloc de
+// couleur franche d'une teinte différente du texte (principe Simon),
+// jamais par ton atténué.
 @mixin high-contrast-green-theme-variables() {
 	@include high-contrast-theme-variables(
 		$colors: (
 			"background": #000000,
 			"text": #00ff00,
 			"link": #00ffff,
-			"highlight": #99ff99,
+			"highlight": #ffff00,
 			"action": #ffffff,
 			"success": #00ff00,
 			"error": #ff0000,

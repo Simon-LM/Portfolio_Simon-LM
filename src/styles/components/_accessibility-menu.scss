@@ -465,6 +465,7 @@
 	// actif = inversion + anneau.
 	&__hc-variant-button {
 		flex-basis: 100%;
+		margin-top: 0.25rem; // avec le gap de la rangée : sépare du bouton principal
 		font-family: "Atkinson Hyperlegible", sans-serif;
 		font-size: 1.1rem;
 		font-weight: 500;
@@ -481,10 +482,12 @@
 				border-color: #000000;
 			}
 
+			// Actif : pas d'inversion — le bouton reste sa propre
+			// prévisualisation ; marqueur = anneau (couleur texte du thème)
 			&.active {
-				background-color: #ffff00;
-				color: #000000;
-				box-shadow: 0 0 0 2px #000000;
+				background-color: #000000;
+				color: #ffff00;
+				box-shadow: 0 0 0 0.1875rem var(--near-black);
 			}
 		}
 
@@ -500,10 +503,12 @@
 				border-color: #000000;
 			}
 
+			// Actif : pas d'inversion — le bouton reste sa propre
+			// prévisualisation ; marqueur = anneau (couleur texte du thème)
 			&.active {
-				background-color: #00ff00;
-				color: #000000;
-				box-shadow: 0 0 0 2px #000000;
+				background-color: #000000;
+				color: #00ff00;
+				box-shadow: 0 0 0 0.1875rem var(--near-black);
 			}
 		}
 
@@ -519,10 +524,12 @@
 				border-color: #000000;
 			}
 
+			// Actif : pas d'inversion — le bouton reste sa propre
+			// prévisualisation ; marqueur = anneau (couleur texte du thème)
 			&.active {
-				background-color: #ffffff;
-				color: #000000;
-				box-shadow: 0 0 0 2px #000000;
+				background-color: #000000;
+				color: #ffffff;
+				box-shadow: 0 0 0 0.1875rem var(--near-black);
 			}
 		}
 
@@ -538,10 +545,11 @@
 				border-color: #ffffff;
 			}
 
+			// Actif : pas d'inversion (cf. ci-dessus)
 			&.active {
-				background-color: #000000;
-				color: #ffffff;
-				box-shadow: 0 0 0 2px #ffffff;
+				background-color: #ffffff;
+				color: #000000;
+				box-shadow: 0 0 0 0.1875rem var(--near-black);
 			}
 		}
 	}

@@ -4,17 +4,18 @@
 
 // Variante « noir sur blanc » / papier (chantier HC, carte actée avec
 // Simon le 2026-07-10) — polarité positive, préférée par certaines basses
-// visions. Miroir assombri de la logique fond noir : les teintes système
-// sont conservées mais foncées (physique du contraste : cyan/blanc/verts
-// purs illisibles sur blanc). Focus et header inversés : bandeau noir à
-// texte blanc, focus rempli noir.
+// visions. Les teintes système sont conservées mais foncées (physique du
+// contraste : cyan/blanc/verts purs illisibles sur blanc). Header =
+// vert-jaune VIF #bfff00 à texte noir (17.5:1) — hiérarchisation par bloc
+// de couleur franche (principe Simon), comme la variante jaune. Focus
+// rempli noir (polarité inversée) ; chip du lien blog noir à texte blanc.
 @mixin high-contrast-paper-theme-variables() {
 	@include high-contrast-theme-variables(
 		$colors: (
 			"background": #ffffff,
 			"text": #000000,
 			"link": #0000cc,
-			"highlight": #000000,
+			"highlight": #bfff00,
 			"action": #000000,
 			"success": #007700,
 			"error": #cc0000,
@@ -22,8 +23,7 @@
 		$focus-outline: #000000,
 		$focus-bg: #000000,
 		$focus-text: #ffffff,
-		$header-text: #ffffff,
-		$header-blog-link-bg: #ffffff,
-		$header-blog-link-text: #000000
+		$header-blog-link-bg: #000000,
+		$header-blog-link-text: #ffffff
 	);
 }
