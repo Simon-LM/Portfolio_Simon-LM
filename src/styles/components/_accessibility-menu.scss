@@ -484,6 +484,14 @@
 		font-size: 1.1rem;
 		font-weight: 500;
 
+		// La coche ✓ est un <span> : la base typo donne aux span une couleur
+		// PROPRE (var(--color-main-text)), qui ignore l'inversion du hover
+		// (coche invisible sur le fond inversé). inherit = la coche suit
+		// toujours la couleur du texte du bouton.
+		span {
+			color: inherit;
+		}
+
 		&--yellow {
 			background-color: #000000;
 			color: #ffff00;
