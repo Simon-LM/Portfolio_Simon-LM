@@ -473,7 +473,7 @@
 		&--yellow {
 			background-color: #000000;
 			color: #ffff00;
-			border: 3px solid #ffff00;
+			border: 0.1875rem solid #ffff00; // 3px
 
 			&:hover,
 			&:focus-visible {
@@ -494,7 +494,7 @@
 		&--green {
 			background-color: #000000;
 			color: #00ff00;
-			border: 3px solid #00ff00;
+			border: 0.1875rem solid #00ff00; // 3px
 
 			&:hover,
 			&:focus-visible {
@@ -515,7 +515,7 @@
 		&--white {
 			background-color: #000000;
 			color: #ffffff;
-			border: 3px solid #ffffff;
+			border: 0.1875rem solid #ffffff; // 3px
 
 			&:hover,
 			&:focus-visible {
@@ -536,7 +536,7 @@
 		&--paper {
 			background-color: #ffffff;
 			color: #000000;
-			border: 3px solid #000000;
+			border: 0.1875rem solid #000000; // 3px
 
 			&:hover,
 			&:focus-visible {
