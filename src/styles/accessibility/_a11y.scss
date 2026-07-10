@@ -165,6 +165,25 @@ textarea,
 	}
 }
 
+// Variante verte : icône verte — le filtre jaune calibré ci-dessus + une
+// rotation de teinte de 60° (jaune 60° -> vert 120°)
+[data-theme="high-contrast-green"] {
+	.accessibility-control__button {
+		img,
+		svg {
+			filter: #{"invert(80%) sepia(72%) saturate(528%) hue-rotate(359deg) brightness(101%) contrast(106%) hue-rotate(60deg)"};
+		}
+
+		&:hover,
+		&:focus-visible {
+			img,
+			svg {
+				filter: none !important;
+			}
+		}
+	}
+}
+
 // Variante papier (polarité inversée) : icône sombre sur fond blanc,
 // survol = action noire -> icône blanche
 [data-theme="high-contrast-paper"] {
