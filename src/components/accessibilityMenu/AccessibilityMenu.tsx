@@ -515,6 +515,9 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 									}`}
 									aria-pressed={theme === variant}
 									onClick={() => selectHcVariant(variant)}>
+									{/* Coche = marqueur visuel de la variante active ; la
+									    sémantique est portée par aria-pressed */}
+									{theme === variant && <span aria-hidden="true">✓ </span>}
 									{labels.visualHelps.highContrast.variants[variant]}
 								</button>
 							))}

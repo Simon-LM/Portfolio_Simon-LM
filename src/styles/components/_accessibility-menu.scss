@@ -113,7 +113,7 @@
 	// réglé par Simon (ex-margin-top 1rem des boutons + gap 0.5rem),
 	// consolidé ici — un seul endroit à ajuster.
 	&__buttons-row--hc-variants {
-		gap: 1.5rem; // entre les boutons de variantes
+		gap: 0.5rem; // entre les boutons de variantes
 		margin-top: 1rem; // sous le bouton « Contraste élevé »
 	}
 
@@ -489,15 +489,14 @@
 			color: #ffff00;
 			border: 0.1875rem solid #ffff00; // 3px
 
-			// Actif : pas d'inversion — le bouton reste sa propre
-			// prévisualisation ; marqueur = anneau (couleur texte du thème).
-			// Déclaré AVANT :hover : à spécificité égale, le hover (plus
-			// bas) doit gagner même sur le bouton actif, sinon on mélange
-			// fond de l'actif + texte du hover (illisible).
+			// Actif : le bouton garde ses couleurs de preview — la coche ✓
+			// dans le libellé marque la sélection (décision Simon,
+			// 2026-07-11). Ce bloc neutralise le .active générique du menu
+			// (fond accent). Déclaré AVANT :hover : à spécificité égale, le
+			// hover (plus bas) doit gagner même sur le bouton actif.
 			&.active {
 				background-color: #000000;
 				color: #ffff00;
-				box-shadow: 0 0 0 0.1875rem var(--near-black); // 3px
 			}
 
 			&:hover,
@@ -512,15 +511,14 @@
 			color: #00ff00;
 			border: 0.1875rem solid #00ff00; // 3px
 
-			// Actif : pas d'inversion — le bouton reste sa propre
-			// prévisualisation ; marqueur = anneau (couleur texte du thème).
-			// Déclaré AVANT :hover : à spécificité égale, le hover (plus
-			// bas) doit gagner même sur le bouton actif, sinon on mélange
-			// fond de l'actif + texte du hover (illisible).
+			// Actif : le bouton garde ses couleurs de preview — la coche ✓
+			// dans le libellé marque la sélection (décision Simon,
+			// 2026-07-11). Ce bloc neutralise le .active générique du menu
+			// (fond accent). Déclaré AVANT :hover : à spécificité égale, le
+			// hover (plus bas) doit gagner même sur le bouton actif.
 			&.active {
 				background-color: #000000;
 				color: #00ff00;
-				box-shadow: 0 0 0 0.1875rem var(--near-black); // 3px
 			}
 
 			&:hover,
@@ -535,15 +533,14 @@
 			color: #ffffff;
 			border: 0.1875rem solid #ffffff; // 3px
 
-			// Actif : pas d'inversion — le bouton reste sa propre
-			// prévisualisation ; marqueur = anneau (couleur texte du thème).
-			// Déclaré AVANT :hover : à spécificité égale, le hover (plus
-			// bas) doit gagner même sur le bouton actif, sinon on mélange
-			// fond de l'actif + texte du hover (illisible).
+			// Actif : le bouton garde ses couleurs de preview — la coche ✓
+			// dans le libellé marque la sélection (décision Simon,
+			// 2026-07-11). Ce bloc neutralise le .active générique du menu
+			// (fond accent). Déclaré AVANT :hover : à spécificité égale, le
+			// hover (plus bas) doit gagner même sur le bouton actif.
 			&.active {
 				background-color: #000000;
 				color: #ffffff;
-				box-shadow: 0 0 0 0.1875rem var(--near-black); // 3px
 			}
 
 			&:hover,
@@ -558,15 +555,14 @@
 			color: #000000;
 			border: 0.1875rem solid #000000; // 3px
 
-			// Actif : pas d'inversion — le bouton reste sa propre
-			// prévisualisation ; marqueur = anneau (couleur texte du thème).
-			// Déclaré AVANT :hover : à spécificité égale, le hover (plus
-			// bas) doit gagner même sur le bouton actif, sinon on mélange
-			// fond de l'actif + texte du hover (illisible).
+			// Actif : le bouton garde ses couleurs de preview — la coche ✓
+			// dans le libellé marque la sélection (décision Simon,
+			// 2026-07-11). Ce bloc neutralise le .active générique du menu
+			// (fond accent). Déclaré AVANT :hover : à spécificité égale, le
+			// hover (plus bas) doit gagner même sur le bouton actif.
 			&.active {
 				background-color: #ffffff;
 				color: #000000;
-				box-shadow: 0 0 0 0.1875rem var(--near-black); // 3px
 			}
 
 			&:hover,
