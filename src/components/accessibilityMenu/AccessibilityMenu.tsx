@@ -29,6 +29,16 @@ type HcVariant =
 	| "high-contrast-white"
 	| "high-contrast-paper";
 
+// Couleurs réelles texte/fond de chaque variante — affichées dans le
+// sélecteur (pastille « Aa ») pour que l'utilisateur constate le rendu
+// avant de choisir. Constantes des thèmes, pas des variables.
+const HC_VARIANT_COLORS: Record<HcVariant, { fg: string; bg: string }> = {
+	"high-contrast": { fg: "#ffff00", bg: "#000000" },
+	"high-contrast-green": { fg: "#00ff00", bg: "#000000" },
+	"high-contrast-white": { fg: "#ffffff", bg: "#000000" },
+	"high-contrast-paper": { fg: "#000000", bg: "#ffffff" },
+};
+
 type OptionType = {
 	value: string;
 	label: string;
@@ -482,9 +492,11 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 						</button>
 					</div>
 
-					{/* Sélecteur de variante — visible quand le fort contraste est actif */}
+					{/* Sélecteur de variante — visible quand le fort contraste est
+					    actif. Structure identique au sélecteur daltonisme (label +
+					    Select directs, mêmes classes). */}
 					{theme.startsWith("high-contrast") && (
-						<div className="accessibility-menu__select-control">
+						<>
 							<label
 								htmlFor="hc-variant-select"
 								className="accessibility-menu__group-label">
@@ -516,6 +528,25 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 									value: variant,
 									label: labels.visualHelps.highContrast.variants[variant],
 								}))}
+								formatOptionLabel={(option) => {
+									const colors =
+										HC_VARIANT_COLORS[(option as OptionType).value as HcVariant];
+									return (
+										<span className="hc-variant-option">
+											<span
+												className="hc-variant-option__swatch"
+												style={{
+													backgroundColor: colors.bg,
+													color: colors.fg,
+													borderColor: colors.fg,
+												}}
+												aria-hidden="true">
+												Aa
+											</span>
+											{(option as OptionType).label}
+										</span>
+									);
+								}}
 								aria-label={labels.visualHelps.highContrast.variantLabel}
 								styles={getSelectStyles()}
 								isSearchable={false}
@@ -557,7 +588,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 									}
 								}}
 							/>
-						</div>
+						</>
 					)}
 				</div>
 

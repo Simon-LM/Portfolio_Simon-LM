@@ -842,23 +842,46 @@ select.accessibility-menu__select:not(.react-select__control) {
 	}
 }
 
+// Aperçu des couleurs réelles des variantes de fort contraste dans le
+// sélecteur (chantier HC) : pastille « Aa » aux couleurs texte/fond de la
+// variante (inline, constantes du thème). Unités em : suit les zooms
+// navigateur et police, comme le reste du menu.
+.hc-variant-option {
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+
+	&__swatch {
+		display: inline-block;
+		padding: 0.05em 0.35em;
+		border: 0.0625em solid; // couleur posée inline (= texte de la variante)
+		border-radius: 0.25em;
+		font-weight: 700;
+		line-height: 1.4;
+	}
+}
+
 // ===================== HIGH CONTRAST MODE =====================
 
-// Styles pour les selects en high contrast
-[data-theme="high-contrast"] {
+// Styles pour les selects en high contrast — TOUTES les variantes
+// (chantier HC, 2026-07-10) : sélecteur ^= et couleurs du thème à la place
+// du jaune codé en dur. Équivalence vérifiée en jaune : --near-black =
+// #ffff00 (texte), --off-white = #000000 (fond), --link-hover = #ffffff
+// (action) → rendu jaune strictement identique, variantes correctes.
+[data-theme^="high-contrast"] {
 	// Styles généraux pour le menu d'accessibilité
 	.accessibility-menu {
 		&__slider {
-			background: #ffff00;
+			background: var(--near-black);
 
 			&::-webkit-slider-thumb {
-				background: #ffff00;
-				border: 2px solid #000000;
+				background: var(--near-black);
+				border: 2px solid var(--off-white);
 			}
 
 			&::-moz-range-thumb {
-				background: #ffff00;
-				border: 2px solid #000000;
+				background: var(--near-black);
+				border: 2px solid var(--off-white);
 			}
 		}
 	}
@@ -866,8 +889,8 @@ select.accessibility-menu__select:not(.react-select__control) {
 	// Styles spécifiques pour React-Select
 	.react-select-container {
 		.react-select__control {
-			background-color: #000000 !important;
-			border-color: #ffff00 !important;
+			background-color: var(--off-white) !important;
+			border-color: var(--near-black) !important;
 			border-width: 2px !important;
 
 			&:hover {
@@ -875,10 +898,10 @@ select.accessibility-menu__select:not(.react-select__control) {
 			}
 
 			&--is-focused {
-				border-color: #ffffff !important;
-				box-shadow: 0 0 0 1px #ffff00 !important;
-				background: white !important;
-				outline: 0.125rem solid #ffffff !important;
+				border-color: var(--link-hover) !important;
+				box-shadow: 0 0 0 1px var(--near-black) !important;
+				background: var(--link-hover) !important;
+				outline: 0.125rem solid var(--link-hover) !important;
 				outline-offset: 0.25rem !important;
 			}
 		}
@@ -889,8 +912,8 @@ select.accessibility-menu__select:not(.react-select__control) {
 			&:hover {
 				.react-select__single-value,
 				.react-select__dropdown-indicator svg {
-					color: black !important;
-					fill: black !important;
+					color: var(--off-white) !important;
+					fill: var(--off-white) !important;
 				}
 			}
 
@@ -898,52 +921,53 @@ select.accessibility-menu__select:not(.react-select__control) {
 			&--is-focused {
 				.react-select__single-value,
 				.react-select__dropdown-indicator svg {
-					color: black !important;
-					fill: black !important;
+					color: var(--off-white) !important;
+					fill: var(--off-white) !important;
 				}
 			}
 		}
 
 		// Indicateur de dropdown
 		.react-select__dropdown-indicator {
-			color: #ffff00 !important;
+			color: var(--near-black) !important;
 
 			svg {
-				fill: #ffff00 !important;
+				fill: var(--near-black) !important;
 			}
 		}
 
 		// Options
 		.react-select__option {
 			// États normaux
-			color: #ffff00 !important;
+			color: var(--near-black) !important;
 
 			// Option sélectionnée
 			&--is-selected {
-				background-color: #ffff00 !important;
-				color: #000000 !important;
+				background-color: var(--near-black) !important;
+				color: var(--off-white) !important;
 				font-weight: bold;
 
 				// État hover sur option sélectionnée
 				&:hover,
 				&:focus,
 				&--is-focused {
-					background-color: white !important;
-					color: black !important;
+					background-color: var(--link-hover) !important;
+					color: var(--off-white) !important;
 				}
 			}
 
 			// États hover et focus
 			&:hover,
 			&--is-focused {
-				background-color: white !important;
-				color: #000000 !important;
-				outline: 0.125rem solid #000000 !important;
+				background-color: var(--link-hover) !important;
+				color: var(--off-white) !important;
+				outline: 0.125rem solid var(--off-white) !important;
 				outline-offset: -0.25rem !important;
 			}
 		}
 
-		// Titres de groupes
+		// Titres de groupes (blanc sur gris sombre : lisible quelle que soit
+		// la variante — volontairement non thémé)
 		.react-select__group-heading {
 			color: white !important;
 			background-color: #222222 !important;
@@ -1030,16 +1054,16 @@ html body .react-select__option--is-focused {
 
 /* Sélecteur ultra-spécifique pour les options sélectionnées en high-contrast */
 // [data-theme="high-contrast"] div[class*="react-select__menu-portal"],
-[data-theme="high-contrast"] div[class*="react-select__menu"] {
+[data-theme^="high-contrast"] div[class*="react-select__menu"] {
 	.react-select__option--is-selected {
-		background-color: #ffff00 !important;
-		color: #000000 !important;
+		background-color: var(--near-black) !important;
+		color: var(--off-white) !important;
 		// font-weight: 600 !important;
 	}
 
 	.react-select__option--is-selected:hover,
 	.react-select__option--is-selected.react-select__option--is-focused {
-		background-color: white !important;
-		color: black !important;
+		background-color: var(--link-hover) !important;
+		color: var(--off-white) !important;
 	}
 }

@@ -43,6 +43,24 @@ technologique = second temps).
   `html.high-contrast` et `getColorVisionMode` couvrent les 4 variantes
   (`startsWith`).
 
+### Fixed (retour de smoke Simon — habillage des variantes + aperçu couleurs)
+
+- **L'habillage HC du menu ne s'appliquait qu'au jaune** : les blocs
+  `[data-theme="high-contrast"]` (selects du menu, tooltips, bouton
+  flottant, options du portail) passent en `[data-theme^="high-contrast"]`
+  et leurs couleurs codées en dur (#ffff00/#000000/blanc) deviennent les
+  variables du thème (`--near-black`/`--off-white`/`--link-hover`) —
+  équivalence vérifiée en jaune (rendu identique), chaque variante
+  récupère ses couleurs. Icône du bouton flottant (filter, non
+  thémable par variable) : blanche par défaut, jaune historique en
+  variante jaune, sombre en papier.
+- **Sélecteur de variante réaligné sur l'architecture des autres selects**
+  (structure du sélecteur daltonisme : label + Select directs, sans
+  wrapper divergent — le SCSS du menu est conçu pour les gros zooms).
+- **Aperçu des vraies couleurs** : chaque option affiche une pastille
+  « Aa » aux couleurs texte/fond réelles de la variante (unités em,
+  zoom-friendly).
+
 ### Changed (typographie HC — phase 1 du chantier)
 
 Bloc typo `html.high-contrast` remplacé par
