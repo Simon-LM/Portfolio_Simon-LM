@@ -2,6 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { applyFontSizeFactor } from "a11y-prefs/react/appliers";
 
 interface FontSizeState {
 	fontSize: number; // en pourcentage (100% = taille normale)
@@ -10,14 +11,9 @@ interface FontSizeState {
 	setFontSize: (size: number) => void;
 }
 
-const updateDocumentFontSize = (size: number) => {
-	if (typeof document !== "undefined") {
-		document.documentElement.style.setProperty(
-			"--font-size-factor",
-			`${size / 100}`
-		);
-	}
-};
+// Délègue l'application DOM à l'applier du paquet (E5) — comportement
+// identique (pose --font-size-factor = size/100, SSR-safe).
+const updateDocumentFontSize = applyFontSizeFactor;
 
 export const useFontSizeStore = create<FontSizeState>()(
 	persist(

@@ -54,16 +54,15 @@ rien oublier. Mettre à jour au fil de l'eau (cocher / retirer une fois fait).
 
 ## À optimiser plus tard (noté, pas urgent)
 
-- [ ] **Typographie du high-contrast** (2026-07-08) : aujourd'hui le
-      high-contrast change la police (**Atkinson Hyperlegible**) + ajoute
-      `letter-spacing: 0.02em`, mais **n'augmente PAS la taille** et met
-      `line-height: 1.5` (< base 1.6). Vérifié : ce bloc est
-      **byte-identique à la référence `918526f`** — les chantiers ne l'ont
-      pas cassé, la hausse de taille n'a simplement jamais été implémentée
-      (l'impression de « plus grand » vient de la grande hauteur d'x
-      d'Atkinson). À optimiser avec le même outil que la dyslexie :
-      **`font-size-adjust`** (normalisation de la hauteur d'x) + hausse de
-      taille + interligne renforcé. À faire après E5, validation visuelle.
+- [ ] **Typographie du high-contrast** (2026-07-08, partiellement traité en
+      E5 phase 4 le 2026-07-09) : le high-contrast change la police
+      (**Atkinson Hyperlegible**) + `letter-spacing: 0.02em`. **Fait en E5** :
+      interligne du corps porté à `1.75` + `word-spacing: 0.064em` (ratio
+      ×3.2 BDA/WCAG, aligné sur le mode dyslexie ; décision Simon). **Reste
+      à faire** : `font-size-adjust` (normalisation de la hauteur d'x) +
+      éventuelle hausse de taille, et arbitrer l'interligne des titres
+      (restés à 1.5). Validation visuelle requise — la preview
+      `docs/theme-system/previews/` peut être étendue au HC.
 
 ## Reporté explicitement (ne pas toucher sans décision)
 

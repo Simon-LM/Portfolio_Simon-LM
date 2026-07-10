@@ -1,0 +1,12 @@
+OpenDyslexic — SIL Open Font License 1.1
+
+Copyright: Abelardo Gonzalez
+Reserved Font Name(s): OpenDyslexic
+Source: https://opendyslexic.org
+
+Cette police est distribuée sous la SIL Open Font License, Version 1.1.
+Le texte canonique de la licence est disponible sur
+https://openfontlicense.org et dans le dépôt source ci-dessus.
+
+⚠️ À FIGER AVANT PUBLICATION (E7) : remplacer ce fichier par l'OFL.txt
+canonique fourni par la source officielle de la police.

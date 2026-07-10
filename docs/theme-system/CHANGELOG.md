@@ -13,6 +13,69 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-10
+
+### Changed (sélecteur de police — même police partout + compensation)
+
+Design acté avec Simon : le sélecteur force **une police partout** (titres
+compris — c'est ce que demande l'utilisateur qui la choisit) ; la hiérarchie
+fine reste l'affaire du mode dyslexie. Smoke Simon : le rétrécissement
+d'Atkinson/Sylexiad au sélecteur est corrigé.
+
+- **Mixin `a11y-font-class`** (module `a11y-fonts` du paquet) : émet une
+  classe complète — police partout + `font-size-adjust` (défaut **0.56**,
+  passer `null` pour une police naturellement grande) + espacements du
+  corps alignés sur le mode dyslexie (ls 0.04em, ws 0.128em, lh 1.75) ;
+  titres inchangés (ls 0.02em, lh 1.5, paramétrables). Une ligne par
+  police pour le consommateur.
+- Les 5 classes régénérées par le mixin : Atkinson/Andika (paquet),
+  Sylexiad ×2 (portfolio, adjust 0.56), **OpenDyslexic sans adjust**
+  (naturellement grande, décision Simon ; titres ls 0.01em historique).
+  Surcharges site OpenDyslexic (header, nav) conservées à part.
+- Diff CSS confiné aux 5 classes `html.*-font`.
+
+## 2026-07-09
+
+### Changed (E5 phase 4 — correction volontaire du rendu, validée par Simon)
+
+Seule phase d'E5 **hors oracle byte-identique** : le rendu change, calibré
+via une preview interactive à curseurs (témoin Inter / corps Sylexiad /
+corps Andika) — valeurs choisies à l'œil par Simon le 2026-07-09.
+
+- **Module `dyslexia` du paquet** (`scss/modules/_dyslexia.scss`) : mixin
+  `dyslexia-typography` configurable à 3 niveaux — titre (Lexend Giga),
+  sous-titres (Lexend Deca), corps (**Andika** par défaut ; le portfolio
+  surcharge avec `$body-font: "SylexiadSans"`). Corps : **`font-size-adjust:
+  0.56`** (normalise la hauteur d'x → fin du rétrécissement des paragraphes,
+  et cible légèrement au-dessus d'Inter ≈ 0.545 donc jamais plus petit que
+  le site hôte), `line-height: 1.75`, `letter-spacing: 0.04em`,
+  `word-spacing: 0.128em` (×3.2, ratio BDA/WCAG 1.4.12).
+  L'agrandissement optionnel `$body-size-scale` existe mais vaut **1**
+  (désactivé) : la normalisation suffit, décision Simon. Les surcharges
+  site-spécifiques (header, navigation) restent côté portfolio.
+- **Site en mode normal** : `p { line-height }` 1.6 → **1.5** (décision
+  Simon — les 1.5 des classes de police et le 1.3 des titres inchangés).
+- **High-contrast (corps)** : `line-height` 1.5 → **1.75** et ajout de
+  `word-spacing: 0.064em` (mêmes ratios que le mode dyslexie). Titres
+  inchangés (1.5) ; le reste de l'optimisation HC reste au TODO.
+
+Avant/après du corps du mode dyslexie :
+
+| Propriété (corps)  | Avant  | Après       |
+| ------------------ | ------ | ----------- |
+| `font-size-adjust` | —      | **0.56**    |
+| `line-height`      | 1.6    | **1.75**    |
+| `letter-spacing`   | 0.02em | **0.04em**  |
+| `word-spacing`     | —      | **0.128em** |
+| agrandissement     | —      | 1 (off)     |
+
+### Added (preview visuelle versionnée)
+
+- `docs/theme-system/previews/` : comparateur interactif
+  `preview-dyslexie.html` (polices embarquées en data-URI, s'ouvre en
+  `file://`) + générateur `generate-preview-dyslexie.py` + README. Hors
+  `public/` → jamais servi en production (Sylexiad, EULA propriétaire).
+
 ## 2026-07-08
 
 ### Docs (plan E5 révisé — décisions polices + mode dyslexie configurable)

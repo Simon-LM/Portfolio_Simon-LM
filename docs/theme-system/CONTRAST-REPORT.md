@@ -2,7 +2,7 @@
 
 # Contrast report — WCAG 2.2 matrix
 
-Generated on: 2026-07-07 — regenerate with `pnpm contrast:report`.
+Generated on: 2026-07-10 — regenerate with `pnpm contrast:report`.
 This file is a generated artifact (chantier E1,
 [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md)); do not edit by hand.
 

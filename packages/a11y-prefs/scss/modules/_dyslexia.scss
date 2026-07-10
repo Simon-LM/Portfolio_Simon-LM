@@ -1,0 +1,89 @@
+/** @format */
+
+// Module opt-in — mode dyslexie « optimisé » (chantier E5).
+//
+// Contrairement aux menus qui posent la MÊME police dyslexique partout, ce
+// module hiérarchise : une police par rôle (titre / sous-titre / corps). Ça
+// garde une hiérarchie lisible et n'alourdit pas la page.
+//
+// Le vrai correctif du corps est `font-size-adjust` : il normalise la
+// hauteur d'x, donc une police au petit œil (Sylexiad…) cesse de « rétrécir »
+// les paragraphes. La cible 0.56 dépasse légèrement les grandes polices de
+// corps (Inter ≈ 0.545) : le mode ne paraît jamais plus petit que le site
+// hôte, quel qu'il soit. Espacements inspirés de la British Dyslexia
+// Association / WCAG 1.4.12, calibrés visuellement (validation Simon,
+// 2026-07-09) : inter-lettres 0.04em, inter-mots ×3.2, interligne 1.75
+// (la fourchette recommandée va de 1.5 à 2.0).
+//
+// Tout est configurable. Défauts = polices OFL embarquées (corps = Andika).
+// Le consommateur surcharge ce qu'il veut, p.ex. corps = Sylexiad sur son
+// site. Les surcharges site-spécifiques (header, navigation) restent chez lui.
+//
+// Usage :
+//   html.dyslexia-optimized {
+//     @include dyslexia-typography($body-font: "SylexiadSans");
+//     // … surcharges maison (.header, .navigation-sticky) …
+//   }
+
+@mixin dyslexia-typography(
+	$title-font: "Lexend Giga",
+	$subtitle-font: "Lexend Deca",
+	$body-font: "Andika",
+	$body-font-size-adjust: 0.56,
+	$body-size-scale: 1,
+	$body-line-height: 1.75,
+	$body-letter-spacing: 0.04em,
+	$body-word-spacing: 0.128em
+) {
+	// Niveau 1 — titre
+	h1 {
+		font-family: $title-font, sans-serif !important;
+		font-weight: 600;
+		line-height: 1.3;
+		letter-spacing: -0.025em;
+	}
+
+	// Niveau 2 — sous-titres
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-family: $subtitle-font, sans-serif !important;
+		font-weight: 600;
+		letter-spacing: -0.02em;
+	}
+
+	// Niveau 3 — corps. font-size-adjust normalise la hauteur d'x (correctif
+	// du rétrécissement), puis espacements BDA. Hérité par les enfants inline,
+	// donc pas de compounding.
+	p,
+	div,
+	span,
+	nav,
+	li,
+	a,
+	input,
+	textarea,
+	button,
+	label,
+	select {
+		font-family: $body-font, sans-serif !important;
+		font-weight: 400;
+		font-size-adjust: $body-font-size-adjust;
+		line-height: $body-line-height;
+		letter-spacing: $body-letter-spacing;
+		word-spacing: $body-word-spacing;
+	}
+
+	// Agrandissement optionnel, désactivé par défaut ($body-size-scale: 1) :
+	// font-size-adjust suffit à restaurer la taille perçue. Si activé, il ne
+	// touche que les porteurs de bloc (p, li) pour éviter le compounding
+	// qu'entraînerait un facteur em sur div/span imbriqués.
+	@if $body-size-scale != 1 {
+		p,
+		li {
+			font-size: calc(1em * #{$body-size-scale});
+		}
+	}
+}

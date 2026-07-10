@@ -103,6 +103,10 @@ définitif en E7) et le portfolio la consomme via
 | `packages/a11y-prefs/scss/_theme-utils.scss` **(paquet)**                                     | Le cœur (~1500 lignes) : `get-dark-color`, `analyze-tailwind-color`, moteurs `transform-light-to-*`, remap CVD, ancres statut, math WCAG, gamut-mapping                            |
 | `packages/a11y-prefs/scss/_anti-glare-functions.scss` **(paquet)**                            | Transformation anti-éblouissement perceptuelle (OKLCH)                                                                                                                             |
 | `packages/a11y-prefs/scss/_index.scss` **(paquet)**                                           | Point d'entrée public (`@forward` des quatre modules)                                                                                                                              |
+| `packages/a11y-prefs/scss/modules/_a11y-fonts.scss` **(paquet, E5)**                          | Module opt-in polices d'accessibilité : `a11y-font-faces($path)` (@font-face OpenDyslexic/Andika/Atkinson) + `a11y-font-classes` ; chemin configurable `$a11y-fonts-path`          |
+| `packages/a11y-prefs/scss/modules/_motion.scss` **(paquet, E5)**                              | Module opt-in réduction d'animations : `reduce-motion-class` (classe `html.reduce-motion`) + `motion-safe` (contrat hôte `prefers-reduced-motion`)                                 |
+| `packages/a11y-prefs/scss/modules/_dyslexia.scss` **(paquet, E5)**                            | Module opt-in mode dyslexie : mixin `dyslexia-typography` 3 niveaux configurable (titre/sous-titre/corps), `font-size-adjust`, espacements BDA — calibré visuellement (2026-07-09) |
+| `packages/a11y-prefs/fonts/` **(paquet, E5)**                                                 | Polices OFL embarquées (22 fichiers, 5 familles) + `LICENSES/` (audit, textes à figer en E7)                                                                                       |
 | `src/styles/themes/_theme-variables.scss`                                                     | **Couche 3 du portfolio** : ~70 tokens de composants + `apply-theme-variables()` (dérivés des rôles du paquet)                                                                     |
 | `src/styles/themes/_light.scss`, `_dark.scss`, `_high-contrast.scss`, `_deuteranopia.scss`, … | Un fichier par thème (= **config du projet**) : reset light → transformation du paquet → `apply-theme-variables` → surcharges manuelles                                            |
 | `src/styles/abstracts/_theme-system.scss`                                                     | Point d'assemblage : `generate-theme-css-vars()` (snapshot des globales Sass → custom properties) + les 12 blocs `[data-theme]`, `:root` et `@media (prefers-color-scheme: dark)`  |
@@ -122,6 +126,8 @@ sont des **shims de ré-export** (les imports `@/config/themes`,
 | `packages/a11y-prefs/react/useTheme.ts` **(paquet)** | État React du thème (`"use client"`) : init paresseuse localStorage/matchMedia, `setTheme()`, `MutationObserver` ; paramètre `themes` optionnel (défaut : les 12) |
 | `packages/a11y-prefs/react/usePrefersDarkMode.ts` **(paquet)** | Abonnement à `prefers-color-scheme` via `useSyncExternalStore` |
 | `packages/a11y-prefs/react/themeInitScript.ts` **(paquet)** | Génère la chaîne du script anti-FOUC (byte-identique au littéral historique) |
+| `packages/a11y-prefs/react/appliers.ts` **(paquet, E5)** | Appliers DOM SSR-safe : `applyFontSizeFactor`, `applyAccessibilityFont(font, classMap)`, `applyReduceMotion` — les stores du portfolio leur délèguent |
+| `packages/a11y-prefs/react/usePreference.ts` **(paquet, E5)** | Hook générique `usePreference<T>(key, {defaultValue, serialize?, deserialize?, apply})` : localStorage + application DOM (patron § 6.5) — pas encore consommé par le portfolio |
 | `src/config/themes.ts`, `src/hooks/useTheme.ts`, `src/hooks/usePrefersDarkMode.ts` | Shims de ré-export du paquet (compatibilité des chemins d'import) |
 | `src/app/[lang]/layout.tsx` | Injecte `themeInitScript(THEMES)` en `beforeInteractive` : pose `data-theme` avant le premier paint |
 | `src/components/accessibilityMenu/AccessibilityMenu.tsx` | UI de sélection : 3 axes (Mode, Confort, Vision), mémorisation du dernier thème de base (`lastBaseTheme`), reset global — scaffoldée en E6, reste projet |
@@ -670,10 +676,10 @@ Modules (chacun **opt-in** — un projet peut ne prendre que les thèmes) :
 | Module | Mécanisme DOM | Difficulté | Point d'attention |
 | --- | --- | --- | --- |
 | Thèmes de couleurs | `data-theme` | fait (fondations 2026-07-03) | — |
-| Taille de texte (zoom) | `--font-size-factor` | facile | **contrat hôte** : tailles en `rem`/`em` sensibles au facteur |
-| Réduction des animations | classe `reduce-motion` | facile | **contrat hôte** : les animations doivent s'y soumettre (mixin fourni) |
-| Polices d'accessibilité | classes de police | moyen | polices **embarquées dans le paquet** (décision Simon 2026-07-03) ; **vérifier les licences avant publication** : OpenDyslexic, Andika, Raleway Dots = OFL (ok) ; Sylexiad, Tiresias, Atkinson Hyperlegible = à vérifier. N'affecte pas les polices de base du site hôte |
-| Mode dyslexie optimisé | classe `dyslexia-optimized` | moyen | dépend du module polices |
+| Taille de texte (zoom) | `--font-size-factor` | **fait (E5, 2026-07-09)** — applier `applyFontSizeFactor` | **contrat hôte** : tailles en `rem`/`em` sensibles au facteur |
+| Réduction des animations | classe `reduce-motion` | **fait (E5)** — module `motion` (mixins `reduce-motion-class`, `motion-safe`) + applier | **contrat hôte** : les animations doivent s'y soumettre (mixin fourni) |
+| Polices d'accessibilité | classes de police | **fait (E5)** — module `a11y-fonts` (@font-face + classes) + applier `applyAccessibilityFont` | licences auditées (2026-07-08) : **embarquées** = OpenDyslexic, Andika, Atkinson Next, Lexend Giga/Deca (OFL) ; **exclues** = Sylexiad (EULA propriétaire — recommandée aux consommateurs via sylexiad.com), Tiresias (GPLv3, non utilisée), Raleway Dots (non utilisée). N'affecte pas les polices de base du site hôte |
+| Mode dyslexie optimisé | classe `dyslexia-optimized` | **fait (E5 phase 4)** — mixin `dyslexia-typography` 3 niveaux (titre/sous-titre/corps), `font-size-adjust: 0.56`, espacements BDA ; corps défaut = Andika, portfolio = Sylexiad | valeurs calibrées visuellement par Simon (2026-07-09, preview versionnée dans `docs/theme-system/previews/`) |
 | UI (déclencheur + carte) | — | moyen | scaffoldée, pas dans npm (§ 6.3) |
 
 Conséquence sur le nom et le concept : « système de thèmes » devient un

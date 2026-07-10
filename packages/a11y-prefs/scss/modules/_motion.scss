@@ -1,0 +1,30 @@
+/** @format */
+
+// Module opt-in — réduction des animations (chantier E5).
+// Le consommateur @use ce module et @include les mixins.
+
+// Classe opt-in `html.reduce-motion` : neutralise animations et transitions
+// sur tout l'arbre. Posée par l'UI (toggle) ou l'applier runtime.
+@mixin reduce-motion-class {
+	html.reduce-motion {
+		*,
+		*::before,
+		*::after {
+			animation-duration: 0.001s !important;
+			animation-delay: 0s !important;
+			animation-iteration-count: 1 !important;
+			transition-duration: 0.001s !important;
+			transition-delay: 0s !important;
+			scroll-behavior: auto !important;
+		}
+	}
+}
+
+// Contrat hôte : à envelopper autour des animations « décoratives » pour
+// qu'elles se soumettent à la préférence système prefers-reduced-motion.
+//   .card { @include motion-safe { transition: transform 0.2s; } }
+@mixin motion-safe {
+	@media (prefers-reduced-motion: no-preference) {
+		@content;
+	}
+}

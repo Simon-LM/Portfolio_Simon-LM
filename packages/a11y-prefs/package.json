@@ -11,7 +11,8 @@
 	},
 	"files": [
 		"scss",
-		"react"
+		"react",
+		"fonts"
 	],
 	"peerDependencies": {
 		"react": ">=18"
