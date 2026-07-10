@@ -497,7 +497,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 					    réelles de sa variante. */}
 					{theme.startsWith("high-contrast") && (
 						<div
-							className="accessibility-menu__buttons-row"
+							className="accessibility-menu__buttons-row accessibility-menu__buttons-row--hc-variants"
 							role="group"
 							aria-label={labels.visualHelps.highContrast.variantLabel}>
 							{(

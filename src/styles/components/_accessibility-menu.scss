@@ -107,6 +107,16 @@
 		gap: 0.5rem;
 	}
 
+	// Rangée des boutons de variantes du fort contraste : espacement propre
+	// à cette rangée, SANS toucher au gap générique ci-dessus. Les boutons
+	// étant en flex-basis 100%, le gap est vertical. Valeurs = le rendu
+	// réglé par Simon (ex-margin-top 1rem des boutons + gap 0.5rem),
+	// consolidé ici — un seul endroit à ajuster.
+	&__buttons-row--hc-variants {
+		gap: 1.5rem; // entre les boutons de variantes
+		margin-top: 1rem; // sous le bouton « Contraste élevé »
+	}
+
 	// Boutons standards
 	&__button {
 		padding: 0.5rem 0.75rem;
@@ -438,7 +448,7 @@
 	&__high-contrast-button {
 		background-color: #000000;
 		color: #ffff00;
-		border: 0.125rem solid #ffff00;
+		border: 0.1875rem solid #ffff00;
 		font-family: "Atkinson Hyperlegible", sans-serif;
 		font-size: 1.1rem;
 		font-weight: 500;
@@ -470,7 +480,6 @@
 	// que __high-contrast-button : hover/focus = inversion de SA paire.
 	&__hc-variant-button {
 		flex-basis: 100%;
-		margin-top: 0.25rem; // avec le gap de la rangée : sépare du bouton principal
 		font-family: "Atkinson Hyperlegible", sans-serif;
 		font-size: 1.1rem;
 		font-weight: 500;
