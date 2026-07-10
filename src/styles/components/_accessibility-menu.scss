@@ -438,7 +438,7 @@
 	&__high-contrast-button {
 		background-color: #000000;
 		color: #ffff00;
-		border: 3px solid #ffff00;
+		border: 0.125rem solid #ffff00;
 		font-family: "Atkinson Hyperlegible", sans-serif;
 		font-size: 1.1rem;
 		font-weight: 500;
@@ -453,7 +453,7 @@
 		&.active {
 			background-color: #ffff00;
 			color: #000000;
-			box-shadow: 0 0 0 2px #000000;
+			box-shadow: 0 0 0 0.125rem #000000;
 		}
 	}
 
@@ -463,6 +463,11 @@
 	// libellé complet dans les couleurs réelles de sa variante. Même patron
 	// que __high-contrast-button : hover/focus = inversion de SA paire,
 	// actif = inversion + anneau.
+	// Boutons de variantes du fort contraste (chantier HC, décision Simon
+	// 2026-07-10) : 4 gros boutons directs — pas de sélecteur, plus robuste
+	// pour NVDA et les gros zooms. Chaque bouton = mini-prévisualisation :
+	// libellé complet dans les couleurs réelles de sa variante. Même patron
+	// que __high-contrast-button : hover/focus = inversion de SA paire.
 	&__hc-variant-button {
 		flex-basis: 100%;
 		margin-top: 0.25rem; // avec le gap de la rangée : sépare du bouton principal
@@ -475,26 +480,39 @@
 			color: #ffff00;
 			border: 0.1875rem solid #ffff00; // 3px
 
+			// Actif : pas d'inversion — le bouton reste sa propre
+			// prévisualisation ; marqueur = anneau (couleur texte du thème).
+			// Déclaré AVANT :hover : à spécificité égale, le hover (plus
+			// bas) doit gagner même sur le bouton actif, sinon on mélange
+			// fond de l'actif + texte du hover (illisible).
+			&.active {
+				background-color: #000000;
+				color: #ffff00;
+				box-shadow: 0 0 0 0.1875rem var(--near-black); // 3px
+			}
+
 			&:hover,
 			&:focus-visible {
 				background-color: #ffff00;
 				color: #000000 !important;
 				border-color: #000000;
 			}
-
-			// Actif : pas d'inversion — le bouton reste sa propre
-			// prévisualisation ; marqueur = anneau (couleur texte du thème)
-			&.active {
-				background-color: #000000;
-				color: #ffff00;
-				box-shadow: 0 0 0 0.1875rem var(--near-black);
-			}
 		}
-
 		&--green {
 			background-color: #000000;
 			color: #00ff00;
 			border: 0.1875rem solid #00ff00; // 3px
+
+			// Actif : pas d'inversion — le bouton reste sa propre
+			// prévisualisation ; marqueur = anneau (couleur texte du thème).
+			// Déclaré AVANT :hover : à spécificité égale, le hover (plus
+			// bas) doit gagner même sur le bouton actif, sinon on mélange
+			// fond de l'actif + texte du hover (illisible).
+			&.active {
+				background-color: #000000;
+				color: #00ff00;
+				box-shadow: 0 0 0 0.1875rem var(--near-black); // 3px
+			}
 
 			&:hover,
 			&:focus-visible {
@@ -502,20 +520,22 @@
 				color: #000000 !important;
 				border-color: #000000;
 			}
-
-			// Actif : pas d'inversion — le bouton reste sa propre
-			// prévisualisation ; marqueur = anneau (couleur texte du thème)
-			&.active {
-				background-color: #000000;
-				color: #00ff00;
-				box-shadow: 0 0 0 0.1875rem var(--near-black);
-			}
 		}
-
 		&--white {
 			background-color: #000000;
 			color: #ffffff;
 			border: 0.1875rem solid #ffffff; // 3px
+
+			// Actif : pas d'inversion — le bouton reste sa propre
+			// prévisualisation ; marqueur = anneau (couleur texte du thème).
+			// Déclaré AVANT :hover : à spécificité égale, le hover (plus
+			// bas) doit gagner même sur le bouton actif, sinon on mélange
+			// fond de l'actif + texte du hover (illisible).
+			&.active {
+				background-color: #000000;
+				color: #ffffff;
+				box-shadow: 0 0 0 0.1875rem var(--near-black); // 3px
+			}
 
 			&:hover,
 			&:focus-visible {
@@ -523,33 +543,28 @@
 				color: #000000 !important;
 				border-color: #000000;
 			}
-
-			// Actif : pas d'inversion — le bouton reste sa propre
-			// prévisualisation ; marqueur = anneau (couleur texte du thème)
-			&.active {
-				background-color: #000000;
-				color: #ffffff;
-				box-shadow: 0 0 0 0.1875rem var(--near-black);
-			}
 		}
-
 		&--paper {
 			background-color: #ffffff;
 			color: #000000;
 			border: 0.1875rem solid #000000; // 3px
+
+			// Actif : pas d'inversion — le bouton reste sa propre
+			// prévisualisation ; marqueur = anneau (couleur texte du thème).
+			// Déclaré AVANT :hover : à spécificité égale, le hover (plus
+			// bas) doit gagner même sur le bouton actif, sinon on mélange
+			// fond de l'actif + texte du hover (illisible).
+			&.active {
+				background-color: #ffffff;
+				color: #000000;
+				box-shadow: 0 0 0 0.1875rem var(--near-black); // 3px
+			}
 
 			&:hover,
 			&:focus-visible {
 				background-color: #000000;
 				color: #ffffff !important;
 				border-color: #ffffff;
-			}
-
-			// Actif : pas d'inversion (cf. ci-dessus)
-			&.active {
-				background-color: #ffffff;
-				color: #000000;
-				box-shadow: 0 0 0 0.1875rem var(--near-black);
 			}
 		}
 	}
