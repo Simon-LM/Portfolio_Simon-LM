@@ -73,15 +73,43 @@ Diff CSS attendu : confiné au bloc `html.high-contrast` (ls corps
 
 **Commit** : `feat(theme): hc phase 1 — typographie (a11y-font-class, adjust 0.56)`.
 
-### Phase 2 — Les 3 variantes SCSS
+### Phase 2 — Les 3 variantes SCSS (MINIMALE — technologie inchangée)
 
-1. Paramétrer le mixin HC : `high-contrast-theme-variables($colors, $focus…)`
-   (défauts = valeurs actuelles → variante jaune byte-identique).
-2. 3 nouveaux fichiers de thème avec cartes complètes proposées (liens,
-   action, highlight, statut par variante ; vérif rapport de contrastes).
-3. Blocs `[data-theme="…"]` dans `_theme-system.scss` ; THEMES (paquet) +
-   anti-FOUC ; garde anti-gamut et rapport de contrastes étendus aux 15
-   thèmes.
+Cadrage réaffirmé par Simon (2026-07-10) : **la fonctionnalité existe, on
+change les couleurs**. Pas de refonte sémantique ni technologique (les
+deux = « second temps » explicitement reporté). Le mécanisme actuel
+(`transform-light-to-high-contrast` + surcharges) est conservé tel quel ;
+le mixin prend simplement la carte de couleurs en argument (défaut = la
+carte actuelle → **jaune byte-identique**).
+
+Palettes actées (proposées par moi, validées comme point de départ —
+Simon juge chaque variante à l'écran) :
+
+| Rôle | Jaune/noir (actuel) | Vert/noir | Blanc/noir | Noir/blanc |
+| --- | --- | --- | --- | --- |
+| Texte | `#ffff00` | `#00ff00` | `#ffffff` | `#000000` |
+| Liens | `#00ffff` | `#00ffff` | `#00ffff` | `#0000cc` |
+| Header (fond) | `#bfff00` | `#99ff99` | `#e0e0e0` | `#000000` (texte header blanc) |
+| Action | `#ffffff` | `#ffffff` | `#ffff00` | `#000000` |
+| Succès | `#00ff00` | `#00ff00` | `#00ff00` | `#007700` |
+| Erreur | `#ff0000` | `#ff0000` | `#ff0000` | `#cc0000` |
+| Focus | blanc | blanc | blanc | noir (rempli inversé) |
+
+Philosophie : sur fond noir, les rôles « système » (liens/action/statut/
+focus) restent communs ; seuls texte + header changent. Écarts imposés par
+les collisions : action jaune en blanc/noir (sinon interactifs invisibles
+dans la masse blanche) ; noir/blanc = miroir assombri complet (physique du
+contraste : cyan/blanc/verts purs illisibles sur blanc).
+
+1. Mixin paramétré (carte en argument, défauts actuels) + surcharges
+   focus/header paramétrées **uniquement** pour les besoins de la variante
+   papier (polarité inversée).
+2. 3 fichiers de thème (green/white/paper) portant leur carte.
+3. Blocs `[data-theme]` + 3 entrées THEMES/anti-FOUC (le rapport de
+   contrastes et la garde anti-gamut couvrent les nouveaux thèmes
+   automatiquement — rien à étendre). ⚠️ le test « script anti-FOUC
+   byte-identique au littéral historique » (E4) devra être mis à jour :
+   la liste des thèmes change, c'est voulu.
 
 **Oracle** : thème jaune byte-identique ; nouveaux blocs = seuls ajouts.
 **Commit** : `feat(theme): hc phase 2 — variantes green/white/paper`.
