@@ -60,6 +60,17 @@ rien oublier. Mettre à jour au fil de l'eau (cocher / retirer une fois fait).
       micro-arbitrage, non bloquant : l'interligne des TITRES en HC (1.5
       aujourd'hui, cohérent avec les classes de police).
 
+## Écarté (décision fermée — ne pas re-proposer)
+
+- [x] **Préview du site entier au survol des boutons de variantes HC**
+      (écarté le 2026-07-11, décision Simon). Raison principale : la
+      navigation CLAVIER induirait en erreur — le focus déclencherait la
+      préview et l'utilisateur croirait avoir sélectionné. Raisons
+      secondaires : flashs plein écran en rafale (photosensibilité, le
+      public HC est le plus exposé), hover ≠ intention, inexistant au
+      tactile, confusion état réel/préview. Le clic est déjà une préview
+      réversible à coût nul.
+
 ## Reporté explicitement (ne pas toucher sans décision)
 
 - [ ] **Réécriture déclarative du thème high-contrast** — reportée à
