@@ -178,46 +178,12 @@
 // Tiresias + Raleway Dots retirés — code mort, non embarqués.)
 
 // Ajouter la classe pour le mode contraste élevé
-html.high-contrast {
-	p,
-	span,
-	div,
-	li,
-	h1,
-	h2,
-	h3,
-	h4,
-	h5,
-	h6,
-	a,
-	input,
-	textarea,
-	button,
-	label,
-	select {
-		font-family: "Atkinson Hyperlegible", sans-serif !important;
-		letter-spacing: 0.02em;
-		line-height: 1.5;
-	}
-
-	// Interligne et inter-mots du corps alignés sur le mode dyslexie
-	// (décision Simon, 2026-07-09 — fourchette recommandée 1.5-2.0 ;
-	// word-spacing = letter-spacing × 3.2, ratio BDA/WCAG). Les titres
-	// restent à 1.5 ; le reste de l'optimisation high-contrast est au TODO.
-	p,
-	span,
-	div,
-	li,
-	a,
-	input,
-	textarea,
-	button,
-	label,
-	select {
-		line-height: 1.75;
-		word-spacing: 0.064em;
-	}
-}
+// Typographie du fort contraste — même structure que les classes du
+// sélecteur de police, via le mixin du paquet (chantier HC, phase 1) :
+// Atkinson partout (police basse vision, Braille Institute) +
+// font-size-adjust 0.56 + espacements corps validés (2026-07-09), titres
+// inchangés (0.02em / 1.5).
+@include a11y-font-class("high-contrast", "Atkinson Hyperlegible");
 
 // Classe pour la police dyslexique — via le mixin du paquet (E5).
 // Pas de font-size-adjust : OpenDyslexic est naturellement grande (décision

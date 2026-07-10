@@ -1,0 +1,23 @@
+/** @format */
+
+@use "high-contrast" as *;
+
+// Variante « blanc sur noir » (chantier HC, carte actée avec Simon le
+// 2026-07-10) — contraste maximal sans teinte. Texte #ffffff (21:1),
+// header JAUNE VIF #ffff00 (19.6:1 avec le texte noir — bloc de
+// couleur franche, principe de hiérarchisation de Simon) ; l'action
+// passe au jaune (l'accent interactif
+// historique) car le blanc serait indistinguable du texte.
+@mixin high-contrast-white-theme-variables() {
+	@include high-contrast-theme-variables(
+		$colors: (
+			"background": #000000,
+			"text": #ffffff,
+			"link": #00ffff,
+			"highlight": #ffff00,
+			"action": #ffff00,
+			"success": #00ff00,
+			"error": #ff0000,
+		)
+	);
+}

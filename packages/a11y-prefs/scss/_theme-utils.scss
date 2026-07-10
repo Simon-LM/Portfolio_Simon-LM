@@ -579,7 +579,11 @@ $hc-palette: (
 
 	// Fusionner la configuration personnalisée
 	$config: map.merge($default-config, $config);
-	$hc-palette: map.get($config, "colors");
+	// !global obligatoire : get-high-contrast-color() lit la variable de
+	// module — sans lui, la carte passée était silencieusement ignorée
+	// (invisible tant que le seul consommateur passait la carte par défaut ;
+	// corrigé au chantier HC variantes, 2026-07-10).
+	$hc-palette: map.get($config, "colors") !global;
 	$overrides: map.get($config, "overrides");
 
 	//  Couleurs fondamentales (rail endpoints)

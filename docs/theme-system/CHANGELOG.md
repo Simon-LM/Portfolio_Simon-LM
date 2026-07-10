@@ -13,6 +13,69 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-10 (chantier HC — variantes de fort contraste)
+
+### Added (3 variantes + sélecteur, branche `feat/hc-variants`)
+
+Concept inspiré de ZoomText (presets deux-couleurs + toggle mémorisant le
+dernier choix), plan : `PLAN-high-contrast-variants.md`. Cadrage Simon :
+**mécanisme inchangé, seules les couleurs changent** (refonte sémantique/
+technologique = second temps).
+
+- **3 variantes de thème** : `high-contrast-green` (vert sur noir,
+  « phosphore »), `high-contrast-white` (blanc sur noir, action = jaune),
+  `high-contrast-paper` (noir sur blanc, polarité positive — teintes
+  système foncées : lien `#0000cc`, succès `#007700`, erreur `#cc0000` ;
+  focus et header inversés). `high-contrast` = jaune sur noir, valeur
+  historique conservée (localStorage existants valides). 15 thèmes,
+  rapport de contrastes **0 échec**.
+- **Fix moteur** : dans `transform-light-to-high-contrast`, `$hc-palette`
+  était réassignée sans `!global` → la carte passée en config était
+  silencieusement ignorée (invisible tant que le seul consommateur passait
+  la carte par défaut).
+- **Mixin consommateur paramétré** (`_high-contrast.scss`) : carte +
+  focus/header en arguments, défauts = valeurs historiques (jaune
+  **byte-identique**, vérifié).
+- **UI** : le bouton « Contraste élevé » réactive la **dernière variante
+  utilisée** (persistée `hc-variant`) ; sélecteur de variante (react-select,
+  patron du sélecteur de police) visible quand le mode est actif ; i18n
+  FR/EN ; reset global → variante jaune. La classe typo
+  `html.high-contrast` et `getColorVisionMode` couvrent les 4 variantes
+  (`startsWith`).
+
+### Fixed (retour de smoke Simon — habillage des variantes + aperçu couleurs)
+
+- **L'habillage HC du menu ne s'appliquait qu'au jaune** : les blocs
+  `[data-theme="high-contrast"]` (selects du menu, tooltips, bouton
+  flottant, options du portail) passent en `[data-theme^="high-contrast"]`
+  et leurs couleurs codées en dur (#ffff00/#000000/blanc) deviennent les
+  variables du thème (`--near-black`/`--off-white`/`--link-hover`) —
+  équivalence vérifiée en jaune (rendu identique), chaque variante
+  récupère ses couleurs. Icône du bouton flottant (filter, non
+  thémable par variable) : blanche par défaut, jaune historique en
+  variante jaune, sombre en papier.
+- **Le sélecteur de variante est remplacé par 4 boutons directs**
+  (décision Simon après deux itérations — un react-select est le pire
+  widget pour un fort malvoyant sous NVDA, et une pastille « Aa » ne sert
+  à rien) : chaque bouton = **mini-prévisualisation** — le libellé complet
+  (« Vert sur noir »…) écrit dans les couleurs réelles de sa variante,
+  même patron que le bouton « Contraste élevé » historique (hover/focus =
+  inversion de SA paire, actif = inversion + anneau, Atkinson,
+  pleine largeur). Visibles uniquement quand le mode est actif ;
+  `role="group"` + `aria-pressed`. Le bouton « Contraste élevé » reste
+  **toujours jaune/noir** (décision Simon). Piste future notée :
+  prévisualisation du site entier au survol.
+
+### Changed (typographie HC — phase 1 du chantier)
+
+Bloc typo `html.high-contrast` remplacé par
+`@include a11y-font-class("high-contrast", "Atkinson Hyperlegible")` :
+`font-size-adjust: 0.56` (compensation de taille), corps ls 0.02→**0.04em**,
+ws 0.064→**0.128em** (valeurs calibrées du 2026-07-09), titres inchangés.
+Atkinson confirmée adaptée (conçue par le Braille Institute pour la basse
+vision). Hors périmètre acté : mode « teinte unique » façon ZoomText Blue
+Dye (piste anti-éblouissement, pas HC).
+
 ## 2026-07-10
 
 ### Changed (sélecteur de police — même police partout + compensation)

@@ -6,6 +6,9 @@
 @use "../themes/anti-glare-light" as *;
 @use "../themes/anti-glare-dark" as *;
 @use "../themes/high-contrast" as *;
+@use "../themes/high-contrast-green" as *;
+@use "../themes/high-contrast-white" as *;
+@use "../themes/high-contrast-paper" as *;
 @use "../themes/deuteranopia" as *;
 @use "../themes/protanopia" as *;
 @use "../themes/tritanopia" as *;
@@ -186,6 +189,21 @@
 
 [data-theme="high-contrast"] {
 	@include high-contrast-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+[data-theme="high-contrast-green"] {
+	@include high-contrast-green-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+[data-theme="high-contrast-white"] {
+	@include high-contrast-white-theme-variables();
+	@include generate-theme-css-vars();
+}
+
+[data-theme="high-contrast-paper"] {
+	@include high-contrast-paper-theme-variables();
 	@include generate-theme-css-vars();
 }
 

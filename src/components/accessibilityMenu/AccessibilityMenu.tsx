@@ -21,6 +21,23 @@ type Props = {
 	onClose?: () => void;
 };
 
+// Variantes du mode fort contraste (chantier HC) — « high-contrast » =
+// jaune sur noir, valeur historique conservée
+type HcVariant =
+	| "high-contrast"
+	| "high-contrast-green"
+	| "high-contrast-white"
+	| "high-contrast-paper";
+
+// Modificateur SCSS de chaque bouton de variante (les couleurs réelles
+// vivent dans _accessibility-menu.scss, patron __high-contrast-button)
+const HC_VARIANT_MODIFIERS: Record<HcVariant, string> = {
+	"high-contrast": "yellow",
+	"high-contrast-green": "green",
+	"high-contrast-white": "white",
+	"high-contrast-paper": "paper",
+};
+
 type OptionType = {
 	value: string;
 	label: string;
@@ -46,6 +63,17 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 	);
 	const colorVisionSelectRef = useRef<SelectInstance<OptionType> | null>(null);
 	const fontTypeSelectRef = useRef<SelectInstance<OptionType> | null>(null);
+	// Dernière variante de fort contraste utilisée (patron ZoomText : le
+	// toggle réactive le dernier schéma choisi) — init paresseuse localStorage
+	const [hcVariant, setHcVariant] = useState<HcVariant>(() => {
+		if (typeof window === "undefined") return "high-contrast";
+		const saved = localStorage.getItem("hc-variant");
+		return saved === "high-contrast-green" ||
+			saved === "high-contrast-white" ||
+			saved === "high-contrast-paper"
+			? saved
+			: "high-contrast";
+	});
 
 	// Fonction pour basculer le mode dyslexie optimisé
 	const toggleDyslexicMode = () => {
@@ -107,13 +135,23 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 
 	useEffect(() => {
 		if (mounted && typeof document !== "undefined") {
-			if (theme === "high-contrast") {
+			// La classe typo s'applique à TOUTES les variantes de fort contraste
+			if (theme.startsWith("high-contrast")) {
 				document.documentElement.classList.add("high-contrast");
 			} else {
 				document.documentElement.classList.remove("high-contrast");
 			}
 		}
 	}, [mounted, theme]);
+
+	// Mémoriser la dernière variante de fort contraste utilisée (le toggle
+	// la réactivera). Appelée par le sélecteur de variante — pas d'effet,
+	// la règle du projet interdit setState dans un effet.
+	const selectHcVariant = (variant: HcVariant) => {
+		setHcVariant(variant);
+		localStorage.setItem("hc-variant", variant);
+		setTheme(variant);
+	};
 
 	// Fonction pour activer le mode anti-éblouissement
 	const activateAntiGlare = () => {
@@ -127,7 +165,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 		if (
 			currentTheme === "light" ||
 			currentTheme === "dark" ||
-			currentTheme === "high-contrast" ||
+			currentTheme.startsWith("high-contrast") ||
 			currentTheme === "anti-glare-light" ||
 			currentTheme === "anti-glare-dark"
 		) {
@@ -203,6 +241,18 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 					language === "fr"
 						? "Pour les fortes pertes de vision"
 						: "For severe vision loss",
+				variantLabel:
+					language === "fr" ? "Couleurs du contraste" : "Contrast colors",
+				variants: {
+					"high-contrast":
+						language === "fr" ? "Jaune sur noir" : "Yellow on black",
+					"high-contrast-green":
+						language === "fr" ? "Vert sur noir" : "Green on black",
+					"high-contrast-white":
+						language === "fr" ? "Blanc sur noir" : "White on black",
+					"high-contrast-paper":
+						language === "fr" ? "Noir sur blanc" : "Black on white",
+				} as Record<HcVariant, string>,
 			},
 			antiGlare: {
 				name: language === "fr" ? "Anti-éblouissement" : "Anti-glare",
@@ -285,6 +335,10 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 
 		// Réinitialiser le type de police
 		setFontType("none");
+
+		// Réinitialiser la variante de fort contraste mémorisée
+		setHcVariant("high-contrast");
+		localStorage.removeItem("hc-variant");
 
 		// Désactiver le mode dyslexie optimisé
 		if (isDyslexicMode) {
@@ -429,12 +483,46 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 					<div className="accessibility-menu__buttons-row">
 						<button
 							className={`accessibility-menu__button  accessibility-menu__high-contrast-button ${
-								theme === "high-contrast" ? "active" : ""
+								theme.startsWith("high-contrast") ? "active" : ""
 							}`}
-							onClick={() => setTheme("high-contrast")}>
+							onClick={() => setTheme(hcVariant)}>
 							{labels.visualHelps.highContrast.name}
 						</button>
 					</div>
+
+					{/* Variantes du fort contraste — 4 boutons directs, visibles quand
+					    le mode est actif (décision Simon 2026-07-10 : pas de sélecteur,
+					    plus robuste pour NVDA et les gros zooms). Chaque bouton =
+					    mini-prévisualisation : libellé complet dans les couleurs
+					    réelles de sa variante. */}
+					{theme.startsWith("high-contrast") && (
+						<div
+							className="accessibility-menu__buttons-row accessibility-menu__buttons-row--hc-variants"
+							role="group"
+							aria-label={labels.visualHelps.highContrast.variantLabel}>
+							{(
+								[
+									"high-contrast",
+									"high-contrast-green",
+									"high-contrast-white",
+									"high-contrast-paper",
+								] as const
+							).map((variant) => (
+								<button
+									key={variant}
+									className={`accessibility-menu__button accessibility-menu__hc-variant-button accessibility-menu__hc-variant-button--${HC_VARIANT_MODIFIERS[variant]} ${
+										theme === variant ? "active" : ""
+									}`}
+									aria-pressed={theme === variant}
+									onClick={() => selectHcVariant(variant)}>
+									{/* Coche = marqueur visuel de la variante active ; la
+									    sémantique est portée par aria-pressed */}
+									{theme === variant && <span aria-hidden="true">✓ </span>}
+									{labels.visualHelps.highContrast.variants[variant]}
+								</button>
+							))}
+						</div>
+					)}
 				</div>
 
 				{/* Sous-section Anti-éblouissement */}

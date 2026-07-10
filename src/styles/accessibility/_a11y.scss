@@ -122,10 +122,34 @@ textarea,
 	}
 }
 // Styles pour les différents thèmes
+// Bouton flottant — toutes les variantes de fort contraste (chantier HC) :
+// fond = fond du thème, survol = couleur d'action. L'icône ne peut pas
+// suivre une variable CSS (c'est un filter) : blanc par défaut (variantes
+// sombres), jaune historique en variante jaune, sombre en variante papier.
+[data-theme^="high-contrast"] {
+	.accessibility-control__button {
+		background-color: var(--off-white) !important;
+
+		img,
+		svg {
+			filter: invert(100%);
+		}
+
+		&:hover,
+		&:focus-visible {
+			background-color: var(--link-hover) !important;
+
+			img,
+			svg {
+				filter: none !important;
+			}
+		}
+	}
+}
+
+// Variante jaune : icône jaune historique (rendu inchangé)
 [data-theme="high-contrast"] {
 	.accessibility-control__button {
-		background-color: #000000 !important;
-
 		img,
 		svg {
 			filter: #{"invert(80%) sepia(72%) saturate(528%) hue-rotate(359deg) brightness(101%) contrast(106%)"};
@@ -133,11 +157,47 @@ textarea,
 
 		&:hover,
 		&:focus-visible {
-			background-color: #ffffff !important;
-
 			img,
 			svg {
 				filter: none !important;
+			}
+		}
+	}
+}
+
+// Variante verte : icône verte — le filtre jaune calibré ci-dessus + une
+// rotation de teinte de 60° (jaune 60° -> vert 120°)
+[data-theme="high-contrast-green"] {
+	.accessibility-control__button {
+		img,
+		svg {
+			filter: #{"invert(80%) sepia(72%) saturate(528%) hue-rotate(359deg) brightness(101%) contrast(106%) hue-rotate(60deg)"};
+		}
+
+		&:hover,
+		&:focus-visible {
+			img,
+			svg {
+				filter: none !important;
+			}
+		}
+	}
+}
+
+// Variante papier (polarité inversée) : icône sombre sur fond blanc,
+// survol = action noire -> icône blanche
+[data-theme="high-contrast-paper"] {
+	.accessibility-control__button {
+		img,
+		svg {
+			filter: none;
+		}
+
+		&:hover,
+		&:focus-visible {
+			img,
+			svg {
+				filter: invert(100%) !important;
 			}
 		}
 	}

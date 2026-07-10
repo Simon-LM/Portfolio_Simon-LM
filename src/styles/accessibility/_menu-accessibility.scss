@@ -60,19 +60,21 @@
 // }
 
 // Styles pour les tooltips en mode high-contrast
-html[data-theme="high-contrast"] {
+// Toutes les variantes de fort contraste (chantier HC) — couleurs du
+// thème, équivalentes au jaune historique dans la variante jaune.
+html[data-theme^="high-contrast"] {
 	// Style global pour tous les tooltips
 	[data-tooltip]:hover::after,
 	[data-tooltip]:focus-visible::after {
-		background: #ffff00 !important;
-		color: #000000 !important;
-		outline: 2px solid #000000 !important;
+		background: var(--near-black) !important;
+		color: var(--off-white) !important;
+		outline: 2px solid var(--off-white) !important;
 		font-weight: 600 !important;
 	}
 
 	// Flèches de tooltip (si présentes)
 	[data-tooltip]:hover::before,
 	[data-tooltip]:focus-visible::before {
-		border-color: transparent transparent #ffff00 transparent !important;
+		border-color: transparent transparent var(--near-black) transparent !important;
 	}
 }

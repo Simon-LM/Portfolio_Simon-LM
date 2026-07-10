@@ -107,6 +107,16 @@
 		gap: 0.5rem;
 	}
 
+	// Rangée des boutons de variantes du fort contraste : espacement propre
+	// à cette rangée, SANS toucher au gap générique ci-dessus. Les boutons
+	// étant en flex-basis 100%, le gap est vertical. Valeurs = le rendu
+	// réglé par Simon (ex-margin-top 1rem des boutons + gap 0.5rem),
+	// consolidé ici — un seul endroit à ajuster.
+	&__buttons-row--hc-variants {
+		gap: 0.5rem; // entre les boutons de variantes
+		margin-top: 1rem; // sous le bouton « Contraste élevé »
+	}
+
 	// Boutons standards
 	&__button {
 		padding: 0.5rem 0.75rem;
@@ -438,7 +448,7 @@
 	&__high-contrast-button {
 		background-color: #000000;
 		color: #ffff00;
-		border: 3px solid #ffff00;
+		border: 0.1875rem solid #ffff00;
 		font-family: "Atkinson Hyperlegible", sans-serif;
 		font-size: 1.1rem;
 		font-weight: 500;
@@ -453,7 +463,126 @@
 		&.active {
 			background-color: #ffff00;
 			color: #000000;
-			box-shadow: 0 0 0 2px #000000;
+			box-shadow: 0 0 0 0.125rem #000000;
+		}
+	}
+
+	// Boutons de variantes du fort contraste (chantier HC, décision Simon
+	// 2026-07-10) : 4 gros boutons directs — pas de sélecteur, plus robuste
+	// pour NVDA et les gros zooms. Chaque bouton = mini-prévisualisation :
+	// libellé complet dans les couleurs réelles de sa variante. Même patron
+	// que __high-contrast-button : hover/focus = inversion de SA paire,
+	// actif = inversion + anneau.
+	// Boutons de variantes du fort contraste (chantier HC, décision Simon
+	// 2026-07-10) : 4 gros boutons directs — pas de sélecteur, plus robuste
+	// pour NVDA et les gros zooms. Chaque bouton = mini-prévisualisation :
+	// libellé complet dans les couleurs réelles de sa variante. Même patron
+	// que __high-contrast-button : hover/focus = inversion de SA paire.
+	&__hc-variant-button {
+		flex-basis: 100%;
+		font-family: "Atkinson Hyperlegible", sans-serif;
+		font-size: 1.1rem;
+		font-weight: 500;
+
+		// La coche ✓ est un <span> : la base typo donne aux span une couleur
+		// PROPRE (var(--color-main-text)), qui ignore l'inversion du hover
+		// (coche invisible sur le fond inversé). inherit = la coche suit
+		// toujours la couleur du texte du bouton.
+		span {
+			color: inherit;
+		}
+
+		&--yellow {
+			background-color: #000000;
+			color: #ffff00;
+			border: 0.1875rem solid #ffff00; // 3px
+
+			// Actif : le bouton garde ses couleurs de preview — la coche ✓
+			// dans le libellé marque la sélection (décision Simon,
+			// 2026-07-11). Ce bloc neutralise le .active générique du menu
+			// (fond accent). Déclaré AVANT :hover : à spécificité égale, le
+			// hover (plus bas) doit gagner même sur le bouton actif.
+			&.active {
+				background-color: #000000;
+				color: #ffff00;
+				box-shadow: 0 0 0 0.1875rem var(--near-black); // 3px
+			}
+
+			&:hover,
+			&:focus-visible {
+				background-color: #ffff00;
+				color: #000000 !important;
+				border-color: #000000;
+			}
+		}
+		&--green {
+			background-color: #000000;
+			color: #00ff00;
+			border: 0.1875rem solid #00ff00; // 3px
+
+			// Actif : le bouton garde ses couleurs de preview — la coche ✓
+			// dans le libellé marque la sélection (décision Simon,
+			// 2026-07-11). Ce bloc neutralise le .active générique du menu
+			// (fond accent). Déclaré AVANT :hover : à spécificité égale, le
+			// hover (plus bas) doit gagner même sur le bouton actif.
+			&.active {
+				background-color: #000000;
+				color: #00ff00;
+				box-shadow: 0 0 0 0.1875rem var(--near-black); // 3px
+			}
+
+			&:hover,
+			&:focus-visible {
+				background-color: #00ff00;
+				color: #000000 !important;
+				border-color: #000000;
+			}
+		}
+		&--white {
+			background-color: #000000;
+			color: #ffffff;
+			border: 0.1875rem solid #ffffff; // 3px
+
+			// Actif : le bouton garde ses couleurs de preview — la coche ✓
+			// dans le libellé marque la sélection (décision Simon,
+			// 2026-07-11). Ce bloc neutralise le .active générique du menu
+			// (fond accent). Déclaré AVANT :hover : à spécificité égale, le
+			// hover (plus bas) doit gagner même sur le bouton actif.
+			&.active {
+				background-color: #000000;
+				color: #ffffff;
+				box-shadow: 0 0 0 0.1875rem var(--near-black); // 3px
+			}
+
+			&:hover,
+			&:focus-visible {
+				background-color: #ffffff;
+				color: #000000 !important;
+				border-color: #000000;
+			}
+		}
+		&--paper {
+			background-color: #ffffff;
+			color: #000000;
+			border: 0.1875rem solid #000000; // 3px
+
+			// Actif : le bouton garde ses couleurs de preview — la coche ✓
+			// dans le libellé marque la sélection (décision Simon,
+			// 2026-07-11). Ce bloc neutralise le .active générique du menu
+			// (fond accent). Déclaré AVANT :hover : à spécificité égale, le
+			// hover (plus bas) doit gagner même sur le bouton actif.
+			&.active {
+				background-color: #ffffff;
+				color: #000000;
+				box-shadow: 0 0 0 0.1875rem var(--near-black); // 3px
+			}
+
+			&:hover,
+			&:focus-visible {
+				background-color: #000000;
+				color: #ffffff !important;
+				border-color: #ffffff;
+			}
 		}
 	}
 }
@@ -844,21 +973,25 @@ select.accessibility-menu__select:not(.react-select__control) {
 
 // ===================== HIGH CONTRAST MODE =====================
 
-// Styles pour les selects en high contrast
-[data-theme="high-contrast"] {
+// Styles pour les selects en high contrast — TOUTES les variantes
+// (chantier HC, 2026-07-10) : sélecteur ^= et couleurs du thème à la place
+// du jaune codé en dur. Équivalence vérifiée en jaune : --near-black =
+// #ffff00 (texte), --off-white = #000000 (fond), --link-hover = #ffffff
+// (action) → rendu jaune strictement identique, variantes correctes.
+[data-theme^="high-contrast"] {
 	// Styles généraux pour le menu d'accessibilité
 	.accessibility-menu {
 		&__slider {
-			background: #ffff00;
+			background: var(--near-black);
 
 			&::-webkit-slider-thumb {
-				background: #ffff00;
-				border: 2px solid #000000;
+				background: var(--near-black);
+				border: 2px solid var(--off-white);
 			}
 
 			&::-moz-range-thumb {
-				background: #ffff00;
-				border: 2px solid #000000;
+				background: var(--near-black);
+				border: 2px solid var(--off-white);
 			}
 		}
 	}
@@ -866,8 +999,8 @@ select.accessibility-menu__select:not(.react-select__control) {
 	// Styles spécifiques pour React-Select
 	.react-select-container {
 		.react-select__control {
-			background-color: #000000 !important;
-			border-color: #ffff00 !important;
+			background-color: var(--off-white) !important;
+			border-color: var(--near-black) !important;
 			border-width: 2px !important;
 
 			&:hover {
@@ -875,10 +1008,10 @@ select.accessibility-menu__select:not(.react-select__control) {
 			}
 
 			&--is-focused {
-				border-color: #ffffff !important;
-				box-shadow: 0 0 0 1px #ffff00 !important;
-				background: white !important;
-				outline: 0.125rem solid #ffffff !important;
+				border-color: var(--link-hover) !important;
+				box-shadow: 0 0 0 1px var(--near-black) !important;
+				background: var(--link-hover) !important;
+				outline: 0.125rem solid var(--link-hover) !important;
 				outline-offset: 0.25rem !important;
 			}
 		}
@@ -889,8 +1022,8 @@ select.accessibility-menu__select:not(.react-select__control) {
 			&:hover {
 				.react-select__single-value,
 				.react-select__dropdown-indicator svg {
-					color: black !important;
-					fill: black !important;
+					color: var(--off-white) !important;
+					fill: var(--off-white) !important;
 				}
 			}
 
@@ -898,52 +1031,53 @@ select.accessibility-menu__select:not(.react-select__control) {
 			&--is-focused {
 				.react-select__single-value,
 				.react-select__dropdown-indicator svg {
-					color: black !important;
-					fill: black !important;
+					color: var(--off-white) !important;
+					fill: var(--off-white) !important;
 				}
 			}
 		}
 
 		// Indicateur de dropdown
 		.react-select__dropdown-indicator {
-			color: #ffff00 !important;
+			color: var(--near-black) !important;
 
 			svg {
-				fill: #ffff00 !important;
+				fill: var(--near-black) !important;
 			}
 		}
 
 		// Options
 		.react-select__option {
 			// États normaux
-			color: #ffff00 !important;
+			color: var(--near-black) !important;
 
 			// Option sélectionnée
 			&--is-selected {
-				background-color: #ffff00 !important;
-				color: #000000 !important;
+				background-color: var(--near-black) !important;
+				color: var(--off-white) !important;
 				font-weight: bold;
 
 				// État hover sur option sélectionnée
 				&:hover,
 				&:focus,
 				&--is-focused {
-					background-color: white !important;
-					color: black !important;
+					background-color: var(--link-hover) !important;
+					color: var(--off-white) !important;
 				}
 			}
 
 			// États hover et focus
 			&:hover,
 			&--is-focused {
-				background-color: white !important;
-				color: #000000 !important;
-				outline: 0.125rem solid #000000 !important;
+				background-color: var(--link-hover) !important;
+				color: var(--off-white) !important;
+				outline: 0.125rem solid var(--off-white) !important;
 				outline-offset: -0.25rem !important;
 			}
 		}
 
-		// Titres de groupes
+		// Titres de groupes (blanc sur gris sombre : lisible quelle que soit
+		// la variante — volontairement non thémé)
 		.react-select__group-heading {
 			color: white !important;
 			background-color: #222222 !important;
@@ -1030,16 +1164,16 @@ html body .react-select__option--is-focused {
 
 /* Sélecteur ultra-spécifique pour les options sélectionnées en high-contrast */
 // [data-theme="high-contrast"] div[class*="react-select__menu-portal"],
-[data-theme="high-contrast"] div[class*="react-select__menu"] {
+[data-theme^="high-contrast"] div[class*="react-select__menu"] {
 	.react-select__option--is-selected {
-		background-color: #ffff00 !important;
-		color: #000000 !important;
+		background-color: var(--near-black) !important;
+		color: var(--off-white) !important;
 		// font-weight: 600 !important;
 	}
 
 	.react-select__option--is-selected:hover,
 	.react-select__option--is-selected.react-select__option--is-focused {
-		background-color: white !important;
-		color: black !important;
+		background-color: var(--link-hover) !important;
+		color: var(--off-white) !important;
 	}
 }
