@@ -29,14 +29,13 @@ type HcVariant =
 	| "high-contrast-white"
 	| "high-contrast-paper";
 
-// Couleurs réelles texte/fond de chaque variante — affichées dans le
-// sélecteur (pastille « Aa ») pour que l'utilisateur constate le rendu
-// avant de choisir. Constantes des thèmes, pas des variables.
-const HC_VARIANT_COLORS: Record<HcVariant, { fg: string; bg: string }> = {
-	"high-contrast": { fg: "#ffff00", bg: "#000000" },
-	"high-contrast-green": { fg: "#00ff00", bg: "#000000" },
-	"high-contrast-white": { fg: "#ffffff", bg: "#000000" },
-	"high-contrast-paper": { fg: "#000000", bg: "#ffffff" },
+// Modificateur SCSS de chaque bouton de variante (les couleurs réelles
+// vivent dans _accessibility-menu.scss, patron __high-contrast-button)
+const HC_VARIANT_MODIFIERS: Record<HcVariant, string> = {
+	"high-contrast": "yellow",
+	"high-contrast-green": "green",
+	"high-contrast-white": "white",
+	"high-contrast-paper": "paper",
 };
 
 type OptionType = {
@@ -64,7 +63,6 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 	);
 	const colorVisionSelectRef = useRef<SelectInstance<OptionType> | null>(null);
 	const fontTypeSelectRef = useRef<SelectInstance<OptionType> | null>(null);
-	const hcVariantSelectRef = useRef<SelectInstance<OptionType> | null>(null);
 	// Dernière variante de fort contraste utilisée (patron ZoomText : le
 	// toggle réactive le dernier schéma choisi) — init paresseuse localStorage
 	const [hcVariant, setHcVariant] = useState<HcVariant>(() => {
@@ -492,103 +490,35 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 						</button>
 					</div>
 
-					{/* Sélecteur de variante — visible quand le fort contraste est
-					    actif. Structure identique au sélecteur daltonisme (label +
-					    Select directs, mêmes classes). */}
+					{/* Variantes du fort contraste — 4 boutons directs, visibles quand
+					    le mode est actif (décision Simon 2026-07-10 : pas de sélecteur,
+					    plus robuste pour NVDA et les gros zooms). Chaque bouton =
+					    mini-prévisualisation : libellé complet dans les couleurs
+					    réelles de sa variante. */}
 					{theme.startsWith("high-contrast") && (
-						<>
-							<label
-								htmlFor="hc-variant-select"
-								className="accessibility-menu__group-label">
-								{labels.visualHelps.highContrast.variantLabel}
-							</label>
-
-							<Select
-								ref={hcVariantSelectRef}
-								inputId="hc-variant-select"
-								className="react-select-container"
-								classNamePrefix="react-select"
-								value={{
-									value: hcVariant,
-									label: labels.visualHelps.highContrast.variants[hcVariant],
-								}}
-								onChange={(option) => {
-									if (option) {
-										selectHcVariant((option as OptionType).value as HcVariant);
-									}
-								}}
-								options={(
-									[
-										"high-contrast",
-										"high-contrast-green",
-										"high-contrast-white",
-										"high-contrast-paper",
-									] as const
-								).map((variant) => ({
-									value: variant,
-									label: labels.visualHelps.highContrast.variants[variant],
-								}))}
-								formatOptionLabel={(option) => {
-									const colors =
-										HC_VARIANT_COLORS[(option as OptionType).value as HcVariant];
-									return (
-										<span className="hc-variant-option">
-											<span
-												className="hc-variant-option__swatch"
-												style={{
-													backgroundColor: colors.bg,
-													color: colors.fg,
-													borderColor: colors.fg,
-												}}
-												aria-hidden="true">
-												Aa
-											</span>
-											{(option as OptionType).label}
-										</span>
-									);
-								}}
-								aria-label={labels.visualHelps.highContrast.variantLabel}
-								styles={getSelectStyles()}
-								isSearchable={false}
-								menuPortalTarget={
-									typeof document !== "undefined" ? document.body : null
-								}
-								menuPosition="fixed"
-								menuShouldBlockScroll={true}
-								openMenuOnFocus={false}
-								closeMenuOnSelect={true}
-								onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
-									const menuOpen =
-										document.querySelector('[role="listbox"]') !== null;
-
-									// Si le menu est fermé et Enter ou Espace est pressé
-									if (!menuOpen && (e.key === "Enter" || e.key === " ")) {
-										e.preventDefault();
-
-										// Ouvrir le menu de manière fiable
-										if (hcVariantSelectRef.current) {
-											hcVariantSelectRef.current.openMenu("first");
-										}
-									}
-
-									// Si le menu est ouvert
-									if (menuOpen) {
-										// Pour Tab et Shift+Tab, simuler les flèches
-										if (e.key === "Tab") {
-											e.preventDefault();
-
-											// Simuler flèche bas ou haut selon Shift
-											const key = e.shiftKey ? "ArrowUp" : "ArrowDown";
-											const event = new KeyboardEvent("keydown", {
-												key,
-												bubbles: true,
-											});
-											e.currentTarget.dispatchEvent(event);
-										}
-									}
-								}}
-							/>
-						</>
+						<div
+							className="accessibility-menu__buttons-row"
+							role="group"
+							aria-label={labels.visualHelps.highContrast.variantLabel}>
+							{(
+								[
+									"high-contrast",
+									"high-contrast-green",
+									"high-contrast-white",
+									"high-contrast-paper",
+								] as const
+							).map((variant) => (
+								<button
+									key={variant}
+									className={`accessibility-menu__button accessibility-menu__hc-variant-button accessibility-menu__hc-variant-button--${HC_VARIANT_MODIFIERS[variant]} ${
+										theme === variant ? "active" : ""
+									}`}
+									aria-pressed={theme === variant}
+									onClick={() => selectHcVariant(variant)}>
+									{labels.visualHelps.highContrast.variants[variant]}
+								</button>
+							))}
+						</div>
 					)}
 				</div>
 

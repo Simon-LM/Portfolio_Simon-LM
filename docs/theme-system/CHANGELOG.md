@@ -54,12 +54,17 @@ technologique = second temps).
   récupère ses couleurs. Icône du bouton flottant (filter, non
   thémable par variable) : blanche par défaut, jaune historique en
   variante jaune, sombre en papier.
-- **Sélecteur de variante réaligné sur l'architecture des autres selects**
-  (structure du sélecteur daltonisme : label + Select directs, sans
-  wrapper divergent — le SCSS du menu est conçu pour les gros zooms).
-- **Aperçu des vraies couleurs** : chaque option affiche une pastille
-  « Aa » aux couleurs texte/fond réelles de la variante (unités em,
-  zoom-friendly).
+- **Le sélecteur de variante est remplacé par 4 boutons directs**
+  (décision Simon après deux itérations — un react-select est le pire
+  widget pour un fort malvoyant sous NVDA, et une pastille « Aa » ne sert
+  à rien) : chaque bouton = **mini-prévisualisation** — le libellé complet
+  (« Vert sur noir »…) écrit dans les couleurs réelles de sa variante,
+  même patron que le bouton « Contraste élevé » historique (hover/focus =
+  inversion de SA paire, actif = inversion + anneau, Atkinson,
+  pleine largeur). Visibles uniquement quand le mode est actif ;
+  `role="group"` + `aria-pressed`. Le bouton « Contraste élevé » reste
+  **toujours jaune/noir** (décision Simon). Piste future notée :
+  prévisualisation du site entier au survol.
 
 ### Changed (typographie HC — phase 1 du chantier)
 

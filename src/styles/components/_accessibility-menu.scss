@@ -456,6 +456,95 @@
 			box-shadow: 0 0 0 2px #000000;
 		}
 	}
+
+	// Boutons de variantes du fort contraste (chantier HC, décision Simon
+	// 2026-07-10) : 4 gros boutons directs — pas de sélecteur, plus robuste
+	// pour NVDA et les gros zooms. Chaque bouton = mini-prévisualisation :
+	// libellé complet dans les couleurs réelles de sa variante. Même patron
+	// que __high-contrast-button : hover/focus = inversion de SA paire,
+	// actif = inversion + anneau.
+	&__hc-variant-button {
+		flex-basis: 100%;
+		font-family: "Atkinson Hyperlegible", sans-serif;
+		font-size: 1.1rem;
+		font-weight: 500;
+
+		&--yellow {
+			background-color: #000000;
+			color: #ffff00;
+			border: 3px solid #ffff00;
+
+			&:hover,
+			&:focus-visible {
+				background-color: #ffff00;
+				color: #000000 !important;
+				border-color: #000000;
+			}
+
+			&.active {
+				background-color: #ffff00;
+				color: #000000;
+				box-shadow: 0 0 0 2px #000000;
+			}
+		}
+
+		&--green {
+			background-color: #000000;
+			color: #00ff00;
+			border: 3px solid #00ff00;
+
+			&:hover,
+			&:focus-visible {
+				background-color: #00ff00;
+				color: #000000 !important;
+				border-color: #000000;
+			}
+
+			&.active {
+				background-color: #00ff00;
+				color: #000000;
+				box-shadow: 0 0 0 2px #000000;
+			}
+		}
+
+		&--white {
+			background-color: #000000;
+			color: #ffffff;
+			border: 3px solid #ffffff;
+
+			&:hover,
+			&:focus-visible {
+				background-color: #ffffff;
+				color: #000000 !important;
+				border-color: #000000;
+			}
+
+			&.active {
+				background-color: #ffffff;
+				color: #000000;
+				box-shadow: 0 0 0 2px #000000;
+			}
+		}
+
+		&--paper {
+			background-color: #ffffff;
+			color: #000000;
+			border: 3px solid #000000;
+
+			&:hover,
+			&:focus-visible {
+				background-color: #000000;
+				color: #ffffff !important;
+				border-color: #ffffff;
+			}
+
+			&.active {
+				background-color: #000000;
+				color: #ffffff;
+				box-shadow: 0 0 0 2px #ffffff;
+			}
+		}
+	}
 }
 
 // // React-Select styles - regroupés en bas du fichier
@@ -839,25 +928,6 @@ select.accessibility-menu__select:not(.react-select__control) {
 	// Input (recherche)
 	.react-select__input {
 		color: var(--color-main-text) !important;
-	}
-}
-
-// Aperçu des couleurs réelles des variantes de fort contraste dans le
-// sélecteur (chantier HC) : pastille « Aa » aux couleurs texte/fond de la
-// variante (inline, constantes du thème). Unités em : suit les zooms
-// navigateur et police, comme le reste du menu.
-.hc-variant-option {
-	display: flex;
-	align-items: center;
-	gap: 0.5em;
-
-	&__swatch {
-		display: inline-block;
-		padding: 0.05em 0.35em;
-		border: 0.0625em solid; // couleur posée inline (= texte de la variante)
-		border-radius: 0.25em;
-		font-weight: 700;
-		line-height: 1.4;
 	}
 }
 
