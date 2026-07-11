@@ -552,7 +552,13 @@ $hc-palette: (
 	// États d'action (blanc)
 	"success": #00ff00,
 	// Validation (vert pur)
-	"error": #ff0000 // Erreur (rouge pur)
+	"error": #ff0000,
+	// Erreur (rouge pur)
+	"focus": #ffffff,
+	// Focus : contour et remplissage (chantier hc-mécanique, 2026-07-11 —
+	// promu rôle de la carte pour restaurer la garantie du design
+	// d'origine, qui capturait « focus » par les noms de variables)
+	"focus-text": #000000 // Texte sur le remplissage de focus
 );
 
 // Fonction qui détermine la couleur high contrast basée sur la luminosité

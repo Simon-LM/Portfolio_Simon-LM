@@ -20,9 +20,9 @@
 			"action": #000000,
 			"success": #007700,
 			"error": #cc0000,
-		),
-		$focus-outline: #000000,
-		$focus-bg: #000000,
-		$focus-text: #ffffff
+			"focus": #000000,
+			// Polarité inversée : focus rempli noir, texte blanc
+			"focus-text": #ffffff,
+		)
 	);
 }
