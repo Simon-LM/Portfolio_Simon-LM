@@ -13,6 +13,28 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-11
+
+### Docs (mécanique HC — archéologie reconstituée + architecture cible actée)
+
+Réflexion « second temps HC » menée avec Simon. Découverte importante :
+le **design d'origine** (capture sémantique par les noms de couche 3 —
+`transform-for-high-contrast` + `str-index` sur `_bg`/`_text`/`link`/
+`focus`…) avait été **supplanté sans décision** pendant le chantier
+(commit `3195de4`, Claude), puis supprimé comme code mort (`f16842d`).
+Le mécanisme actuel capture en couche 2 (assignations explicites +
+branchement + clarté) — trou identifié : un token de couche 3 non branché
+échappe silencieusement au HC.
+
+Décisions (détail : README § 6.6, plan `PLAN-hc-mecanique-controles.md`) :
+branchement couche 2 seul pour décider des couleurs ; **focus promu rôle
+de couche 2** ; deux contrôles en lecture seule dans l'outillage (par
+**valeur** : tout ∈ palette HC ; par **noms** : la sémantique d'origine
+recyclée en inspecteur) ; notice d'implémentation orientée IA (E6/E7) ;
+`$accent*` en HC garé. Également actées ce jour : préview du site au
+survol des variantes **écartée** (navigation clavier trompeuse) ; carte
+des documents du README resynchronisée (E5 et variantes HC soldés).
+
 ## 2026-07-10 (chantier HC — variantes de fort contraste)
 
 ### Added (3 variantes + sélecteur, branche `feat/hc-variants`)

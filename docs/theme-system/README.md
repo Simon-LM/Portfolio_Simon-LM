@@ -31,7 +31,9 @@ mergée : rollup + src, datant d'avant plusieurs refontes du système).
 | [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : P1 remap de familles + tests de distinguabilité ; P2 ancres sémantiques des rôles statut ; P3 robustesse (dégradation gracieuse, garde-gamut) | P1 ✅ mergée le 2026-07-05 (`d12264f`) ; P2 ✅ et P3 ✅ mergées le 2026-07-06 (`5c8dce9`) après validation visuelle |
 | [PLAN-extraction-monorepo.md](./PLAN-extraction-monorepo.md) | Plan d'exécution : chantier E3 — workspace pnpm + extraction de la face SCSS dans `packages/a11y-prefs` (nom de travail) | ✅ exécuté et mergé le 2026-07-07 (`812d5d5`) |
 | [PLAN-extraction-runtime.md](./PLAN-extraction-runtime.md) | Plan d'exécution : chantier E4 — extraction du runtime React (THEMES, useTheme, usePrefersDarkMode, anti-FOUC) | ✅ exécuté et mergé le 2026-07-07 (`19df328`) |
-| [PLAN-extraction-modules.md](./PLAN-extraction-modules.md) | Plan d'exécution : chantier E5 — modules opt-in (polices a11y + licences, motion, appliers, usePreference) + correction du dimensionnement des polices et mode dyslexie configurable | rédigé le 2026-07-07, révisé le 2026-07-08 (décisions actées), **à exécuter** |
+| [PLAN-extraction-modules.md](./PLAN-extraction-modules.md) | Plan d'exécution : chantier E5 — modules opt-in (polices a11y + licences, motion, appliers, usePreference) + correction du dimensionnement des polices et mode dyslexie configurable | ✅ exécuté et mergé le 2026-07-10 (`7bae83f`), validations visuelles Simon |
+| [PLAN-high-contrast-variants.md](./PLAN-high-contrast-variants.md) | Plan d'exécution : variantes du fort contraste (jaune/vert/blanc/papier) + typographie HC + boutons-preview | ✅ exécuté et mergé le 2026-07-11 (`5192ee3`), smoke Simon variante par variante |
+| [PLAN-hc-mecanique-controles.md](./PLAN-hc-mecanique-controles.md) | Plan d'exécution : mécanique HC — focus promu rôle de couche 2 + contrôles d'outillage (valeur + noms) | rédigé le 2026-07-11 (décisions actées, archéologie comprise), **à exécuter** |
 
 Principe : **un chantier = un plan = une branche = une exécution par IA**,
 avec revue avant merge. Le guide donne l'ordre ; chaque plan est autonome.
@@ -688,6 +690,67 @@ Modules (chacun **opt-in** — un projet peut ne prendre que les thèmes) :
 Conséquence sur le nom et le concept : « système de thèmes » devient un
 module — le paquet est un **système de préférences d'accessibilité**
 (`a11y-prefs` comme nom de travail).
+
+### 6.6 Mécanique du fort contraste : histoire et architecture cible (acté le 2026-07-11)
+
+Rappel du vocabulaire des **trois couches** (celui de Simon) : couche 1 =
+palettes Tailwind ; couche 2 = variables de **rôle** (~19, l'API du
+paquet : `$link`, `$accent`, `$gray-50`…) ; couche 3 = noms
+d'**assignation** (la config du consommateur : `$color-header-bg`…).
+
+**Le design d'origine de Simon** capturait la sémantique **par les noms de
+couche 3** : `transform-for-high-contrast($color, $element-type)` lisait
+les mots des noms (`str-index`) et attribuait la couleur HC :
+
+| Mot dans le nom | Couleur HC |
+| --- | --- |
+| `_bg`, `background` | fond (noir) |
+| `_text`, `text` | texte (jaune) |
+| `link` | cyan |
+| `heading`, `title` | vert-jaune |
+| `hover`, `focus` | blanc |
+| `success` | vert |
+| _aucun_ | selon la clarté (foncé → texte, clair → fond) |
+
+Ce mécanisme garantissait notamment le **focus par son nom**. Il a été
+**supplanté sans décision** pendant le chantier d'extraction (commit
+`3195de4`, Claude) par le mécanisme actuel, puis supprimé en tant que code
+mort au nettoyage du 2026-07-03 (`f16842d`). Archéologie reconstituée le
+2026-07-11 — cette section existe pour que l'information ne se reperde
+plus.
+
+**Le mécanisme actuel** : les ~19 rôles de couche 2 reçoivent leur couleur
+HC par assignation **explicite** dans le moteur (`$link` → slot `"link"`…) ;
+les non-assignés (gris intermédiaires, `$accent*`) passent par la clarté
+(`is-dark()`) ; la couche 3 hérite **par branchement** (`$color-main-text:
+$fg-base`) — le nom du token n'a plus aucun rôle. **Trou identifié** : une
+assignation de couche 3 NON branchée (valeur brute) échappe silencieusement
+au mode HC — risque principal pour un paquet implémenté surtout par des IA.
+
+**L'architecture cible** (décisions du 2026-07-11, plan
+`PLAN-hc-mecanique-controles.md`) :
+
+1. **Décision des couleurs = branchement couche 2 seul.** La capture par
+   noms ne revient pas comme mécanisme : Sass ne sait pas lire les noms —
+   l'ancienne fonction exigeait de lui passer chaque nom à la main, soit
+   la même discipline que le branchement (le filet a les mêmes trous que
+   le sol).
+2. **Le focus devient un rôle de couche 2** (restaure la garantie du
+   design d'origine, pour tous les consommateurs).
+3. **Deux contrôles en lecture seule** dans l'outillage (warnings au
+   build/test, ne modifient jamais une couleur) : **par valeur** (en HC,
+   toute couleur émise ∈ palette du thème → attrape les tokens non
+   branchés) et **par noms** (la sémantique d'origine recyclée en
+   inspecteur : nom `*_text` qui émet la couleur de fond → warning →
+   attrape les branchements de travers, angle mort du contrôle par
+   valeur). Complémentaires, pas concurrents.
+4. **Notice d'implémentation orientée IA** (livrable E6/E7, pattern
+   AGENTS.md/llms.txt du paquet) : le contrat « couche 3 = toujours
+   dérivée d'un rôle de couche 2, jamais une valeur brute » écrit pour
+   les implémenteurs.
+5. **Garé, à réfléchir** : le sort des 4 rôles `$accent*` en HC
+   (aujourd'hui écrasés par clarté ; le header de Simon était une
+   surcharge manuelle — l'accent n'a jamais fait partie de son design HC).
 
 ## 7. Pistes d'amélioration envisagées
 
