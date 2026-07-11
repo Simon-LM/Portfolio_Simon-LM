@@ -35,6 +35,7 @@ mergée : rollup + src, datant d'avant plusieurs refontes du système).
 | [PLAN-high-contrast-variants.md](./PLAN-high-contrast-variants.md) | Plan d'exécution : variantes du fort contraste (jaune/vert/blanc/papier) + typographie HC + boutons-preview | ✅ exécuté et mergé le 2026-07-11 (`5192ee3`), smoke Simon variante par variante |
 | [PLAN-hc-mecanique-controles.md](./PLAN-hc-mecanique-controles.md) | Plan d'exécution : mécanique HC — focus promu rôle de couche 2 + contrôles d'outillage (valeur + noms) | ✅ exécuté le 2026-07-11 (branche `feat/hc-mecanique`) |
 | [HC-SEMANTIC-AUDIT.md](./HC-SEMANTIC-AUDIT.md) | Artefact généré : audit sémantique du fort contraste (noms ↔ valeurs émises) | vivant (régénéré par `pnpm hc:audit`) |
+| [PLAN-e6-cli-scaffolding.md](./PLAN-e6-cli-scaffolding.md) | Plan d'exécution : chantier E6 — templates UI (déclencheur + carte) + CLI `init`/`init --diff` (modèle shadcn) | rédigé le 2026-07-12, **à exécuter** |
 
 Principe : **un chantier = un plan = une branche = une exécution par IA**,
 avec revue avant merge. Le guide donne l'ordre ; chaque plan est autonome.
