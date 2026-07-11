@@ -13,6 +13,31 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-11 (chantier hc-mécanique — exécution)
+
+### Added (focus en rôle + les deux contrôles, branche `feat/hc-mecanique`)
+
+- **Focus promu rôle de la carte HC** : slots `focus`/`focus-text` dans
+  `$hc-palette` (moteur) et dans la carte du mixin consommateur, qui
+  FUSIONNE désormais la carte passée avec les défauts (une variante ne
+  déclare que ce qui change) ; les arguments `$focus-*` deviennent des
+  surcharges optionnelles ; la variante papier porte son focus dans sa
+  carte. **CSS byte-identique** (vérifié).
+- **Contrôle par valeur** (`hc-palette-conformance.test.ts`) : en thème
+  `high-contrast*`, toute couleur émise ∈ palette du thème (alpha tolérée
+  si la teinte ∈ palette). Calibration : 101/106 conformes par thème ;
+  waiver `--constant-*` (constantes volontairement athématiques) + garde
+  anti-zombie.
+- **Inspecteur sémantique** (`pnpm hc:audit` → `HC-SEMANTIC-AUDIT.md`) :
+  le design d'origine de Simon recyclé en contrôle lecture seule. Matching
+  par segment entier (« context » ≠ « text »), synonymes par famille,
+  **appariement bg/texte par composant** (la vérité d'une paire est dans
+  la paire — un bloc inversé légitime ne déclenche rien ; texte == fond
+  = alerte « invisible »), règle globale nom↔slot pour les orphelins.
+  Calibrage : 70 → 20 → 8 → **0 avertissement actif**, 15 waivés
+  argumentés (dont `--bg-emphasis-strong` et `--color-collapse-bg-title`,
+  surfaces d'emphase inversées par conception — arbitrables par Simon).
+
 ## 2026-07-11
 
 ### Docs (mécanique HC — archéologie reconstituée + architecture cible actée)

@@ -33,7 +33,8 @@ mergée : rollup + src, datant d'avant plusieurs refontes du système).
 | [PLAN-extraction-runtime.md](./PLAN-extraction-runtime.md) | Plan d'exécution : chantier E4 — extraction du runtime React (THEMES, useTheme, usePrefersDarkMode, anti-FOUC) | ✅ exécuté et mergé le 2026-07-07 (`19df328`) |
 | [PLAN-extraction-modules.md](./PLAN-extraction-modules.md) | Plan d'exécution : chantier E5 — modules opt-in (polices a11y + licences, motion, appliers, usePreference) + correction du dimensionnement des polices et mode dyslexie configurable | ✅ exécuté et mergé le 2026-07-10 (`7bae83f`), validations visuelles Simon |
 | [PLAN-high-contrast-variants.md](./PLAN-high-contrast-variants.md) | Plan d'exécution : variantes du fort contraste (jaune/vert/blanc/papier) + typographie HC + boutons-preview | ✅ exécuté et mergé le 2026-07-11 (`5192ee3`), smoke Simon variante par variante |
-| [PLAN-hc-mecanique-controles.md](./PLAN-hc-mecanique-controles.md) | Plan d'exécution : mécanique HC — focus promu rôle de couche 2 + contrôles d'outillage (valeur + noms) | rédigé le 2026-07-11 (décisions actées, archéologie comprise), **à exécuter** |
+| [PLAN-hc-mecanique-controles.md](./PLAN-hc-mecanique-controles.md) | Plan d'exécution : mécanique HC — focus promu rôle de couche 2 + contrôles d'outillage (valeur + noms) | ✅ exécuté le 2026-07-11 (branche `feat/hc-mecanique`) |
+| [HC-SEMANTIC-AUDIT.md](./HC-SEMANTIC-AUDIT.md) | Artefact généré : audit sémantique du fort contraste (noms ↔ valeurs émises) | vivant (régénéré par `pnpm hc:audit`) |
 
 Principe : **un chantier = un plan = une branche = une exécution par IA**,
 avec revue avant merge. Le guide donne l'ordre ; chaque plan est autonome.
@@ -736,14 +737,24 @@ au mode HC — risque principal pour un paquet implémenté surtout par des IA.
    la même discipline que le branchement (le filet a les mêmes trous que
    le sol).
 2. **Le focus devient un rôle de couche 2** (restaure la garantie du
-   design d'origine, pour tous les consommateurs).
+   design d'origine, pour tous les consommateurs). **Implémenté le
+   2026-07-11** : slots `focus`/`focus-text` dans `$hc-palette` (moteur)
+   et dans la carte du mixin consommateur (fusion avec les défauts — une
+   variante ne déclare que ce qui change) ; CSS byte-identique.
 3. **Deux contrôles en lecture seule** dans l'outillage (warnings au
    build/test, ne modifient jamais une couleur) : **par valeur** (en HC,
    toute couleur émise ∈ palette du thème → attrape les tokens non
    branchés) et **par noms** (la sémantique d'origine recyclée en
    inspecteur : nom `*_text` qui émet la couleur de fond → warning →
    attrape les branchements de travers, angle mort du contrôle par
-   valeur). Complémentaires, pas concurrents.
+   valeur). Complémentaires, pas concurrents. **Implémentés le
+   2026-07-11** : test `hc-palette-conformance` (calibré : 101/106
+   conformes par thème, waiver `--constant-*`, alpha tolérée si la
+   teinte ∈ palette) + inspecteur `pnpm hc:audit`
+   (`hc-semantic-audit.ts` : matching par segment entier, appariement
+   bg/texte par composant — un bloc inversé légitime ne déclenche rien,
+   texte == fond d'une paire = alerte ; artefact `HC-SEMANTIC-AUDIT.md` ;
+   calibré : 0 avertissement actif, 15 waivés argumentés).
 4. **Notice d'implémentation orientée IA** (livrable E6/E7, pattern
    AGENTS.md/llms.txt du paquet) : le contrat « couche 3 = toujours
    dérivée d'un rôle de couche 2, jamais une valeur brute » écrit pour

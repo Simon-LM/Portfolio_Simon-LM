@@ -71,6 +71,14 @@ rien oublier. Mettre à jour au fil de l'eau (cocher / retirer une fois fait).
       tactile, confusion état réel/préview. Le clic est déjà une préview
       réversible à coût nul.
 
+## Fait (chantier hc-mécanique, 2026-07-11)
+
+- [x] **Mécanique HC — « second temps », volet architecture** : focus
+      promu rôle de la carte ; contrôle par valeur (palette) ; inspecteur
+      sémantique par noms (`pnpm hc:audit`). Voir README § 6.6. Restent
+      ouverts : le sort des `$accent*` en HC (garé, décision Simon) et la
+      refonte techno de fond (toujours reportée).
+
 ## Reporté explicitement (ne pas toucher sans décision)
 
 - [ ] **Réécriture déclarative du thème high-contrast** — reportée à
