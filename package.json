@@ -13,7 +13,8 @@
 		"test:coverage": "jest --coverage",
 		"test:a11y": "pa11y-ci",
 		"test:a11y:single": "pa11y http://localhost:3000",
-		"contrast:report": "tsx src/accessibility/contrast/report.ts"
+		"contrast:report": "tsx src/accessibility/contrast/report.ts",
+		"hc:audit": "tsx src/accessibility/contrast/hc-semantic-audit.ts"
 	},
 	"jest": {
 		"testEnvironment": "jsdom",
