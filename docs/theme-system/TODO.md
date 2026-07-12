@@ -16,6 +16,20 @@ rien oublier. Mettre à jour au fil de l'eau (cocher / retirer une fois fait).
       « quasi invisible ». Ne conditionne rien aujourd'hui (chemin latent) ;
       valeur à confirmer ou ajuster. Ajouté partie 3 (2026-07-06).
 
+## À faire AVANT publication (E7)
+
+- [ ] **Renommer la famille de palette `redd` → `red`** (2026-07-12). Simon
+      avait mis 2 « d » pour contourner un conflit (VS Code / compilateur qui
+      confondait avec le nom Tailwind `red` — probablement la fonction Sass
+      `red()` ou le language server CSS). Non urgent, mais **à réparer avant
+      d'envoyer** : « redd » exposé dans l'API publique ferait mauvais effet.
+      6 fichiers : `packages/a11y-prefs/scss/_base-palette.scss` (déf.),
+      `_theme-utils.scss`, `_state.scss`, `templates/scss/theme-example.scss`,
+      `src/styles/main.scss`, `src/accessibility/contrast/contrast-pairs.ts`.
+      ⚠️ Comprendre d'abord le conflit d'origine pour ne pas le réintroduire ;
+      oracle CSS byte-identique. (Impossible de changer juste l'exemple : il
+      référence la palette « redd » → casserait la compilation.)
+
 ## Micro-chantiers proposés (non planifiés, sous filet des tests)
 
 - [x] **Corrections de rôles** (proposé après E1) — **terminé le 2026-07-07**
