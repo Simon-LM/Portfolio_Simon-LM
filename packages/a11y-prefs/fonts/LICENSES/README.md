@@ -7,18 +7,18 @@ Toutes les polices livrées dans `packages/a11y-prefs/fonts/files/` sont sous
 redistribution (y compris commerciale) tant que la police n'est pas vendue
 seule et que la licence accompagne les fichiers.
 
-Audit réalisé le 2026-07-08. **Chaque texte de licence canonique doit être
-récupéré depuis la source officielle et figé ici avant publication npm
-(chantier E7)** — les fichiers `*.txt` de ce dossier documentent la
-licence et la source ; ils ne se substituent pas au texte OFL canonique.
+Audit réalisé le 2026-07-08. **Textes canoniques figés le 2026-07-13**
+(préparation E7) : chaque fichier `*.txt` de ce dossier EST le texte OFL 1.1
+canonique, téléchargé verbatim depuis la source officielle du projet de
+police (en-tête de copyright + corps OFL intégral). Copyrights réels tels
+que déclarés dans ces textes :
 
-| Famille | Licence | Détenteur du copyright | Source officielle |
+| Famille | Fichier | Copyright (verbatim OFL) | Source officielle |
 | --- | --- | --- | --- |
-| OpenDyslexic | SIL OFL 1.1 | Abelardo Gonzalez | https://opendyslexic.org |
-| Andika | SIL OFL 1.1 | SIL International | https://software.sil.org/andika/ |
-| Atkinson Hyperlegible Next | SIL OFL 1.1 | Braille Institute of America, Inc. | https://github.com/googlefonts/atkinson-hyperlegible |
-| Lexend Giga | SIL OFL 1.1 | The Lexend Project Authors | https://github.com/googlefonts/lexend |
-| Lexend Deca | SIL OFL 1.1 | The Lexend Project Authors | https://github.com/googlefonts/lexend |
+| OpenDyslexic | `OpenDyslexic.txt` | Abbie Gonzalez | github.com/antijingoist/opendyslexic |
+| Andika | `Andika.txt` | SIL Global | github.com/silnrsi/font-andika |
+| Atkinson Hyperlegible Next | `AtkinsonHyperlegibleNext.txt` | The Atkinson Hyperlegible Next Project Authors | github.com/googlefonts/atkinson-hyperlegible-next |
+| Lexend Giga + Deca | `Lexend.txt` | The Lexend Project Authors | github.com/googlefonts/lexend |
 
 ## Police recommandée mais NON embarquée : Sylexiad
 
