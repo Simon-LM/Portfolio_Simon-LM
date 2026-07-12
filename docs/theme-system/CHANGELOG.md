@@ -13,6 +13,34 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-12 (chantier E6.5 — générateur de thèmes dans le paquet)
+
+### Added / Changed (branche `feat/e6-5-theme-generator`)
+
+Comble l'écart n°1 de l'audit de réconciliation §6.2 : l'émetteur
+`[data-theme]` + les définitions de thèmes standards étaient encore côté
+site alors que le §6.2 les met dans le paquet. Réalise la vision « je
+définis mon light → tous les thèmes sont générés » **côté paquet**.
+
+- **`packages/a11y-prefs/scss/_theme-generator.scss`** (paquet) :
+  `apply-theme($name)` (15 recettes standards migrées : dark, 4× fort
+  contraste, 6× daltoniens, achromatopsie, 2× anti-glare ; swap accent dark
+  généralisé — dérive des primitives, plus d'amber en dur),
+  `emit-role-vars()` (variables couches 1+2), `generate-all-themes($themes)`
+  avec `@content($name)` pour la couche 3, `hc-carte($name)`, `$default-themes`.
+- **Le portfolio consomme `generate-all-themes`** : `_theme-system.scss`
+  réduit à un appel + `:root`/`@media` (défaut light / défaut système dark) ;
+  couche 3 et règles site (header/focus HC, lang-toggle anti-glare) injectées
+  via `emit-consumer-vars` + `theme-overrides($name)` ; `emit-layer3-vars`
+  extrait dans `_theme-variables`. **Les 15 fichiers de thème supprimés.**
+- **Oracle** : CSS **byte-identique modulo pragmas** (0 écart de règle ou de
+  variable ; 25 lignes `/** @format */` en moins, l'ex-bruit des fichiers de
+  thème). Vérifié aussi : 15 thèmes × 39 rôles identiques au site. 748 tests.
+- **Exemple E6** (`templates/scss/theme-example.scss`) réduit à un seul
+  `@include generate-all-themes() { @include a11y-ui-theme-vars; }`.
+
+Reste E6.6 (extraction du vérificateur de contrastes, écart n°2) avant E7.
+
 ## 2026-07-12 (chantier E6 — templates UI + CLI de scaffolding)
 
 ### Added (branche `feat/e6-cli` ; le site ne change pas — byte-identique)

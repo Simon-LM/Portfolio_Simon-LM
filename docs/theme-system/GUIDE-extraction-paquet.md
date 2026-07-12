@@ -360,6 +360,22 @@ exemples de couche 3. `init --diff` compare l'UI locale à la référence du
 paquet (modèle shadcn). L'UI copiée n'importe **que** l'API publique du
 paquet (core, hooks, tokens) — jamais ses internes.
 
+### E6.5 — Extraction du générateur de thèmes — ✅ fait le 2026-07-12
+
+Révélé par l'audit de réconciliation §6.2 (README) : l'émetteur
+`[data-theme]` et les définitions de thèmes standards étaient restés côté
+site (différés par E3, garés en README §7 au lieu d'être un chantier).
+`_theme-generator.scss` dans le paquet : `apply-theme`, `emit-role-vars`,
+`generate-all-themes($themes)`. Le consommateur configure son light + liste
+ses thèmes → tous générés. Oracle byte-identique modulo pragmas. Plan :
+`PLAN-e6-5-theme-generator.md`.
+
+### E6.6 — Extraction du vérificateur de contrastes — à faire
+
+Écart n°2 de l'audit §6.2 : l'outillage `src/accessibility/contrast/` (8
+fichiers) est côté site alors que le §6.2 le met dans le paquet. À extraire
+avant E7 (le paquet doit livrer sa garantie de contrastes + le gate CI).
+
 ### E7 — Open source et publication
 
 - **Nom du paquet acté (2026-07-12)** : `darkmode-plus-a11y` (positionnement
