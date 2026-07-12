@@ -1,0 +1,54 @@
+/** @format */
+
+// Configuration de thème — COUCHE 3 de l'UI d'accessibilité (template
+// scaffoldé, vous le possédez). Câble les variables CSS que la carte + le
+// déclencheur consomment, dérivées des RÔLES (couche 2) que le moteur du
+// paquet a transformés pour chaque thème.
+//
+// ⚠️ RÈGLE D'OR (voir la notice AGENTS.md) : chaque token se définit À PARTIR
+// D'UN RÔLE de couche 2 (`$accent`, `$bg-base`, `$link`…), jamais une valeur
+// brute. C'est ce qui garantit que le fort contraste et les thèmes daltoniens
+// s'appliquent correctement. Les contrôles d'outillage (`pnpm hc:audit` +
+// test de conformité) vérifient ce câblage.
+//
+// ⚠️ `a11y-prefs` = nom d'import du paquet ; le CLI le réécrit vers le nom
+// installé (défaut « darkmode-plus-a11y ») lors de `init`.
+
+@use "a11y-prefs/scss/base-palette" as *;
+@use "a11y-prefs/scss/state" as *;
+
+// Émet les variables CSS consommées par l'UI d'accessibilité, dérivées des
+// rôles courants. À inclure DANS chaque bloc [data-theme], APRÈS le
+// transform du moteur + apply-roles (cf. theme-example.scss).
+@mixin a11y-ui-theme-vars {
+	// --- Rôles / rail utilisés directement par l'UI (passe-plats) ---
+	--accent: #{$accent};
+	--link: #{$link};
+	--link-hover: #{$link-hover};
+	--near-black: #{$near-black};
+	--off-white: #{$off-white};
+	--gray-300: #{$gray-300};
+	--gray-400: #{$gray-400};
+	--gray-700: #{$gray-700};
+
+	// --- Constantes athématiques (mêmes valeurs dans tous les thèmes ;
+	//     leur nom --constant-* le déclare) ---
+	--constant-near-black: #0c0a09;
+	--constant-error-color: #dc2626;
+
+	// --- Tokens de l'UI, dérivés des rôles ---
+	--color-main-bg: #{$bg-base};
+	--color-main-text: #{$fg-base};
+	--color-panel-bg: #{$bg-base};
+	--color-panel-border: #{$border-base};
+	--color-scrollbar-track: #{$bg-base};
+	--color-scrollbar-thumb: #{$border-subtle};
+	--color-button-border: #{$border-subtle};
+	--color-button-hover-bg: #{$link-hover};
+	--color-button-hover-text: #{$fg-on-emphasis};
+	--color-button-active-text: #{$fg-base};
+	--color-border: #{$border-subtle};
+	--color-accent: #{$accent};
+	--color-accent-hover: #{$accent-strong};
+	--color-focus-outline: #{$focus-ring};
+}
