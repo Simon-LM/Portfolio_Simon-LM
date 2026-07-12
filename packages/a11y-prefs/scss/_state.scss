@@ -35,7 +35,7 @@ $primitives: (
 	"link-hover": ("sky", 800),
 	// emerald-700 (décision Simon 2026-07-07) : 5.25:1 sur bg-base en light.
 	"success": ("emerald", 700),
-	"danger": ("redd", 600),
+	"danger": ("red", 600),
 ) !default;
 
 // Résout une primitive configurée (famille, poids) en couleur.

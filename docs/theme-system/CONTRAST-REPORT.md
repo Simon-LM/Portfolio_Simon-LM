@@ -2,7 +2,7 @@
 
 # Contrast report — WCAG 2.2 matrix
 
-Generated on: 2026-07-12 — regenerate with `pnpm contrast:report`.
+Generated on: 2026-07-13 — regenerate with `pnpm contrast:report`.
 This file is a generated artifact (chantier E1,
 [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md)); do not edit by hand.
 
@@ -82,4 +82,4 @@ applied), ⚠ waived (see reason below). Cell value is the measured ratio.
 
 - Threshold: 4.5:1 (text)
 - Measured: `anti-glare-light`: 3.9425:1
-- Reason: anti-glare-light only, as of chantier E2 (refonte daltonienne). The 6 CVD-theme failures documented here since chantier E1 — the old CVD-engine substitution colors (e.g. #ffcc00 in deuteranopia, chosen for perceptual distinguishability, not contrast, as low as 1.34:1) — are resolved: --danger now resolves to a weight >= 4.5:1 in all 6 CVD themes (orange-700 = 4.96:1 in the -opias via the part-2 semantic status anchor, redd-600 = 4.62:1 kept in the -omalies, amber-based in tritan). anti-glare-light's ratio rose (3.46 → 3.94, still non-compliant) after the chantier E2 OKLCH anti-glare rewrite (PLAN-revue-moteurs.md phase 3), unrelated to the CVD work. --danger remains currently unreferenced by any component.
+- Reason: anti-glare-light only, as of chantier E2 (refonte daltonienne). The 6 CVD-theme failures documented here since chantier E1 — the old CVD-engine substitution colors (e.g. #ffcc00 in deuteranopia, chosen for perceptual distinguishability, not contrast, as low as 1.34:1) — are resolved: --danger now resolves to a weight >= 4.5:1 in all 6 CVD themes (orange-700 = 4.96:1 in the -opias via the part-2 semantic status anchor, red-600 = 4.62:1 kept in the -omalies, amber-based in tritan). anti-glare-light's ratio rose (3.46 → 3.94, still non-compliant) after the chantier E2 OKLCH anti-glare rewrite (PLAN-revue-moteurs.md phase 3), unrelated to the CVD work. --danger remains currently unreferenced by any component.

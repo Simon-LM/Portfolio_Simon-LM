@@ -18,17 +18,7 @@ rien oublier. Mettre à jour au fil de l'eau (cocher / retirer une fois fait).
 
 ## À faire AVANT publication (E7)
 
-- [ ] **Renommer la famille de palette `redd` → `red`** (2026-07-12). Simon
-      avait mis 2 « d » pour contourner un conflit (VS Code / compilateur qui
-      confondait avec le nom Tailwind `red` — probablement la fonction Sass
-      `red()` ou le language server CSS). Non urgent, mais **à réparer avant
-      d'envoyer** : « redd » exposé dans l'API publique ferait mauvais effet.
-      6 fichiers : `packages/a11y-prefs/scss/_base-palette.scss` (déf.),
-      `_theme-utils.scss`, `_state.scss`, `templates/scss/theme-example.scss`,
-      `src/styles/main.scss`, `src/accessibility/contrast/contrast-pairs.ts`.
-      ⚠️ Comprendre d'abord le conflit d'origine pour ne pas le réintroduire ;
-      oracle CSS byte-identique. (Impossible de changer juste l'exemple : il
-      référence la palette « redd » → casserait la compilation.)
+- [x] **Renommé la famille de palette `redd` → `red`** (fait le 2026-07-13). Cause racine confirmée par test : une clé de map NON quotée `red:` est lue comme la couleur CSS `red`, donc `map.get($colors, "red")` renvoyait null. Fix cohérent avec `"orange"`/`"violet"` (déjà quotées) : clé quotée `"red":`. 6 fichiers ; CSS byte-identique.
 
 ## Micro-chantiers proposés (non planifiés, sous filet des tests)
 

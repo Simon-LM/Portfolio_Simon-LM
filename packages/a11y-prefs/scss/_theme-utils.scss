@@ -269,7 +269,7 @@ $status-legibility-floor: 3 !default;
 // NOTE (déviation mesurée, partie 2) : le plan prévoyait pour les anomalies un
 // mélange severity (anchor mixé à 50 % avec l'origine). Ce mélange OKLCH entre
 // teintes éloignées sortait du gamut sRGB — remplacé par une couleur Tailwind
-// pure ; la finesse des -omalies vient du choix d'ancre (emerald/redd).
+// pure ; la finesse des -omalies vient du choix d'ancre (emerald/red).
 @function resolve-anchor-weight($target-family, $bg, $target-ratio: 4.5) {
 	$bg-lum: wcag-relative-luminance($bg);
 	$n: list.length($tailwind-weights);
@@ -662,13 +662,13 @@ $hc-palette: (
 		// Déficience LÉGÈRE (-omalie) : la discrimination rouge-vert est
 		// réduite, pas absente — on garde les teintes naturelles (success
 		// vert, danger rouge) et le résolveur ne corrige que le POIDS pour
-		// atteindre >= 4.5:1 (emerald-600 -> emerald-700 ; redd-600 tient
+		// atteindre >= 4.5:1 (emerald-600 -> emerald-700 ; red-600 tient
 		// déjà). Plus doux et plus « attendu » que le remap complet des
 		// -opies, et mesuré distinguable sous simulation (voir rapport de
 		// phase 3). accent/link ne sont pas remappés (déjà sûrs).
 		"status-anchors": (
 			"success": "emerald",
-			"danger": "redd",
+			"danger": "red",
 		),
 		"severity": 0.5,
 		"overrides": (),
@@ -780,14 +780,14 @@ $hc-palette: (
 	// Utiliser la configuration par défaut si aucune n'est fournie.
 	// "special-colors" (ex. #0075ff/#ffcc00) retiré des défauts (chantier
 	// E3, PLAN-refonte-daltonienne.md phase 3) : family-remap couvre
-	// désormais --success (emerald -> sky) et --danger (redd -> amber).
+	// désormais --success (emerald -> sky) et --danger (red -> amber).
 	// Le mécanisme special-colors reste disponible pour un override projet.
 	$default-config: (
 		"special-colors": (),
 		// Rôles statut résolus par ancres sémantiques (partie 2, phase 3) :
 		// success -> famille bleue, danger -> famille orange, poids
 		// auto-résolu pour >= 4.5:1. Remplace l'ancien family-remap
-		// emerald->sky(-3)/redd->amber(+1) dont le décalage fixe écrasait le
+		// emerald->sky(-3)/red->amber(+1) dont le décalage fixe écrasait le
 		// contraste de --success (1.60:1). `sky` (bleu « naturel ») est déjà
 		// pris par --link ; `violet` est perçu bleu sous CVD rouge-verte et
 		// laisse le lien distinguable. accent/link ne sont pas remappés
@@ -930,13 +930,13 @@ $hc-palette: (
 		// Déficience LÉGÈRE (-omalie) : la discrimination rouge-vert est
 		// réduite, pas absente — on garde les teintes naturelles (success
 		// vert, danger rouge) et le résolveur ne corrige que le POIDS pour
-		// atteindre >= 4.5:1 (emerald-600 -> emerald-700 ; redd-600 tient
+		// atteindre >= 4.5:1 (emerald-600 -> emerald-700 ; red-600 tient
 		// déjà). Plus doux et plus « attendu » que le remap complet des
 		// -opies, et mesuré distinguable sous simulation (voir rapport de
 		// phase 3). accent/link ne sont pas remappés (déjà sûrs).
 		"status-anchors": (
 			"success": "emerald",
-			"danger": "redd",
+			"danger": "red",
 		),
 		"severity": 0.5,
 		"overrides": (),
@@ -1049,7 +1049,7 @@ $hc-palette: (
 		// Rôles statut résolus par ancres sémantiques (partie 2, phase 3) :
 		// success -> famille bleue, danger -> famille orange, poids
 		// auto-résolu pour >= 4.5:1. Remplace l'ancien family-remap
-		// emerald->sky(-3)/redd->amber(+1) dont le décalage fixe écrasait le
+		// emerald->sky(-3)/red->amber(+1) dont le décalage fixe écrasait le
 		// contraste de --success (1.60:1). `sky` (bleu « naturel ») est déjà
 		// pris par --link ; `violet` est perçu bleu sous CVD rouge-verte et
 		// laisse le lien distinguable. accent/link ne sont pas remappés
@@ -1272,7 +1272,7 @@ $hc-palette: (
 @mixin transform-light-to-tritanopia($config: ()) {
 	// Utiliser la configuration par défaut si aucune n'est fournie.
 	// "special-colors" retiré des défauts (chantier E2 (refonte daltonienne), phase 3) :
-	// emerald/redd n'ont pas d'entrée family-remap ici (déjà sûres pour la
+	// emerald/red n'ont pas d'entrée family-remap ici (déjà sûres pour la
 	// confusion bleu-jaune, cf. plan) — --success/--danger restent donc
 	// inchangées ; seules amber/sky (l'axe réellement confus) sont remappées.
 	$default-config: (

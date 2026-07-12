@@ -41,7 +41,7 @@ const rolePairWaivers: Readonly<Record<string, Waiver>> = {
 			"chosen for perceptual distinguishability, not contrast, as low as " +
 			"1.34:1) — are resolved: --danger now resolves to a weight " +
 			">= 4.5:1 in all 6 CVD themes (orange-700 = 4.96:1 in the -opias " +
-			"via the part-2 semantic status anchor, redd-600 = 4.62:1 kept in " +
+			"via the part-2 semantic status anchor, red-600 = 4.62:1 kept in " +
 			"the -omalies, amber-based in tritan). anti-glare-light's ratio " +
 			"rose (3.46 → 3.94, still non-compliant) after the chantier E2 " +
 			"OKLCH anti-glare rewrite (PLAN-revue-moteurs.md phase 3), " +
