@@ -9,10 +9,15 @@
 		"./react": "./react/index.ts",
 		"./react/*": "./react/*.ts"
 	},
+	"bin": {
+		"darkmode-plus-a11y": "./bin/cli.mjs"
+	},
 	"files": [
 		"scss",
 		"react",
-		"fonts"
+		"fonts",
+		"templates",
+		"bin"
 	],
 	"peerDependencies": {
 		"react": ">=18"

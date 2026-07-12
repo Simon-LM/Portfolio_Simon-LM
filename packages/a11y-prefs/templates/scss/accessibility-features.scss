@@ -1,0 +1,37 @@
+/** @format */
+
+// Fonctionnalités d'accessibilité — SCSS (template scaffoldé, vous le
+// possédez). Émet : les @font-face des polices embarquées, les classes du
+// sélecteur de police, le mode dyslexie optimisé (3 niveaux) et la classe
+// de réduction d'animations. Tout provient des modules opt-in du paquet.
+//
+// ⚠️ Chemin des polices : `$a11y-fonts-path` (défaut "/fonts"). Copiez les
+// fichiers de polices du paquet (fonts/files/) dans ce dossier public, ou
+// changez le chemin ci-dessous.
+//
+// ⚠️ `a11y-prefs` = nom d'import du paquet ; le CLI le réécrit vers le nom
+// installé (défaut « darkmode-plus-a11y ») lors de `init`.
+
+@use "a11y-prefs/scss/modules/a11y-fonts" as * with ($a11y-fonts-path: "/fonts");
+@use "a11y-prefs/scss/modules/dyslexia" as *;
+@use "a11y-prefs/scss/modules/motion" as *;
+
+// @font-face des polices embarquées (OpenDyslexic, Andika, Atkinson).
+@include a11y-font-faces();
+
+// Classes du sélecteur de police : Atkinson + Andika (émises par le paquet).
+@include a11y-font-classes;
+
+// OpenDyslexic : le sélecteur mappe « opendyslexic » → .dyslexic-font. Pas
+// de font-size-adjust (OpenDyslexic est naturellement grande).
+@include a11y-font-class("dyslexic-font", "OpenDyslexic", $font-size-adjust: null);
+
+// Mode dyslexie optimisé (3 niveaux : titre / sous-titre / corps). Défauts
+// = Lexend Giga / Lexend Deca / Andika. Surchargez le corps si besoin, ex.
+// @include dyslexia-typography($body-font: "Ma Police").
+html.dyslexia-optimized {
+	@include dyslexia-typography();
+}
+
+// Classe opt-in de réduction d'animations (html.reduce-motion).
+@include reduce-motion-class;

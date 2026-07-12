@@ -1,0 +1,68 @@
+/** @format */
+
+// Surcharges de RÈGLES site par thème (chantier E6.5) — la part
+// site-spécifique des anciens fichiers de thème (_high-contrast.scss,
+// _anti-glare-*.scss). Émises dans le @content de generate-all-themes,
+// après apply-theme-variables et avant l'émission des variables (ordre
+// préservé pour le byte-identique). Les valeurs par variante HC sont lues
+// dans la carte du paquet (hc-carte), pas redupliquées.
+
+@use "sass:map";
+@use "sass:string";
+@use "a11y-prefs/scss/base-palette" as *;
+@use "a11y-prefs/scss/state" as *;
+@use "a11y-prefs/scss/theme-generator" as *;
+@use "../themes/theme-variables" as *;
+
+@mixin theme-overrides($name) {
+	@if string.index($name, "high-contrast") == 1 {
+		$carte: hc-carte($name);
+		$focus: map.get($carte, "focus");
+		$focus-text: map.get($carte, "focus-text");
+		$highlight: map.get($carte, "highlight");
+
+		// Uniformiser tous les états de focus avec les états hover
+		*:focus-visible {
+			outline: 3px solid $focus !important;
+			border-color: $focus !important;
+			box-shadow: none !important;
+		}
+
+		// Boutons et éléments interactifs au focus
+		button:focus-visible,
+		.button:focus-visible,
+		a:focus-visible,
+		.react-select__control:focus-visible {
+			background-color: $focus !important;
+			color: $focus-text !important;
+			outline: 3px solid $focus !important;
+			outline-offset: 0.25rem;
+		}
+
+		// Surcharges header (le fond suit "highlight" de la carte).
+		$color-header-bg: $highlight !global;
+		$color-header-text: #000000 !global;
+		$color-header-text-role: #000000 !global;
+		$color-header-blog-link-bg: #000000 !global;
+		$color-header-blog-link-text: $highlight !global;
+
+		.skills__icon-wrapper {
+			&.is-rotating {
+				animation: none;
+				animation-fill-mode: none;
+			}
+		}
+	} @else if $name == "anti-glare-light" {
+		.header {
+			&__lang-toggle {
+				background-color: var(--color-section-bg-even);
+			}
+		}
+	} @else if $name == "anti-glare-dark" {
+		.header {
+			&__lang-toggle {
+				background-color: var(--color-section-bg-odd);
+			}
+		}
+	}
+}

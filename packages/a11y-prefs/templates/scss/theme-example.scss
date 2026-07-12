@@ -1,0 +1,37 @@
+/** @format */
+
+// Assemblage des thèmes (template scaffoldé). Vous configurez votre LIGHT
+// une fois (famille de gris + primitives de marque), listez les thèmes
+// voulus, et le PAQUET les génère TOUS — dark, fort contraste (+ variantes),
+// daltoniens, anti-glare — dérivés de votre light. Un seul appel.
+//
+// Votre couche 3 (les variables de l'UI) est injectée par thème via le
+// @content : le paquet n'émet que ses variables de rôle, vous ajoutez les
+// vôtres, dérivées des rôles transformés.
+//
+// ⚠️ `a11y-prefs` = nom d'import du paquet ; le CLI le réécrit vers le nom
+// installé (défaut « darkmode-plus-a11y ») lors de `init`.
+
+@use "a11y-prefs/scss/state" as * with (
+	// Famille de gris et primitives de marque (palettes Tailwind — prérequis).
+	$gray-family: "stone",
+	$primitives: (
+		"accent": ("amber", 300),
+		"accent-strong": ("amber", 500),
+		"accent-ink": ("amber", 950),
+		"accent-soft": ("amber", 100),
+		"link": ("sky", 900),
+		"link-hover": ("sky", 800),
+		"success": ("emerald", 700),
+		"danger": ("redd", 600),
+	)
+);
+@use "a11y-prefs/scss/theme-generator" as *;
+@use "theme.config" as *;
+
+// Tous les thèmes standards, générés depuis votre light. Passez une liste
+// à generate-all-themes(("light", "dark", "high-contrast")) pour n'émettre
+// qu'un sous-ensemble (CSS plus léger).
+@include generate-all-themes() using ($name) {
+	@include a11y-ui-theme-vars; // votre couche 3, dérivée des rôles du thème
+}

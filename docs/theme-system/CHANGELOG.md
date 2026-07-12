@@ -13,6 +13,67 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-12 (chantier E6.5 — générateur de thèmes dans le paquet)
+
+### Added / Changed (branche `feat/e6-5-theme-generator`)
+
+Comble l'écart n°1 de l'audit de réconciliation §6.2 : l'émetteur
+`[data-theme]` + les définitions de thèmes standards étaient encore côté
+site alors que le §6.2 les met dans le paquet. Réalise la vision « je
+définis mon light → tous les thèmes sont générés » **côté paquet**.
+
+- **`packages/a11y-prefs/scss/_theme-generator.scss`** (paquet) :
+  `apply-theme($name)` (15 recettes standards migrées : dark, 4× fort
+  contraste, 6× daltoniens, achromatopsie, 2× anti-glare ; swap accent dark
+  généralisé — dérive des primitives, plus d'amber en dur),
+  `emit-role-vars()` (variables couches 1+2), `generate-all-themes($themes)`
+  avec `@content($name)` pour la couche 3, `hc-carte($name)`, `$default-themes`.
+- **Le portfolio consomme `generate-all-themes`** : `_theme-system.scss`
+  réduit à un appel + `:root`/`@media` (défaut light / défaut système dark) ;
+  couche 3 et règles site (header/focus HC, lang-toggle anti-glare) injectées
+  via `emit-consumer-vars` + `theme-overrides($name)` ; `emit-layer3-vars`
+  extrait dans `_theme-variables`. **Les 15 fichiers de thème supprimés.**
+- **Oracle** : CSS **byte-identique modulo pragmas** (0 écart de règle ou de
+  variable ; 25 lignes `/** @format */` en moins, l'ex-bruit des fichiers de
+  thème). Vérifié aussi : 15 thèmes × 39 rôles identiques au site. 748 tests.
+- **Exemple E6** (`templates/scss/theme-example.scss`) réduit à un seul
+  `@include generate-all-themes() { @include a11y-ui-theme-vars; }`.
+
+Reste E6.6 (extraction du vérificateur de contrastes, écart n°2) avant E7.
+
+## 2026-07-12 (chantier E6 — templates UI + CLI de scaffolding)
+
+### Added (branche `feat/e6-cli` ; le site ne change pas — byte-identique)
+
+Modèle shadcn : le moteur reste sur npm (mise à jour par version), l'UI est
+**copiée** dans le projet du consommateur (il la possède). Le portfolio ne
+consomme PAS les templates (son UI en est l'ancêtre) ; oracle du chantier =
+CSS du site byte-identique, tenu à chaque phase.
+
+- **Templates React** (`packages/a11y-prefs/templates/react/`) : déclencheur
+  + carte + câblage `accessibilityPreferences` (via `usePreference` du
+  paquet, plus de store zustand). Généralisés : polices du paquet seules
+  (Sylexiad retiré), aucune dépendance framework (next/link + next/image
+  retirés ; icône react-icons, lien conformité en prop), déclencheur
+  in-flow. N'importent que l'API publique. tsc + lint OK.
+- **Templates SCSS** (`templates/scss/`) : copie fidèle de l'architecture
+  rem-first (menu + trigger, pilotés par variables CSS), `accessibility-
+  features` (font-faces + classes + dyslexie + motion via modules du
+  paquet), `theme.config` (couche 3 de l'UI dérivée des rôles, règle d'or
+  documentée), `theme-example` (assemblage light + HC qui compile). Tous
+  compilent.
+- **CLI** (`bin/cli.mjs`, Node pur, `bin` du paquet) : `init` copie les
+  templates + polices en réécrivant l'import `a11y-prefs` → nom installé
+  (défaut `darkmode-plus-a11y`), refuse d'écraser sans `--force` ;
+  `init --diff` compare la copie locale à la référence (nouveau / modifié /
+  identique). Vérifié en projet-test.
+- **Notice IA** (`templates/AGENTS.md`) : contrat couche 3 (règle d'or +
+  liste des 25 rôles vérifiés), prérequis Tailwind, câblage, placement
+  in-flow (jamais fixed), renvoi vers `hc:audit` + test de conformité.
+
+Reste E7 : nom `darkmode-plus-a11y` acté, dist publiable + publication npm
+(voir GUIDE § E7, politique de versionnage semver).
+
 ## 2026-07-11 (chantier hc-mécanique — exécution)
 
 ### Added (focus en rôle + les deux contrôles, branche `feat/hc-mecanique`)

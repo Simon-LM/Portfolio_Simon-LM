@@ -1,0 +1,234 @@
+/** @format */
+
+// Styles du déclencheur (bouton) + panneau d'accessibilité (template
+// scaffoldé — vous les possédez, modifiez-les librement). Copie de
+// l'architecture du portfolio. ⚠️ Le déclencheur est prévu DANS LE FLUX
+// (ex. votre header), pas en position:fixed flottant.
+// L'icône par défaut du template est une SVG react-icons : les filtres
+// d'inversion ci-dessous fonctionnent, mais vous pouvez préférer piloter sa
+// couleur via `color`/`fill`.
+
+.accessibility-control {
+	position: relative;
+
+	// Le bouton lui-même
+	&__button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border: none;
+		border-radius: 0.25rem;
+		padding: 0;
+		background: var(--off-white);
+		aspect-ratio: 1/1;
+		width: 1.75rem;
+		overflow: hidden;
+		cursor: pointer;
+
+		img,
+		svg {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		&:hover {
+			img,
+			svg {
+				filter: invert(100%);
+			}
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-focus-outline);
+			outline-offset: 2px;
+
+			img,
+			svg {
+				filter: invert(100%);
+			}
+		}
+	}
+
+	&__icon {
+		display: flex;
+		width: 100%;
+		height: 100%;
+	}
+}
+
+.accessibility-panel {
+	position: fixed;
+	top: clamp(10%, 22rem, 45%);
+	left: clamp(50%, calc(100% - 13rem), calc(100% - 4rem));
+	transform: translate(-50%, -50%) translateY(0);
+
+	width: 22.5rem;
+	// max-width: calc(100vw - 4rem);
+	max-width: 75vw;
+	height: 30rem;
+	max-height: calc(100vh - 10rem);
+
+	background: var(--color-panel-bg, var(--color-main-bg));
+	border: 0.125rem solid var(--color-panel-border, var(--color-main-text));
+	border-radius: 0.5rem;
+	box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.2);
+	padding: 0.75rem;
+	z-index: 1000;
+
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+
+	// En mode high contrast
+	.theme-high-contrast & {
+		border-width: 0.1875rem;
+	}
+
+	// État ouvert
+	&.open {
+		opacity: 1;
+		visibility: visible;
+		transform: translate(-50%, -50%);
+	}
+
+	// Triangle décoratif
+	&::before {
+		content: "";
+		position: absolute;
+		top: -0.625rem;
+		right: 1.125rem;
+		width: 0;
+		height: 0;
+		border-left: 0.625rem solid transparent;
+		border-right: 0.625rem solid transparent;
+		border-bottom: 0.625rem solid
+			var(--color-panel-border, var(--color-main-text));
+	}
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: -0.4375rem;
+		right: 1.3125rem;
+		width: 0;
+		height: 0;
+		border-left: 0.4375rem solid transparent;
+		border-right: 0.4375rem solid transparent;
+		border-bottom: 0.4375rem solid var(--color-panel-bg, var(--color-main-bg));
+	}
+}
+// Styles pour les différents thèmes
+// Bouton flottant — toutes les variantes de fort contraste (chantier HC) :
+// fond = fond du thème, survol = couleur d'action. L'icône ne peut pas
+// suivre une variable CSS (c'est un filter) : blanc par défaut (variantes
+// sombres), jaune historique en variante jaune, sombre en variante papier.
+[data-theme^="high-contrast"] {
+	.accessibility-control__button {
+		background-color: var(--off-white) !important;
+
+		img,
+		svg {
+			filter: invert(100%);
+		}
+
+		&:hover,
+		&:focus-visible {
+			background-color: var(--link-hover) !important;
+
+			img,
+			svg {
+				filter: none !important;
+			}
+		}
+	}
+}
+
+// Variante jaune : icône jaune historique (rendu inchangé)
+[data-theme="high-contrast"] {
+	.accessibility-control__button {
+		img,
+		svg {
+			filter: #{"invert(80%) sepia(72%) saturate(528%) hue-rotate(359deg) brightness(101%) contrast(106%)"};
+		}
+
+		&:hover,
+		&:focus-visible {
+			img,
+			svg {
+				filter: none !important;
+			}
+		}
+	}
+}
+
+// Variante verte : icône verte — le filtre jaune calibré ci-dessus + une
+// rotation de teinte de 60° (jaune 60° -> vert 120°)
+[data-theme="high-contrast-green"] {
+	.accessibility-control__button {
+		img,
+		svg {
+			filter: #{"invert(80%) sepia(72%) saturate(528%) hue-rotate(359deg) brightness(101%) contrast(106%) hue-rotate(60deg)"};
+		}
+
+		&:hover,
+		&:focus-visible {
+			img,
+			svg {
+				filter: none !important;
+			}
+		}
+	}
+}
+
+// Variante papier (polarité inversée) : icône sombre sur fond blanc,
+// survol = action noire -> icône blanche
+[data-theme="high-contrast-paper"] {
+	.accessibility-control__button {
+		img,
+		svg {
+			filter: none;
+		}
+
+		&:hover,
+		&:focus-visible {
+			img,
+			svg {
+				filter: invert(100%) !important;
+			}
+		}
+	}
+}
+
+[data-theme="dark"] {
+	.accessibility-control__button {
+		img,
+		svg {
+			filter: invert(100%);
+		}
+
+		&:hover,
+		&:focus-visible {
+			img,
+			svg {
+				filter: none;
+			}
+		}
+	}
+}
+[data-theme="anti-glare-dark"] {
+	.accessibility-control__button {
+		img,
+		svg {
+			filter: invert(100%); // Même filtre que pour le thème dark
+		}
+
+		&:hover,
+		&:focus-visible {
+			img,
+			svg {
+				filter: none;
+			}
+		}
+	}
+}

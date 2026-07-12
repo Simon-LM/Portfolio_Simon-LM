@@ -35,7 +35,8 @@ mergée : rollup + src, datant d'avant plusieurs refontes du système).
 | [PLAN-high-contrast-variants.md](./PLAN-high-contrast-variants.md) | Plan d'exécution : variantes du fort contraste (jaune/vert/blanc/papier) + typographie HC + boutons-preview | ✅ exécuté et mergé le 2026-07-11 (`5192ee3`), smoke Simon variante par variante |
 | [PLAN-hc-mecanique-controles.md](./PLAN-hc-mecanique-controles.md) | Plan d'exécution : mécanique HC — focus promu rôle de couche 2 + contrôles d'outillage (valeur + noms) | ✅ exécuté le 2026-07-11 (branche `feat/hc-mecanique`) |
 | [HC-SEMANTIC-AUDIT.md](./HC-SEMANTIC-AUDIT.md) | Artefact généré : audit sémantique du fort contraste (noms ↔ valeurs émises) | vivant (régénéré par `pnpm hc:audit`) |
-| [PLAN-e6-cli-scaffolding.md](./PLAN-e6-cli-scaffolding.md) | Plan d'exécution : chantier E6 — templates UI (déclencheur + carte) + CLI `init`/`init --diff` (modèle shadcn) | rédigé le 2026-07-12, **à exécuter** |
+| [PLAN-e6-cli-scaffolding.md](./PLAN-e6-cli-scaffolding.md) | Plan d'exécution : chantier E6 — templates UI (déclencheur + carte) + CLI `init`/`init --diff` (modèle shadcn) | ✅ exécuté le 2026-07-12 (branche `feat/e6-cli`) — `packages/a11y-prefs/templates/` + `bin/cli.mjs` + notice IA `templates/AGENTS.md` |
+| [PLAN-e6-5-theme-generator.md](./PLAN-e6-5-theme-generator.md) | Plan d'exécution : chantier E6.5 — extraction du générateur de thèmes (generate-all-themes) dans le paquet | ✅ exécuté le 2026-07-12 (branche `feat/e6-5-theme-generator`) — écart n°1 de l'audit §6.2 comblé |
 
 Principe : **un chantier = un plan = une branche = une exécution par IA**,
 avec revue avant merge. Le guide donne l'ordre ; chaque plan est autonome.
@@ -550,7 +551,7 @@ WCAG dans les 12 thèmes ; styler un nouveau composant = choisir un `bg`, un
 | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------ |
 | Moteurs de transformation (dark, high-contrast, daltonismes, anti-glare)                               | Choix des familles de palette + famille du rail gris         |
 | **Noms** des rôles de la couche 2 (+ valeurs par défaut)                                               | **Valeurs** des rôles (affectations rôle → rail)             |
-| Liste des thèmes — source unique dont dérivent type TS, `VALID_THEMES`, script anti-FOUC et blocs SCSS | Sous-ensemble de thèmes émis (à la carte, pour un CSS léger) |
+| Liste des thèmes — source unique dont dérivent type TS, `VALID_THEMES`, script anti-FOUC et blocs SCSS **(✅ E6.5 : `generate-all-themes()` + `$default-themes`)** | Sous-ensemble de thèmes émis (à la carte, pour un CSS léger) |
 | Palettes Tailwind embarquées (maps statiques)                                                          | Palettes maison éventuelles (contrat : 11 poids)             |
 | Émetteur des blocs `[data-theme]`                                                                      | Couche 3 (tokens de composants)                              |
 | Runtime : cœur des préférences (persistance, application DOM, anti-FOUC), `useTheme`                  | Rôles additionnels éventuels (extension, pas renommage)      |
