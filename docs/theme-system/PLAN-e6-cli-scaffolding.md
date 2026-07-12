@@ -10,14 +10,26 @@ modifient leur UI, elle n'est pas dans npm ; seuls les moteurs le sont).
 ## Ce que le consommateur obtient à la fin
 
 ```
-pnpm dlx a11y-prefs init        # nom de travail — définitif en E7
+pnpm dlx darkmode-plus-a11y init    # nom définitif acté le 2026-07-12
 ```
 
-copie dans son projet : le **déclencheur** (bouton flottant) + la **carte
+copie dans son projet : le **déclencheur** (l'icône) + la **carte
 d'accessibilité** complète (React + SCSS), `theme.config.scss` (sa config
 couche 3 commentée) et des exemples. `init --diff` compare ensuite son UI
 locale à la référence du paquet (mises à jour à la shadcn : le dev voit ce
 qui a changé et reporte ce qu'il veut).
+
+### ⚠️ Placement du déclencheur — surtout PAS de position fixe (décision Simon 2026-07-12)
+
+Le déclencheur du portfolio est un élément **dans le flux** (rendu dans le
+header, aucun `position: fixed`) : il grossit et se replace avec les zooms,
+sans jamais chevaucher le contenu. Un bouton flottant `position: fixed`
+serait une **faute d'accessibilité** (chevauchement quasi certain aux
+grands zooms). Donc : le template expose un composant **in-flow**, le dev
+le place où il veut (idéalement son header). Si un défaut clé-en-main est
+requis, ce sera une **bande pré-header** (un bandeau au-dessus du header
+principal, icône à droite) — pas joli mais correct en accessibilité —
+**jamais** un flottant fixe.
 
 ## État des lieux (relevé du 2026-07-12)
 
@@ -42,10 +54,9 @@ qui a changé et reporte ce qu'il veut).
    d'extension documenté** pour les polices maison (le patron Sylexiad) ;
    `next/link` remplacé par un `<a>` (ou prop de rendu) ; lien « politique
    d'accessibilité » paramétrable.
-3. **Reco à arbitrer — l'état dans les templates** : remplacer les stores
-   zustand par le hook `usePreference` du paquet (zéro dépendance d'état
-   pour le consommateur, et ça fait ses preuves au vrai usage). Le
-   portfolio garde ses stores.
+3. **ACTÉ (Simon 2026-07-12) — l'état dans les templates = `usePreference`**
+   du paquet (pas zustand) : zéro dépendance d'état pour le consommateur, et
+   ça éprouve le hook au vrai usage. Le portfolio garde ses stores.
 4. **Reco à arbitrer — dépendances UI des templates** : garder
    `react-select` (sélecteurs daltonisme/polices, ton SCSS les couvre) et
    `react-icons` (icône du déclencheur) comme dépendances **du projet
