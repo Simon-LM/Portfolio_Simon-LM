@@ -7,7 +7,8 @@
 	"exports": {
 		"./scss/*": "./scss/*",
 		"./react": "./react/index.ts",
-		"./react/*": "./react/*.ts"
+		"./react/*": "./react/*.ts",
+		"./testing/*": "./testing/*.ts"
 	},
 	"bin": {
 		"darkmode-plus-a11y": "./bin/cli.mjs"
@@ -17,9 +18,15 @@
 		"react",
 		"fonts",
 		"templates",
-		"bin"
+		"bin",
+		"testing"
 	],
 	"peerDependencies": {
 		"react": ">=18"
+	},
+	"dependencies": {
+		"culori": "^4.0.2",
+		"postcss": "^8.5.16",
+		"sass": "^1.101.0"
 	}
 }

@@ -1,12 +1,14 @@
 /** @format */
 
+import "./setup";
+
 import fs from "node:fs";
 import path from "node:path";
 
 import { THEMES, type ThemeOption } from "../../config/themes";
 import { contrastPairs, type ContrastPair } from "./contrast-pairs";
-import { thresholdFor } from "./wcag";
-import { measureRatio } from "./measure";
+import { thresholdFor } from "a11y-prefs/testing/wcag";
+import { measureRatio } from "a11y-prefs/testing/measure";
 
 export const REPORT_PATH = path.resolve(
 	__dirname,

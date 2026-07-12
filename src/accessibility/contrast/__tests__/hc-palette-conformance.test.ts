@@ -8,7 +8,7 @@
 // définit à partir des rôles ». Lecture seule : ce test ne modifie rien.
 
 import { THEMES } from "../../../config/themes";
-import { getThemeVars } from "../extract-themes";
+import { getThemeVars } from "a11y-prefs/testing/extract-themes";
 
 // Palettes par variante — MIROIR de src/styles/themes/_high-contrast*.scss
 // (si une carte change là-bas, ce test échoue : c'est voulu, il force la

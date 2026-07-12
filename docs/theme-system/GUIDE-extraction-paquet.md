@@ -370,11 +370,13 @@ site (différés par E3, garés en README §7 au lieu d'être un chantier).
 ses thèmes → tous générés. Oracle byte-identique modulo pragmas. Plan :
 `PLAN-e6-5-theme-generator.md`.
 
-### E6.6 — Extraction du vérificateur de contrastes — à faire
+### E6.6 — Extraction du vérificateur de contrastes — ✅ fait le 2026-07-12
 
-Écart n°2 de l'audit §6.2 : l'outillage `src/accessibility/contrast/` (8
-fichiers) est côté site alors que le §6.2 le met dans le paquet. À extraire
-avant E7 (le paquet doit livrer sa garantie de contrastes + le gate CI).
+Écart n°2 de l'audit §6.2 comblé : le moteur (`wcag`/`measure`/`cvd`/`gamut`/
+`extract-themes` paramétré/`pairs`) vit dans `packages/a11y-prefs/testing/` ;
+le portfolio le consomme (config + paires couche 3 + waivers en overlay).
+Oracle byte-identique. Plan : `PLAN-e6-6-contrast-verifier.md`. Gate CI : le
+consommateur exécute les tests du vérificateur sur ses paires × thèmes.
 
 ### E7 — Open source et publication
 

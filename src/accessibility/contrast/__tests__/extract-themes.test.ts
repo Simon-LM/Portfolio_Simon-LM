@@ -1,7 +1,7 @@
 /** @jest-environment node */
 /** @format */
 
-import { getThemeVars, getRootVars, getVar } from "../extract-themes";
+import { getThemeVars, getRootVars, getVar } from "a11y-prefs/testing/extract-themes";
 import { THEMES } from "../../../config/themes";
 
 describe("getThemeVars", () => {
@@ -47,7 +47,8 @@ describe("getVar", () => {
 	});
 
 	it("throws for an unknown theme", () => {
-		// @ts-expect-error deliberately passing an invalid theme name
+		// theme est typé `string` côté paquet (générique) ; le contrôle est
+		// désormais au runtime seulement.
 		expect(() => getVar("not-a-theme", "--fg-base")).toThrow(/unknown theme/);
 	});
 

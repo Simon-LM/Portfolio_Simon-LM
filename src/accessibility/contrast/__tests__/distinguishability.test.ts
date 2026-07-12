@@ -1,9 +1,9 @@
 /** @jest-environment node */
 /** @format */
 
-import { getVar } from "../extract-themes";
+import { getVar } from "a11y-prefs/testing/extract-themes";
 import { distinguishabilityPairs } from "../contrast-pairs";
-import { measureDeltaE } from "../measure";
+import { measureDeltaE } from "a11y-prefs/testing/measure";
 
 describe("distinguishability-pairs registry integrity", () => {
 	it("has no duplicate pair ids", () => {
