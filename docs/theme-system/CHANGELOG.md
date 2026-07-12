@@ -13,6 +13,36 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-12 (chantier E6.6 — vérificateur de contrastes dans le paquet)
+
+### Added / Changed (branche `feat/e6-6-contrast-verifier`)
+
+Comble l'**écart n°2** de l'audit §6.2 : l'outillage `contrast/` était côté
+site. Le paquet livre désormais le **moteur** ; le site le **consomme**.
+
+- **`packages/a11y-prefs/testing/`** : `wcag`, `measure`, `cvd-simulation`,
+  `gamut`, `extract-themes` (paramétré — `configureThemeExtraction({ entry,
+  loadPaths, themes })`, le chemin `main.scss` codé en dur devient un
+  argument), `pairs` (types + `defaultRolePairs` + `defaultDistinguishability
+  Pairs` + `withWaivers`). Export `./testing/*` ; deps culori/postcss/sass.
+- **Le portfolio consomme le moteur** : `contrast-pairs.ts` importe les
+  défauts du paquet, applique **ses** waivers en overlay + ajoute ses paires
+  de **couche 3** ; `setup.ts` configure l'extraction (entrée + node_modules
+  + THEMES), branché dans `jest.setup.js` + les scripts report/audit ;
+  `moduleNameMapper` a11y-prefs/testing.
+- **Théme names → `string`** dans le moteur (générique, plus lié au type
+  `ThemeOption` du site).
+- **Oracle** : `CONTRAST-REPORT.md` **byte-identique** (hors date de
+  génération), `hc:audit` inchangé (0 actif, 15 waivés), **748 tests** verts,
+  build + tsc + lint OK.
+- Les **tests moteur** (wcag, gamut, cvd) restent dans la suite du site pour
+  l'instant (ils importent le paquet) ; ils rejoindront la CI propre du
+  paquet en E7.
+
+**Les DEUX écarts de l'audit §6.2 sont comblés** → le paquet correspond au
+périmètre cible. Reste E7 (dist publiable + npm), et le renommage `redd`→
+`red` (TODO).
+
 ## 2026-07-12 (chantier E6.5 — générateur de thèmes dans le paquet)
 
 ### Added / Changed (branche `feat/e6-5-theme-generator`)

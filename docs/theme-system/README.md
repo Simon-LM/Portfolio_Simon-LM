@@ -37,6 +37,7 @@ mergée : rollup + src, datant d'avant plusieurs refontes du système).
 | [HC-SEMANTIC-AUDIT.md](./HC-SEMANTIC-AUDIT.md) | Artefact généré : audit sémantique du fort contraste (noms ↔ valeurs émises) | vivant (régénéré par `pnpm hc:audit`) |
 | [PLAN-e6-cli-scaffolding.md](./PLAN-e6-cli-scaffolding.md) | Plan d'exécution : chantier E6 — templates UI (déclencheur + carte) + CLI `init`/`init --diff` (modèle shadcn) | ✅ exécuté le 2026-07-12 (branche `feat/e6-cli`) — `packages/a11y-prefs/templates/` + `bin/cli.mjs` + notice IA `templates/AGENTS.md` |
 | [PLAN-e6-5-theme-generator.md](./PLAN-e6-5-theme-generator.md) | Plan d'exécution : chantier E6.5 — extraction du générateur de thèmes (generate-all-themes) dans le paquet | ✅ exécuté le 2026-07-12 (branche `feat/e6-5-theme-generator`) — écart n°1 de l'audit §6.2 comblé |
+| [PLAN-e6-6-contrast-verifier.md](./PLAN-e6-6-contrast-verifier.md) | Plan d'exécution : chantier E6.6 — extraction du vérificateur de contrastes dans le paquet (`testing/`) | ✅ exécuté le 2026-07-12 (branche `feat/e6-6-contrast-verifier`) — écart n°2 de l'audit §6.2 comblé |
 
 Principe : **un chantier = un plan = une branche = une exécution par IA**,
 avec revue avant merge. Le guide donne l'ordre ; chaque plan est autonome.
@@ -557,7 +558,7 @@ WCAG dans les 12 thèmes ; styler un nouveau composant = choisir un `bg`, un
 | Runtime : cœur des préférences (persistance, application DOM, anti-FOUC), `useTheme`                  | Rôles additionnels éventuels (extension, pas renommage)      |
 | UI **scaffoldée** : déclencheur (icône) + carte d'accessibilité complète, copiées dans le projet (§ 6.3) | Personnalisation libre de l'UI copiée (libellés, styles, modules) |
 | Polices d'accessibilité **embarquées** (module opt-in — licences à vérifier avant publication, § 6.5) | Polices de base du site (inchangées)                         |
-| Vérificateur de contrastes WCAG sur les paires de rôles                                                | Respect des contrats hôte (§ 6.5 : tailles en `rem`, animations soumises à `reduce-motion`) |
+| Vérificateur de contrastes WCAG sur les paires de rôles **(✅ E6.6 : `a11y-prefs/testing/` — moteur + paires de rôles par défaut)** | Respect des contrats hôte (§ 6.5) ; ses paires de couche 3 + config (`configureThemeExtraction`) |
 | Exemples de couche 3 commentés                                                                         | —                                                            |
 
 Esquisse de structure et de consommation :
