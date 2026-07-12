@@ -13,6 +13,39 @@ Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-12 (chantier E6 — templates UI + CLI de scaffolding)
+
+### Added (branche `feat/e6-cli` ; le site ne change pas — byte-identique)
+
+Modèle shadcn : le moteur reste sur npm (mise à jour par version), l'UI est
+**copiée** dans le projet du consommateur (il la possède). Le portfolio ne
+consomme PAS les templates (son UI en est l'ancêtre) ; oracle du chantier =
+CSS du site byte-identique, tenu à chaque phase.
+
+- **Templates React** (`packages/a11y-prefs/templates/react/`) : déclencheur
+  + carte + câblage `accessibilityPreferences` (via `usePreference` du
+  paquet, plus de store zustand). Généralisés : polices du paquet seules
+  (Sylexiad retiré), aucune dépendance framework (next/link + next/image
+  retirés ; icône react-icons, lien conformité en prop), déclencheur
+  in-flow. N'importent que l'API publique. tsc + lint OK.
+- **Templates SCSS** (`templates/scss/`) : copie fidèle de l'architecture
+  rem-first (menu + trigger, pilotés par variables CSS), `accessibility-
+  features` (font-faces + classes + dyslexie + motion via modules du
+  paquet), `theme.config` (couche 3 de l'UI dérivée des rôles, règle d'or
+  documentée), `theme-example` (assemblage light + HC qui compile). Tous
+  compilent.
+- **CLI** (`bin/cli.mjs`, Node pur, `bin` du paquet) : `init` copie les
+  templates + polices en réécrivant l'import `a11y-prefs` → nom installé
+  (défaut `darkmode-plus-a11y`), refuse d'écraser sans `--force` ;
+  `init --diff` compare la copie locale à la référence (nouveau / modifié /
+  identique). Vérifié en projet-test.
+- **Notice IA** (`templates/AGENTS.md`) : contrat couche 3 (règle d'or +
+  liste des 25 rôles vérifiés), prérequis Tailwind, câblage, placement
+  in-flow (jamais fixed), renvoi vers `hc:audit` + test de conformité.
+
+Reste E7 : nom `darkmode-plus-a11y` acté, dist publiable + publication npm
+(voir GUIDE § E7, politique de versionnage semver).
+
 ## 2026-07-11 (chantier hc-mécanique — exécution)
 
 ### Added (focus en rôle + les deux contrôles, branche `feat/hc-mecanique`)
