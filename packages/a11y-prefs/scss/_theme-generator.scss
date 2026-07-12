@@ -81,6 +81,17 @@ $hc-paper: (
 	"error": #cc0000, "focus": #000000, "focus-text": #ffffff,
 );
 
+// Carte de couleurs fusionnée d'une variante fort contraste. Exposée pour
+// que le consommateur lise les valeurs (highlight, focus…) de ses surcharges
+// de règles par thème sans les redupliquer.
+@function hc-carte($name) {
+	@if $name == "high-contrast" { @return $hc-colors; }
+	@else if $name == "high-contrast-green" { @return map.merge($hc-colors, $hc-green); }
+	@else if $name == "high-contrast-white" { @return map.merge($hc-colors, $hc-white); }
+	@else if $name == "high-contrast-paper" { @return map.merge($hc-colors, $hc-paper); }
+	@return null;
+}
+
 // Sous-recette « base sombre » : rail dark + swap accent (générique — dérive
 // des primitives du consommateur, byte-identique au portfolio amber).
 @mixin apply-dark-base() {

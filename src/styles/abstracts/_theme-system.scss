@@ -1,253 +1,63 @@
 /** @format */
+@use "a11y-prefs/scss/base-palette" as *;
 @use "a11y-prefs/scss/state" as *;
+@use "a11y-prefs/scss/theme-generator" as *;
 @use "../themes/theme-variables" as *;
-@use "../themes/light" as *;
-@use "../themes/dark" as *;
-@use "../themes/anti-glare-light" as *;
-@use "../themes/anti-glare-dark" as *;
-@use "../themes/high-contrast" as *;
-@use "../themes/high-contrast-green" as *;
-@use "../themes/high-contrast-white" as *;
-@use "../themes/high-contrast-paper" as *;
-@use "../themes/deuteranopia" as *;
-@use "../themes/protanopia" as *;
-@use "../themes/tritanopia" as *;
-@use "../themes/deuteranomaly" as *;
-@use "../themes/protanomaly" as *;
-@use "../themes/tritanomaly" as *;
-@use "../themes/achromatopsia" as *;
+@use "./theme-overrides" as *;
 
-@mixin generate-theme-css-vars() {
-	// Variables fondamentales
-	--off-white: #{$off-white};
-	--near-black: #{$near-black};
-	--constant-off-white: #fafaf9;
-	--constant-near-black: #0c0a09;
+// Assemblage des thèmes (chantier E6.5) : le générateur du PAQUET émet un
+// bloc [data-theme] par thème (rail + rôles transformés + variables de
+// rôle), le portfolio injecte sa couche 3 et ses surcharges site via
+// @content. Les 15 recettes de thème vivent désormais dans le paquet
+// (apply-theme) ; ne restent ici que la config couche 3 et les règles site.
+//
+// Ordre des thèmes = ordre historique du portfolio (préserve l'ordre des
+// blocs émis). Un consommateur peut passer un sous-ensemble.
+$portfolio-themes: (
+	"light",
+	"dark",
+	"high-contrast",
+	"high-contrast-green",
+	"high-contrast-white",
+	"high-contrast-paper",
+	"deuteranomaly",
+	"deuteranopia",
+	"protanomaly",
+	"protanopia",
+	"tritanomaly",
+	"tritanopia",
+	"achromatopsia",
+	"anti-glare-light",
+	"anti-glare-dark"
+);
 
-	// Niveaux de gris — rail numérique complet (11 crans, ordre historique
-	// darkest → lightest conservé pour un diff d'ajout pur)
-	--gray-950: #{$gray-950};
-	--gray-900: #{$gray-900};
-	--gray-800: #{$gray-800};
-	--gray-700: #{$gray-700};
-	--gray-600: #{$gray-600};
-	--gray-500: #{$gray-500};
-	--gray-400: #{$gray-400};
-	--gray-300: #{$gray-300};
-	--gray-200: #{$gray-200};
-	--gray-100: #{$gray-100};
-	--gray-50: #{$gray-50};
-
-	// Variables sémantiques (couche 1 — primitives)
-	--accent: #{$accent};
-	--accent-strong: #{$accent-strong};
-	--accent-ink: #{$accent-ink};
-	--accent-soft: #{$accent-soft};
-	--link: #{$link};
-	--link-hover: #{$link-hover};
-	--success: #{$success};
-	--danger: #{$danger};
-
-	// Rôles (couche 2 — API du futur paquet)
-	--bg-base: #{$bg-base};
-	--bg-subtle: #{$bg-subtle};
-	--bg-container: #{$bg-container};
-	--bg-container-high: #{$bg-container-high};
-	--bg-emphasis: #{$bg-emphasis};
-	--bg-emphasis-strong: #{$bg-emphasis-strong};
-	--bg-inverse: #{$bg-inverse};
-	--fg-base: #{$fg-base};
-	--fg-muted: #{$fg-muted};
-	--fg-on-emphasis: #{$fg-on-emphasis};
-	--fg-on-accent: #{$fg-on-accent};
-	--border-subtle: #{$border-subtle};
-	--border-base: #{$border-base};
-	--border-strong: #{$border-strong};
-	--focus-ring: #{$focus-ring};
-
-	// Couleur fonctionnelle constante (non thématisée, cf. README § 5.11).
-	// (--constant-success-color supprimée 2026-07-07 : plus consommée nulle
-	// part — audit émis/consommés ; à recréer si le toast de succès du
-	// formulaire redevient vert, cf. TODO.md)
-	--constant-error-color: #dc2626; // Rouge d'erreur fixe
-
-	// Variables dérivées - déclarées explicitement
-	--color-main-bg: #{$color-main-bg};
-	--color-main-text: #{$color-main-text};
-	--color-pages-title: #{$color-pages-title};
-
-	--color-header-bg: #{$color-header-bg};
-	--color-header-text: #{$color-header-text};
-	--color-header-text-role: #{$color-header-text-role};
-	--color-header-blog-link-bg: #{$color-header-blog-link-bg};
-	--color-header-blog-link-text: #{$color-header-blog-link-text};
-
-	--color-lang-toggle-bg: #{$color-lang-toggle-bg};
-	--color-lang-toggle-border: #{$color-lang-toggle-border};
-	--color-lang-toggle-bg-activated: #{$color-lang-toggle-bg-activated};
-	--color-lang-toggle-text-activated: #{$color-lang-toggle-text-activated};
-	--color-lang-toggle-text-disabled: #{$color-lang-toggle-text-disabled};
-	--color-lang-toggle-disabled-hover-bg: #{$color-lang-toggle-disabled-hover-bg};
-	--color-lang-toggle-disabled-hover-text: #{$color-lang-toggle-disabled-hover-text};
-
-	--color-scroll-progress-line: #{$color-scroll-progress-line};
-	--color-scroll-progress-indicator: #{$color-scroll-progress-indicator};
-	--color-scroll-progress-indicator-active: #{$color-scroll-progress-indicator-active};
-
-	--color-collapse-title: #{$color-collapse-title};
-	--color-collapse-bg: #{$color-collapse-bg};
-	--color-collapse-bg-title: #{$color-collapse-bg-title};
-
-	--color-section-bg-even: #{$color-section-bg-even};
-	--color-section-bg-odd: #{$color-section-bg-odd};
-	--color-section-title: #{$color-section-title};
-	--color-hero-title: #{$color-hero-title};
-
-	--color-about-overlay-bg: #{$color-about-overlay-bg};
-	--color-about-overlay-text: #{$color-about-overlay-text};
-	--color-about-button-bg: #{$color-about-button-bg};
-	--color-about-button-border: #{$color-about-button-border};
-	--color-about-button-text: #{$color-about-button-text};
-
-	--color-skills-icon-bg: #{$color-skills-icon-bg};
-	--color-skills-icon-text: #{$color-skills-icon-text};
-	--color-skills-presentation-link-hover-bg: #{$color-skills-presentation-link-hover-bg};
-	--color-skills-presentation-link-hover-text: #{$color-skills-presentation-link-hover-text};
-
-	--color-section-card-bg: #{$color-section-card-bg};
-	--color-section-odd-card-bg: #{$color-section-odd-card-bg};
-
-	--color-portfolio-tag-bg: #{$color-portfolio-tag-bg};
-	--color-portfolio-tag-text: #{$color-portfolio-tag-text};
-
-	--color-contact-form-bg: #{$color-contact-form-bg};
-	--color-contact-modal-bg: #{$color-contact-modal-bg};
-
-	--color-bottom-footer-bg: #{$color-bottom-footer-bg};
-	--color-bottom-footer-title: #{$color-bottom-footer-title};
-	--color-bottom-footer-text: #{$color-bottom-footer-text};
-	--color-bottom-footer-link-bg: #{$color-bottom-footer-link-bg};
-	--color-bottom-footer-link-text: #{$color-bottom-footer-link-text};
-
-	--color-sticky-footer-bg: #{$color-sticky-footer-bg};
-	--color-sticky-footer-text: #{$color-sticky-footer-text};
-
-	--color-link: #{$color-link};
-	--color-link-hover: #{$color-link-hover};
-	--color-link-bg: #{$color-link-bg};
-
-	--color-focus-outline: #{$color-focus-outline};
-	--color-focus-bg: #{$color-focus-bg};
-	--color-focus-text: #{$color-focus-text};
-
-	--color-tooltip-text: #{$color-tooltip-text};
-	--color-tooltip-bg: #{$color-tooltip-bg};
-	--color-shadow: #{$color-shadow};
-
-	// Variables pour le panneau d'accessibilité
-	--color-panel-bg: #{$color-panel-bg};
-	--color-panel-border: #{$color-panel-border};
-	--color-scrollbar-track: #{$color-scrollbar-track};
-	--color-scrollbar-thumb: #{$color-scrollbar-thumb};
-	--color-button-border: #{$color-button-border};
-	--color-button-hover-bg: #{$color-button-hover-bg};
-	--color-button-hover-text: #{$color-button-hover-text};
-	--color-button-active-text: #{$color-button-active-text};
-
-	// Variables pour le curseur
-	--color-border: #{$color-border};
-	--color-accent: #{$color-accent};
-	--color-accent-hover: #{$color-accent-hover};
+// Émission consommateur pour un thème : couche 3 + règles site + variables.
+// Ordre calé sur l'ancien (byte-identique) : règles site d'abord, puis
+// variables de rôle (paquet), puis couche 3.
+@mixin emit-consumer-vars($name) {
+	@include apply-theme-variables; // couche 3 dérivée des rôles transformés
+	@include theme-overrides($name); // règles site + surcharges header par thème
+	@include emit-role-vars; // variables couches 1+2 (paquet)
+	@include emit-layer3-vars; // variables couche 3 (~70 --color-*)
 }
 
-// Thème par défaut (light)
+// Ordre historique (byte-identique) : :root et @media AVANT les blocs
+// [data-theme].
+
+// Thème par défaut (sans attribut data-theme) = light.
 :root {
-	@include light-theme-variables();
-	@include generate-theme-css-vars();
+	@include apply-theme("light");
+	@include emit-consumer-vars("light");
 }
 
-// Application du thème sombre si l'utilisateur le préfère
+// Défaut système sombre : dark quand aucun thème n'est explicitement choisi.
 @media (prefers-color-scheme: dark) {
 	:root:not([data-theme]) {
-		@include dark-theme-variables();
-		@include generate-theme-css-vars();
+		@include apply-theme("dark");
+		@include emit-consumer-vars("dark");
 	}
 }
 
-// Thèmes explicites via data-theme
-// NOTE: cette liste de 12 thèmes doit rester synchronisée manuellement avec
-// src/config/themes.ts (source unique côté runtime).
-[data-theme="light"] {
-	@include light-theme-variables();
-	@include generate-theme-css-vars();
-}
-
-[data-theme="dark"] {
-	@include dark-theme-variables();
-	@include generate-theme-css-vars();
-}
-
-[data-theme="high-contrast"] {
-	@include high-contrast-theme-variables();
-	@include generate-theme-css-vars();
-}
-
-[data-theme="high-contrast-green"] {
-	@include high-contrast-green-theme-variables();
-	@include generate-theme-css-vars();
-}
-
-[data-theme="high-contrast-white"] {
-	@include high-contrast-white-theme-variables();
-	@include generate-theme-css-vars();
-}
-
-[data-theme="high-contrast-paper"] {
-	@include high-contrast-paper-theme-variables();
-	@include generate-theme-css-vars();
-}
-
-[data-theme="deuteranomaly"] {
-	@include deuteranomaly-theme-variables();
-	@include generate-theme-css-vars();
-}
-
-[data-theme="deuteranopia"] {
-	@include deuteranopia-theme-variables();
-	@include generate-theme-css-vars();
-}
-
-[data-theme="protanomaly"] {
-	@include protanomaly-theme-variables();
-	@include generate-theme-css-vars();
-}
-
-[data-theme="protanopia"] {
-	@include protanopia-theme-variables();
-	@include generate-theme-css-vars();
-}
-
-[data-theme="tritanomaly"] {
-	@include tritanomaly-theme-variables();
-	@include generate-theme-css-vars();
-}
-
-[data-theme="tritanopia"] {
-	@include tritanopia-theme-variables();
-	@include generate-theme-css-vars();
-}
-
-[data-theme="achromatopsia"] {
-	@include achromatopsia-theme-variables();
-	@include generate-theme-css-vars();
-}
-
-[data-theme="anti-glare-light"] {
-	@include anti-glare-light-theme-variables();
-	@include generate-theme-css-vars();
-}
-
-[data-theme="anti-glare-dark"] {
-	@include anti-glare-dark-theme-variables();
-	@include generate-theme-css-vars();
+@include generate-all-themes($portfolio-themes) using ($name) {
+	@include emit-consumer-vars($name);
 }
