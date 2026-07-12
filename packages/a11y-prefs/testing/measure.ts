@@ -4,15 +4,14 @@ import { differenceCiede2000 } from "culori";
 import { getVar } from "./extract-themes";
 import { toRgb, compositeOver, contrastRatio, type RgbColor } from "./wcag";
 import { simulateForCvdTheme, type CvdTheme } from "./cvd-simulation";
-import type { ContrastPair, DistinguishabilityPair } from "./contrast-pairs";
-import type { ThemeOption } from "../../config/themes";
+import type { ContrastPair, DistinguishabilityPair } from "./pairs";
 
 const deltaE = differenceCiede2000();
 
 // Resolves a custom property to an opaque color for a given theme,
 // compositing over `composeOverVar` first if it carries an alpha channel.
 export function resolveColor(
-	theme: ThemeOption,
+	theme: string,
 	varName: string,
 	composeOverVar?: string,
 ): RgbColor {
@@ -30,7 +29,7 @@ export function resolveColor(
 	return color;
 }
 
-export function measureRatio(pair: ContrastPair, theme: ThemeOption): number {
+export function measureRatio(pair: ContrastPair, theme: string): number {
 	const fg = resolveColor(theme, pair.fg, pair.composeOver);
 	const bg = resolveColor(theme, pair.bg, pair.composeOver);
 	return contrastRatio(fg, bg);

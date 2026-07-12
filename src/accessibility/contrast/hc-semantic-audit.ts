@@ -1,5 +1,7 @@
 /** @format */
 
+import "./setup";
+
 // Inspecteur SÉMANTIQUE du fort contraste (chantier hc-mécanique, phase 3
 // — décision Simon 2026-07-11). C'est le design d'origine de Simon
 // (capture par les mots des noms de variables, élargie aux synonymes)
@@ -15,7 +17,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { THEMES } from "../../config/themes";
-import { getThemeVars } from "./extract-themes";
+import { getThemeVars } from "a11y-prefs/testing/extract-themes";
 
 // Familles sémantiques — synonymes qu'un dev (ou une IA) est susceptible
 // d'utiliser dans ses noms de variables de couche 3. Le matching se fait

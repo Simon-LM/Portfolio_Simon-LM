@@ -25,7 +25,8 @@
 			"\\.(css|less|scss|sass)$": "identity-obj-proxy",
 			"^@/(.*)$": "<rootDir>/src/$1",
 			"^a11y-prefs/react$": "<rootDir>/packages/a11y-prefs/react/index.ts",
-			"^a11y-prefs/react/(.*)$": "<rootDir>/packages/a11y-prefs/react/$1"
+			"^a11y-prefs/react/(.*)$": "<rootDir>/packages/a11y-prefs/react/$1",
+			"^a11y-prefs/testing/(.*)$": "<rootDir>/packages/a11y-prefs/testing/$1"
 		},
 		"transform": {
 			"^.+\\.(js|jsx|ts|tsx)$": [
