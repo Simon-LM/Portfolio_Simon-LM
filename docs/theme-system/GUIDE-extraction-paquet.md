@@ -362,18 +362,47 @@ paquet (core, hooks, tokens) — jamais ses internes.
 
 ### E7 — Open source et publication
 
+- **Nom du paquet acté (2026-07-12)** : `darkmode-plus-a11y` (positionnement
+  dark-mode-first assumé). Libre sur npm — à re-vérifier juste avant la
+  première publication.
 - Licence code : MIT recommandée (simple, adoption maximale) — décision
   Simon à acter. Licences polices séparées (E5).
 - README du paquet **en anglais** (adoption), doc de ce dépôt reste la
   référence de conception.
-- Versionnage semver + changesets (ou équivalent) ; le
-  [CHANGELOG](./CHANGELOG.md) dédié du portfolio continue de tracer
-  l'intégration côté site.
 - CI : build + tests unitaires + **tests de contraste** (gate bloquant) +
   lint, sur chaque PR.
 - Publication : registre npm **public** (+ provenance npm si CI GitHub).
-- Étape finale : le portfolio épingle une version publiée (plus le
-  workspace), prouvant le cycle complet.
+- Étape finale : **prouver le cycle complet** (installer la version publiée
+  depuis npm et la faire tourner) dans un **projet-test jetable** — PAS sur
+  le portfolio. Décision Simon 2026-07-11 : le portfolio **reste sur le
+  code source local** (lien de workspace) pour développer, afin de garder
+  l'aperçu instantané dans `pnpm dev` ; il n'épingle jamais la version npm.
+
+#### Politique de versionnage (semver — actée le 2026-07-12)
+
+Numéro `MAJEUR.MINEUR.CORRECTIF` (ex. `2.4.1`), semver strict, + changesets
+(ou équivalent). Règles, **à appliquer dès la première publication** :
+
+| Changement | Version montée | Impact consommateur |
+| --- | --- | --- |
+| **Ajouter** un rôle (couche 2), une option, un module | MINEUR (`2.4`→`2.5`) | rien ne casse — **sûr** |
+| **Corriger** sans toucher l'API (valeur, bug) | CORRECTIF (`2.4.0`→`2.4.1`) | transparent |
+| **Supprimer / renommer** un rôle, changer une signature | **MAJEUR** (`2.x`→`3.0`) | **cassant** |
+
+- **Éviter** de supprimer/renommer un rôle. Si nécessaire : voie de
+  **dépréciation** — garder le rôle fonctionnel avec un `@warn`, fournir une
+  **note de migration** (« `$X` → `$Y` »), retirer **seulement** à la version
+  MAJEURE suivante. Jamais de retrait brutal.
+- **L'échec d'un rôle manquant est BRUYANT** : en SCSS, une couche 3 qui
+  référence un rôle supprimé fait **échouer la compilation au build**
+  (« variable indéfinie »), jamais un bug silencieux en prod. Comme le
+  développement se fait en monorepo (le portfolio lit le code source),
+  **le site casse au build dès la suppression** → détection immédiate,
+  avant publication.
+- **Front-end (UI) livré par COPIE** (§ 6.3) : il ne se met **pas** à jour
+  automatiquement au bump de version. Le consommateur récupère les
+  évolutions d'UI de référence via `init --diff` (il reporte ce qu'il veut).
+  Semver s'applique donc surtout au **moteur** (livré par import).
 
 ---
 
