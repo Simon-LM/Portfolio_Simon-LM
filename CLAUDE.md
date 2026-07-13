@@ -7,7 +7,8 @@ This file is auto-loaded by Claude Code at the start of every session in this re
 ## Language
 
 - **Reply to Simon in French, in chat, always** — including summaries, wrap-ups, and status updates at the end of a turn.
-- **Everything written to a file is English**: code comments, docstrings, commit message bodies, all `.md` documentation (README, CHANGELOG, plans, this file, AGENTS.md). No exceptions. See `AGENTS.md` §6.
+- **Everything written to a file is English**: code comments, docstrings, **commit messages** (subject and body), all `.md` documentation (README, CHANGELOG, plans, this file, AGENTS.md). No exceptions. See `AGENTS.md` §6.
+- Simon's own commit history is entirely in English. If you find French commit messages, they are a regression to fix (translate + rewrite history), not a style already in use — do not assume mixed-language history is the established convention.
 
 ## Accessibility is the subject, not a checkbox
 
