@@ -1,119 +1,119 @@
 <!-- @format -->
 
-# Plan — Chantier E6 : templates UI + CLI de scaffolding
+# Plan — E6: UI templates + scaffolding CLI
 
-Rédigé le 2026-07-12 (après merge hc-mécanique `dc9bef0`). Exécution sur
-branche `feat/e6-cli`. Référence : GUIDE-extraction-paquet.md § E6 —
-modèle **shadcn** (décision Simon 2026-07-03 : les devs possèdent et
-modifient leur UI, elle n'est pas dans npm ; seuls les moteurs le sont).
+Written 2026-07-12 (after the hc-mécanique merge `dc9bef0`). Executed on
+branch `feat/e6-cli`. Reference: GUIDE-extraction-paquet.md § E6 —
+**shadcn** model (decision 2026-07-03: devs own and modify their UI, it is
+not in npm; only the engines are).
 
-## Ce que le consommateur obtient à la fin
+## What the consumer gets in the end
 
 ```
-pnpm dlx darkmode-plus-a11y init    # nom définitif acté le 2026-07-12
+pnpm dlx darkmode-plus-a11y init    # final name settled on 2026-07-12
 ```
 
-copie dans son projet : le **déclencheur** (l'icône) + la **carte
-d'accessibilité** complète (React + SCSS), `theme.config.scss` (sa config
-couche 3 commentée) et des exemples. `init --diff` compare ensuite son UI
-locale à la référence du paquet (mises à jour à la shadcn : le dev voit ce
-qui a changé et reporte ce qu'il veut).
+copies into their project: the **trigger** (the icon) + the full
+**accessibility card** (React + SCSS), `theme.config.scss` (their
+commented layer-3 config) and examples. `init --diff` then compares their
+local UI against the package's reference (shadcn-style updates: the dev
+sees what changed and ports over what they want).
 
-### ⚠️ Placement du déclencheur — surtout PAS de position fixe (décision Simon 2026-07-12)
+### ⚠️ Trigger placement — absolutely NO fixed position (decision 2026-07-12)
 
-Le déclencheur du portfolio est un élément **dans le flux** (rendu dans le
-header, aucun `position: fixed`) : il grossit et se replace avec les zooms,
-sans jamais chevaucher le contenu. Un bouton flottant `position: fixed`
-serait une **faute d'accessibilité** (chevauchement quasi certain aux
-grands zooms). Donc : le template expose un composant **in-flow**, le dev
-le place où il veut (idéalement son header). Si un défaut clé-en-main est
-requis, ce sera une **bande pré-header** (un bandeau au-dessus du header
-principal, icône à droite) — pas joli mais correct en accessibilité —
-**jamais** un flottant fixe.
+The portfolio's trigger is an element **in the flow** (rendered in the
+header, no `position: fixed`): it grows and repositions with zoom, never
+overlapping content. A floating `position: fixed` button would be an
+**accessibility defect** (near-certain overlap at high zoom). So: the
+template exposes an **in-flow** component, the dev places it wherever they
+want (ideally their header). If a turnkey default is required, it will be
+a **pre-header band** (a strip above the main header, icon on the right) —
+not pretty but accessibility-correct — **never** a fixed floating element.
 
-## État des lieux (relevé du 2026-07-12)
+## State of play (as of 2026-07-12)
 
-- Déclencheur : `src/accessibility/accessibilityControl/AccessibilityControl.tsx`.
-- Carte : `AccessibilityMenu.tsx` (972 lignes) + `_accessibility-menu.scss`
-  (1179 lignes) + parties de `_a11y.scss` (237 lignes).
-- Adhérences à généraliser : 17 mentions Sylexiad (police du site, non
-  distribuable) ; `next/link` (1 occurrence, lien vers la politique
-  d'accessibilité) ; stores zustand du portfolio (fontSize, dyslexicFont) ;
-  `react-select` + `react-icons` (dépendances UI) ; labels i18n FR/EN
-  inline (patron sain, conservé).
+- Trigger: `src/accessibility/accessibilityControl/AccessibilityControl.tsx`.
+- Card: `AccessibilityMenu.tsx` (972 lines) + `_accessibility-menu.scss`
+  (1179 lines) + parts of `_a11y.scss` (237 lines).
+- Coupling to generalize: 17 mentions of Sylexiad (the site's font, not
+  redistributable); `next/link` (1 occurrence, link to the accessibility
+  policy); the portfolio's zustand stores (fontSize, dyslexicFont);
+  `react-select` + `react-icons` (UI dependencies); inline FR/EN i18n
+  labels (a sound pattern, kept).
 
-## Décisions déjà actées / recommandations à arbitrer
+## Decisions already made / recommendations to settle
 
-1. **Le portfolio ne bouge pas** : son UI reste telle quelle (elle est
-   l'ancêtre des templates, pas leur consommatrice). Oracle du chantier :
-   **zéro changement du site**. Le passage du portfolio aux templates
-   scaffoldés est une décision séparée, post-E7 si souhaitée.
-2. **Templates = ton menu, généralisé** : même design, mêmes patrons
-   (boutons-preview HC, sélecteurs, i18n par prop `language`), mais :
-   polices du paquet uniquement (OpenDyslexic/Atkinson/Andika) + **point
-   d'extension documenté** pour les polices maison (le patron Sylexiad) ;
-   `next/link` remplacé par un `<a>` (ou prop de rendu) ; lien « politique
-   d'accessibilité » paramétrable.
-3. **ACTÉ (Simon 2026-07-12) — l'état dans les templates = `usePreference`**
-   du paquet (pas zustand) : zéro dépendance d'état pour le consommateur, et
-   ça éprouve le hook au vrai usage. Le portfolio garde ses stores.
-4. **Reco à arbitrer — dépendances UI des templates** : garder
-   `react-select` (sélecteurs daltonisme/polices, ton SCSS les couvre) et
-   `react-icons` (icône du déclencheur) comme dépendances **du projet
-   consommateur** (le CLI les signale à l'init s'il ne les trouve pas).
-   Alternative : select natif + SVG inline (zéro dépendance, mais on
-   s'éloigne de ton UI éprouvée).
-5. **CLI minimal, sans framework** : script Node pur (`bin` du paquet),
-   deux commandes — `init [--dir <chemin>] [--force]` (copie, refuse
-   d'écraser sans `--force`) et `init --diff` (statut par fichier :
-   identique / modifié localement / nouveau dans la référence).
-6. La **notice IA** (contrat couche 3, rôles, exemples — pattern
-   AGENTS.md/llms.txt) : sa première version est livrée avec les templates
-   (le CLI la copie aussi), peaufinée en E7.
+1. **The portfolio doesn't move**: its UI stays as-is (it's the templates'
+   ancestor, not their consumer). Chantier oracle: **zero site change**.
+   Migrating the portfolio to the scaffolded templates is a separate
+   decision, post-E7 if desired.
+2. **Templates = your menu, generalized**: same design, same patterns
+   (HC preview buttons, selectors, i18n via a `language` prop), but:
+   package fonts only (OpenDyslexic/Atkinson/Andika) + a **documented
+   extension point** for custom fonts (the Sylexiad pattern); `next/link`
+   replaced with an `<a>` (or a render prop); the "accessibility policy"
+   link made configurable.
+3. **DECIDED (2026-07-12) — state in the templates = the package's
+   `usePreference`** (not zustand): zero state dependency for the
+   consumer, and it exercises the hook under real use. The portfolio
+   keeps its stores.
+4. **Recommendation to settle — templates' UI dependencies**: keep
+   `react-select` (color-blindness/font selectors, your SCSS covers them)
+   and `react-icons` (trigger icon) as dependencies **of the consumer
+   project** (the CLI flags them at init if not found). Alternative:
+   native select + inline SVG (zero dependency, but drifts from your
+   proven UI).
+5. **Minimal CLI, no framework**: pure Node script (package `bin`), two
+   commands — `init [--dir <path>] [--force]` (copy, refuses to overwrite
+   without `--force`) and `init --diff` (per-file status: identical /
+   locally modified / new in the reference).
+6. The **AI guide** (layer-3 contract, roles, examples — AGENTS.md/llms.txt
+   pattern): its first version ships with the templates (the CLI copies it
+   too), polished in E7.
 
 ## Phases
 
-### Phase 0 — Préparation
+### Phase 0 — Preparation
 
-Oracle : CSS compilé + build du site de référence ; AUCUN fichier du site
-ne doit changer pendant tout le chantier (vérifié à chaque phase).
+Oracle: reference compiled CSS + build of the site; NO site file may
+change throughout the chantier (verified at each phase).
 
-### Phase 1 — Templates React (`packages/a11y-prefs/templates/react/`)
+### Phase 1 — React templates (`packages/a11y-prefs/templates/react/`)
 
-Déclencheur + carte, dérivés des composants du portfolio, généralisés
-(décisions 2-4). N'importent QUE l'API publique du paquet. Compilables
-hors du portfolio (vérifié par un tsc dédié en phase 4).
+Trigger + card, derived from the portfolio's components, generalized
+(decisions 2-4). Import ONLY the package's public API. Compilable outside
+the portfolio (verified by a dedicated tsc in phase 4).
 
-**Commit** : `feat(theme): e6 phase 1 — templates react (déclencheur + carte)`.
+**Commit**: `feat(theme): e6 phase 1 — react templates (trigger + card)`.
 
-### Phase 2 — Templates SCSS + config
+### Phase 2 — SCSS templates + config
 
-`templates/scss/` : le SCSS du menu généralisé (rem-first, zoom-robuste —
-copie de l'architecture de Simon, pas de réécriture) ; `theme.config.scss`
-= config couche 3 commentée (rôles → tokens, exemples) ; blocs
-`[data-theme]` d'exemple.
+`templates/scss/`: the generalized menu SCSS (rem-first, zoom-robust —
+copy of Simon's architecture, not a rewrite); `theme.config.scss` =
+commented layer-3 config (roles → tokens, examples); example
+`[data-theme]` blocks.
 
-**Commit** : `feat(theme): e6 phase 2 — templates scss + theme.config`.
+**Commit**: `feat(theme): e6 phase 2 — scss templates + theme.config`.
 
-### Phase 3 — Le CLI
+### Phase 3 — The CLI
 
-`packages/a11y-prefs/bin/cli.mjs` (Node pur) : `init` + `init --diff`
-(décision 5), messages clairs, détection des dépendances UI manquantes.
+`packages/a11y-prefs/bin/cli.mjs` (pure Node): `init` + `init --diff`
+(decision 5), clear messages, detection of missing UI dependencies.
 
-**Commit** : `feat(theme): e6 phase 3 — cli init + diff`.
+**Commit**: `feat(theme): e6 phase 3 — cli init + diff`.
 
-### Phase 4 — Vérification et docs
+### Phase 4 — Verification and docs
 
-1. Tests : exécution du CLI dans un répertoire temporaire (fichiers créés,
-   refus d'écrasement, diff) ; tsc de compilabilité des templates ;
-   suites complètes du site inchangées.
-2. Docs : README chantier, notice IA v1 (`templates/AGENTS.md`),
-   changelog, rapport final.
+1. Tests: running the CLI in a temp directory (files created, overwrite
+   refusal, diff); template-compilability tsc; the site's full test suites
+   unchanged.
+2. Docs: chantier README, AI guide v1 (`templates/AGENTS.md`), changelog,
+   final report.
 
-**Commit** : `docs(theme): e6 phase 4 — finalisation`.
+**Commit**: `docs(theme): e6 phase 4 — wrap-up`.
 
-## Hors périmètre (ne PAS faire)
+## Out of scope (do NOT do)
 
-- Faire consommer les templates par le portfolio (post-E7, décision Simon).
-- Publication npm, nom définitif, dist (E7).
-- Traductions au-delà de FR/EN (le patron i18n reste celui de Simon).
+- Migrating the portfolio to consume the templates (post-E7, decision to come).
+- npm publication, final name, dist build (E7).
+- Translations beyond FR/EN (the i18n pattern stays Simon's).

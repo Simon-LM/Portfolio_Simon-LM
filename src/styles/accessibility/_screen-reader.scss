@@ -1,6 +1,6 @@
 /** @format */
 
-// Cache le champ aux humains mais reste visible pour les bots
+// Hides the field from humans but stays visible to bots
 .sr-only {
 	position: absolute !important;
 	width: 1px !important;

@@ -1,496 +1,497 @@
 <!-- @format -->
 
-# Guide d'extraction — du composant in situ au paquet open source
+# Extraction guide — from in-situ component to open-source package
 
-**Document d'orientation destiné à une IA (ou un dev) chargée de
-transformer le système de préférences d'accessibilité du portfolio en paquet
-réutilisable.** Il donne les grandes lignes, l'ordre des chantiers et les
-décisions déjà actées ; chaque chantier devra recevoir son plan d'exécution
-détaillé (sur le modèle de
-[PLAN-migration-fondations.md](./PLAN-migration-fondations.md)) avant d'être
-lancé.
+**Orientation document for an AI (or a dev) tasked with turning the
+portfolio's accessibility preferences system into a reusable package.**
+It gives the broad strokes, the chantier order, and decisions already
+made; each chantier must get its own detailed execution plan (following
+the model of
+[PLAN-migration-fondations.md](./PLAN-migration-fondations.md)) before it
+starts.
 
-Lecture préalable obligatoire : [README.md](./README.md) § 6 (architecture
-cible actée : modèle 3 couches, périmètre § 6.2, distribution hybride § 6.3,
-élargissement au système de préférences § 6.5). Conventions du dépôt :
-`AGENTS.md`. Toute modification est consignée dans
-[CHANGELOG.md](./CHANGELOG.md).
+Required reading beforehand: [README.md](./README.md) § 6 (target
+architecture decided: 3-layer model, scope § 6.2, hybrid distribution
+§ 6.3, expansion to the preferences system § 6.5). Repo conventions:
+`AGENTS.md`. Every change is logged in [CHANGELOG.md](./CHANGELOG.md).
 
-## Principes non négociables
+## Non-negotiable principles
 
-1. **Le CSS compilé du portfolio reste l'oracle** pendant toute
-   l'extraction : à chaque étape, le portfolio consommant le paquet doit
-   produire un CSS identique (ou au diff explicitement attendu) à celui
-   d'avant l'étape.
-2. **Le portfolio est le premier consommateur** : chaque API du paquet est
-   validée en migrant le portfolio dessus, jamais conçue dans le vide.
-3. **Rien ne se publie sans les tests de contraste** (chapitre dédié
-   ci-dessous) : ils protègent toutes les réécritures de moteurs.
-4. Positionnement public : ce composant est un système de **préférences
-   first-party intégrées au site** — ne jamais le présenter avec le
-   vocabulaire des « accessibility overlays » (widgets tiers automatiques,
-   très mal perçus par la communauté accessibilité, cf. overlayfactsheet.com).
+1. **The portfolio's compiled CSS stays the oracle** throughout the
+   extraction: at every step, the portfolio consuming the package must
+   produce CSS identical (or with the explicitly expected diff) to before
+   the step.
+2. **The portfolio is the first consumer**: every package API is
+   validated by migrating the portfolio onto it, never designed in a
+   vacuum.
+3. **Nothing gets published without the contrast tests** (dedicated
+   chapter below): they protect every engine rewrite.
+4. Public positioning: this component is a **first-party preferences
+   system built into the site** — never present it with "accessibility
+   overlay" language (automatic third-party widgets, very poorly regarded
+   by the accessibility community, cf. overlayfactsheet.com).
 
-## État de départ (post-fondations, 2026-07-03)
+## Starting point (post-foundations, 2026-07-03)
 
-Fondations migrées (rail numérique 11 crans, rôles de couche 2, modules
-Sass `@use`, source unique de la liste des thèmes `src/config/themes.ts`).
-Restent in situ, à faire **avant** l'extraction :
+Foundations migrated (11-step numeric rail, layer-2 roles, `@use` Sass
+modules, single source for the theme list `src/config/themes.ts`).
+Still in-place, to do **before** the extraction:
 
-- **Système de tests de contrastes** (chapitre ci-dessous) — protège tout le
-  reste.
-- **Revue/optimisation des moteurs anti-glare et daltoniens** (constats du
-  2026-07-03 dans le CHANGELOG ; dont : double transformation anti-glare des
-  tokens de couche 3, paramètre `$intensity` inutilisé, expression `if()`
-  mal formée dans la branche d'erreur, enhance-factor non configurable pour
-  les -opies, overlay `backdrop-filter` à évaluer/mesurer).
-- La réécriture **déclarative du moteur high-contrast** sur les rôles peut
-  attendre l'extraction elle-même (c'est au moment de généraliser les
-  moteurs qu'elle devient rentable) — décision Simon 2026-07-03.
+- **Contrast testing system** (chapter below) — protects everything else.
+- **Review/optimization of the anti-glare and color-blind engines**
+  (findings from 2026-07-03 in the CHANGELOG; including: double
+  anti-glare transformation of layer-3 tokens, unused `$intensity`
+  parameter, malformed `if()` expression in the error branch,
+  non-configurable enhance-factor for the -opias, `backdrop-filter`
+  overlay to evaluate/measure).
+- The **declarative rewrite of the high-contrast engine** onto roles can
+  wait until the extraction itself (it's only worth doing once the
+  engines are generalized) — decision 2026-07-03.
 
-## Cible
+## Target
 
-Monorepo pnpm dans ce dépôt, puis publication npm publique (projet open
-source — décision Simon 2026-07-03).
+pnpm monorepo inside this repo, then public npm publication (open-source
+project — decision 2026-07-03).
 
 ```
 pnpm-workspace.yaml
-packages/<nom>/                  # nom : décision en cours (a11y-prefs pressenti)
+packages/<name>/                  # name: decision in progress (a11y-prefs planned)
 ├── package.json                 # exports: ".", "./scss", "./react", "./fonts", "./testing"
-├── LICENSE                      # licence du code (MIT recommandée)
+├── LICENSE                      # code license (MIT recommended)
 ├── scss/
-│   ├── _palette.scss            # palettes Tailwind + get-color()
-│   ├── _rail.scss               # $gray-50…950, géométrie 11 poids
-│   ├── _roles.scss              # les ~23 rôles (API publique) + !default
-│   ├── engines/                 # dark, high-contrast, daltonismes, anti-glare
-│   └── _emit.scss               # generate-theme-css-vars + blocs [data-theme] à la carte
+│   ├── _palette.scss            # Tailwind palettes + get-color()
+│   ├── _rail.scss               # $gray-50…950, 11-weight geometry
+│   ├── _roles.scss              # the ~23 roles (public API) + !default
+│   ├── engines/                 # dark, high-contrast, color-blind, anti-glare
+│   └── _emit.scss               # generate-theme-css-vars + à-la-carte [data-theme] blocks
 ├── react/
-│   ├── core.ts                  # cœur préférences : persistance + application DOM + SSR
-│   ├── themes.ts                # liste des thèmes (source unique, générée vers SCSS ou vérifiée)
-│   ├── anti-fouc.ts             # générateur du script inline
+│   ├── core.ts                  # preferences core: persistence + DOM application + SSR
+│   ├── themes.ts                # theme list (single source, generated toward SCSS or checked)
+│   ├── anti-fouc.ts             # inline script generator
 │   └── useTheme.ts, usePreference.ts
-├── fonts/                       # @font-face + fichiers (module opt-in)
-│   └── LICENSES/                # une licence PAR police (distinctes du code)
-├── cli/                         # init (scaffolding UI + config), init --diff
-├── templates/                   # AccessibilityMenu (déclencheur + carte) copiés par init
-├── testing/                     # runner de tests de contraste (exporté)
-└── examples/                    # couche 3 commentée (recettes portfolio)
+├── fonts/                       # @font-face + files (opt-in module)
+│   └── LICENSES/                # one license PER font (distinct from the code's)
+├── cli/                         # init (UI + config scaffolding), init --diff
+├── templates/                   # AccessibilityMenu (trigger + card) copied by init
+├── testing/                     # contrast test runner (exported)
+└── examples/                    # commented layer 3 (portfolio recipes)
 ```
 
-## Les chantiers, dans l'ordre
+## The chantiers, in order
 
-### E1 — Système de tests de contrastes (in situ, avant tout) — ✅ fait le 2026-07-04
+### E1 — Contrast testing system (in-situ, before anything else) — ✅ done 2026-07-04
 
-Plan d'exécution : [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md).
-Conception : chapitre dédié en fin de document. Livré d'abord dans le
-portfolio (`pnpm test`), déplacé plus tard dans `testing/` du paquet.
-Chantier **purement additif** : les échecs préexistants deviennent des
-waivers documentés pour arbitrage, aucune couleur n'est corrigée.
+Execution plan: [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md).
+Design: dedicated chapter at the end of this document. Shipped first
+inside the portfolio (`pnpm test`), moved later into the package's
+`testing/`. **Purely additive** chantier: pre-existing failures become
+documented waivers for review, no color is fixed.
 
-Résultat : `src/accessibility/contrast/` (utilitaires WCAG, extraction des
-12 blocs `[data-theme]`, registre de 40 paires, suite Jest, générateur de
-rapport), [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) généré et commité. 33
-échecs mesurés au premier run, regroupés en 7 paires waivées
-(`preexisting: true`, ratio mesuré + raison factuelle) — en attente
-d'arbitrage par Simon (voir CHANGELOG phase 5 pour la liste triée par
-gravité). CSS compilé resté strictement byte-identique du début à la fin.
+Result: `src/accessibility/contrast/` (WCAG utilities, extraction of the
+12 `[data-theme]` blocks, a 40-pair registry, a Jest suite, a report
+generator), [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) generated and
+committed. 33 failures measured on the first run, grouped into 7 waived
+pairs (`preexisting: true`, measured ratio + factual reason) — awaiting
+review (see the CHANGELOG phase 5 for the list sorted by severity).
+Compiled CSS stayed strictly byte-identical from start to finish.
 
-### E2 — Revue des moteurs anti-glare / daltoniens (in situ) — ✅ fait (mergé le 2026-07-05)
+### E2 — Anti-glare / color-blind engine review (in-situ) — ✅ done (merged 2026-07-05)
 
-Plan d'exécution : [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md)
-(corrections mécaniques : passe unique anti-glare à couverture totale,
-`enhance-factor` configurable, scories). Toute modification de valeurs est
-validée par les tests de contraste (E1, idéalement livrés avant) + validation
-visuelle de Simon. Sortie : moteurs stables, prêts à être figés dans une API.
+Execution plan: [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md)
+(mechanical fixes: single-pass full-coverage anti-glare, configurable
+`enhance-factor`, cruft). Every value change is validated by the contrast
+tests (E1, ideally shipped first) + visual validation. Output: stable
+engines, ready to be frozen into an API.
 
-Résultat (branche `refactor/theme-engines`, mergée) : phase 1 (corrections
-API/dead-code, CSS byte-identique — un item du plan, la syntaxe `if()`, n'a
-pas été appliqué tel quel car il introduisait une régression avec Dart Sass
-1.101, voir CHANGELOG) ; phase 2 (passe unique anti-glare, couverture des
-~45 tokens auparavant jamais atténués) ; phase 3 (moteur anti-glare réécrit
-en OKLCH, seuil clair recalibré de 92% à 85% pour rester proche du rendu
-HSL précédent, seuil sombre inchangé) ; phase 4 (overlay `backdrop-filter`
-supprimé, effet mesuré comme négligeable). Diff CSS cumulé strictement
-confiné aux blocs `anti-glare-light`/`anti-glare-dark`, `CONTRAST-REPORT.md`
-tenu à jour à chaque phase colorée. Validation visuelle de Simon faite,
-branche mergée dans main.
+Result (branch `refactor/theme-engines`, merged): phase 1 (API/dead-code
+fixes, byte-identical CSS — one plan item, the `if()` syntax, was NOT
+applied as written since it introduced a regression with Dart Sass 1.101,
+see CHANGELOG); phase 2 (single-pass anti-glare, coverage of the ~45
+tokens previously never attenuated); phase 3 (anti-glare engine rewritten
+in OKLCH, light threshold recalibrated from 92% to 85% to stay close to
+the previous HSL rendering, dark threshold unchanged); phase 4
+(`backdrop-filter` overlay removed, effect measured as negligible).
+Cumulative CSS diff strictly confined to the `anti-glare-light`/
+`anti-glare-dark` blocks, `CONTRAST-REPORT.md` kept up to date at every
+color-changing phase. Visual validation done, branch merged into main.
 
-**Évolutions du mécanisme — actées par Simon le 2026-07-03**, avec ses
-contraintes de conception, qui priment :
+**Mechanism evolutions — decided 2026-07-03**, with the design
+constraints below, which take priority:
 
-- **Contrainte n° 1 — le système est ancré aux palettes Tailwind.** La
-  cohérence visuelle du composant repose sur des palettes à géométrie
-  Tailwind (11 poids bien espacés, familles bien séparées). Les
-  consommateurs qui personnalisent **doivent adopter ce mécanisme de
-  palettes** (contrat déjà inscrit au README § 6.1). Les couleurs « trop
-  proches » sont donc évitées *par construction*, en amont des moteurs.
-- **Contrainte n° 2 — l'adaptation ne doit pas enlaidir.** L'objectif des
-  thèmes daltoniens est d'améliorer les contrastes perçus **sans rendre le
-  site moche** : rester autant que possible *dans* les palettes (le
-  regroupement de teintes du mécanisme historique était en partie voulu,
-  pour alléger visuellement).
+- **Constraint #1 — the system is anchored to Tailwind palettes.** The
+  component's visual coherence relies on Tailwind-geometry palettes
+  (11 well-spaced weights, well-separated families). Consumers who
+  customize **must adopt this palette mechanism** (contract already
+  written into README § 6.1). "Too similar" colors are therefore avoided
+  *by construction*, upstream of the engines.
+- **Constraint #2 — the adaptation must not make things ugly.** The goal
+  of the color-blind themes is to improve perceived contrast **without
+  making the site ugly**: stay as much as possible *within* the palettes
+  (the historical mechanism's hue grouping was partly intentional, to
+  lighten the visual weight).
 
-Évolutions actées, reformulées sous ces contraintes :
+Evolutions decided, reworded under these constraints:
 
-1. **OKLCH plutôt que HSL** pour les transformations (anti-glare : intégré
-   au [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md), phase 3 ;
-   daltonien : dans la refonte ci-dessous). La « lightness » HSL n'est pas
-   perceptuelle ; OKLCH permet d'adapter la teinte **à luminance
-   constante**, donc sans dégrader les ratios de contraste WCAG.
-2. **Remap de familles Tailwind à poids constant** plutôt qu'ancres de
-   teintes libres : pour chaque type de CVD, une table configurable
-   `famille → famille` (ex. deutéranopie : `emerald → sky`,
-   `redd → amber`), le **poids étant conservé**. C'est la synthèse des
-   contraintes et du besoin de distinguabilité : on reste dans les
-   palettes (beau par construction, cohérent avec la philosophie du rail),
-   la luminance Tailwind à poids égal est *proche* d'une famille à l'autre
-   (mais pas constante — voir les garde-fous ci-dessous), et les
-   distinctions internes d'une famille survivent (deux
-   verts de poids différents deviennent deux bleus de poids différents —
-   là où les fenêtres de teinte les écrasaient sur une seule valeur).
-   L'OKLCH ne sert qu'en **repli** pour les couleurs hors palette.
+1. **OKLCH instead of HSL** for the transforms (anti-glare: folded into
+   [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md), phase 3;
+   color-blind: in the redesign below). HSL "lightness" isn't perceptual;
+   OKLCH allows adapting hue **at constant luminance**, so without
+   degrading WCAG contrast ratios.
+2. **Constant-weight Tailwind family remap** rather than free hue
+   anchors: for each CVD type, a configurable `family → family` table
+   (e.g. deuteranopia: `emerald → sky`, `redd → amber`), with **weight
+   preserved**. This is the synthesis of the constraints and the need for
+   distinguishability: we stay within the palettes (beautiful by
+   construction, consistent with the rail's philosophy), Tailwind
+   luminance at equal weight is *close* from one family to another (but
+   not constant — see the safeguards below), and a family's internal
+   distinctions survive (two greens of different weights become two
+   blues of different weights — where hue windows used to crush them
+   down to a single value). OKLCH is only used as a **fallback** for
+   out-of-palette colors.
 
-   ⚠️ Le remap à poids constant ne garantit **pas** les ratios à lui seul :
-   la luminance Tailwind n'est *pas* constante entre familles à poids égal
-   (mesuré le 2026-07-03 : à poids 600, luminance 0.167 pour `redd` →
-   0.280 pour `amber` ; `redd-600→amber-600` sur fond clair fait chuter le
-   ratio de 4.62:1 à **3.05:1**). Deux garde-fous font partie du
-   mécanisme : (a) **décalage de poids par entrée de table**, comme les
-   `adjustments` du dark (ex. `redd → amber(+1)` : amber-700 → 4.81:1) ;
-   (b) **tables par défaut conscientes des collisions** — ne pas remapper
-   vers une famille déjà occupée par un autre rôle à poids voisin (ex.
-   deutéranopie `emerald → sky` rend success bleu comme `link` : à
-   arbitrer par décalage de poids ou par le choix d'une autre famille
-   cible). La garantie finale ne vient **jamais** du générateur : elle
-   vient de la vérification E1 (ratios WCAG + distinguabilité simulée).
-   À noter : les `special-colors` actuelles ont le même problème en
-   latence (deutéranopie : erreur `#ffcc00` = **1.45:1** sur fond clair —
-   inoffensif aujourd'hui car `--danger` n'est consommé nulle part, mais
-   premier piège du paquet publié).
-3. **Tests de distinguabilité par simulation CVD** dans le système E1 : en
-   plus des ratios WCAG, simuler chaque déficience (matrices
-   Brettel/Viénot — celles supprimées comme code mort en fondations avaient
-   leur place *ici*, côté tests) sur les couleurs finales des thèmes, et
-   vérifier que les paires porteuses de sens (`success`/`danger`,
-   `accent`/`link`…) restent au-dessus d'un seuil de différence perçue
-   (ΔE). C'est ce qui rend le mécanisme *démontrable* pour n'importe quelle
-   palette de consommateur : la génération peut rester heuristique si la
-   vérification est systématique.
+   ⚠️ The constant-weight remap does **not** guarantee ratios on its own:
+   Tailwind luminance is *not* constant across families at equal weight
+   (measured 2026-07-03: at weight 600, luminance 0.167 for `redd` →
+   0.280 for `amber`; `redd-600→amber-600` on a light background drops
+   the ratio from 4.62:1 to **3.05:1**). Two safeguards are part of the
+   mechanism: (a) **per-table-entry weight shift**, like dark's
+   `adjustments` (e.g. `redd → amber(+1)`: amber-700 → 4.81:1); (b)
+   **default tables aware of collisions** — don't remap onto a family
+   already occupied by another role at a nearby weight (e.g. deuteranopia
+   `emerald → sky` renders success blue like `link`: to be settled by a
+   weight shift or by picking a different target family). The final
+   guarantee **never** comes from the generator: it comes from the E1
+   verification (WCAG ratios + simulated distinguishability). Note: the
+   current `special-colors` have the same problem lying dormant
+   (deuteranopia: error `#ffcc00` = **1.45:1** on a light background —
+   harmless today since `--danger` is consumed nowhere, but the first
+   trap for the published package).
+3. **CVD-simulation distinguishability tests** in the E1 system: besides
+   WCAG ratios, simulate each deficiency (Brettel/Viénot matrices — the
+   ones removed as dead code during the foundations belonged *here*, on
+   the test side) on the themes' final colors, and verify that
+   meaning-carrying pairs (`success`/`danger`, `accent`/`link`…) stay
+   above a perceived-difference threshold (ΔE). This is what makes the
+   mechanism *demonstrable* for any consumer palette: generation can stay
+   heuristic as long as verification is systematic.
 
-**Séquencement** : les corrections mécaniques et l'OKLCH anti-glare sont
-couverts par [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md), exécutable
-dès maintenant ; la refonte daltonienne (points 2 et 3) attend le chantier
-E1 (les tests de distinguabilité en sont le filet de sécurité) et recevra
-son propre plan.
+**Sequencing**: the mechanical fixes and the OKLCH anti-glare work are
+covered by [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md), executable
+right away; the color-blind redesign (points 2 and 3) waits for the E1
+chantier (the distinguishability tests are its safety net) and will get
+its own plan.
 
-**Refonte daltonienne — exécutée le 2026-07-04, mergée le 2026-07-05
-(`d12264f`) après validation visuelle de Simon et revue indépendante**
-(branche `refactor/theme-cvd-remap`, plan
+**Color-blind redesign — executed 2026-07-04, merged 2026-07-05
+(`d12264f`) after visual validation and independent review** (branch
+`refactor/theme-cvd-remap`, plan
 [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md), 5 phases,
-un commit chacune) : `remap-for-cvd()` implémente exactement le
-mécanisme décrit ci-dessus (family-remap à poids décalé, repli OKLCH,
-garde-fous de poids et de collision mesurés plutôt que devinés) ; tests
-de distinguabilité par simulation CVD (matrices de Machado et al. 2009,
-pas Brettel/Viénot comme envisagé plus haut — équivalentes dans
-l'esprit, mesures publiées plus simples à sourcer sans accès réseau)
-livrés en phase 1, avant toute bascule de couleurs, comme prévu. Résumé
-des résultats : le pire cas historique (`#ffcc00` à 1.34:1 en
-protanopie) est résolu, `role/danger-on-bg-base` passe de 6 thèmes
-daltoniens waivés à 0 ; `distinguish/success-vs-danger` (le seul échec
-de distinguabilité de l'inventaire de phase 1, tritanopie ΔE 6.81) est
-résolu à ΔE 69.66. Le point d'arbitrage remonté par l'exécution —
-`role/success-on-bg-base` régressé en contraste WCAG dans 4 thèmes
-(jusqu'à 1.60:1), la calibration ayant priorisé la distinguabilité CVD —
-a conduit à la décision « ancres sémantiques » ci-dessous, qui le résout
-par conception. Détail complet, tableaux avant/après et diffs bruts :
-voir [CHANGELOG.md](./CHANGELOG.md).
+one commit each): `remap-for-cvd()` implements exactly the mechanism
+described above (weight-shifted family-remap, OKLCH fallback, weight and
+collision safeguards measured rather than guessed); CVD-simulation
+distinguishability tests (Machado et al. 2009 matrices, not
+Brettel/Viénot as considered earlier — equivalent in spirit, published
+measurements simpler to source without network access) shipped in phase
+1, before any color switch, as planned. Result summary: the historical
+worst case (`#ffcc00` at 1.34:1 in protanopia) is resolved,
+`role/danger-on-bg-base` goes from 6 waived color-blind themes to 0;
+`distinguish/success-vs-danger` (the only distinguishability failure in
+the phase-1 inventory, tritanopia ΔE 6.81) is resolved at ΔE 69.66. The
+issue surfaced during execution —
+`role/success-on-bg-base` regressed in WCAG contrast across 4 themes (as
+low as 1.60:1), the calibration having prioritized CVD distinguishability
+— led to the "semantic anchors" decision below, which resolves it by
+design. Full details, before/after tables and raw diffs:
+see [CHANGELOG.md](./CHANGELOG.md).
 
-**Ancres sémantiques pour les rôles statut — acté le 2026-07-06,
-✅ implémenté et mergé le 2026-07-06 (`5c8dce9`)** (plan
-[PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) partie 2,
-branche `refactor/theme-status-anchors`, validation visuelle de Simon
-faite ; résolveur `resolve-status-color` dans
-`_theme-utils.scss`, -opies → violet-600/orange-700, -omalies →
-emerald-700/redd-600, tous ≥ 4.5:1). Le cas `success` à 1.60:1 a
-révélé un défaut de conception du remap pour une classe précise de
-rôles : un décalage de poids fixe sert deux contraintes à la fois
-(distinguabilité CVD *et* contraste WCAG), et finit par sacrifier l'une
-à l'autre. La réponse actée exploite une propriété que Simon a pointée :
-les rôles **statut** — `--success` et `--danger` aujourd'hui,
-`--warning` et `--info` réservés pour l'extension future de l'API, même
-classe, même mécanisme — portent une sémantique quasi universelle
-(vert = OK, rouge = problème, températures comparables d'un projet à
-l'autre). Le paquet peut donc embarquer pour eux une vraie connaissance
-de domaine, là où il n'a aucune légitimité sur les rôles identitaires
-(`accent`, `link`…) :
+**Semantic anchors for status roles — decided 2026-07-06,
+✅ implemented and merged 2026-07-06 (`5c8dce9`)** (plan
+[PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) part 2,
+branch `refactor/theme-status-anchors`, visual validation done;
+`resolve-status-color` resolver in
+`_theme-utils.scss`, -opias → violet-600/orange-700, -omalies →
+emerald-700/redd-600, all ≥ 4.5:1). The `success` case at 1.60:1
+revealed a design flaw in the remap for a specific class of roles: a
+fixed weight shift serves two constraints at once (CVD distinguishability
+*and* WCAG contrast), and ends up sacrificing one for the other. The
+decision made exploits a property that was pointed out: **status** roles
+— `--success` and `--danger` today, `--warning` and `--info` reserved for
+future API extension, same class, same mechanism — carry near-universal
+semantics (green = OK, red = problem, comparable "temperatures" from one
+project to another). The package can therefore embed real domain
+knowledge for them, where it has no such legitimacy on identity roles
+(`accent`, `link`…):
 
-1. **Ancres de teinte par type de CVD, livrées par le paquet** — les
-   conventions établies de conception daltonienne : en déficience
-   rouge-verte (deutér/protanopie et anomalies), `success` migre vers
-   une ancre **bleue** et `danger` vers une ancre **orange** (la paire
-   bleu/orange est le duo sûr canonique) ; en tritanopie, rouge et vert
-   restent bien perçus — les statuts gardent leurs familles, c'est le
-   couple bleu/jaune qu'il faut éclater (déjà couvert par les tables).
-   La résolution reste **dans la palette du projet** : l'ancre désigne
-   la famille du consommateur la plus proche (configurable), jamais une
-   couleur hors palette — contraintes n° 1 et n° 2 respectées.
-2. **Poids auto-résolu par la contrainte de contraste** : la teinte est
-   choisie par l'ancre (distinguabilité), le poids est calculé — premier
-   cran de la famille cible qui atteint le ratio WCAG requis sur le fond
-   du thème (luminance relative calculable en Sass à la compilation).
-   Les deux contraintes sont découplées : un rôle statut ne peut plus
-   sortir sous le seuil par construction.
-3. **Seuils ΔE par classe de paire** dans la suite de distinguabilité :
-   `success`/`danger` est la paire critique (confondre les deux est
-   l'échec d'accessibilité majeur) et garde un seuil élevé ;
-   `link`/statut peut porter un seuil réduit — WCAG 1.4.1 impose déjà
-   que les liens ne reposent jamais sur la couleur seule (soulignement),
-   la confusion lien/statut n'est donc pas un échec du même ordre. C'est
-   ce sur-poids de `link`/`success` qui avait poussé la calibration vers
-   le décalage destructeur de contraste. Valeurs des seuils : arbitrage
-   de Simon au moment du plan.
+1. **Hue anchors per CVD type, shipped by the package** — established
+   color-blind design conventions: under red-green deficiency
+   (deuter/protanopia and anomalies), `success` migrates to a **blue**
+   anchor and `danger` to an **orange** anchor (the blue/orange pair is
+   the canonical safe duo); under tritanopia, red and green stay well
+   perceived — the status roles keep their families, it's the blue/yellow
+   pair that needs splitting apart (already covered by the tables).
+   Resolution stays **within the project's palette**: the anchor points
+   to the consumer's closest family (configurable), never an
+   out-of-palette color — constraints #1 and #2 respected.
+2. **Weight auto-resolved by the contrast constraint**: hue is chosen by
+   the anchor (distinguishability), weight is computed — the first step
+   of the target family that reaches the required WCAG ratio against the
+   theme's background (relative luminance computable in Sass at compile
+   time). The two constraints are decoupled: a status role can no longer
+   fall below the threshold by construction.
+3. **ΔE thresholds per pair class** in the distinguishability suite:
+   `success`/`danger` is the critical pair (confusing the two is the
+   major accessibility failure) and keeps a high threshold; `link`/status
+   can carry a reduced threshold — WCAG 1.4.1 already requires links to
+   never rely on color alone (underline), so link/status confusion isn't
+   a failure of the same order. It's this over-weighting of
+   `link`/`success` that had pushed the calibration toward the
+   contrast-destroying shift. Threshold values: decided at plan time.
 
-Les entrées statut des tables `family-remap` (ex. `emerald → sky (-3)`)
-disparaîtront au profit de ce mécanisme ; les tables restent pour les
-rôles identitaires, et la suite E1 + ΔE reste la garantie finale sur la
-palette réelle de chaque consommateur.
+The status entries of the `family-remap` tables (e.g. `emerald → sky
+(-3)`) will disappear in favor of this mechanism; the tables remain for
+identity roles, and the E1 + ΔE suite remains the final guarantee on each
+consumer's actual palette.
 
-**Robustesse — ✅ implémenté et mergé le 2026-07-06 (`5c8dce9`)** (plan
-[PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) partie 3,
-branche `refactor/theme-cvd-degradation`, validation visuelle de Simon
-faite) : trois garanties issues des parties 1-2.
+**Robustness — ✅ implemented and merged 2026-07-06 (`5c8dce9`)** (plan
+[PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) part 3,
+branch `refactor/theme-cvd-degradation`, visual validation done): three
+guarantees stemming from parts 1-2.
 
-1. **Garde anti-gamut mécanique** (`gamut.test.ts`) : aucune couleur émise
-   ne sort du gamut sRGB, sur les 12 thèmes. A révélé et corrigé
-   **11 déclarations hors gamut** en `tritanomaly` (mélange OKLCH
-   `amber → orange` de la partie 1), ramenées in-gamut par réduction de
-   chroma standard (`gamut-map-srgb` → `color.to-gamut(..., local-minde)`),
-   écart perceptuel négligeable (ΔE < 1).
-2. **Dégradation gracieuse** : `resolve-anchor-weight` ne casse plus le
-   build (`@error` → meilleur effort + `@warn`), avec un plancher de
-   lisibilité (défaut 3:1). Chemin latent pour le portfolio, robustesse
-   pour les palettes consommatrices.
-3. **Politique de palette par classe** (README § 6.1) : -omalie strictement
-   in-palette ; -opie autorisée à une couleur in-gamut hors palette ;
-   `special-colors` = recours sanctionné pour les collisions de
-   distinguabilité (non calculables en Sass). Déviation mesurée assumée :
-   le chemin « couleur calculée hors palette » automatique n'a **pas** été
-   construit (le contraste étant dominé par la lightness et la palette
-   couvrant déjà toute l'échelle, il serait quasi inutile).
+1. **Mechanical anti-gamut guard** (`gamut.test.ts`): no emitted color
+   falls outside the sRGB gamut, across the 12 themes. It found and fixed
+   **11 out-of-gamut declarations** in `tritanomaly` (part 1's OKLCH
+   `amber → orange` mix), brought back in-gamut via standard chroma
+   reduction (`gamut-map-srgb` → `color.to-gamut(..., local-minde)`),
+   negligible perceptual gap (ΔE < 1).
+2. **Graceful degradation**: `resolve-anchor-weight` no longer breaks the
+   build (`@error` → best effort + `@warn`), with a legibility floor
+   (default 3:1). A latent path for the portfolio, robustness for
+   consumer palettes.
+3. **Per-class palette policy** (README § 6.1): -omaly strictly
+   in-palette; -opia allowed one in-gamut out-of-palette color;
+   `special-colors` = the sanctioned escape hatch for distinguishability
+   collisions (not computable in Sass). Measured, accepted deviation: the
+   automatic "color computed outside the palette" path was **not** built
+   (with contrast dominated by lightness and the palette already covering
+   the full scale, it would be nearly useless).
 
-### E3 — Monorepo et extraction de la face SCSS — ✅ exécuté le 2026-07-07
+### E3 — Monorepo and extracting the SCSS side — ✅ executed 2026-07-07
 
-**Plan : [PLAN-extraction-monorepo.md](./PLAN-extraction-monorepo.md)**
-(6 phases, branche `feat/e3-monorepo`, revue avant merge). Résultat : le
-workspace pnpm existe, `packages/a11y-prefs/scss/` contient palette, état
-(couches 1+2, configurable `with($gray-family, $primitives)`), moteurs et
-anti-glare ; le portfolio ne garde que sa couche 3, ses 12 fichiers de
-thèmes (= configs) et l'assemblage. Inversion de dépendance acquise : les
-moteurs s'arrêtent aux rôles. CSS identique (modulo duplication des
-pragmas `/** @format */`, documentée). Le registre `$roles`/`$themes`
-complet reste pour une itération ultérieure, comme prévu.
+**Plan: [PLAN-extraction-monorepo.md](./PLAN-extraction-monorepo.md)**
+(6 phases, branch `feat/e3-monorepo`, reviewed before merge). Result: the
+pnpm workspace exists, `packages/a11y-prefs/scss/` holds the palette,
+state (layers 1+2, configurable via `with($gray-family, $primitives)`),
+engines, and anti-glare; the portfolio keeps only its layer 3, its 12
+theme files (= configs), and the assembly. Dependency inversion achieved:
+the engines stop at the roles. CSS identical (modulo duplicated
+`/** @format */` pragmas, documented). The full `$roles`/`$themes`
+registry remains for a later iteration, as planned.
 
-`pnpm-workspace.yaml`, création du paquet, déplacement de
-palette/rail/rôles/moteurs/émetteur. Le portfolio consomme :
+`pnpm-workspace.yaml`, creating the package, moving
+palette/rail/roles/engines/emitter. The portfolio consumes it:
 
 ```scss
-@use "<nom>/scss" with (
+@use "<name>/scss" with (
   $gray-family: "stone",
-  $roles: (…),            // les affectations actuelles du portfolio
-  $themes: (…)            // les 12, à la carte pour d'autres projets
+  $roles: (…),            // the portfolio's current assignments
+  $themes: (…)            // the 12, à la carte for other projects
 );
 ```
 
-Tout ce qui est configurable porte `!default`. Oracle : CSS identique.
+Everything configurable carries `!default`. Oracle: identical CSS.
 
-### E4 — Extraction du runtime React — ✅ exécuté le 2026-07-07
+### E4 — Extracting the React runtime — ✅ executed 2026-07-07
 
-**Plan : [PLAN-extraction-runtime.md](./PLAN-extraction-runtime.md)**
-(4 phases, branche `feat/e4-runtime`, smoke + revue avant merge).
-Résultat : `packages/a11y-prefs/react` expose `THEMES`/`ThemeOption`,
-`useTheme` (paramétrable, défaut = les 12), `usePrefersDarkMode` et
-`themeInitScript()` (chaîne anti-FOUC byte-identique au littéral
-historique) ; les fichiers portfolio sont des shims de ré-export (zéro
-churn). Leçon d'exécution : frontière RSC — le hook porte désormais
-`"use client"` et le paquet expose des exports granulaires
-`./react/*` pour que les modules de données restent importables côté
-serveur. La **généralisation `usePreference(key, applyFn)`** ci-dessous
-reste reportée à E5, où les autres préférences en auront besoin.
+**Plan: [PLAN-extraction-runtime.md](./PLAN-extraction-runtime.md)**
+(4 phases, branch `feat/e4-runtime`, smoke test + review before merge).
+Result: `packages/a11y-prefs/react` exposes `THEMES`/`ThemeOption`,
+`useTheme` (parameterizable, default = the 12), `usePrefersDarkMode`, and
+`themeInitScript()` (anti-FOUC string byte-identical to the historical
+literal); the portfolio files are re-export shims (zero churn). Execution
+lesson: the RSC boundary — the hook now carries `"use client"` and the
+package exposes granular `./react/*` exports so data modules remain
+importable server-side. The **`usePreference(key, applyFn)`
+generalization** below stays deferred to E5, where the other preferences
+will need it.
 
-Le cœur préférences (persistance localStorage, application DOM, anti-FOUC,
-sécurité SSR) devient générique : `usePreference(key, applyFn)` ;
-`useTheme` en est une instance. La liste des thèmes vit dans le paquet ;
-le portfolio importe depuis le paquet (supprime `src/config/themes.ts`).
-Le script anti-FOUC est *généré* par le paquet à partir de la même liste.
+The preferences core (localStorage persistence, DOM application,
+anti-FOUC, SSR safety) becomes generic: `usePreference(key, applyFn)`;
+`useTheme` is one instance of it. The theme list lives in the package;
+the portfolio imports from the package (removes
+`src/config/themes.ts`). The anti-FOUC script is *generated* by the
+package from the same list.
 
-### E5 — Modules de préférences additionnels
+### E5 — Additional preference modules
 
-**Plan rédigé le 2026-07-07 :
+**Plan written 2026-07-07:
 [PLAN-extraction-modules.md](./PLAN-extraction-modules.md)** (4 phases,
-branche `feat/e5-modules`, **audit de licences des polices fait et
-intégré** — voir le plan). Portée : polices redistribuables +
-`LICENSES/` dans le paquet, modules SCSS opt-in (a11y-fonts, motion),
-appliers DOM SSR-safe + `usePreference` générique (que E4 avait reporté
-ici) ; les stores zustand du portfolio restent, ils délèguent seulement
-l'application DOM (clés/formats localStorage inchangés). Résultat de
-l'audit : OFL pour OpenDyslexic/Andika/Raleway Dots/**Atkinson** →
-embarquées ; **Sylexiad = EULA propriétaire → exclue** (reste au
-portfolio via le point d'extension) ; **Tiresias = GPLv3+exception →
-arbitrage Simon** (inclure avec licence jointe, ou exclure).
+branch `feat/e5-modules`, **font license audit done and folded in** —
+see the plan). Scope: redistributable fonts + `LICENSES/` in the package,
+opt-in SCSS modules (a11y-fonts, motion), SSR-safe DOM appliers +
+generic `usePreference` (which E4 had deferred to here); the portfolio's
+zustand stores stay, only delegating DOM application (localStorage
+keys/formats unchanged). Audit result: OFL for OpenDyslexic/Andika/
+Raleway Dots/**Atkinson** → bundled; **Sylexiad = proprietary EULA →
+excluded** (stays with the portfolio via the extension point);
+**Tiresias = GPLv3+exception → call needed** (include with the license
+attached, or exclude).
 
-Un module = préférence + application DOM + CSS/contrat hôte, opt-in :
+A module = preference + DOM application + CSS/host contract, opt-in:
 
-- **Taille de texte** : `--font-size-factor` ; contrat hôte documenté
-  (tailles en `rem`/`em`) + mixin d'aide.
-- **Réduction des animations** : classe `reduce-motion` + mixin
-  `motion-safe` fourni ; contrat hôte documenté.
-- **Polices d'accessibilité** : embarquées (décision Simon) dans `fonts/`
-  avec `@font-face` prêts. ⚠️ **Audit de licences bloquant avant
-  publication** : OpenDyslexic/Andika/Raleway Dots = OFL (ok) ; Sylexiad,
-  Tiresias, Atkinson Hyperlegible : vérifier et consigner dans
-  `fonts/LICENSES/`. Une police non redistribuable = retirée du paquet
-  (l'hôte pourra brancher la sienne).
-- **Mode dyslexie optimisé** : dépend du module polices.
+- **Text size**: `--font-size-factor`; documented host contract (sizes in
+  `rem`/`em`) + a helper mixin.
+- **Motion reduction**: `reduce-motion` class + a supplied `motion-safe`
+  mixin; documented host contract.
+- **Accessibility fonts**: bundled (decision) in `fonts/` with
+  `@font-face` ready. ⚠️ **Blocking license audit before publication**:
+  OpenDyslexic/Andika/Raleway Dots = OFL (ok); Sylexiad, Tiresias,
+  Atkinson Hyperlegible: verify and log in `fonts/LICENSES/`. A
+  non-redistributable font = removed from the package (the host can wire
+  in their own).
+- **Optimized dyslexia mode**: depends on the fonts module.
 
-### E6 — CLI de scaffolding (l'UI)
+### E6 — Scaffolding CLI (the UI)
 
-`pnpm dlx <nom> init` copie dans le projet hôte : le déclencheur (icône) +
-la carte d'accessibilité (depuis `templates/`), `theme.config.scss`, et les
-exemples de couche 3. `init --diff` compare l'UI locale à la référence du
-paquet (modèle shadcn). L'UI copiée n'importe **que** l'API publique du
-paquet (core, hooks, tokens) — jamais ses internes.
+`pnpm dlx <name> init` copies into the host project: the trigger (icon) +
+the accessibility card (from `templates/`), `theme.config.scss`, and the
+layer-3 examples. `init --diff` compares the local UI against the
+package's reference (shadcn model). The copied UI imports **only** the
+package's public API (core, hooks, tokens) — never its internals.
 
-### E6.5 — Extraction du générateur de thèmes — ✅ fait le 2026-07-12
+### E6.5 — Extracting the theme generator — ✅ done 2026-07-12
 
-Révélé par l'audit de réconciliation §6.2 (README) : l'émetteur
-`[data-theme]` et les définitions de thèmes standards étaient restés côté
-site (différés par E3, garés en README §7 au lieu d'être un chantier).
-`_theme-generator.scss` dans le paquet : `apply-theme`, `emit-role-vars`,
-`generate-all-themes($themes)`. Le consommateur configure son light + liste
-ses thèmes → tous générés. Oracle byte-identique modulo pragmas. Plan :
-`PLAN-e6-5-theme-generator.md`.
+Surfaced by the §6.2 reconciliation audit (README): the `[data-theme]`
+emitter and the standard theme definitions had stayed on the site side
+(deferred by E3, parked in README §7 instead of being a numbered
+chantier). `_theme-generator.scss` in the package: `apply-theme`,
+`emit-role-vars`, `generate-all-themes($themes)`. The consumer configures
+their light theme + lists their themes → all generated. Byte-identical
+oracle modulo pragmas. Plan: `PLAN-e6-5-theme-generator.md`.
 
-### E6.6 — Extraction du vérificateur de contrastes — ✅ fait le 2026-07-12
+### E6.6 — Extracting the contrast verifier — ✅ done 2026-07-12
 
-Écart n°2 de l'audit §6.2 comblé : le moteur (`wcag`/`measure`/`cvd`/`gamut`/
-`extract-themes` paramétré/`pairs`) vit dans `packages/a11y-prefs/testing/` ;
-le portfolio le consomme (config + paires couche 3 + waivers en overlay).
-Oracle byte-identique. Plan : `PLAN-e6-6-contrast-verifier.md`. Gate CI : le
-consommateur exécute les tests du vérificateur sur ses paires × thèmes.
+Audit gap #2 (§6.2) closed: the engine (`wcag`/`measure`/`cvd`/`gamut`/
+parameterized `extract-themes`/`pairs`) lives in
+`packages/a11y-prefs/testing/`; the portfolio consumes it (config +
+layer-3 pairs + waivers as an overlay). Byte-identical oracle. Plan:
+`PLAN-e6-6-contrast-verifier.md`. CI gate: the consumer runs the
+verifier's tests on their pairs × themes.
 
-### E7 — Open source et publication
+### E7 — Open source and publication
 
-- **Nom du paquet acté (2026-07-12)** : `darkmode-plus-a11y` (positionnement
-  dark-mode-first assumé). Libre sur npm — à re-vérifier juste avant la
-  première publication.
-- Licence code : MIT recommandée (simple, adoption maximale) — décision
-  Simon à acter. Licences polices séparées (E5).
-- README du paquet **en anglais** (adoption), doc de ce dépôt reste la
-  référence de conception.
-- CI : build + tests unitaires + **tests de contraste** (gate bloquant) +
-  lint, sur chaque PR.
-- Publication : registre npm **public** (+ provenance npm si CI GitHub).
-- Étape finale : **prouver le cycle complet** (installer la version publiée
-  depuis npm et la faire tourner) dans un **projet-test jetable** — PAS sur
-  le portfolio. Décision Simon 2026-07-11 : le portfolio **reste sur le
-  code source local** (lien de workspace) pour développer, afin de garder
-  l'aperçu instantané dans `pnpm dev` ; il n'épingle jamais la version npm.
+- **Package name settled (2026-07-12)**: `darkmode-plus-a11y`
+  (dark-mode-first positioning, deliberately). Free on npm — to
+  re-verify right before the first publication.
+- Code license: MIT recommended (simple, maximum adoption) — decision to
+  finalize. Font licenses separate (E5).
+- Package README **in English** (adoption), this repo's doc remains the
+  design reference.
+- CI: build + unit tests + **contrast tests** (blocking gate) + lint, on
+  every PR.
+- Publication: **public** npm registry (+ npm provenance if CI runs on
+  GitHub).
+- Final step: **prove the full cycle** (install the published version
+  from npm and run it) in a **disposable test project** — NOT on the
+  portfolio. Decision 2026-07-11: the portfolio **stays on the local
+  source code** (workspace link) for development, to keep the instant
+  preview in `pnpm dev`; it never pins the npm version.
 
-#### Politique de versionnage (semver — actée le 2026-07-12)
+#### Versioning policy (semver — decided 2026-07-12)
 
-Numéro `MAJEUR.MINEUR.CORRECTIF` (ex. `2.4.1`), semver strict, + changesets
-(ou équivalent). Règles, **à appliquer dès la première publication** :
+`MAJOR.MINOR.PATCH` numbering (e.g. `2.4.1`), strict semver, +
+changesets (or equivalent). Rules, **to apply starting with the first
+publication**:
 
-| Changement | Version montée | Impact consommateur |
+| Change | Version bump | Consumer impact |
 | --- | --- | --- |
-| **Ajouter** un rôle (couche 2), une option, un module | MINEUR (`2.4`→`2.5`) | rien ne casse — **sûr** |
-| **Corriger** sans toucher l'API (valeur, bug) | CORRECTIF (`2.4.0`→`2.4.1`) | transparent |
-| **Supprimer / renommer** un rôle, changer une signature | **MAJEUR** (`2.x`→`3.0`) | **cassant** |
+| **Adding** a role (layer 2), an option, a module | MINOR (`2.4`→`2.5`) | nothing breaks — **safe** |
+| **Fixing** without touching the API (a value, a bug) | PATCH (`2.4.0`→`2.4.1`) | transparent |
+| **Removing / renaming** a role, changing a signature | **MAJOR** (`2.x`→`3.0`) | **breaking** |
 
-- **Éviter** de supprimer/renommer un rôle. Si nécessaire : voie de
-  **dépréciation** — garder le rôle fonctionnel avec un `@warn`, fournir une
-  **note de migration** (« `$X` → `$Y` »), retirer **seulement** à la version
-  MAJEURE suivante. Jamais de retrait brutal.
-- **L'échec d'un rôle manquant est BRUYANT** : en SCSS, une couche 3 qui
-  référence un rôle supprimé fait **échouer la compilation au build**
-  (« variable indéfinie »), jamais un bug silencieux en prod. Comme le
-  développement se fait en monorepo (le portfolio lit le code source),
-  **le site casse au build dès la suppression** → détection immédiate,
-  avant publication.
-- **Front-end (UI) livré par COPIE** (§ 6.3) : il ne se met **pas** à jour
-  automatiquement au bump de version. Le consommateur récupère les
-  évolutions d'UI de référence via `init --diff` (il reporte ce qu'il veut).
-  Semver s'applique donc surtout au **moteur** (livré par import).
+- **Avoid** removing/renaming a role. If necessary: a **deprecation**
+  path — keep the role functional with a `@warn`, provide a **migration
+  note** ("`$X` → `$Y`"), remove it **only** at the next MAJOR version.
+  Never an abrupt removal.
+- **A missing-role failure is LOUD**: in SCSS, a layer 3 that references
+  a removed role makes **the compilation fail at build time**
+  ("undefined variable"), never a silent bug in prod. Since development
+  happens in the monorepo (the portfolio reads the source code), **the
+  site breaks at build time the moment the role is removed** → immediate
+  detection, before publication.
+- **Front-end (UI) shipped by COPY** (§ 6.3): it does **not** auto-update
+  on a version bump. The consumer picks up reference-UI changes via
+  `init --diff` (they port over what they want). Semver therefore mostly
+  applies to the **engine** (shipped via import).
 
 ---
 
-## Chapitre : système de tests de contrastes (conception)
+## Chapter: contrast testing system (design)
 
-Objectif : garantir mécaniquement que **chaque paire texte/fond connue
-respecte WCAG 2.2 dans les 12 thèmes**, à chaque commit — et offrir la même
-garantie aux futurs consommateurs du paquet qui redéfinissent les rôles.
+Goal: mechanically guarantee that **every known text/background pair
+meets WCAG 2.2 across the 12 themes**, on every commit — and offer the
+same guarantee to future package consumers who redefine roles.
 
 ### Architecture
 
 ```
-contrast-pairs.ts (registre, source de vérité)
+contrast-pairs.ts (registry, source of truth)
         │
-compilation SCSS (API JS de sass, même entrée que le site)
+SCSS compilation (sass JS API, same entry as the site)
         │
-extraction des custom properties par bloc [data-theme] (postcss)
+custom-property extraction per [data-theme] block (postcss)
         │
-résolution des paires → calcul du ratio WCAG → assertions Jest
+pair resolution → WCAG ratio computation → Jest assertions
         │
-rapport matrice (markdown généré, artefact de CI)
+matrix report (generated markdown, CI artifact)
 ```
 
-### Le registre des paires
+### The pair registry
 
-Un fichier TypeScript déclaratif, versionné, à deux niveaux :
+A declarative, versioned TypeScript file, at two levels:
 
 ```ts
 type ContrastRule = {
-  fg: string;                  // ex. "--fg-on-emphasis"
-  bg: string;                  // ex. "--bg-emphasis"
-  level: "text" | "large-text" | "non-text"; // seuils 4.5 / 3 / 3 (WCAG 2.2)
-  themes?: ThemeOption[];      // défaut : les 12
-  waiver?: { reason: string; issue?: string }; // exception documentée
+  fg: string;                  // e.g. "--fg-on-emphasis"
+  bg: string;                  // e.g. "--bg-emphasis"
+  level: "text" | "large-text" | "non-text"; // thresholds 4.5 / 3 / 3 (WCAG 2.2)
+  themes?: ThemeOption[];      // default: the 12
+  waiver?: { reason: string; issue?: string }; // documented exception
 };
 ```
 
-- **Niveau rôles** (livré par le paquet) : `fg-base`/`bg-base`,
+- **Role level** (shipped by the package): `fg-base`/`bg-base`,
   `fg-base`/`bg-subtle`, `fg-base`/`bg-container`, `fg-muted`/`bg-base`,
   `fg-on-emphasis`/`bg-emphasis` (+`-strong`, `bg-inverse`, `focus-ring`),
   `fg-on-accent`/`accent`, `accent-ink`/`accent-soft`,
   `accent-ink`/`bg-base`, `link`/`bg-base` (+`bg-subtle`, `bg-container`),
   `link-hover`/`bg-base`, `success`/`bg-base`, `danger`/`bg-base`,
-  `focus-ring`/`bg-base` en `non-text` (3:1, critère 1.4.11).
-- **Niveau site** (propre au portfolio, extensible par tout consommateur) :
-  les paires de couche 3 critiques — header, footers, tags, boutons,
-  tooltip, formulaire.
+  `focus-ring`/`bg-base` as `non-text` (3:1, criterion 1.4.11).
+- **Site level** (portfolio-specific, extensible by any consumer): the
+  critical layer-3 pairs — header, footers, tags, buttons, tooltip, form.
 
-### Points techniques imposés
+### Mandatory technical points
 
-- **Calcul** : luminance relative et ratio selon la formule WCAG 2.x —
-  ~20 lignes de TS, zéro dépendance (`culori` acceptable si besoin de
-  parsing de couleurs exotiques).
-- **Couleurs à alpha** (`--color-tooltip-bg`, `--color-shadow`) : composer
-  l'avant-plan sur son fond déclaré **avant** le calcul du ratio ; une paire
-  avec alpha doit toujours déclarer son fond de composition.
-- **Waivers** : une paire qui échoue *volontairement* dans un thème donné
-  n'est jamais supprimée du registre — elle porte un `waiver` motivé,
-  visible dans le rapport. Zéro échec silencieux.
-- **Rapport** : générer une matrice thèmes × paires (markdown) comme
-  artefact — c'est aussi un argument de transparence pour l'open source.
-- **Intégration** : suite Jest dédiée dans `pnpm test` (bloquant) ; en E7,
-  le runner part dans `testing/` avec les paires de rôles par défaut, et
-  chaque consommateur y ajoute ses paires de couche 3.
-- **Évolution** : colonne APCA (WCAG 3 pressenti) **consultative** dans le
-  rapport, jamais bloquante tant que la norme n'est pas stabilisée.
+- **Computation**: relative luminance and ratio per the WCAG 2.x formula
+  — ~20 lines of TS, zero dependency (`culori` acceptable if exotic
+  color parsing is needed).
+- **Colors with alpha** (`--color-tooltip-bg`, `--color-shadow`):
+  composite the foreground over its declared background **before**
+  computing the ratio; a pair with alpha must always declare its
+  compositing background.
+- **Waivers**: a pair that *deliberately* fails in a given theme is never
+  removed from the registry — it carries a justified `waiver`, visible in
+  the report. Zero silent failure.
+- **Report**: generate a themes × pairs matrix (markdown) as an artifact
+  — it's also a transparency argument for the open source project.
+- **Integration**: a dedicated Jest suite inside `pnpm test` (blocking);
+  in E7, the runner moves into `testing/` with the default role pairs,
+  and each consumer adds their layer-3 pairs there.
+- **Evolution**: an APCA column (expected WCAG 3) **advisory** in the
+  report, never blocking until the standard stabilizes.
 
-### Ce que ce système change pour le high-contrast et les moteurs
+### What this system changes for high-contrast and the engines
 
-C'est lui qui rend les optimisations de moteurs (E2) sûres : toute dérive
-de contraste introduite par une simplification est détectée immédiatement,
-thème par thème, paire par paire — le pendant « perceptif » de l'oracle
-« CSS identique » utilisé pendant les fondations.
+It's what makes the engine optimizations (E2) safe: any contrast drift
+introduced by a simplification is detected immediately, theme by theme,
+pair by pair — the "perceptual" counterpart to the "identical CSS" oracle
+used during the foundations.

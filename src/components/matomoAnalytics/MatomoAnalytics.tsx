@@ -8,43 +8,43 @@
 
 // type MatomoCommandArray = Array<string | string[] | Record<string, unknown>>;
 
-// // Composant qui utilise useSearchParams
+// // Component that uses useSearchParams
 // function MatomoPageTracker() {
 // 	const pathname = usePathname();
 // 	const searchParams = useSearchParams();
 // 	const [isMounted, setIsMounted] = useState(false);
 
-// 	// Attendre que le composant soit monté côté client
+// 	// Wait for the component to be mounted client-side
 // 	useEffect(() => {
 // 		setIsMounted(true);
 // 	}, []);
 
-// 	// Configuration initiale de Matomo
+// 	// Initial Matomo configuration
 // 	useEffect(() => {
 // 		if (!isMounted) return;
 
-// 		// Vérifier que _paq est défini
+// 		// Check that _paq is defined
 // 		window._paq = window._paq || [];
 
-// 		// Configuration de base
+// 		// Base configuration
 // 		window._paq.push(["disableCookies"]);
 // 		window._paq.push(["setTrackerUrl", "//analytics.lostintab.com/matomo.php"]);
 // 		window._paq.push(["setSiteId", "1"]);
 // 		window._paq.push(["enableLinkTracking"]);
 
-// 		// Premier trackPageView
+// 		// First trackPageView
 // 		window._paq.push(["trackPageView"]);
 // 	}, [isMounted]);
 
-// 	// Suivi des changements de page
+// 	// Track page changes
 // 	useEffect(() => {
 // 		if (!isMounted || typeof window === "undefined" || !window._paq) return;
 
-// 		// Reconstruire l'URL complète pour Matomo
+// 		// Rebuild the full URL for Matomo
 // 		const url =
 // 			pathname + (searchParams.toString() ? `?${searchParams.toString()}` : "");
 
-// 		// Notifier Matomo du changement de page
+// 		// Notify Matomo of the page change
 // 		window._paq.push(["setCustomUrl", url]);
 // 		window._paq.push(["setDocumentTitle", document.title]);
 // 		window._paq.push(["trackPageView"]);
@@ -53,7 +53,7 @@
 // 	return null;
 // }
 
-// // Composant principal qui enveloppe le tracker dans un Suspense
+// // Main component that wraps the tracker in a Suspense
 // export default function MatomoAnalytics() {
 // 	return (
 // 		<>
@@ -85,7 +85,7 @@ import Script from "next/script";
 
 type MatomoCommandArray = Array<string | string[] | Record<string, unknown>>;
 
-// Composant qui utilise useSearchParams
+// Component that uses useSearchParams
 function MatomoPageTracker({ scriptLoaded }: { scriptLoaded: boolean }) {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
@@ -114,7 +114,7 @@ function MatomoPageTracker({ scriptLoaded }: { scriptLoaded: boolean }) {
 	return null;
 }
 
-// Composant principal qui enveloppe le tracker dans un Suspense
+// Main component that wraps the tracker in a Suspense
 export default function MatomoAnalytics() {
 	const [scriptLoaded, setScriptLoaded] = useState(false);
 
@@ -135,7 +135,7 @@ export default function MatomoAnalytics() {
 				}}
 			/>
 
-			{/* Ensuite charger le script Matomo */}
+			{/* Then load the Matomo script */}
 			<Script
 				id="matomo-script"
 				strategy="afterInteractive"
@@ -143,7 +143,7 @@ export default function MatomoAnalytics() {
 				onLoad={() => setScriptLoaded(true)}
 			/>
 
-			{/* Tracker pour les changements de page */}
+			{/* Tracker for page changes */}
 			<Suspense fallback={null}>
 				{scriptLoaded && <MatomoPageTracker scriptLoaded={scriptLoaded} />}
 			</Suspense>

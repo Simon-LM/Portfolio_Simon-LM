@@ -1,7 +1,7 @@
-// Point d'entrée public du paquet (E3 phase 3) : les consommateurs peuvent
-// @use "a11y-prefs/scss" (ce fichier) ou cibler un module précis
-// ("a11y-prefs/scss/theme-utils"…). L'état (rail/rôles) rejoint le paquet
-// en phase 4.
+// Public entry point of the package (E3 phase 3): consumers can
+// @use "a11y-prefs/scss" (this file) or target a specific module
+// ("a11y-prefs/scss/theme-utils"…). State (rail/roles) joins the package
+// in phase 4.
 @forward "base-palette";
 @forward "state";
 @forward "theme-utils";

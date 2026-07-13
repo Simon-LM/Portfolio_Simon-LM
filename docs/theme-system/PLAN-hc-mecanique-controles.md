@@ -1,108 +1,107 @@
 <!-- @format -->
 
-# Plan — Mécanique du fort contraste : rôle focus + contrôles d'outillage
+# Plan — High-contrast mechanics: focus role + tooling controls
 
-Rédigé le 2026-07-11, après la réflexion « second temps HC » menée avec
-Simon (archéologie du mécanisme comprise). Exécution sur branche
-`feat/hc-mecanique`.
+Written 2026-07-11, after the "HC second pass" reflection (mechanism
+archaeology understood). Executed on branch `feat/hc-mecanique`.
 
-## L'archéologie qui fonde les décisions (vérifiée dans git)
+## The archaeology behind these decisions (verified in git)
 
-- **Design d'origine de Simon** : capture **par les noms de couche 3**
-  (`transform-for-high-contrast($color, $element-type)`, `str-index` sur
-  `_bg`/`_text`/`link`/`heading`/`hover`/`focus`/`success`) + clarté en
-  filet. Garantissait notamment le focus par son nom.
-- **Supplanté pendant ce chantier d'extraction** (commit `3195de4`, par
-  Claude — pas une décision) par le mécanisme actuel : assignations
-  explicites des ~19 rôles de **couche 2** dans le moteur + héritage de la
-  couche 3 **par branchement** + clarté pour les non-assignés (gris
-  intermédiaires, accents). La fonction d'origine, devenue code mort, a
-  été supprimée au nettoyage du 2026-07-03 (`f16842d`).
-- Architecture 3 couches (vocabulaire de Simon) : couche 1 = palettes
-  Tailwind ; couche 2 = variables de rôle (API du paquet) ; couche 3 =
-  noms d'assignation (config du consommateur).
+- **Original design**: capture **by layer-3 names**
+  (`transform-for-high-contrast($color, $element-type)`, `str-index` on
+  `_bg`/`_text`/`link`/`heading`/`hover`/`focus`/`success`) + a clarity
+  safety net. This notably guaranteed focus by its name.
+- **Superseded during this extraction chantier** (commit `3195de4`, by
+  Claude — not a deliberate decision) by the current mechanism: explicit
+  assignment of the ~19 **layer-2** roles in the engine + layer-3
+  inheriting **through wiring** + clarity for unassigned values
+  (intermediate grays, accents). The original function, having become dead
+  code, was removed during the 2026-07-03 cleanup (`f16842d`).
+- 3-layer architecture: layer 1 = Tailwind palettes; layer 2 = role
+  variables (the package's API); layer 3 = assignment names (consumer
+  config).
 
-## Décisions actées (Simon, 2026-07-11)
+## Decisions made (2026-07-11)
 
-1. **Décision des couleurs = branchement couche 2 seul** (mécanisme actuel
-   conservé). La capture par noms ne revient PAS comme mécanisme — fait
-   technique : Sass ne sait pas lire les noms ; l'ancienne fonction
-   exigeait de déclarer chaque token à la main, soit la même discipline
-   que le branchement (le filet a les mêmes trous que le sol).
-2. **Le focus est promu rôle de couche 2** — restaure la garantie du
-   design d'origine, pour tous les consommateurs (aujourd'hui : simples
-   arguments du mixin local, aucune garantie moteur).
-3. **Deux contrôles en lecture seule dans l'outillage** (ne modifient
-   JAMAIS une couleur ; warnings au build/test, invisibles aux visiteurs) :
-   - **Par valeur** : en thème HC, toute couleur émise doit appartenir à
-     la palette du thème. Attrape tout token non branché (valeur brute).
-   - **Par noms** (la sémantique de Simon, recyclée en inspecteur) :
-     synonymes par famille (text/fg/ink…, bg/surface…, link/anchor…,
-     focus/outline…) ; si le nom suggère une famille et que la valeur
-     émise la contredit (ex. `*_text` qui émet la couleur de fond),
-     warning. Attrape les branchements DE TRAVERS qui tombent dans la
-     palette — l'angle mort du contrôle par valeur. Faux positif = un
-     avertissement de trop, jamais une couleur fausse.
-4. **Notice d'implémentation orientée IA** (pattern AGENTS.md/llms.txt du
-   paquet) : les implémenteurs seront surtout des IA ; le contrat
-   « couche 3 = toujours dérivée d'un rôle de couche 2, jamais de valeur
-   brute » doit leur être écrit. Livrable rattaché à E6/E7 ; le contrat
-   rédigé en phase 4 en sera la base.
-5. **Garé (« à réfléchir, risqué »)** : le sort des 4 rôles `$accent*` en
-   HC (aujourd'hui écrasés par clarté ; le header de Simon était une
-   surcharge manuelle, l'accent n'a jamais fait partie de son design HC).
-6. Prérequis **Tailwind** réaffirmé (géométrie 11 poids obligatoire).
+1. **Color decisions = layer-2 wiring only** (current mechanism kept).
+   Name-based capture does NOT come back as a mechanism — technical fact:
+   Sass can't read names; the old function required declaring each token
+   by hand, the same discipline as wiring (the safety net has the same
+   holes as the floor).
+2. **Focus is promoted to a layer-2 role** — restores the original
+   design's guarantee, for every consumer (until now: plain arguments of
+   the local mixin, no engine-level guarantee).
+3. **Two read-only controls in the tooling** (they NEVER modify a color;
+   warnings at build/test time, invisible to visitors):
+   - **By value**: in an HC theme, every emitted color must belong to the
+     theme's palette. Catches any unwired token (raw value).
+   - **By name** (the original semantics, recycled as an inspector):
+     family synonyms (text/fg/ink…, bg/surface…, link/anchor…,
+     focus/outline…); if a name suggests a family and the emitted value
+     contradicts it (e.g. `*_text` emitting the background color),
+     warning. Catches crossed wiring that happens to land inside the
+     palette — the blind spot of value-based control. False positive = one
+     extra warning, never a wrong color.
+4. **AI-oriented implementation guide** (AGENTS.md/llms.txt pattern of the
+   package): implementers will mostly be AIs; the contract "layer 3 is
+   always derived from a layer-2 role, never a raw value" must be written
+   for them. Deliverable attached to E6/E7; the contract written in phase 4
+   will be its basis.
+5. **Parked ("needs thought, risky")**: the fate of the 4 `$accent*` roles
+   in HC (currently overridden for clarity; Simon's header was a manual
+   override, accent was never part of his HC design).
+6. **Tailwind** prerequisite reaffirmed (11-weight geometry mandatory).
 
 ## Phases
 
-### Phase 0 — Préparation
+### Phase 0 — Preparation
 
-CSS compilé de référence (`main`), diff normalisé à chaque phase.
+Reference compiled CSS (`main`), normalized diff at each phase.
 
-### Phase 1 — Rôle focus en couche 2 (rendu identique)
+### Phase 1 — Focus role in layer 2 (identical rendering)
 
-1. Slot `"focus"` (+ `"focus-text"` si nécessaire) dans `$hc-palette`
-   (moteur) et dans les cartes des 4 variantes.
-2. Le mixin consommateur (`_high-contrast.scss` du portfolio) lit le
-   focus depuis la carte (les arguments `$focus-*` actuels deviennent
-   des surcharges optionnelles, défaut = la carte).
+1. `"focus"` slot (+ `"focus-text"` if needed) in `$hc-palette` (engine)
+   and in the 4 variant maps.
+2. The consumer mixin (portfolio's `_high-contrast.scss`) reads focus from
+   the map (the current `$focus-*` arguments become optional overrides,
+   default = the map).
 
-**Oracle** : 4 variantes byte-identiques (les valeurs ne changent pas,
-seule la tuyauterie).
-**Commit** : `feat(theme): hc-mécanique phase 1 — focus promu rôle`.
+**Oracle**: 4 byte-identical variants (values don't change, only the
+plumbing).
+**Commit**: `feat(theme): hc-mécanique phase 1 — focus promoted to role`.
 
-### Phase 2 — Contrôle par valeur
+### Phase 2 — Value-based control
 
-Test Jest dans l'outillage contraste : pour chaque thème `high-contrast*`,
-chaque custom property de couleur émise ∈ palette du thème. Mécanique de
-waivers pour les cas légitimes documentés (à découvrir à la première
-exécution — l'état actuel du portfolio sert de calibration).
+Jest test in the contrast tooling: for each `high-contrast*` theme, every
+emitted color custom property ∈ the theme's palette. Waiver mechanism for
+documented legitimate cases (to be discovered on first run — the
+portfolio's current state serves as calibration).
 
-**Oracle** : aucun CSS modifié ; le test décrit l'existant (les écarts
-trouvés sont documentés, pas corrigés en douce — arbitrages Simon).
-**Commit** : `feat(theme): hc-mécanique phase 2 — contrôle palette HC`.
+**Oracle**: no CSS changed; the test describes the existing state (any
+gaps found are documented, not silently fixed — decisions).
+**Commit**: `feat(theme): hc-mécanique phase 2 — HC palette control`.
 
-### Phase 3 — Contrôle par noms (l'inspecteur sémantique)
+### Phase 3 — Name-based control (the semantic inspector)
 
-Audit : familles de synonymes → incohérences nom/valeur émise dans les
-thèmes HC → warnings listés (console + artefact de rapport). Jamais
-bloquant, jamais de modification.
+Audit: synonym families → name/emitted-value inconsistencies in HC themes
+→ warnings listed (console + report artifact). Never blocking, never a
+modification.
 
-**Commit** : `feat(theme): hc-mécanique phase 3 — inspecteur sémantique`.
+**Commit**: `feat(theme): hc-mécanique phase 3 — semantic inspector`.
 
-### Phase 4 — Docs et finalisation
+### Phase 4 — Docs and wrap-up
 
-README chantier (§ mécanique HC : les 2 étages décision/contrôle, le
-contrat couche 3), rédaction du contrat (base de la future notice IA),
-changelog, TODO (réflexion « second temps mécanique » soldée — reste
-l'item accent garé), rapport final.
+Chantier README (§ HC mechanics: the 2 decision/control layers, the
+layer-3 contract), writing the contract (basis for the future AI guide),
+changelog, TODO (the "second mechanical pass" reflection closed out — the
+accent item remains parked), final report.
 
-**Commit** : `docs(theme): hc-mécanique phase 4 — finalisation`.
+**Commit**: `docs(theme): hc-mécanique phase 4 — wrap-up`.
 
-## Hors périmètre (ne PAS faire)
+## Out of scope (do NOT do)
 
-- Retour de la capture par noms comme mécanisme de décision.
-- Le sort des rôles `$accent*` en HC (garé, décision Simon à venir).
-- Refonte de la technologie de fond du HC (« second temps » toujours
-  reporté) ; `forced-colors: active` (noté pour le paquet, plus tard).
-- La notice IA elle-même (livrable E6/E7 — seule sa base est rédigée ici).
+- Bringing back name-based capture as the decision mechanism.
+- The fate of the `$accent*` roles in HC (parked, decision to come).
+- Redesigning HC's underlying technology ("second pass" still deferred);
+  `forced-colors: active` (noted for the package, later).
+- The AI guide itself (E6/E7 deliverable — only its basis is written here).

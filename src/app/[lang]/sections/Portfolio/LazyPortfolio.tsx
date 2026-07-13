@@ -53,7 +53,7 @@ interface LazyPortfolioProps {
 
 // 	return (
 // 		<section
-// 			id="portfolio" // ID constant pour la navigation
+// 			id="portfolio" // Constant ID for navigation
 // 			className={`portfolio ${!inView ? "portfolio--placeholder" : ""}`}
 // 			ref={ref}>
 // 			{inView && <PortfolioClient dictionary={dictionary} />}

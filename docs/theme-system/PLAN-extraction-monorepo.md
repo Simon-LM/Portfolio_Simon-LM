@@ -1,198 +1,197 @@
 <!-- @format -->
 
-# Plan d'exécution — E3 : monorepo et extraction de la face SCSS
+# Execution plan — E3: monorepo and extracting the SCSS side
 
-**Document d'exécution destiné à une IA.** Mêmes règles générales que les
-plans précédents : branche dédiée, un commit par phase, sortie brute des
-vérifications dans chaque rapport, arrêt en cas d'imprévu, entrées
-[CHANGELOG.md](./CHANGELOG.md). Conception de référence :
-[GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E3 et
-README § 6 (architecture 3 couches, § 6.2 périmètre, § 6.3 distribution
-hybride).
+**Execution document meant for an AI.** Same general rules as previous
+plans: dedicated branch, one commit per phase, raw check output in each
+report, stop on anything unexpected, entries in
+[CHANGELOG.md](./CHANGELOG.md). Reference design:
+[GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E3 and
+README § 6 (3-layer architecture, § 6.2 scope, § 6.3 hybrid distribution).
 
-> **Statut : ✅ exécuté le 2026-07-07** (branche `feat/e3-monorepo`,
-> 6 commits, un par phase). Déviation mesurée et documentée : l'oracle
-> « byte-identique » est tenu **modulo la duplication des pragmas
-> `/** @format */`** (règle empirique établie par sondes : les commentaires
-> bruyants placés avant les `@use` d'un module sont ré-émis une fois par
-> importeur — la réorganisation des imports change leur nombre ; le spam de
-> pragmas baisse d'ailleurs de 80 à 68). Zéro changement de valeur ou de
-> règle CSS, prouvé par diff normalisé à chaque phase.
+> **Status: ✅ executed 2026-07-07** (branch `feat/e3-monorepo`,
+> 6 commits, one per phase). Measured and documented deviation: the
+> "byte-identical" oracle holds **modulo duplicated `/** @format */`
+> pragmas** (an empirical rule established via probes: noisy comments
+> placed before a module's `@use`s get re-emitted once per importer —
+> reorganizing the imports changes their count; the pragma spam actually
+> drops from 80 to 68). Zero color-value or CSS-rule change, proven by a
+> normalized diff at every phase.
 
-## ⛔ Prérequis bloquants
+## ⛔ Blocking prerequisites
 
-1. `main` propre, `pnpm build`/`lint`/`test` verts, suite de contrastes
-   présente (elle est l'oracle comportemental de tout le chantier).
-2. Aucun autre chantier thèmes en cours sur une branche.
+1. Clean `main`, `pnpm build`/`lint`/`test` green, contrast suite present
+   (it's the behavioral oracle for the whole chantier).
+2. No other theme chantier in progress on another branch.
 
-Branche : `feat/e3-monorepo`.
+Branch: `feat/e3-monorepo`.
 
-## Objectif et périmètre
+## Goal and scope
 
-Créer un **workspace pnpm** et y extraire la **face SCSS du moteur** — ce
-qui, à terme, sera mis à jour de façon centralisée via npm chez les
-consommateurs :
+Create a **pnpm workspace** and extract the **engine's SCSS side** into
+it — which, eventually, will be updated centrally via npm for consumers:
 
-| Va dans le paquet (`packages/a11y-prefs/scss/`) | Reste dans le portfolio |
+| Goes into the package (`packages/a11y-prefs/scss/`) | Stays in the portfolio |
 | --- | --- |
-| `_base-palette.scss` (palettes, `get-color`, `is-dark`…) | `main.scss`, tous les composants/pages |
-| `_theme-utils.scss` (tous les moteurs `transform-light-to-*`, remap CVD, ancres statut, math WCAG, gamut) | les 12 fichiers de thèmes `_light.scss`… (= **configs** du projet) |
-| `_anti-glare-functions.scss` | `_theme-system.scss` (assemblage : 12 blocs `[data-theme]`, `:root`, media) |
-| la partie **rail + primitives + rôles** de `_theme-variables.scss` (état mutable + `define-base-colors` + `apply-roles`) | la partie **couche 3** de `_theme-variables.scss` (~70 tokens projet + `apply-theme-variables`) |
+| `_base-palette.scss` (palettes, `get-color`, `is-dark`…) | `main.scss`, every component/page |
+| `_theme-utils.scss` (every `transform-light-to-*` engine, CVD remap, status anchors, WCAG math, gamut) | the 12 theme files `_light.scss`… (= project **configs**) |
+| `_anti-glare-functions.scss` | `_theme-system.scss` (assembly: 12 `[data-theme]` blocks, `:root`, media) |
+| the **rail + primitives + roles** part of `_theme-variables.scss` (mutable state + `define-base-colors` + `apply-roles`) | the **layer 3** part of `_theme-variables.scss` (~70 project tokens + `apply-theme-variables`) |
 
-`a11y-prefs` est un **nom de travail** (dossier + `"name"` npm privé) —
-le nom définitif appartient à Simon et sera fixé au plus tard en E7 ;
-le renommage est bon marché (dossier + imports).
+`a11y-prefs` is a **working name** (folder + private npm `"name"`) — the
+final name belongs to Simon and will be set at the latest in E7;
+renaming is cheap (folder + imports).
 
-**Oracle global du chantier : le CSS compilé reste byte-identique du
-début à la fin** (aucun changement visuel — c'est un déménagement, pas une
-refonte). Chaque phase recompile et compare à la baseline.
+**Chantier-wide oracle: the compiled CSS stays byte-identical from start
+to finish** (no visual change — this is a move, not a redesign). Every
+phase recompiles and compares against the baseline.
 
-## Points techniques imposés
+## Mandatory technical points
 
-1. **Résolution Sass des imports du paquet.** pnpm symlinke le paquet du
-   workspace dans `node_modules/`. Dart Sass ne résout pas les modules
-   Node par défaut : ajouter `node_modules` aux chemins de recherche
-   partout où l'on compile —
-   - `next.config.ts` : `sassOptions: { includePaths: ["node_modules"] }` ;
-   - `extract-themes.ts` (suite de contrastes) : `compile(MAIN_SCSS,
-     { loadPaths: ["node_modules"] })` ;
-   - tests-sondes (`status-resolver.test.ts`) et toute compilation CLI :
+1. **Sass resolution of package imports.** pnpm symlinks the workspace
+   package into `node_modules/`. Dart Sass doesn't resolve Node modules
+   by default: add `node_modules` to the search paths everywhere
+   compilation happens —
+   - `next.config.ts`: `sassOptions: { includePaths: ["node_modules"] }`;
+   - `extract-themes.ts` (contrast suite): `compile(MAIN_SCSS,
+     { loadPaths: ["node_modules"] })`;
+   - probe tests (`status-resolver.test.ts`) and any CLI compilation:
      `--load-path=node_modules`.
-   Les `@use` du portfolio vers le paquet s'écrivent alors
+   The portfolio's `@use`s toward the package are then written
    `@use "a11y-prefs/scss/theme-utils"`.
-2. **État mutable et `!global`.** Le pipeline repose sur la mutation de
-   globales déclarées à la racine du module d'état. Ce module (rail,
-   primitives, rôles) part **entier** dans le paquet ; les mixins du
-   paquet continuent d'y accéder par `@use … as *` (relation inchangée).
-   Les ~70 tokens de couche 3 restent déclarés à la racine du module
-   **portfolio**, assignés par le mixin portfolio `apply-theme-variables`
-   qui lit les rôles du paquet — aucune assignation croisée
-   paquet→portfolio ne doit subsister (c'est l'objet de la phase 2).
-3. **`@forward` d'API.** Le paquet expose un point d'entrée unique
-   `scss/_index.scss` qui `@forward` palette, état/rôles et moteurs — le
-   portfolio ne `@use` que des chemins publics du paquet, jamais ses
-   fichiers internes.
-4. **Windows/`node_modules` et Vercel** : vérifier que le build Vercel
-   (`pnpm install` en workspace) produit le même CSS — le rapport de
-   phase 6 doit inclure un `pnpm build` complet.
+2. **Mutable state and `!global`.** The pipeline relies on mutating
+   globals declared at the root of the state module. This module (rail,
+   primitives, roles) moves **whole** into the package; the package's
+   mixins keep accessing it via `@use … as *` (unchanged relationship).
+   The ~70 layer-3 tokens stay declared at the root of the **portfolio**
+   module, assigned by the portfolio's `apply-theme-variables` mixin
+   which reads the package's roles — no cross package→portfolio
+   assignment should remain (that's phase 2's job).
+3. **API `@forward`.** The package exposes a single entry point,
+   `scss/_index.scss`, that `@forward`s the palette, state/roles, and
+   engines — the portfolio only `@use`s the package's public paths, never
+   its internal files.
+4. **Windows/`node_modules` and Vercel**: verify that the Vercel build
+   (`pnpm install` in workspace mode) produces the same CSS — the phase 6
+   report must include a full `pnpm build`.
 
-## Phase 0 — Préparation
+## Phase 0 — Preparation
 
-Arbre propre, branche, baseline `/tmp/e3-monorepo/phase0.css`
+Clean tree, branch, baseline `/tmp/e3-monorepo/phase0.css`
 (`pnpm exec sass --no-source-map src/styles/main.scss …`),
-`pnpm build`/`lint`/`test` verts.
+`pnpm build`/`lint`/`test` green.
 
-## Phase 1 — Workspace pnpm + sonde de résolution (aucun déplacement)
+## Phase 1 — pnpm workspace + resolution probe (no relocation)
 
-1. `pnpm-workspace.yaml` (`packages: ["packages/*"]`),
-   `packages/a11y-prefs/package.json` minimal (`"name": "a11y-prefs"`,
+1. `pnpm-workspace.yaml` (`packages: ["packages/*"]`), a minimal
+   `packages/a11y-prefs/package.json` (`"name": "a11y-prefs"`,
    `"version": "0.0.0"`, `"private": true`, `"exports": { "./scss/*":
-   "./scss/*" }`) et un `scss/_probe.scss` temporaire (une variable).
-2. `pnpm install` (crée le lien workspace), ajout des chemins de
-   résolution (`next.config.ts` sassOptions, extract-themes loadPaths).
-3. **Sonde** : un `@use "a11y-prefs/scss/probe"` temporaire dans un
-   fichier de test compilé par les trois canaux (CLI sass, Next build,
-   extract-themes) — prouver la résolution avant de déménager quoi que ce
-   soit, puis retirer la sonde.
+   "./scss/*" }`) and a temporary `scss/_probe.scss` (one variable).
+2. `pnpm install` (creates the workspace link), add the resolution paths
+   (`next.config.ts` sassOptions, extract-themes loadPaths).
+3. **Probe**: a temporary `@use "a11y-prefs/scss/probe"` in a test file
+   compiled through all three channels (sass CLI, Next build,
+   extract-themes) — prove resolution before moving anything, then remove
+   the probe.
 
-**Oracle** : CSS byte-identique. **Commit** :
+**Oracle**: byte-identical CSS. **Commit**:
 `feat(theme): e3 phase 1 — pnpm workspace + package skeleton`.
 
-## Phase 2 — Inversion de dépendance (moteurs ↛ couche 3)
+## Phase 2 — Dependency inversion (engines ↛ layer 3)
 
-Aujourd'hui, chaque mixin `transform-light-to-*` (et l'anti-glare) se
-termine par `@include apply-roles()` **puis `@include
-apply-theme-variables`** — or `apply-theme-variables` est la couche 3 du
-projet : un moteur de paquet ne peut pas appeler un mixin du consommateur.
+Today, every `transform-light-to-*` mixin (and anti-glare) ends with
+`@include apply-roles()` **then `@include apply-theme-variables`** — but
+`apply-theme-variables` is the project's layer 3: a package engine cannot
+call a consumer mixin.
 
-1. Retirer `@include apply-theme-variables;` de **tous** les mixins
-   moteurs (`transform-light-to-{dark,high-contrast,deuter/prot/trit
-   ×2}`, `transform-theme-for-anti-glare`) — ils s'arrêtent à
+1. Remove `@include apply-theme-variables;` from **every** engine mixin
+   (`transform-light-to-{dark,high-contrast,deuter/prot/trit
+   ×2}`, `transform-theme-for-anti-glare`) — they stop at
    `apply-roles()`.
-2. Ajouter `@include apply-theme-variables;` dans **chaque fichier de
-   thème** (`_dark.scss`, `_high-contrast.scss`, les 6 daltoniens, les 2
-   anti-glare — et vérifier `_light.scss`/`_achromatopsia.scss`), juste
-   après l'appel du transform. L'ordre d'exécution est strictement
-   identique → CSS byte-identique.
-3. Documenter dans le code : « le moteur s'arrête aux rôles ; la couche 3
-   est dérivée par le consommateur ».
+2. Add `@include apply-theme-variables;` to **each theme file**
+   (`_dark.scss`, `_high-contrast.scss`, the 6 color-blind ones, the 2
+   anti-glare — and check `_light.scss`/`_achromatopsia.scss`), right
+   after the transform call. Execution order is strictly identical →
+   byte-identical CSS.
+3. Document in the code: "the engine stops at the roles; layer 3 is
+   derived by the consumer."
 
-**Oracle** : CSS byte-identique. **Commit** :
+**Oracle**: byte-identical CSS. **Commit**:
 `refactor(theme): e3 phase 2 — engines stop at the role layer`.
 
-## Phase 3 — Déménagement de la palette et des moteurs
+## Phase 3 — Moving the palette and engines
 
-1. Déplacer `_base-palette.scss`, `_theme-utils.scss`,
-   `_anti-glare-functions.scss` vers `packages/a11y-prefs/scss/` (avec
-   `git mv` pour préserver l'historique).
-2. Créer `packages/a11y-prefs/scss/_index.scss` qui `@forward` les trois.
-3. Mettre à jour tous les `@use` du portfolio (12 fichiers de thèmes,
-   `_theme-variables.scss`, `_theme-system.scss`, `main.scss`) vers
-   `a11y-prefs/scss/…`, et les chemins des tests-sondes
+1. Move `_base-palette.scss`, `_theme-utils.scss`,
+   `_anti-glare-functions.scss` into `packages/a11y-prefs/scss/` (with
+   `git mv` to preserve history).
+2. Create `packages/a11y-prefs/scss/_index.scss` that `@forward`s all
+   three.
+3. Update every portfolio `@use` (12 theme files,
+   `_theme-variables.scss`, `_theme-system.scss`, `main.scss`) to
+   `a11y-prefs/scss/…`, and the probe-test paths
    (`status-resolver.test.ts`).
-4. Attention aux `@use` internes du paquet (theme-utils ↔
-   theme-variables) : tant que l'état n'est pas déménagé (phase 4), le
-   paquet `@use` temporairement le fichier d'état du portfolio par chemin
-   relatif remontant — laid mais byte-safe, résorbé en phase 4 ; le
-   signaler dans le rapport.
+4. Watch out for the package's internal `@use`s (theme-utils ↔
+   theme-variables): until state is moved (phase 4), the package
+   temporarily `@use`s the portfolio's state file via a relative
+   upward-reaching path — ugly but byte-safe, resolved in phase 4; flag
+   it in the report.
 
-**Oracle** : CSS byte-identique ; `pnpm test` complet (la suite recompile
-tout). **Commit** : `refactor(theme): e3 phase 3 — move palette and engines
+**Oracle**: byte-identical CSS; full `pnpm test` (the suite recompiles
+everything). **Commit**: `refactor(theme): e3 phase 3 — move palette and engines
 into the package`.
 
-## Phase 4 — Scission de l'état : rôles (paquet) / couche 3 (portfolio)
+## Phase 4 — Splitting state: roles (package) / layer 3 (portfolio)
 
-1. Créer `packages/a11y-prefs/scss/_state.scss` : rail 11 crans,
-   primitives (`$accent`…), ~15 rôles, alias (`$off-white`,
-   `$near-black`), `define-base-colors()`, `apply-roles()` — coupé-collé
-   depuis `_theme-variables.scss`, déclarations racine comprises.
-2. `src/styles/themes/_theme-variables.scss` (portfolio) ne garde que la
-   couche 3 : ~70 déclarations racine + `apply-theme-variables()` — et
-   `@use "a11y-prefs/scss/state" as *` pour lire rôles et primitives.
-3. Résorber le chemin temporaire de la phase 3 (le paquet ne référence
-   plus rien côté portfolio — vérifier par grep qu'aucun `@use` du paquet
-   ne remonte vers `src/`).
+1. Create `packages/a11y-prefs/scss/_state.scss`: the 11-step rail,
+   primitives (`$accent`…), ~15 roles, aliases (`$off-white`,
+   `$near-black`), `define-base-colors()`, `apply-roles()` — cut-and-paste
+   from `_theme-variables.scss`, root declarations included.
+2. `src/styles/themes/_theme-variables.scss` (portfolio) keeps only layer
+   3: ~70 root declarations + `apply-theme-variables()` — and
+   `@use "a11y-prefs/scss/state" as *` to read roles and primitives.
+3. Resolve phase 3's temporary path (the package no longer references
+   anything on the portfolio side — verify via grep that no package
+   `@use` reaches back up into `src/`).
 
-**Oracle** : CSS byte-identique. **Commit** :
+**Oracle**: byte-identical CSS. **Commit**:
 `refactor(theme): e3 phase 4 — split state: roles in package, layer 3 in app`.
 
-## Phase 5 — Configuration minimale `with (…)`
+## Phase 5 — Minimal `with (…)` configuration
 
-Rendre configurable ce qui est bon marché, sans refonte :
+Make what's cheap configurable, without a redesign:
 
-1. Dans `_state.scss` : `$gray-family: "stone" !default;` (le rail est
-   dérivé de cette famille) et une map `$primitives` `!default`
+1. In `_state.scss`: `$gray-family: "stone" !default;` (the rail is
+   derived from this family) and a `!default` `$primitives` map
    (`accent: (amber, 300), link: (sky, 900), success: (emerald, 700),
-   danger: (redd, 600)`, etc.) consommée par `define-base-colors()`.
-2. Le portfolio consomme : `@use "a11y-prefs/scss/state" as * with
-   ($gray-family: "stone", $primitives: (…));` — valeurs identiques aux
-   actuelles → byte-identique.
-3. **Hors périmètre assumé** : le câblage rôle→cran de `apply-roles()`
-   reste codé en dur dans le paquet (le « registre central » complet est
-   un chantier ultérieur, cf. README § 7) ; idem la liste des thèmes.
+   danger: (redd, 600)`, etc.) consumed by `define-base-colors()`.
+2. The portfolio consumes it: `@use "a11y-prefs/scss/state" as * with
+   ($gray-family: "stone", $primitives: (…));` — same values as today →
+   byte-identical.
+3. **Deliberately out of scope**: the role→step wiring of `apply-roles()`
+   stays hardcoded in the package (the full "central registry" is a later
+   chantier, cf. README § 7); likewise the theme list.
 
-**Oracle** : CSS byte-identique. **Commit** :
+**Oracle**: byte-identical CSS. **Commit**:
 `feat(theme): e3 phase 5 — minimal package configuration (with)`.
 
-## Phase 6 — Finalisation
+## Phase 6 — Wrap-up
 
-1. `pnpm build`/`lint`/`test` complets + **`pnpm contrast:report`**
-   (rapport inchangé attendu) + build local type Vercel.
-2. Docs : README § 3 (cartographie des fichiers → nouveaux chemins),
-   guide § E3 (fait), TODO ; changelog de synthèse ; rapport final (diff
-   byte-identique prouvé, arborescence du paquet).
+1. Full `pnpm build`/`lint`/`test` + **`pnpm contrast:report`** (unchanged
+   report expected) + a local Vercel-style build.
+2. Docs: README § 3 (file → new-path mapping), guide § E3 (done), TODO;
+   summary changelog entry; final report (byte-identical diff proven,
+   package tree).
 
-**Commit** : `docs(theme): e3 phase 6 — finalization`.
+**Commit**: `docs(theme): e3 phase 6 — finalization`.
 
-## Hors périmètre (ne PAS faire)
+## Out of scope (do NOT do)
 
-- Le **runtime React** (`useTheme`, anti-FOUC, menu) — chantier E4.
-- Les **modules** de préférences (zoom, polices, animations) — E5.
-- Le **CLI de scaffolding** — E6 ; la **publication npm et le nom** — E7
-  (décision de Simon).
-- La **suite de contrastes** reste côté portfolio (elle compile
-  `src/styles/main.scss`) ; son extraction en outil du paquet = E7.
-- Le **registre central** des ~70 tokens et la génération des blocs
-  `[data-theme]` depuis `themes.ts`.
-- Tout changement de **valeur de couleur** (oracle byte-identique).
+- The **React runtime** (`useTheme`, anti-FOUC, menu) — E4 chantier.
+- The preference **modules** (zoom, fonts, animations) — E5.
+- The **scaffolding CLI** — E6; **npm publication and the name** — E7
+  (decision).
+- The **contrast suite** stays on the portfolio side (it compiles
+  `src/styles/main.scss`); extracting it as a package tool = E7.
+- The **central registry** of the ~70 tokens and generating the
+  `[data-theme]` blocks from `themes.ts`.
+- Any **color-value** change (byte-identical oracle).

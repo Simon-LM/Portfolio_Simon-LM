@@ -76,7 +76,7 @@ export default function Header({ dictionary }: HeaderProps) {
 						: "Skip to main content"}
 				</a>
 				<div className="header__utils">
-					{/* Conteneur du menu d'accessibilité */}
+					{/* Accessibility menu container */}
 					{/* <AccessibilityControl
 						language={language as "fr" | "en"}
 						className="header__accessibility"
@@ -113,7 +113,7 @@ export default function Header({ dictionary }: HeaderProps) {
 						</div>
 					</div>
 
-					{/* Conteneur du menu d'accessibilité */}
+					{/* Accessibility menu container */}
 					<AccessibilityControl
 						language={language as "fr" | "en"}
 						className="header__accessibility"

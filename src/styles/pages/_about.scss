@@ -22,7 +22,7 @@
 		@extend %section-subtitle;
 	}
 
-	// Conteneur de la vidéo active
+	// Container for the active video
 	&__video-container {
 		position: relative;
 		padding-bottom: 56.25%; /* 16:9 */
@@ -59,7 +59,7 @@
 		}
 	}
 
-	// Conteneur du wrapper
+	// Wrapper container
 	&__video-wrapper {
 		position: relative;
 		width: 100%;
@@ -67,7 +67,7 @@
 		margin: 0 auto;
 	}
 
-	// Placeholder de la vidéo (avant acceptation)
+	// Video placeholder (before acceptance)
 	&__video-placeholder {
 		position: relative;
 		width: 100%;
@@ -79,7 +79,7 @@
 		object-fit: cover;
 	}
 
-	// Overlay de consentement
+	// Consent overlay
 	&__video-consent-overlay {
 		position: absolute;
 		top: 0;
@@ -119,7 +119,7 @@
 		}
 	}
 
-	// Bouton d'acceptation
+	// Acceptance button
 	&__video-button {
 		padding: 0.5rem 1rem;
 		background: var(--color-about-button-bg);

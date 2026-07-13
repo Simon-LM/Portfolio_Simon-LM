@@ -2,27 +2,25 @@
 
 import "./setup";
 
-// Inspecteur SÉMANTIQUE du fort contraste (chantier hc-mécanique, phase 3
-// — décision Simon 2026-07-11). C'est le design d'origine de Simon
-// (capture par les mots des noms de variables, élargie aux synonymes)
-// recyclé en CONTRÔLE : les noms ne décident plus des couleurs (c'est le
-// branchement couche 2 qui décide), ils surveillent. Si le nom d'un token
-// suggère une famille (texte, fond, lien, focus) et que la valeur émise la
-// contredit, on émet un avertissement. Jamais bloquant, jamais de
-// modification — attrape les branchements DE TRAVERS qui tombent dans la
-// palette (l'angle mort du contrôle par valeur).
+// SEMANTIC inspector for high contrast (hc-mécanique chantier, phase 3 —
+// decision 2026-07-11). This is the original name-based design (matching
+// on words in variable names, widened to synonyms) recycled as a CONTROL:
+// names no longer decide colors (the layer-2 wiring decides that), they
+// monitor. If a token's name suggests a family (text, background, link,
+// focus) and the emitted value contradicts it, a warning is emitted. Never
+// blocking, never a modification — catches crossed wiring that happens to
+// land inside the palette (the blind spot of value-based control).
 //
-// Usage : pnpm hc:audit  → console + docs/theme-system/HC-SEMANTIC-AUDIT.md
+// Usage: pnpm hc:audit  → console + docs/theme-system/HC-SEMANTIC-AUDIT.md
 
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { THEMES } from "../../config/themes";
 import { getThemeVars } from "a11y-prefs/testing/extract-themes";
 
-// Familles sémantiques — synonymes qu'un dev (ou une IA) est susceptible
-// d'utiliser dans ses noms de variables de couche 3. Le matching se fait
-// par SEGMENT entier (découpe sur - et _) : « context » ne matche pas
-// « text ».
+// Semantic families — synonyms a dev (or an AI) is likely to use in their
+// layer-3 variable names. Matching happens on WHOLE SEGMENTS (split on -
+// and _): "context" does not match "text".
 const FAMILIES: Record<string, readonly string[]> = {
 	text: ["text", "txt", "fg", "foreground", "ink", "label", "copy"],
 	background: ["bg", "background", "backdrop", "surface", "fill"],
@@ -30,7 +28,7 @@ const FAMILIES: Record<string, readonly string[]> = {
 	focus: ["focus", "ring"],
 };
 
-// Slot de palette attendu par famille (clés des cartes de thème).
+// Expected palette slot per family (theme map keys).
 const EXPECTED_SLOT: Record<string, string> = {
 	text: "text",
 	background: "background",
@@ -38,10 +36,10 @@ const EXPECTED_SLOT: Record<string, string> = {
 	focus: "focus",
 };
 
-// Contradictions surveillées : famille du nom → slots dont la valeur émise
-// déclenche un avertissement. Volontairement conservateur (un texte qui
-// vaut la couleur de FOND est suspect ; un texte qui vaut la couleur de
-// lien ne l'est pas forcément).
+// Monitored contradictions: name family → slots whose emitted value
+// triggers a warning. Deliberately conservative (a text token that equals
+// the BACKGROUND color is suspect; a text token that equals the link color
+// isn't necessarily).
 const CONTRADICTIONS: Record<string, readonly string[]> = {
 	text: ["background"],
 	background: ["text"],
@@ -49,7 +47,7 @@ const CONTRADICTIONS: Record<string, readonly string[]> = {
 	focus: ["background"],
 };
 
-// Slots par thème — MIROIR de src/styles/themes/_high-contrast*.scss.
+// Slots per theme — MIRROR of src/styles/themes/_high-contrast*.scss.
 const HC_SLOTS: Record<string, Record<string, string>> = {
 	"high-contrast": {
 		background: "#000000",
@@ -77,51 +75,50 @@ const HC_SLOTS: Record<string, Record<string, string>> = {
 	},
 };
 
-// Tokens légitimement « contradictoires », avec leur raison — typiquement
-// du texte posé SUR un bloc coloré (il prend logiquement une couleur
-// d'encre = celle du fond de page). Toute nouvelle entrée doit être
-// argumentée.
+// Tokens legitimately "contradictory", with their reason — typically text
+// sitting ON a colored block (it logically takes an ink color = the page
+// background color). Every new entry must be justified.
 const WAIVERS: readonly { pattern: RegExp; reason: string }[] = [
 	{
 		pattern: /^--fg-on-/,
 		reason:
-			"texte posé SUR un bloc coloré (accent/emphasis) : l'encre vaut légitimement la couleur de fond de page",
+			"text sitting ON a colored block (accent/emphasis): the ink legitimately equals the page background color",
 	},
 	{
 		pattern: /^--color-header-text/,
 		reason:
-			"texte du header, posé sur la bande colorée (highlight) : encre sombre légitime",
+			"header text, sitting on the colored band (highlight): dark ink is legitimate",
 	},
 	{
 		pattern: /^--color-lang-toggle-text-activated$/,
-		reason: "texte du bouton de langue actif, posé sur bg-emphasis (bloc coloré)",
+		reason: "active language button text, sitting on bg-emphasis (colored block)",
 	},
 	{
 		pattern: /-inverse(-|$)/,
 		reason:
-			"bloc volontairement INVERSÉ — l'inversion est déclarée dans le nom",
+			"deliberately INVERTED block — the inversion is declared in the name",
 	},
 	{
 		pattern: /^--bg-emphasis-strong$/,
 		reason:
-			"surface d'emphase forte = bloc inversé par conception (texte posé dessus : --fg-on-emphasis)",
+			"strong emphasis surface = block inverted by design (text sitting on it: --fg-on-emphasis)",
 	},
 	{
 		pattern: /^--color-collapse-bg-title$/,
 		reason:
-			"barre de titre des collapses = bloc d'emphase inversé (texte posé dessus en encre sombre)",
+			"collapse title bar = inverted emphasis block (text sitting on it in dark ink)",
 	},
 ];
 
-/** Découpe un nom de custom property en segments : --color-header-bg →
+/** Splits a custom property name into segments: --color-header-bg →
  *  ["color", "header", "bg"] */
 export function segments(name: string): string[] {
 	return name.replace(/^--/, "").split(/[-_]/).filter(Boolean);
 }
 
-/** Famille sémantique d'un nom — le DERNIER segment reconnu gagne (dans la
- *  convention suffixée, le dernier mot dit le rôle : header-blog-link-bg
- *  est un fond, pas un lien). Renvoie null si aucun segment reconnu. */
+/** Semantic family of a name — the LAST recognized segment wins (in the
+ *  suffixed convention, the last word states the role: header-blog-link-bg
+ *  is a background, not a link). Returns null if no segment is recognized. */
 export function familyOf(name: string): string | null {
 	const segs = segments(name);
 	for (let i = segs.length - 1; i >= 0; i--) {
@@ -141,19 +138,18 @@ export type Finding = {
 	waived: string | null;
 };
 
-/** Base d'appariement : le nom privé de son segment de famille, où qu'il
- *  soit (--color-footer-bg → « color-footer » ; --color-lang-toggle-bg-
- *  activated → « color-lang-toggle-activated »). Le préfixe « on- » est
- *  aussi retiré : --fg-on-emphasis s'apparie avec --bg-emphasis (texte
- *  posé sur ce bloc). */
+/** Pairing base: the name stripped of its family segment, wherever it is
+ *  (--color-footer-bg → "color-footer"; --color-lang-toggle-bg-activated →
+ *  "color-lang-toggle-activated"). The "on-" prefix is also stripped:
+ *  --fg-on-emphasis pairs with --bg-emphasis (text sitting on that block). */
 export function pairBase(name: string): string | null {
 	const segs = segments(name);
 	for (let i = segs.length - 1; i >= 0; i--) {
 		for (const words of Object.values(FAMILIES)) {
 			if (words.includes(segs[i])) {
 				const rest = [...segs.slice(0, i), ...segs.slice(i + 1)];
-				// --fg-ON-emphasis : le « on » dit « posé sur » → même base
-				// que le bloc correspondant
+				// --fg-ON-emphasis: "on" means "sitting on" → same base as
+				// the matching block
 				if (rest[i] === "on") rest.splice(i, 1);
 				return rest.join("-");
 			}
@@ -171,10 +167,10 @@ export function runAudit(): Finding[] {
 		const slots = HC_SLOTS[theme];
 		if (!vars || !slots) continue;
 
-		// 1. Recenser les PAIRES composant (même base, familles text + bg).
-		// Un bloc peut être légitimement inversé (footer noir sur page
-		// blanche) : la vérité d'une paire est dans la paire, pas dans les
-		// slots globaux du thème.
+		// 1. Gather component PAIRS (same base, text + bg families). A
+		// block can be legitimately inverted (black footer on white page):
+		// the truth of a pair lies in the pair, not in the theme's global
+		// slots.
 		const pairs = new Map<string, { text?: [string, string]; background?: [string, string] }>();
 		for (const [name, value] of vars) {
 			const family = familyOf(name);
@@ -191,24 +187,24 @@ export function runAudit(): Finding[] {
 			if (entry.text && entry.background) {
 				paired.add(entry.text[0]);
 				paired.add(entry.background[0]);
-				// Contrôle de paire : texte == fond → texte invisible.
+				// Pair check: text == background → invisible text.
 				if (entry.text[1] === entry.background[1]) {
 					const waiver = WAIVERS.find((w) => w.pattern.test(entry.text![0]));
 					findings.push({
 						theme,
 						name: `${entry.text[0]} + ${entry.background[0]}`,
 						value: entry.text[1],
-						family: "paire",
-						conflictingSlot: "texte identique au fond (invisible)",
+						family: "pair",
+						conflictingSlot: "text identical to background (invisible)",
 						waived: waiver ? waiver.reason : null,
 					});
 				}
 			}
 		}
 
-		// 2. Règle globale nom↔slot — UNIQUEMENT pour les tokens orphelins
-		// (sans moitié de paire) : là, pas de contexte local, les slots du
-		// thème sont la seule référence.
+		// 2. Global name↔slot rule — ONLY for orphan tokens (with no pair
+		// half): there, with no local context, the theme's slots are the
+		// only reference.
 		for (const [name, value] of vars) {
 			if (paired.has(name)) continue;
 			const family = familyOf(name);
@@ -239,30 +235,30 @@ function formatReport(findings: Finding[]): string {
 	const lines: string[] = [
 		"<!-- @format -->",
 		"",
-		"# Audit sémantique du fort contraste",
+		"# High-contrast semantic audit",
 		"",
-		"Artefact généré par `pnpm hc:audit` — ne pas éditer à la main.",
-		"Contrôle en LECTURE SEULE : les noms de variables ne décident d'aucune",
-		"couleur (le branchement couche 2 décide) ; ils servent d'inspecteurs.",
-		"Un avertissement = « le nom suggère une famille, la valeur émise la",
-		"contredit » — à vérifier, jamais bloquant.",
+		"Artifact generated by `pnpm hc:audit` — do not edit by hand.",
+		"READ-ONLY control: variable names decide no color (the layer-2 wiring",
+		"decides that); they act as inspectors. A warning means \"the name",
+		"suggests a family, the emitted value contradicts it\" — to verify,",
+		"never blocking.",
 		"",
-		`## Avertissements actifs : ${active.length}`,
+		`## Active warnings: ${active.length}`,
 		"",
 	];
 	if (active.length === 0) {
-		lines.push("Aucun. Tous les noms sémantiques sont cohérents avec les",
-			"valeurs émises (ou couverts par un waiver argumenté).", "");
+		lines.push("None. Every semantic name is consistent with its emitted",
+			"value (or covered by a justified waiver).", "");
 	} else {
 		for (const f of active) {
 			lines.push(
-				`- ⚠️ \`${f.name}\` (${f.theme}) : nommé « ${f.family} » mais émet` +
-				` \`${f.value}\` (= slot ${f.conflictingSlot}) — vérifier le branchement`,
+				`- ⚠️ \`${f.name}\` (${f.theme}): named "${f.family}" but emits` +
+				` \`${f.value}\` (= slot ${f.conflictingSlot}) — check the wiring`,
 			);
 		}
 		lines.push("");
 	}
-	lines.push(`## Waivers (contradictions légitimes) : ${waived.length}`, "");
+	lines.push(`## Waivers (legitimate contradictions): ${waived.length}`, "");
 	const seen = new Set<string>();
 	for (const f of waived) {
 		const key = `${f.name}|${f.waived}`;
@@ -274,7 +270,7 @@ function formatReport(findings: Finding[]): string {
 	return lines.join("\n");
 }
 
-// Exécution directe (tsx)
+// Direct execution (tsx)
 if (require.main === module) {
 	const findings = runAudit();
 	const active = findings.filter((f) => !f.waived);
@@ -286,12 +282,12 @@ if (require.main === module) {
 	fs.writeFileSync(out, report);
 	for (const f of active) {
 		console.warn(
-			`⚠️  [hc-audit] ${f.theme} ${f.name}: nommé « ${f.family} » mais émet ${f.value} (slot ${f.conflictingSlot})`,
+			`⚠️  [hc-audit] ${f.theme} ${f.name}: named "${f.family}" but emits ${f.value} (slot ${f.conflictingSlot})`,
 		);
 	}
 	console.log(
-		`hc-audit : ${active.length} avertissement(s) actif(s), ${
+		`hc-audit: ${active.length} active warning(s), ${
 			findings.length - active.length
-		} waivé(s) — rapport : ${out}`,
+		} waived — report: ${out}`,
 	);
 }

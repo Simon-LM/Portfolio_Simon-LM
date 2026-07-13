@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 /** @format */
 
-// CLI de scaffolding (chantier E6) — modèle shadcn : copie l'UI
-// (déclencheur + carte + SCSS + config) DANS le projet du consommateur,
-// qui la possède ensuite. Node pur, aucune dépendance.
+// Scaffolding CLI (E6) — shadcn model: copies the UI (trigger + card +
+// SCSS + config) INTO the consumer's project, which then owns it. Pure
+// Node, no dependency.
 //
-//   init                Copie les templates dans <dir> (défaut ./a11y).
-//   init --diff         Compare la copie locale à la référence du paquet.
+//   init                Copies the templates into <dir> (default ./a11y).
+//   init --diff         Compares the local copy against the package's reference.
 //
-// Options : --dir <chemin>  --pkg <nom-import>  --fonts <chemin>  --force
+// Options: --dir <path>  --pkg <import-name>  --fonts <path>  --force
 
 import { readFileSync, writeFileSync, copyFileSync, mkdirSync, existsSync, readdirSync } from "node:fs";
 import { dirname, join, resolve, relative } from "node:path";
@@ -19,8 +19,8 @@ const PKG_ROOT = resolve(HERE, "..");
 const TEMPLATES = join(PKG_ROOT, "templates");
 const FONTS_SRC = join(PKG_ROOT, "fonts", "files");
 
-// Nom d'import employé DANS les templates (nom de travail du paquet) ;
-// réécrit vers le nom réellement installé par le consommateur.
+// Import name used INSIDE the templates (the package's working name);
+// rewritten to the name actually installed by the consumer.
 const SOURCE_IMPORT = "a11y-prefs";
 
 const C = {
@@ -42,7 +42,7 @@ function parseArgs(argv) {
 	return args;
 }
 
-// Liste récursive des fichiers d'un dossier (chemins relatifs à `base`).
+// Recursive file listing for a folder (paths relative to `base`).
 function listFiles(base, sub = "") {
 	const out = [];
 	for (const entry of readdirSync(join(base, sub), { withFileTypes: true })) {
@@ -53,7 +53,7 @@ function listFiles(base, sub = "") {
 	return out;
 }
 
-// Contenu d'un template texte, nom d'import réécrit vers le nom installé.
+// Content of a text template, import name rewritten to the installed name.
 function renderTemplate(absPath, pkgName) {
 	const raw = readFileSync(absPath, "utf8");
 	return raw.split(SOURCE_IMPORT).join(pkgName);
@@ -69,12 +69,12 @@ function cmdInit(args) {
 	let written = 0, skipped = 0;
 
 	console.log(`\n${C.bold}darkmode-plus-a11y — init${C.reset}`);
-	console.log(`${C.dim}UI copiée dans ${relative(process.cwd(), targetDir) || "."} (import: ${args.pkg})${C.reset}\n`);
+	console.log(`${C.dim}UI copied into ${relative(process.cwd(), targetDir) || "."} (import: ${args.pkg})${C.reset}\n`);
 
 	for (const rel of files) {
 		const dest = join(targetDir, rel);
 		if (existsSync(dest) && !args.force) {
-			console.log(`  ${C.yellow}skip${C.reset}    ${rel} ${C.dim}(existe — --force pour écraser)${C.reset}`);
+			console.log(`  ${C.yellow}skip${C.reset}    ${rel} ${C.dim}(exists — use --force to overwrite)${C.reset}`);
 			skipped++;
 			continue;
 		}
@@ -84,7 +84,7 @@ function cmdInit(args) {
 		written++;
 	}
 
-	// Polices (référencées par accessibility-features.scss).
+	// Fonts (referenced by accessibility-features.scss).
 	const fontsDir = resolve(process.cwd(), args.fonts);
 	if (existsSync(FONTS_SRC)) {
 		ensureDir(fontsDir);
@@ -95,15 +95,15 @@ function cmdInit(args) {
 			copyFileSync(join(FONTS_SRC, f), dest);
 			fonts++;
 		}
-		console.log(`  ${C.green}fonts${C.reset}   ${fonts} fichier(s) → ${relative(process.cwd(), fontsDir)}`);
+		console.log(`  ${C.green}fonts${C.reset}   ${fonts} file(s) → ${relative(process.cwd(), fontsDir)}`);
 	}
 
-	console.log(`\n${C.green}✓${C.reset} ${written} écrit(s), ${skipped} ignoré(s).`);
-	console.log(`${C.cyan}Étapes suivantes :${C.reset}`);
-	console.log(`  1. Dépendances UI : ${C.bold}react-select react-icons${C.reset} + le paquet ${C.bold}${args.pkg}${C.reset}`);
-	console.log(`  2. Importez la SCSS (theme-example, accessibility-menu, -trigger, -features).`);
-	console.log(`  3. Placez <AccessibilityControl/> DANS LE FLUX (votre header), pas en position:fixed.`);
-	console.log(`  4. Lisez la notice ${C.bold}AGENTS.md${C.reset} copiée (contrat couche 3).\n`);
+	console.log(`\n${C.green}✓${C.reset} ${written} written, ${skipped} skipped.`);
+	console.log(`${C.cyan}Next steps:${C.reset}`);
+	console.log(`  1. UI dependencies: ${C.bold}react-select react-icons${C.reset} + the ${C.bold}${args.pkg}${C.reset} package`);
+	console.log(`  2. Import the SCSS (theme-example, accessibility-menu, -trigger, -features).`);
+	console.log(`  3. Place <AccessibilityControl/> IN THE FLOW (your header), not as position:fixed.`);
+	console.log(`  4. Read the copied ${C.bold}AGENTS.md${C.reset} guide (layer-3 contract).\n`);
 }
 
 function cmdDiff(args) {
@@ -112,25 +112,25 @@ function cmdDiff(args) {
 	let nw = 0, mod = 0, same = 0;
 
 	console.log(`\n${C.bold}darkmode-plus-a11y — init --diff${C.reset}`);
-	console.log(`${C.dim}Référence du paquet vs ${relative(process.cwd(), targetDir) || "."}${C.reset}\n`);
+	console.log(`${C.dim}Package reference vs ${relative(process.cwd(), targetDir) || "."}${C.reset}\n`);
 
 	for (const rel of files) {
 		const dest = join(targetDir, rel);
 		const ref = renderTemplate(join(TEMPLATES, rel), args.pkg);
 		if (!existsSync(dest)) {
-			console.log(`  ${C.cyan}new${C.reset}      ${rel} ${C.dim}(absent en local)${C.reset}`);
+			console.log(`  ${C.cyan}new${C.reset}      ${rel} ${C.dim}(missing locally)${C.reset}`);
 			nw++;
 		} else if (readFileSync(dest, "utf8") !== ref) {
-			console.log(`  ${C.yellow}modified${C.reset} ${rel} ${C.dim}(diffère de la référence)${C.reset}`);
+			console.log(`  ${C.yellow}modified${C.reset} ${rel} ${C.dim}(differs from the reference)${C.reset}`);
 			mod++;
 		} else {
 			same++;
 		}
 	}
 
-	console.log(`\n${nw} nouveau(x), ${mod} modifié(s), ${same} identique(s).`);
+	console.log(`\n${nw} new, ${mod} modified, ${same} unchanged.`);
 	if (nw + mod > 0) {
-		console.log(`${C.dim}Reportez à la main ce que vous voulez (rien n'est écrasé).${C.reset}\n`);
+		console.log(`${C.dim}Port over by hand whatever you want (nothing is overwritten).${C.reset}\n`);
 	}
 }
 
@@ -140,7 +140,7 @@ function main() {
 	const cmd = args._[0];
 
 	if (cmd !== "init") {
-		console.log(`Usage : darkmode-plus-a11y init [--diff] [--dir <chemin>] [--pkg <nom>] [--fonts <chemin>] [--force]`);
+		console.log(`Usage: darkmode-plus-a11y init [--diff] [--dir <path>] [--pkg <name>] [--fonts <path>] [--force]`);
 		process.exit(cmd ? 1 : 0);
 	}
 	if (args.diff) cmdDiff(args);

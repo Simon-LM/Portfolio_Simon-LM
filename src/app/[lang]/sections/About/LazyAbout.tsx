@@ -17,8 +17,8 @@
 // export const LazyAbout = ({ dictionary }: LazyAboutProps) => {
 // 	const { ref, inView } = useInView({
 // 		triggerOnce: true,
-// 		threshold: 0.1, // Déclenche le chargement quand 10% de la section est visible
-// 		rootMargin: "100px", // Pré-charge 100px avant que la section soit visible
+// 		threshold: 0.1, // Triggers loading when 10% of the section is visible
+// 		rootMargin: "100px", // Preload 100px before the section is visible
 // 	});
 
 // 	return (

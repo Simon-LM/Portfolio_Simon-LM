@@ -10,11 +10,11 @@ import { useRouter } from "next/navigation";
 // 		(sectionId: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
 // 			e.preventDefault();
 
-// 			// Vérifier si on est sur la page d'accueil
+// 			// Check whether we're on the home page
 // 			const isHomePage = window.location.pathname.split("/").length <= 2;
 
 // 			if (!isHomePage) {
-// 				// Si on est sur une page secondaire, rediriger vers l'accueil avec l'ancre
+// 				// If we're on a secondary page, redirect to the home page with the anchor
 // 				const language = window.location.pathname.split("/")[1];
 // 				router.push(`/${language}/#${sectionId}`);
 // 				return;
@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 // 			const section = document.getElementById(sectionId.replace("#", ""));
 
 // 			if (section) {
-// 				// Ajustement pour le header fixe
+// 				// Adjustment for the fixed header
 // 				const headerHeight =
 // 					document.querySelector("header")?.offsetHeight || 0;
 // 				const y =
@@ -37,7 +37,7 @@ import { useRouter } from "next/navigation";
 // 					behavior: "smooth",
 // 				});
 
-// 				// Gestion du focus
+// 				// Focus handling
 // 				requestAnimationFrame(() => {
 // 					section.setAttribute("tabindex", "-1");
 // 					section.focus({ preventScroll: true });
@@ -94,7 +94,7 @@ export const useScrollNavigation = () => {
 				});
 			}
 		},
-		[router] // Ajout de router aux dépendances
+		[router] // router added to the dependencies
 	);
 
 	return { handleNavigation };

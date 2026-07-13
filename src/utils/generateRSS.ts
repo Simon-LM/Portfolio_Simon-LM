@@ -18,7 +18,7 @@ export async function generateRSS() {
 		},
 	});
 
-	// Ajouter vos articles ici
+	// Add your articles here
 	feed.addItem({
 		title: "Titre de l'article",
 		id: "https://simon-lm.dev/blog/article-1",

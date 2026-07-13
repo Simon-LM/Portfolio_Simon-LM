@@ -1,119 +1,119 @@
 <!-- @format -->
 
-# Plan d'exécution — système de tests de contrastes (chantier E1)
+# Execution plan — contrast testing system (E1 chantier)
 
-**Document d'exécution destiné à une IA.** Mêmes règles générales que
-[PLAN-migration-fondations.md](./PLAN-migration-fondations.md) : branche
-dédiée, un commit par phase, sortie brute des vérifications dans chaque
-rapport, arrêt et rapport en cas d'imprévu, entrée
-[CHANGELOG.md](./CHANGELOG.md) à chaque phase. Conception de référence :
-[GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md), chapitre
-« système de tests de contrastes ».
+**Execution document meant for an AI.** Same general rules as
+[PLAN-migration-fondations.md](./PLAN-migration-fondations.md): dedicated
+branch, one commit per phase, raw check output in each report, stop and
+report on anything unexpected, a [CHANGELOG.md](./CHANGELOG.md) entry at
+each phase. Reference design:
+[GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md), "contrast
+testing system" chapter.
 
-Branche : `feat/contrast-tests`.
+Branch: `feat/contrast-tests`.
 
-**Règle absolue de ce chantier : il est purement additif.** Aucun fichier de
-`src/styles/` ne doit être modifié — on *mesure* les couleurs, on ne les
-corrige pas. Les échecs constatés deviennent des *waivers* documentés
-(phase 3), jamais des retouches de couleurs. L'oracle est donc trivial : le
-CSS compilé doit rester byte-identique du début à la fin.
+**Absolute rule for this chantier: it is purely additive.** No file under
+`src/styles/` may be modified — colors are *measured*, not fixed. Failures
+found become documented *waivers* (phase 3), never color tweaks. The
+oracle is therefore trivial: the compiled CSS must stay byte-identical
+from start to finish.
 
-## Objectif
+## Goal
 
-À chaque `pnpm test`, vérifier mécaniquement que chaque paire
-texte/fond déclarée respecte son seuil WCAG 2.2 dans chacun des 12 thèmes,
-et produire un rapport matrice lisible. Les échecs préexistants sont
-inventoriés comme waivers pour arbitrage par Simon — le système fournit
-l'état des lieux, puis empêche toute régression future (« ratchet »).
+On every `pnpm test`, mechanically verify that every declared text/
+background pair meets its WCAG 2.2 threshold in each of the 12 themes,
+and produce a readable matrix report. Pre-existing failures are inventoried
+as waivers for review — the system provides the current state, then
+prevents any future regression (a "ratchet").
 
-## Implantation
+## Implementation
 
 ```
 src/accessibility/contrast/
-├── wcag.ts               # luminance, ratio, composition alpha
-├── extract-themes.ts     # compilation SCSS → map thème → { --var: couleur }
-├── contrast-pairs.ts     # registre des paires (source de vérité) + waivers
-├── report.ts             # générateur de la matrice markdown
+├── wcag.ts               # luminance, ratio, alpha compositing
+├── extract-themes.ts     # SCSS compilation → theme map → { --var: color }
+├── contrast-pairs.ts     # pair registry (source of truth) + waivers
+├── report.ts             # markdown matrix generator
 └── __tests__/
     ├── wcag.test.ts
     ├── extract-themes.test.ts
-    └── contrast.test.ts  # la suite principale
-docs/theme-system/CONTRAST-REPORT.md   # artefact généré (commité)
+    └── contrast.test.ts  # the main suite
+docs/theme-system/CONTRAST-REPORT.md   # generated artifact (committed)
 ```
 
-Dépendances dev à ajouter (`pnpm add -D`) : `culori` (parsing de couleurs
-hex/rgb()/hsl() et conversion — ne pas réécrire un parseur à la main) et
-`postcss` s'il n'est pas déjà résoluble (parsing structuré du CSS compilé —
-pas de regex sur le CSS).
+Dev dependencies to add (`pnpm add -D`): `culori` (hex/rgb()/hsl() color
+parsing and conversion — don't hand-roll a parser) and `postcss` if not
+already resolvable (structured parsing of the compiled CSS — no regex on
+CSS).
 
-## Phase 0 — Préparation
+## Phase 0 — Preparation
 
-Arbre propre, branche depuis `main`, `pnpm build`/`lint`/`test` verts,
-snapshot CSS de référence (`pnpm exec sass --no-source-map --style=expanded
+Clean tree, branch from `main`, `pnpm build`/`lint`/`test` green,
+reference CSS snapshot (`pnpm exec sass --no-source-map --style=expanded
 src/styles/main.scss /tmp/contrast-e1/phase0.css`).
 
-## Phase 1 — Utilitaires (`wcag.ts`, `extract-themes.ts`)
+## Phase 1 — Utilities (`wcag.ts`, `extract-themes.ts`)
 
 ### `wcag.ts`
 
-- `toRgb(value: string)` : via culori ; erreur explicite si la valeur n'est
-  pas une couleur (ne jamais retourner une couleur par défaut).
-- `compositeOver(fg, bg)` : composition alpha standard en sRGB
-  (`c = a·c_fg + (1−a)·c_bg` par canal). Utilisée quand l'avant-plan ou le
-  fond porte un alpha < 1.
-- `contrastRatio(fg, bg)` : formule WCAG 2.x (luminance relative,
-  `(L1+0.05)/(L2+0.05)`). culori fournit `wcagContrast` — l'utiliser, mais
-  **après** composition alpha éventuelle.
-- Seuils : `text` → 4.5, `large-text` → 3.0, `non-text` → 3.0 (SC 1.4.3 et
-  1.4.11).
+- `toRgb(value: string)`: via culori; an explicit error if the value isn't
+  a color (never return a default color).
+- `compositeOver(fg, bg)`: standard sRGB alpha compositing
+  (`c = a·c_fg + (1−a)·c_bg` per channel). Used when the foreground or
+  background carries alpha < 1.
+- `contrastRatio(fg, bg)`: the WCAG 2.x formula (relative luminance,
+  `(L1+0.05)/(L2+0.05)`). culori provides `wcagContrast` — use it, but
+  **after** any alpha compositing.
+- Thresholds: `text` → 4.5, `large-text` → 3.0, `non-text` → 3.0 (SC 1.4.3
+  and 1.4.11).
 
-Tests unitaires avec valeurs de référence connues : blanc/noir = 21:1,
-`#767676`/blanc = 4.54:1, composition d'un `rgba(0,0,0,0.5)` sur blanc =
-`#808080` (à 1 près par canal).
+Unit tests with known reference values: white/black = 21:1,
+`#767676`/white = 4.54:1, compositing `rgba(0,0,0,0.5)` over white =
+`#808080` (within 1 per channel).
 
 ### `extract-themes.ts`
 
-1. Compiler `src/styles/main.scss` via l'API JS de `sass`
-   (`compile(...)`) — une seule fois, mémoïsé au niveau module.
-2. Parser avec postcss ; pour chaque bloc dont le sélecteur est
-   `[data-theme="X"]` (les 12), collecter les déclarations `--*` dans une
-   `Map<theme, Map<varName, value>>`. Ignorer `:root` et le bloc
-   `prefers-color-scheme` (redondants), mais **vérifier en test** que les
-   custom properties de `:root` sont identiques à celles de
-   `[data-theme="light"]` (garde-fou de cohérence).
-3. Erreur explicite si un thème attendu (liste importée de
-   `src/config/themes.ts` — source unique) est absent du CSS.
+1. Compile `src/styles/main.scss` via the `sass` JS API
+   (`compile(...)`) — once, memoized at module level.
+2. Parse with postcss; for every block whose selector is
+   `[data-theme="X"]` (the 12), collect the `--*` declarations into a
+   `Map<theme, Map<varName, value>>`. Ignore `:root` and the
+   `prefers-color-scheme` block (redundant), but **verify in a test**
+   that `:root`'s custom properties match `[data-theme="light"]`'s
+   (consistency safeguard).
+3. Explicit error if an expected theme (list imported from
+   `src/config/themes.ts` — single source) is missing from the CSS.
 
-⚠️ Le test principal compile du Sass et lit le système de fichiers : le
-fichier de test doit porter le docblock `/** @jest-environment node */`
-(l'environnement par défaut du projet est jsdom).
+⚠️ The main test compiles Sass and reads the filesystem: the test file
+must carry the `/** @jest-environment node */` docblock (the project's
+default environment is jsdom).
 
-**Vérif** : `pnpm test` vert, CSS byte-identique à phase 0.
-**Commit** : `feat(theme): contrast phase 1 — WCAG utils and theme extraction`.
+**Check**: `pnpm test` green, byte-identical CSS vs phase 0.
+**Commit**: `feat(theme): contrast phase 1 — WCAG utils and theme extraction`.
 
-## Phase 2 — Le registre des paires (`contrast-pairs.ts`)
+## Phase 2 — The pair registry (`contrast-pairs.ts`)
 
-Structure :
+Structure:
 
 ```ts
 export type ContrastLevel = "text" | "large-text" | "non-text";
 
 export type ContrastPair = {
-  id: string;                     // stable, ex. "role/fg-base-on-bg-base"
-  fg: string;                     // nom de custom property, ex. "--fg-base"
+  id: string;                     // stable, e.g. "role/fg-base-on-bg-base"
+  fg: string;                     // custom property name, e.g. "--fg-base"
   bg: string;
   level: ContrastLevel;
-  composeOver?: string;           // fond de composition si fg/bg porte un alpha
-  themes?: readonly ThemeOption[]; // défaut : les 12
+  composeOver?: string;           // compositing background if fg/bg carries alpha
+  themes?: readonly ThemeOption[]; // default: the 12
   waiver?: {
     reason: string;
-    preexisting: boolean;         // true = constaté à l'introduction du système
-    measured?: Record<string, number>; // thème → ratio mesuré
+    preexisting: boolean;         // true = found when the system was introduced
+    measured?: Record<string, number>; // theme → measured ratio
   };
 };
 ```
 
-Registre initial — **niveau rôles** (partira dans le paquet en E7) :
+Initial registry — **role level** (will move into the package in E7):
 
 | fg | bg | level |
 | --- | --- | --- |
@@ -137,14 +137,14 @@ Registre initial — **niveau rôles** (partira dans le paquet en E7) :
 | `--focus-ring` | `--bg-base` | non-text |
 | `--border-strong` | `--bg-base` | non-text |
 
-Registre initial — **niveau site** (couche 3 du portfolio) :
+Initial registry — **site level** (portfolio layer 3):
 
 | fg | bg | level | note |
 | --- | --- | --- | --- |
 | `--color-main-text` | `--color-main-bg` | text | |
 | `--color-hero-text` | `--color-hero-bg` | text | |
 | `--color-header-text` | `--color-header-bg` | text | |
-| `--color-header-text-role` | `--color-header-bg` | text | fg-muted sur accent — paire sensible |
+| `--color-header-text-role` | `--color-header-bg` | text | fg-muted on accent — sensitive pair |
 | `--color-header-blog-link-text` | `--color-header-blog-link-bg` | text | |
 | `--color-lang-toggle-text-activated` | `--color-lang-toggle-bg-activated` | text | |
 | `--color-lang-toggle-text-disabled` | `--color-lang-toggle-bg` | text | |
@@ -163,72 +163,70 @@ Registre initial — **niveau site** (couche 3 du portfolio) :
 | `--color-scroll-progress-indicator` | `--bg-base` | non-text | |
 | `--color-button-active-outline` | `--color-panel-bg` | non-text | |
 
-Le registre est **extensible, jamais amputé** : une paire problématique
-reçoit un waiver, elle n'est pas supprimée.
+The registry is **extensible, never amputated**: a problematic pair gets
+a waiver, it is not deleted.
 
-**Vérif** : lint + typecheck. **Commit** :
+**Check**: lint + typecheck. **Commit**:
 `feat(theme): contrast phase 2 — pair registry`.
 
-## Phase 3 — La suite de tests + inventaire des échecs
+## Phase 3 — The test suite + failure inventory
 
-1. `contrast.test.ts` : pour chaque paire × chaque thème applicable,
-   résoudre les deux couleurs (composition alpha si `composeOver`), calculer
-   le ratio, comparer au seuil. Paire waivée : le test est marqué
-   passant-avec-waiver, **mais** si le ratio mesuré devient *conforme*, le
-   test échoue avec le message « waiver obsolète, le retirer » (les waivers
-   ne peuvent pas devenir des zombies).
-2. **Premier run = inventaire.** Il *va* échouer — c'est attendu (on sait
-   déjà : `--success` emerald-600 sur fond clair ≈ 3.61:1 en light ;
-   erreur deutéranopie `#ffcc00` ≈ 1.45:1…). Pour chaque échec : ajouter un
-   waiver `preexisting: true` avec le ratio mesuré et une raison factuelle
-   (ex. « couleur fonctionnelle non consommée par le site à ce jour ;
-   sera retraitée par la refonte daltonienne »). **Ne corriger aucune
-   couleur.**
-3. Fin de phase : `pnpm test` intégralement vert, et la liste complète des
-   waivers figure dans le rapport de phase (sortie brute) — c'est le
-   livrable principal pour l'arbitrage de Simon.
+1. `contrast.test.ts`: for every pair × every applicable theme, resolve
+   both colors (alpha compositing if `composeOver`), compute the ratio,
+   compare to the threshold. A waived pair: the test is marked
+   passing-with-waiver, **but** if the measured ratio becomes *compliant*,
+   the test fails with the message "waiver obsolete, remove it" (waivers
+   can't turn into zombies).
+2. **First run = inventory.** It *will* fail — that's expected (we already
+   know: `--success` emerald-600 on a light background ≈ 3.61:1 in light;
+   deuteranopia error `#ffcc00` ≈ 1.45:1…). For every failure: add a
+   `preexisting: true` waiver with the measured ratio and a factual reason
+   (e.g. "functional color not consumed by the site as of today; will be
+   revisited by the color-blind redesign"). **Do not fix any color.**
+3. End of phase: `pnpm test` fully green, and the complete waiver list
+   appears in the phase report (raw output) — this is the main
+   deliverable for review.
 
-**Commit** : `feat(theme): contrast phase 3 — full suite with pre-existing waivers inventory`.
+**Commit**: `feat(theme): contrast phase 3 — full suite with pre-existing waivers inventory`.
 
-## Phase 4 — Le rapport matrice
+## Phase 4 — The matrix report
 
-1. `report.ts` : génère `docs/theme-system/CONTRAST-REPORT.md` — une matrice
-   paires × 12 thèmes, chaque cellule = ratio mesuré, marquée ✓ (conforme),
-   ✗ (échec — ne doit plus exister après phase 3), ⚠ (waiver, avec renvoi
-   vers la raison). En tête : date de génération et commande de
-   régénération.
-2. Script `package.json` : `"contrast:report": ...` (exécution via `tsx` ou
-   `ts-node` selon ce qui est déjà résoluble ; sinon compiler à la volée
-   avec le même transform que Jest).
-3. Générer et **committer** le rapport. Le rapport est un artefact
-   régénérable : le test principal vérifie qu'il est à jour (le régénérer
-   en mémoire et comparer — échec si un dev a changé des couleurs sans
-   régénérer le rapport).
+1. `report.ts`: generates `docs/theme-system/CONTRAST-REPORT.md` — a
+   matrix of pairs × 12 themes, each cell = measured ratio, marked ✓
+   (compliant), ✗ (failure — must no longer exist after phase 3), ⚠
+   (waiver, with a link back to the reason). Header: generation date and
+   regeneration command.
+2. `package.json` script: `"contrast:report": ...` (run via `tsx` or
+   `ts-node`, whichever is already resolvable; otherwise compile on the
+   fly with the same transform as Jest).
+3. Generate and **commit** the report. The report is a regenerable
+   artifact: the main test verifies it's up to date (regenerate it in
+   memory and compare — fails if a dev changed colors without
+   regenerating the report).
 
-**Commit** : `feat(theme): contrast phase 4 — generated contrast matrix report`.
+**Commit**: `feat(theme): contrast phase 4 — generated contrast matrix report`.
 
-## Phase 5 — Finalisation
+## Phase 5 — Wrap-up
 
-1. `pnpm build`, `pnpm lint`, `pnpm test` verts ; CSS toujours
-   byte-identique à phase 0 (prouver par diff).
-2. Docs : README § 6.4 et guide E1 (chantier réalisé) ; entrée changelog de
-   synthèse.
-3. Rapport final à Simon : le CONTRAST-REPORT.md, la liste des waivers
-   `preexisting` triée par gravité (ratio le plus bas d'abord), et les
-   recommandations de traitement (lesquels relèvent de la refonte
-   daltonienne, lesquels d'un ajustement de rôle).
+1. `pnpm build`, `pnpm lint`, `pnpm test` green; CSS still byte-identical
+   to phase 0 (prove it with a diff).
+2. Docs: README § 6.4 and guide E1 (chantier done); a summary changelog
+   entry.
+3. Final report: CONTRAST-REPORT.md, the list of `preexisting` waivers
+   sorted by severity (lowest ratio first), and treatment recommendations
+   (which fall under the color-blind redesign, which under a role
+   adjustment).
 
-**Commit** : `docs(theme): contrast phase 5 — documentation and waiver inventory`.
+**Commit**: `docs(theme): contrast phase 5 — documentation and waiver inventory`.
 
-## Hors périmètre (ne PAS faire)
+## Out of scope (do NOT do)
 
-- Corriger des couleurs, des rôles ou des thèmes (aucune modification de
-  `src/styles/`) — les échecs deviennent des waivers, l'arbitrage revient à
-  Simon.
-- Tests de **distinguabilité** par simulation CVD (matrices Brettel/Viénot,
-  ΔE) : prévus avec la refonte daltonienne — mais concevoir le registre de
-  façon extensible (le champ `level` pourra être rejoint par un
-  `kind: "distinguishability"` plus tard).
-- Colonne APCA : plus tard, consultative uniquement.
-- Intégration CI GitHub Actions : hors périmètre tant que le projet n'a pas
-  de workflow CI (le gate est `pnpm test` en local).
+- Fixing colors, roles, or themes (no modification of `src/styles/`) —
+  failures become waivers, the call belongs to review.
+- **Distinguishability** tests via CVD simulation (Brettel/Viénot
+  matrices, ΔE): planned alongside the color-blind redesign — but design
+  the registry to be extensible (the `level` field could later be joined
+  by a `kind: "distinguishability"`).
+- APCA column: later, advisory only.
+- GitHub Actions CI integration: out of scope until the project has a CI
+  workflow (the gate is `pnpm test` locally).

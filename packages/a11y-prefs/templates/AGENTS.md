@@ -1,83 +1,81 @@
 <!-- @format -->
 
-# darkmode-plus-a11y — notice d'implémentation
+# darkmode-plus-a11y — implementation guide
 
-Notice destinée aux **IA et développeurs** qui intègrent ce composant
-d'accessibilité dans un projet. Lisez-la **avant** de câbler.
+Guide for **AI agents and developers** integrating this accessibility
+component into a project. Read it **before** wiring anything.
 
-## Ce que vous venez de copier
+## What you just copied
 
-`init` a copié dans votre projet (vous le **possédez**, modifiez-le) :
+`init` copied into your project (you **own** it, edit freely):
 
-- `react/AccessibilityControl.tsx` — le déclencheur (bouton).
-- `react/AccessibilityMenu.tsx` — la carte d'accessibilité.
-- `react/accessibilityPreferences.ts` — état via le hook `usePreference`.
-- `scss/accessibility-menu.scss`, `-trigger.scss` — styles de l'UI.
-- `scss/accessibility-features.scss` — @font-face + classes + dyslexie + motion.
-- `scss/theme.config.scss` — **couche 3** de l'UI (à câbler, voir plus bas).
-- `scss/theme-example.scss` — assemblage de thèmes minimal (light + HC).
+- `react/AccessibilityControl.tsx` — the trigger (button).
+- `react/AccessibilityMenu.tsx` — the accessibility card.
+- `react/accessibilityPreferences.ts` — state via the `usePreference` hook.
+- `scss/accessibility-menu.scss`, `-trigger.scss` — the UI styles.
+- `scss/accessibility-features.scss` — @font-face + classes + dyslexia + motion.
+- `scss/theme.config.scss` — the UI's **layer 3** (to wire, see below).
+- `scss/theme-example.scss` — a minimal theme assembly (light + high-contrast).
 
-Le **moteur** (transformations de couleurs, hooks, garanties de contraste)
-reste dans le paquet npm et se met à jour par version. L'**UI copiée** ne se
-met PAS à jour toute seule : `darkmode-plus-a11y init --diff` montre les
-évolutions de référence, à reporter à la main.
+The **engine** (color transforms, hooks, contrast guarantees) stays in the
+npm package and updates per version. The **copied UI** does NOT auto-update:
+`darkmode-plus-a11y init --diff` shows the upstream reference changes for you
+to port by hand.
 
-## Prérequis
+## Prerequisites
 
-- **Palettes Tailwind** : le système est ancré à la géométrie 11 poids de
-  Tailwind (c'est ce qui garantit des couleurs bien espacées). Vos
-  primitives de marque se déclarent comme `("famille", poids)`.
-- Dépendances UI du projet : `react-select`, `react-icons`, et le paquet
-  `darkmode-plus-a11y`.
+- **Tailwind palettes**: the system is anchored to Tailwind's 11-weight
+  geometry (this is what guarantees well-spaced colors). Your brand
+  primitives are declared as `("family", weight)`.
+- Project UI dependencies: `react-select`, `react-icons`, and the
+  `darkmode-plus-a11y` package.
 
-## RÈGLE D'OR (couche 3)
+## GOLDEN RULE (layer 3)
 
-Le système a **3 couches** : (1) palettes Tailwind, (2) **rôles** = l'API du
-paquet, (3) vos **tokens** d'assignation.
+The system has **3 layers**: (1) Tailwind palettes, (2) **roles** = the
+package API, (3) your **assignment tokens**.
 
-> **Chaque token de couche 3 se définit À PARTIR D'UN RÔLE de couche 2,
-> jamais une valeur brute** (`#hex`, une couleur Tailwind en dur…).
+> **Every layer-3 token is defined FROM A LAYER-2 ROLE** (`$bg-base`,
+> `$accent`, `$link`…), never a raw value (`#hex`, a hardcoded Tailwind color).
 
-C'est ce qui fait que le fort contraste et les thèmes daltoniens
-s'appliquent correctement : le moteur transforme les **rôles**, vos tokens
-en héritent. Un token câblé en dur **échappe** aux thèmes (texte resté
-coloré en plein fort contraste, etc.).
+This is what makes high-contrast and color-blind themes apply correctly: the
+engine transforms the **roles**, your tokens inherit from them. A hardcoded
+token **escapes** theming (text staying colored in full high-contrast, etc.).
 
-Rôles de couche 2 disponibles (à utiliser dans `theme.config.scss`) :
+Available layer-2 roles (use these in `theme.config.scss`):
 
-- Fonds : `$bg-base`, `$bg-subtle`, `$bg-container`, `$bg-container-high`,
+- Backgrounds: `$bg-base`, `$bg-subtle`, `$bg-container`, `$bg-container-high`,
   `$bg-emphasis`, `$bg-emphasis-strong`, `$bg-inverse`
-- Textes : `$fg-base`, `$fg-muted`, `$fg-on-accent`, `$fg-on-emphasis`
-- Marque : `$accent`, `$accent-strong`, `$accent-ink`, `$accent-soft`
-- Liens / focus : `$link`, `$link-hover`, `$focus-ring`
-- Bordures : `$border-base`, `$border-subtle`, `$border-strong`
-- Statut : `$success`, `$danger`
-- Rail : `$gray-50` … `$gray-950`, `$off-white`, `$near-black`
+- Foregrounds: `$fg-base`, `$fg-muted`, `$fg-on-accent`, `$fg-on-emphasis`
+- Brand: `$accent`, `$accent-strong`, `$accent-ink`, `$accent-soft`
+- Links / focus: `$link`, `$link-hover`, `$focus-ring`
+- Borders: `$border-base`, `$border-subtle`, `$border-strong`
+- Status: `$success`, `$danger`
+- Rail: `$gray-50` … `$gray-950`, `$off-white`, `$near-black`
 
-## Câblage minimal
+## Minimal wiring
 
-1. **SCSS** : importez `theme-example.scss` (l'assemblage), puis
+1. **SCSS**: import `theme-example.scss` (the assembly), then
    `accessibility-menu.scss`, `accessibility-trigger.scss`,
-   `accessibility-features.scss`. Étendez `theme-example` avec vos autres
-   thèmes (dark, daltoniens, variantes HC) sur le même patron.
-2. **Polices** : `init` a copié les fichiers dans `public/fonts` (chemin
-   `$a11y-fonts-path`, défaut `/fonts`).
-3. **Anti-FOUC** : posez `data-theme` sur `<html>` avant le premier paint
-   (le paquet fournit `themeInitScript` — voir sa doc).
-4. **UI** : rendez `<AccessibilityControl language="fr" />`
-   **DANS LE FLUX** (typiquement votre header).
-   - ⚠️ **JAMAIS `position: fixed` flottant** : ça chevauche le contenu aux
-     grands zooms (faute d'accessibilité). Si aucun emplacement évident,
-     utilisez une **bande pré-header** (bandeau au-dessus du header, icône à
-     droite).
-   - Props : `language` ("fr"|"en"), `position?`, `icon?`, `complianceUrl?`.
+   `accessibility-features.scss`. Extend `theme-example` with your other
+   themes (dark, color-blind, HC variants) following the same pattern.
+2. **Fonts**: `init` copied the files to `public/fonts` (path
+   `$a11y-fonts-path`, default `/fonts`).
+3. **Anti-FOUC**: set `data-theme` on `<html>` before first paint (the
+   package provides `themeInitScript` — see its docs).
+4. **UI**: render `<AccessibilityControl language="fr" />`
+   **IN THE DOCUMENT FLOW** (typically your header).
+   - ⚠️ **NEVER a floating `position: fixed`**: it overlaps content at high
+     zoom (an accessibility defect). If there is no obvious spot, use a
+     **pre-header band** (a strip above the header, icon on the right).
+   - Props: `language` ("fr"|"en"), `position?`, `icon?`, `complianceUrl?`.
 
-## Vérifier votre câblage
+## Verifying your wiring
 
-- `pnpm hc:audit` — inspecteur sémantique : signale un token dont le nom
-  contredit la valeur émise en fort contraste (ex. `*-text` qui émet la
-  couleur de fond → branchement à revoir).
-- Le test de conformité de palette échoue si un token n'appartient pas à la
-  palette du fort contraste (token non branché sur un rôle).
+- `pnpm hc:audit` — semantic inspector: flags a token whose name contradicts
+  the value it emits in high-contrast (e.g. `*-text` emitting the background
+  color → wiring to review).
+- The palette conformance test fails if a token is not part of the
+  high-contrast palette (a token not wired to a role).
 
-Ces contrôles sont en **lecture seule** : ils avertissent, ne modifient rien.
+These checks are **read-only**: they warn, they never modify anything.

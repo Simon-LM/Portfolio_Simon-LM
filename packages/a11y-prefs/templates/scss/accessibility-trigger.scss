@@ -1,17 +1,16 @@
 /** @format */
 
-// Styles du déclencheur (bouton) + panneau d'accessibilité (template
-// scaffoldé — vous les possédez, modifiez-les librement). Copie de
-// l'architecture du portfolio. ⚠️ Le déclencheur est prévu DANS LE FLUX
-// (ex. votre header), pas en position:fixed flottant.
-// L'icône par défaut du template est une SVG react-icons : les filtres
-// d'inversion ci-dessous fonctionnent, mais vous pouvez préférer piloter sa
-// couleur via `color`/`fill`.
+// Styles for the trigger (button) + accessibility panel (scaffolded
+// template — you own them, edit freely). Copied from the portfolio's
+// architecture. ⚠️ The trigger is meant to be placed IN THE FLOW (e.g.
+// your header), not as a floating position:fixed.
+// The template's default icon is a react-icons SVG: the inversion filters
+// below work, but you may prefer to drive its color via `color`/`fill`.
 
 .accessibility-control {
 	position: relative;
 
-	// Le bouton lui-même
+	// The button itself
 	&__button {
 		display: flex;
 		align-items: center;
@@ -80,19 +79,19 @@
 	visibility: hidden;
 	transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
 
-	// En mode high contrast
+	// In high contrast mode
 	.theme-high-contrast & {
 		border-width: 0.1875rem;
 	}
 
-	// État ouvert
+	// Open state
 	&.open {
 		opacity: 1;
 		visibility: visible;
 		transform: translate(-50%, -50%);
 	}
 
-	// Triangle décoratif
+	// Decorative triangle
 	&::before {
 		content: "";
 		position: absolute;
@@ -118,11 +117,11 @@
 		border-bottom: 0.4375rem solid var(--color-panel-bg, var(--color-main-bg));
 	}
 }
-// Styles pour les différents thèmes
-// Bouton flottant — toutes les variantes de fort contraste (chantier HC) :
-// fond = fond du thème, survol = couleur d'action. L'icône ne peut pas
-// suivre une variable CSS (c'est un filter) : blanc par défaut (variantes
-// sombres), jaune historique en variante jaune, sombre en variante papier.
+// Styles for the different themes
+// Floating button — all high-contrast variants (HC chantier): background =
+// theme background, hover = action color. The icon can't follow a CSS
+// variable (it's a filter): white by default (dark variants), historical
+// yellow for the yellow variant, dark for the paper variant.
 [data-theme^="high-contrast"] {
 	.accessibility-control__button {
 		background-color: var(--off-white) !important;
@@ -144,7 +143,7 @@
 	}
 }
 
-// Variante jaune : icône jaune historique (rendu inchangé)
+// Yellow variant: historical yellow icon (rendering unchanged)
 [data-theme="high-contrast"] {
 	.accessibility-control__button {
 		img,
@@ -162,8 +161,8 @@
 	}
 }
 
-// Variante verte : icône verte — le filtre jaune calibré ci-dessus + une
-// rotation de teinte de 60° (jaune 60° -> vert 120°)
+// Green variant: green icon — the yellow filter calibrated above + a
+// 60° hue rotation (yellow 60° -> green 120°)
 [data-theme="high-contrast-green"] {
 	.accessibility-control__button {
 		img,
@@ -181,8 +180,8 @@
 	}
 }
 
-// Variante papier (polarité inversée) : icône sombre sur fond blanc,
-// survol = action noire -> icône blanche
+// Paper variant (inverted polarity): dark icon on white background,
+// hover = black action -> white icon
 [data-theme="high-contrast-paper"] {
 	.accessibility-control__button {
 		img,
@@ -220,7 +219,7 @@
 	.accessibility-control__button {
 		img,
 		svg {
-			filter: invert(100%); // Même filtre que pour le thème dark
+			filter: invert(100%); // Same filter as the dark theme
 		}
 
 		&:hover,

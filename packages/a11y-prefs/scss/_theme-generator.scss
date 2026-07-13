@@ -1,15 +1,14 @@
 /** @format */
 
-// Générateur de thèmes (chantier E6.5) — comble l'écart n°1 de l'audit
-// §6.2 : les définitions de thèmes standards + l'émission des variables de
-// rôle vivent désormais DANS le paquet. Le consommateur configure son light
-// (via `@use state with (…)`), liste les thèmes voulus, et `generate-all-
-// themes()` les émet tous. Sa couche 3 est injectée par thème via @content.
+// Theme generator (E6.5) — closes audit gap #1 (§6.2): standard theme
+// definitions + role-variable emission now live INSIDE the package. The
+// consumer configures their light theme (via `@use state with (…)`), lists
+// the themes they want, and `generate-all-themes()` emits all of them. Their
+// layer 3 is injected per theme via @content.
 //
-// Les configs standards (dark, cartes fort contraste, achromatopsie) sont
-// migrées ici depuis les fichiers de thème du portfolio, généralisées (le
-// swap accent dark dérive des primitives du consommateur, plus d'amber en
-// dur).
+// Standard configs (dark, high-contrast maps, achromatopsia) are migrated
+// here from the portfolio's theme files, generalized (the dark accent swap
+// derives from the consumer's primitives, no more hardcoded amber).
 
 @use "sass:map";
 @use "base-palette" as *;
@@ -17,8 +16,8 @@
 @use "theme-utils" as *;
 @use "anti-glare-functions" as *;
 
-// Les 15 thèmes standards. Défaut de generate-all-themes ; le consommateur
-// peut en émettre un sous-ensemble (CSS plus léger).
+// The 15 standard themes. Default for generate-all-themes; the consumer
+// can emit a subset (lighter CSS).
 $default-themes: (
 	"light",
 	"dark",
@@ -37,9 +36,9 @@ $default-themes: (
 	"achromatopsia"
 ) !default;
 
-// --- Configs standards migrées (product) ---
+// --- Migrated standard configs (product) ---
 
-// Dark : décalage des poids en miroir (config à 11 crans).
+// Dark: mirrored weight shift (11-step rail).
 $dark-config: (
 	"steps": 7,
 	"overrides": ("accent": true, "accent-ink": true, "accent-soft": true),
@@ -51,7 +50,7 @@ $dark-config: (
 	),
 );
 
-// Achromatopsie : gris de luminance équivalente, statut en gris spéciaux.
+// Achromatopsia: equivalent-luminance grays, status conveyed via special grays.
 $achromatopsia-config: (
 	"special-colors": (
 		"success": get-color("neutral", 400),
@@ -66,8 +65,8 @@ $achromatopsia-config: (
 	),
 );
 
-// Fort contraste : carte par défaut (jaune sur noir) + variantes (partielles,
-// fusionnées avec la carte par défaut).
+// High contrast: default map (yellow on black) + variants (partial, merged
+// with the default map).
 $hc-colors: (
 	"background": #000000, "text": #ffff00, "link": #00ffff,
 	"highlight": #bfff00, "action": #ffffff, "success": #00ff00,
@@ -81,10 +80,10 @@ $hc-paper: (
 	"error": #cc0000, "focus": #000000, "focus-text": #ffffff,
 );
 
-// Carte de couleurs fusionnée d'une variante fort contraste. Exposée pour
-// que le consommateur lise les valeurs (highlight, focus…) de ses surcharges
-// de règles par thème sans les redupliquer.
-@function hc-carte($name) {
+// Merged color map for a high-contrast variant. Exposed so the consumer can
+// read values (highlight, focus…) in their per-theme rule overrides without
+// duplicating them.
+@function hc-color-map($name) {
 	@if $name == "high-contrast" { @return $hc-colors; }
 	@else if $name == "high-contrast-green" { @return map.merge($hc-colors, $hc-green); }
 	@else if $name == "high-contrast-white" { @return map.merge($hc-colors, $hc-white); }
@@ -92,8 +91,8 @@ $hc-paper: (
 	@return null;
 }
 
-// Sous-recette « base sombre » : rail dark + swap accent (générique — dérive
-// des primitives du consommateur, byte-identique au portfolio amber).
+// "Dark base" sub-recipe: dark rail + accent swap (generic — derives from
+// the consumer's primitives, byte-identical to the portfolio's amber swap).
 @mixin apply-dark-base() {
 	@include define-base-colors();
 	@include apply-roles();
@@ -102,9 +101,9 @@ $hc-paper: (
 	@include transform-light-to-dark($dark-config);
 }
 
-// Pose le rail + les rôles TRANSFORMÉS pour le thème $name. N'émet AUCUNE
-// variable CSS ni règle : juste l'état des rôles. La couche 3 et les
-// surcharges de règles sont l'affaire du consommateur (@content).
+// Sets up the rail + TRANSFORMED roles for theme $name. Emits NO CSS
+// variable and NO rule: just the roles' state. Layer 3 and rule overrides
+// are the consumer's responsibility (@content).
 @mixin apply-theme($name) {
 	@if $name == "light" {
 		@include define-base-colors();
@@ -163,21 +162,21 @@ $hc-paper: (
 		@include apply-roles();
 		@include transform-light-to-achromatopsia($achromatopsia-config);
 	} @else {
-		@error "apply-theme : thème inconnu « #{$name} ».";
+		@error "apply-theme: unknown theme « #{$name} ».";
 	}
 }
 
-// Émet les variables CSS des couches 1+2 (rail, primitives, rôles,
-// constantes) — l'ex-partie « paquet » de generate-theme-css-vars (portfolio).
-// La couche 3 (~70 tokens --color-*) reste chez le consommateur.
+// Emits layer 1+2 CSS variables (rail, primitives, roles, constants) — the
+// ex-"package" portion of generate-theme-css-vars (portfolio). Layer 3
+// (~70 --color-* tokens) stays with the consumer.
 @mixin emit-role-vars() {
-	// Variables fondamentales
+	// Foundational variables
 	--off-white: #{$off-white};
 	--near-black: #{$near-black};
 	--constant-off-white: #fafaf9;
 	--constant-near-black: #0c0a09;
 
-	// Niveaux de gris — rail numérique complet (ordre darkest → lightest)
+	// Gray levels — full numeric rail (darkest → lightest order)
 	--gray-950: #{$gray-950};
 	--gray-900: #{$gray-900};
 	--gray-800: #{$gray-800};
@@ -190,7 +189,7 @@ $hc-paper: (
 	--gray-100: #{$gray-100};
 	--gray-50: #{$gray-50};
 
-	// Primitives (couche 1)
+	// Primitives (layer 1)
 	--accent: #{$accent};
 	--accent-strong: #{$accent-strong};
 	--accent-ink: #{$accent-ink};
@@ -200,7 +199,7 @@ $hc-paper: (
 	--success: #{$success};
 	--danger: #{$danger};
 
-	// Rôles (couche 2 — API du paquet)
+	// Roles (layer 2 — package API)
 	--bg-base: #{$bg-base};
 	--bg-subtle: #{$bg-subtle};
 	--bg-container: #{$bg-container};
@@ -217,14 +216,14 @@ $hc-paper: (
 	--border-strong: #{$border-strong};
 	--focus-ring: #{$focus-ring};
 
-	// Couleur fonctionnelle constante (non thématisée)
+	// Constant functional color (not themed)
 	--constant-error-color: #dc2626;
 }
 
-// Génère un bloc [data-theme] par thème demandé. Pour chacun : pose les
-// rôles transformés, puis passe le nom au @content (le consommateur y émet
-// sa couche 3 et ses surcharges par thème). Le paquet n'émet QUE ses
-// variables via emit-role-vars — aucune couche 3 ne fuit ici.
+// Generates one [data-theme] block per requested theme. For each: sets up
+// the transformed roles, then passes the name to @content (the consumer
+// emits their layer 3 and per-theme overrides there). The package emits
+// ONLY its own variables via emit-role-vars — no layer 3 leaks here.
 @mixin generate-all-themes($themes: $default-themes) {
 	@each $name in $themes {
 		[data-theme="#{$name}"] {

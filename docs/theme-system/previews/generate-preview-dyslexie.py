@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import base64, pathlib
 
-# Chemins relatifs au repo, quel que soit le répertoire d'exécution.
+# Paths relative to the repo, regardless of the execution directory.
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
 FONTS_DIR = REPO_ROOT / "public" / "fonts"
 OUT = pathlib.Path(__file__).resolve().parent / "preview-dyslexie.html"
@@ -74,7 +74,7 @@ body {{ margin:0; font-family:"Inter",system-ui,sans-serif; background:#f4f5f7; 
 .col-sylexiad .tag {{ background:#b3541e; color:#fff; }}
 .col-andika .tag {{ background:#1f5eb3; color:#fff; }}
 
-/* Tailles de titres identiques dans les 3 colonnes (comparaison équitable) */
+/* Identical heading sizes across the 3 columns (fair comparison) */
 .col h1 {{ font-size:1.7rem; margin:.2rem 0 .5rem; }}
 .col h2 {{ font-size:1.3rem; margin:0 0 .9rem; }}
 .col ul {{ padding-left:1.3em; }} .col li {{ margin:.3em 0; }}

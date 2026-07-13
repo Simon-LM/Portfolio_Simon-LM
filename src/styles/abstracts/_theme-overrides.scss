@@ -1,11 +1,11 @@
 /** @format */
 
-// Surcharges de RÈGLES site par thème (chantier E6.5) — la part
-// site-spécifique des anciens fichiers de thème (_high-contrast.scss,
-// _anti-glare-*.scss). Émises dans le @content de generate-all-themes,
-// après apply-theme-variables et avant l'émission des variables (ordre
-// préservé pour le byte-identique). Les valeurs par variante HC sont lues
-// dans la carte du paquet (hc-carte), pas redupliquées.
+// Per-theme site RULE overrides (E6.5) — the site-specific part of the old
+// theme files (_high-contrast.scss, _anti-glare-*.scss). Emitted in
+// generate-all-themes's @content, after apply-theme-variables and before
+// variable emission (order preserved for byte-identical output). HC variant
+// values are read from the package's color map (hc-color-map), not
+// duplicated.
 
 @use "sass:map";
 @use "sass:string";
@@ -16,19 +16,19 @@
 
 @mixin theme-overrides($name) {
 	@if string.index($name, "high-contrast") == 1 {
-		$carte: hc-carte($name);
-		$focus: map.get($carte, "focus");
-		$focus-text: map.get($carte, "focus-text");
-		$highlight: map.get($carte, "highlight");
+		$color-map: hc-color-map($name);
+		$focus: map.get($color-map, "focus");
+		$focus-text: map.get($color-map, "focus-text");
+		$highlight: map.get($color-map, "highlight");
 
-		// Uniformiser tous les états de focus avec les états hover
+		// Unify all focus states with the hover states
 		*:focus-visible {
 			outline: 3px solid $focus !important;
 			border-color: $focus !important;
 			box-shadow: none !important;
 		}
 
-		// Boutons et éléments interactifs au focus
+		// Buttons and interactive elements on focus
 		button:focus-visible,
 		.button:focus-visible,
 		a:focus-visible,
@@ -39,7 +39,7 @@
 			outline-offset: 0.25rem;
 		}
 
-		// Surcharges header (le fond suit "highlight" de la carte).
+		// Header overrides (background follows the map's "highlight").
 		$color-header-bg: $highlight !global;
 		$color-header-text: #000000 !global;
 		$color-header-text-role: #000000 !global;

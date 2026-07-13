@@ -1,10 +1,10 @@
 /** @format */
 
-// Module opt-in — réduction des animations (chantier E5).
-// Le consommateur @use ce module et @include les mixins.
+// Opt-in module — motion reduction (E5).
+// The consumer @use's this module and @include's the mixins.
 
-// Classe opt-in `html.reduce-motion` : neutralise animations et transitions
-// sur tout l'arbre. Posée par l'UI (toggle) ou l'applier runtime.
+// Opt-in class `html.reduce-motion`: neutralizes animations and transitions
+// across the whole tree. Set by the UI (toggle) or the runtime applier.
 @mixin reduce-motion-class {
 	html.reduce-motion {
 		*,
@@ -20,8 +20,8 @@
 	}
 }
 
-// Contrat hôte : à envelopper autour des animations « décoratives » pour
-// qu'elles se soumettent à la préférence système prefers-reduced-motion.
+// Host contract: wrap this around "decorative" animations so they honor
+// the system prefers-reduced-motion preference.
 //   .card { @include motion-safe { transition: transform 0.2s; } }
 @mixin motion-safe {
 	@media (prefers-reduced-motion: no-preference) {

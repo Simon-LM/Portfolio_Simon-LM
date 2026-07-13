@@ -1,10 +1,10 @@
 /** @format */
 
-// Tests de l'inspecteur sémantique (chantier hc-mécanique phase 3) : la
-// mécanique de matching des noms (pièges connus) + un smoke sur l'état
-// calibré du portfolio (0 avertissement actif — si ce test échoue après
-// un ajout de token, c'est l'inspecteur qui fait son travail : vérifier
-// le branchement du nouveau token ou documenter un waiver argumenté).
+// Tests for the semantic inspector (hc-mécanique chantier, phase 3): the
+// name-matching mechanics (known pitfalls) + a smoke test on the
+// portfolio's calibrated state (0 active warnings — if this test fails
+// after adding a token, the inspector is doing its job: check the new
+// token's wiring or document a justified waiver).
 
 import {
 	segments,
@@ -13,8 +13,8 @@ import {
 	runAudit,
 } from "../hc-semantic-audit";
 
-describe("segments / familyOf — matching par segment entier", () => {
-	it("découpe sur - et _", () => {
+describe("segments / familyOf — whole-segment matching", () => {
+	it("splits on - and _", () => {
 		expect(segments("--color-header-bg")).toEqual(["color", "header", "bg"]);
 		expect(segments("--sticky_footer_text")).toEqual([
 			"sticky",
@@ -23,18 +23,18 @@ describe("segments / familyOf — matching par segment entier", () => {
 		]);
 	});
 
-	it("« context » ne matche PAS « text » (segment entier)", () => {
+	it("\"context\" does NOT match \"text\" (whole segment)", () => {
 		expect(familyOf("--color-context")).toBeNull();
 	});
 
-	it("le DERNIER segment reconnu gagne (convention suffixée)", () => {
-		// « link » ET « bg » présents : c'est un fond
+	it("the LAST recognized segment wins (suffixed convention)", () => {
+		// Both "link" AND "bg" present: it's a background
 		expect(familyOf("--color-header-blog-link-bg")).toBe("background");
 		expect(familyOf("--color-main-text")).toBe("text");
 		expect(familyOf("--fg-on-emphasis")).toBe("text");
 	});
 
-	it("reconnaît les synonymes (fg, surface, anchor, ring…)", () => {
+	it("recognizes synonyms (fg, surface, anchor, ring…)", () => {
 		expect(familyOf("--card-surface")).toBe("background");
 		expect(familyOf("--fg-muted")).toBe("text");
 		expect(familyOf("--nav-anchor")).toBe("link");
@@ -42,13 +42,13 @@ describe("segments / familyOf — matching par segment entier", () => {
 	});
 });
 
-describe("pairBase — appariement bg/texte d'un même composant", () => {
-	it("apparie les suffixes simples", () => {
+describe("pairBase — bg/text pairing of the same component", () => {
+	it("pairs simple suffixes", () => {
 		expect(pairBase("--color-footer-bg")).toBe("color-footer");
 		expect(pairBase("--color-footer-text")).toBe("color-footer");
 	});
 
-	it("apparie quand la famille n'est pas en position finale", () => {
+	it("pairs when the family isn't in the final position", () => {
 		expect(pairBase("--color-lang-toggle-bg-activated")).toBe(
 			"color-lang-toggle-activated",
 		);
@@ -57,18 +57,18 @@ describe("pairBase — appariement bg/texte d'un même composant", () => {
 		);
 	});
 
-	it("apparie --fg-on-X avec --bg-X (texte posé sur ce bloc)", () => {
+	it("pairs --fg-on-X with --bg-X (text sitting on that block)", () => {
 		expect(pairBase("--fg-on-emphasis")).toBe("emphasis");
 		expect(pairBase("--bg-emphasis")).toBe("emphasis");
 	});
 
-	it("null si aucun segment de famille", () => {
+	it("null when no family segment is found", () => {
 		expect(pairBase("--shadow-strength")).toBeNull();
 	});
 });
 
-describe("smoke — état calibré du portfolio", () => {
-	it("0 avertissement actif (tout est branché ou waivé avec raison)", () => {
+describe("smoke — portfolio's calibrated state", () => {
+	it("0 active warnings (everything is wired or waived with a reason)", () => {
 		const active = runAudit().filter((f) => !f.waived);
 		expect(active).toEqual([]);
 	});

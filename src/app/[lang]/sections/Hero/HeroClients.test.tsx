@@ -11,7 +11,7 @@ interface MockCollapseProps {
 	headingLevel?: "h2" | "h3" | "h4";
 }
 
-// Mock du composant Collapse
+// Mock of the Collapse component
 jest.mock("../../../../components/collapse/Collapse", () => {
 	return function MockCollapse({ title, children, id }: MockCollapseProps) {
 		return (
@@ -23,7 +23,7 @@ jest.mock("../../../../components/collapse/Collapse", () => {
 	};
 });
 
-// Mock de framer-motion
+// Mock of framer-motion
 jest.mock("framer-motion", () => ({
 	motion: {
 		section: jest.fn(({ children, ...props }) => (

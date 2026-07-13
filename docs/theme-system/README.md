@@ -1,192 +1,193 @@
 <!-- @format -->
 
-# Système de thèmes de couleurs accessibles
+# Accessible color theme system
 
-Documentation du composant de gestion des thèmes de couleurs, conçu pour
-s'adapter à différents types de handicap visuel. Le composant est réparti sur
-plusieurs fichiers (SCSS + React) et est encore en cours de finalisation.
+Documentation for the color theme management component, designed to
+adapt to different types of visual impairment. The component is spread
+across several files (SCSS + React) and is still being finalized.
 
-**Objectif à terme** : en faire un composant réutilisable dans d'autres
-projets, packagé (NPM ou autre) pour une intégration simplifiée. Une première
-tentative de packaging existe sur la branche
-`feature/darkmode-plus-a11y-package` (`packages/darkmode-plus-a11y/`, jamais
-mergée : rollup + src, datant d'avant plusieurs refontes du système).
+**End goal**: turn it into a component reusable across other projects,
+packaged (npm or otherwise) for easy integration. A first packaging
+attempt exists on branch
+`feature/darkmode-plus-a11y-package` (`packages/darkmode-plus-a11y/`,
+never merged: rollup + src, predating several redesigns of the system).
 
-> Les modifications apportées à cette fonctionnalité sont tracées dans
-> [CHANGELOG.md](./CHANGELOG.md) (changelog dédié, distinct du changelog
-> global du projet).
+> Changes to this feature are tracked in
+> [CHANGELOG.md](./CHANGELOG.md) (a dedicated changelog, distinct from
+> the project's global changelog).
 
-## Carte des documents de ce dossier
+## Map of this folder's documents
 
-| Document | Rôle | Statut |
+| Document | Role | Status |
 | --- | --- | --- |
-| **README.md** (ce fichier) | Conception : fonctionnement, architecture cible, décisions actées | vivant |
-| [CHANGELOG.md](./CHANGELOG.md) | Journal de toutes les modifications de la fonctionnalité | vivant |
-| [TODO.md](./TODO.md) | Checklist des travaux et décisions en suspens (fils qui pendent) | vivant |
-| [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) | Feuille de route vers le paquet open source (chantiers E1→E7) — c'est **la carte** qui ordonne les plans | vivant |
-| [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) | Plan d'exécution : fondations (rail, rôles, `@use`…) | ✅ exécuté le 2026-07-03 |
-| [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) | Plan d'exécution : chantier E1 — système de tests de contrastes | ✅ exécuté le 2026-07-04 |
-| [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) | Artefact généré : matrice de contraste WCAG (39 paires × 15 thèmes) + distinguabilité CVD (5 paires ΔE) | vivant (régénéré par `pnpm contrast:report`) |
-| [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) | Plan d'exécution : chantier E2 — corrections moteurs + OKLCH anti-glare | ✅ exécuté le 2026-07-04, mergé le 2026-07-05 |
-| [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Plan d'exécution : P1 remap de familles + tests de distinguabilité ; P2 ancres sémantiques des rôles statut ; P3 robustesse (dégradation gracieuse, garde-gamut) | P1 ✅ mergée le 2026-07-05 (`d12264f`) ; P2 ✅ et P3 ✅ mergées le 2026-07-06 (`5c8dce9`) après validation visuelle |
-| [PLAN-extraction-monorepo.md](./PLAN-extraction-monorepo.md) | Plan d'exécution : chantier E3 — workspace pnpm + extraction de la face SCSS dans `packages/a11y-prefs` (nom de travail) | ✅ exécuté et mergé le 2026-07-07 (`812d5d5`) |
-| [PLAN-extraction-runtime.md](./PLAN-extraction-runtime.md) | Plan d'exécution : chantier E4 — extraction du runtime React (THEMES, useTheme, usePrefersDarkMode, anti-FOUC) | ✅ exécuté et mergé le 2026-07-07 (`19df328`) |
-| [PLAN-extraction-modules.md](./PLAN-extraction-modules.md) | Plan d'exécution : chantier E5 — modules opt-in (polices a11y + licences, motion, appliers, usePreference) + correction du dimensionnement des polices et mode dyslexie configurable | ✅ exécuté et mergé le 2026-07-10 (`7bae83f`), validations visuelles Simon |
-| [PLAN-high-contrast-variants.md](./PLAN-high-contrast-variants.md) | Plan d'exécution : variantes du fort contraste (jaune/vert/blanc/papier) + typographie HC + boutons-preview | ✅ exécuté et mergé le 2026-07-11 (`5192ee3`), smoke Simon variante par variante |
-| [PLAN-hc-mecanique-controles.md](./PLAN-hc-mecanique-controles.md) | Plan d'exécution : mécanique HC — focus promu rôle de couche 2 + contrôles d'outillage (valeur + noms) | ✅ exécuté le 2026-07-11 (branche `feat/hc-mecanique`) |
-| [HC-SEMANTIC-AUDIT.md](./HC-SEMANTIC-AUDIT.md) | Artefact généré : audit sémantique du fort contraste (noms ↔ valeurs émises) | vivant (régénéré par `pnpm hc:audit`) |
-| [PLAN-e6-cli-scaffolding.md](./PLAN-e6-cli-scaffolding.md) | Plan d'exécution : chantier E6 — templates UI (déclencheur + carte) + CLI `init`/`init --diff` (modèle shadcn) | ✅ exécuté le 2026-07-12 (branche `feat/e6-cli`) — `packages/a11y-prefs/templates/` + `bin/cli.mjs` + notice IA `templates/AGENTS.md` |
-| [PLAN-e6-5-theme-generator.md](./PLAN-e6-5-theme-generator.md) | Plan d'exécution : chantier E6.5 — extraction du générateur de thèmes (generate-all-themes) dans le paquet | ✅ exécuté le 2026-07-12 (branche `feat/e6-5-theme-generator`) — écart n°1 de l'audit §6.2 comblé |
-| [PLAN-e6-6-contrast-verifier.md](./PLAN-e6-6-contrast-verifier.md) | Plan d'exécution : chantier E6.6 — extraction du vérificateur de contrastes dans le paquet (`testing/`) | ✅ exécuté le 2026-07-12 (branche `feat/e6-6-contrast-verifier`) — écart n°2 de l'audit §6.2 comblé |
+| **README.md** (this file) | Design: how it works, target architecture, decisions made | living |
+| [CHANGELOG.md](./CHANGELOG.md) | Log of every change to the feature | living |
+| [TODO.md](./TODO.md) | Checklist of pending work and decisions (loose ends) | living |
+| [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) | Roadmap toward the open-source package (chantiers E1→E7) — this is **the map** that orders the plans | living |
+| [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) | Execution plan: foundations (rail, roles, `@use`…) | ✅ executed 2026-07-03 |
+| [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) | Execution plan: E1 chantier — contrast testing system | ✅ executed 2026-07-04 |
+| [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) | Generated artifact: WCAG contrast matrix (39 pairs × 15 themes) + CVD distinguishability (5 ΔE pairs) | living (regenerated by `pnpm contrast:report`) |
+| [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) | Execution plan: E2 chantier — engine fixes + OKLCH anti-glare | ✅ executed 2026-07-04, merged 2026-07-05 |
+| [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) | Execution plan: P1 family remap + distinguishability tests; P2 semantic anchors for status roles; P3 robustness (graceful degradation, gamut guard) | P1 ✅ merged 2026-07-05 (`d12264f`); P2 ✅ and P3 ✅ merged 2026-07-06 (`5c8dce9`) after visual validation |
+| [PLAN-extraction-monorepo.md](./PLAN-extraction-monorepo.md) | Execution plan: E3 chantier — pnpm workspace + extracting the SCSS side into `packages/a11y-prefs` (working name) | ✅ executed and merged 2026-07-07 (`812d5d5`) |
+| [PLAN-extraction-runtime.md](./PLAN-extraction-runtime.md) | Execution plan: E4 chantier — extracting the React runtime (THEMES, useTheme, usePrefersDarkMode, anti-FOUC) | ✅ executed and merged 2026-07-07 (`19df328`) |
+| [PLAN-extraction-modules.md](./PLAN-extraction-modules.md) | Execution plan: E5 chantier — opt-in modules (a11y fonts + licenses, motion, appliers, usePreference) + font sizing fix and configurable dyslexia mode | ✅ executed and merged 2026-07-10 (`7bae83f`), visual validations done |
+| [PLAN-high-contrast-variants.md](./PLAN-high-contrast-variants.md) | Execution plan: high-contrast variants (yellow/green/white/paper) + HC typography + preview buttons | ✅ executed and merged 2026-07-11 (`5192ee3`), variant-by-variant smoke test |
+| [PLAN-hc-mecanique-controles.md](./PLAN-hc-mecanique-controles.md) | Execution plan: HC mechanics — focus promoted to a layer-2 role + tooling controls (value + names) | ✅ executed 2026-07-11 (branch `feat/hc-mecanique`) |
+| [HC-SEMANTIC-AUDIT.md](./HC-SEMANTIC-AUDIT.md) | Generated artifact: high-contrast semantic audit (names ↔ emitted values) | living (regenerated by `pnpm hc:audit`) |
+| [PLAN-e6-cli-scaffolding.md](./PLAN-e6-cli-scaffolding.md) | Execution plan: E6 chantier — UI templates (trigger + card) + `init`/`init --diff` CLI (shadcn model) | ✅ executed 2026-07-12 (branch `feat/e6-cli`) — `packages/a11y-prefs/templates/` + `bin/cli.mjs` + AI guide `templates/AGENTS.md` |
+| [PLAN-e6-5-theme-generator.md](./PLAN-e6-5-theme-generator.md) | Execution plan: E6.5 chantier — extracting the theme generator (generate-all-themes) into the package | ✅ executed 2026-07-12 (branch `feat/e6-5-theme-generator`) — audit gap #1 (§6.2) closed |
+| [PLAN-e6-6-contrast-verifier.md](./PLAN-e6-6-contrast-verifier.md) | Execution plan: E6.6 chantier — extracting the contrast verifier into the package (`testing/`) | ✅ executed 2026-07-12 (branch `feat/e6-6-contrast-verifier`) — audit gap #2 (§6.2) closed |
 
-Principe : **un chantier = un plan = une branche = une exécution par IA**,
-avec revue avant merge. Le guide donne l'ordre ; chaque plan est autonome.
+Principle: **one chantier = one plan = one branch = one AI-driven
+execution**, reviewed before merge. The guide gives the order; each plan
+is self-contained.
 
 ---
 
-## 1. Principe fondamental
+## 1. Core principle
 
-Les **15 thèmes ne sont pas écrits à la main : ils sont dérivés
-algorithmiquement du thème `light` à la compilation Sass**. Chaque thème est
-le résultat d'une transformation (décalage de poids Tailwind, rotation de
-teinte HSL, conversion en luminance…) appliquée aux couleurs du thème de
-référence.
+The **15 themes are not hand-written: they are algorithmically derived
+from the `light` theme at Sass compile time**. Each theme is the result
+of a transformation (Tailwind weight shift, HSL hue rotation, luminance
+conversion…) applied to the reference theme's colors.
 
-Le CSS compilé contient un bloc `[data-theme="…"]` par thème, chacun
-définissant ~94 custom properties CSS (rail, primitives, rôles, variables
-dérivées de couche 3). Au runtime, le JavaScript ne fait que poser un
-attribut `data-theme` sur `<html>` : le changement de thème est un pur
-re-render CSS, sans recalcul.
+The compiled CSS contains one `[data-theme="…"]` block per theme, each
+defining ~94 CSS custom properties (rail, primitives, roles, layer-3
+derived variables). At runtime, JavaScript only sets a `data-theme`
+attribute on `<html>`: switching themes is a pure CSS re-render, with no
+recomputation.
 
 ```
-COMPILATION (Sass)                          RUNTIME (navigateur)
+COMPILATION (Sass)                          RUNTIME (browser)
 ┌─────────────────────────────┐             ┌─────────────────────────────┐
-│ palette Tailwind ($colors)  │             │ script anti-FOUC            │
+│ Tailwind palette ($colors)  │             │ anti-FOUC script             │
 │   ↓ get-color()             │             │  (localStorage → data-theme)│
 │ rail (11) + primitives (8)  │             │        ↓                    │
 │   ↓ transform-light-to-X()  │             │ useTheme() (React)          │
-│ rail + primitives transformés│            │  setTheme → data-theme +    │
+│ transformed rail + primitives│            │  setTheme → data-theme +    │
 │   ↓ apply-roles()           │             │  localStorage               │
-│ ~15 rôles (couche 2)        │             │        ↓                    │
-│   ↓ apply-theme-variables() │             │ [data-theme="X"] matche     │
-│ ~70 variables de couche 3   │             │  → var(--*) résolues        │
+│ ~15 roles (layer 2)         │             │        ↓                    │
+│   ↓ apply-theme-variables() │             │ [data-theme="X"] matches    │
+│ ~70 layer-3 variables       │             │  → var(--*) resolved        │
 │   ↓ generate-theme-css-vars │             │                             │
-│ 12 blocs [data-theme]       │──── CSS ───▶│                             │
+│ 12 [data-theme] blocks      │──── CSS ───▶│                             │
 └─────────────────────────────┘             └─────────────────────────────┘
 ```
 
-## 2. Les 15 thèmes (12 + 3 variantes de fort contraste)
+## 2. The 15 themes (12 + 3 high-contrast variants)
 
-| Thème              | Public visé                             | Méthode de génération *(à jour au 2026-07-07)*                                                       |
+| Theme              | Target audience                         | Generation method *(up to date as of 2026-07-07)*                                                       |
 | ------------------ | --------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `light`            | défaut                                  | référence : couleurs définies à la main depuis la palette Tailwind                                    |
-| `dark`             | préférence sombre                       | décalage des poids Tailwind en miroir autour du pivot 500                                             |
-| `anti-glare-light` | photophobie, kératocône, DMLA, aniridie | thème light complet → atténuation perceptuelle **OKLCH** (lightness plafonnée, chroma réduite)        |
-| `anti-glare-dark`  | idem, base sombre                       | thème dark complet → idem (noirs relevés)                                                             |
-| `high-contrast`    | fortes pertes de vision                 | réduction à une palette fixe de couleurs pures, choisie par rôle (variante **jaune sur noir**, défaut) |
-| `high-contrast-green` | idem, préférence « phosphore »       | même mécanisme, carte **vert sur noir** (chantier HC, 2026-07-10)                                     |
-| `high-contrast-white` | idem, contraste max sans teinte      | même mécanisme, carte **blanc sur noir** (action = jaune)                                             |
-| `high-contrast-paper` | idem, polarité positive              | même mécanisme, carte **noir sur blanc** (teintes système foncées, focus/header inversés)             |
-| `deuteranopia`     | daltonisme rouge-vert (complet)         | **ancres sémantiques statut** (success→violet, danger→orange, poids auto ≥ 4.5:1) ; gris/accent/liens intacts (déjà sûrs) |
-| `protanopia`       | daltonisme rouge (complet)              | idem                                                                                                   |
-| `tritanopia`       | daltonisme bleu-jaune (complet)         | **remap de familles Tailwind** (`amber → orange`, `sky → violet`) ; statuts intacts (rouge/vert bien perçus) |
-| `deuteranomaly`    | daltonisme rouge-vert (léger)           | ancres statut douces : teintes naturelles corrigées en poids (emerald-700, redd-600)                  |
-| `protanomaly`      | daltonisme rouge (léger)                | idem                                                                                                   |
-| `tritanomaly`      | daltonisme bleu-jaune (léger)           | tables tritan avec mélange perceptuel OKLCH (`severity: 0.5`), ramené dans le gamut sRGB              |
-| `achromatopsia`    | vision monochrome                       | conversion en gris `neutral` de luminance équivalente                                                 |
+| `light`            | default                                 | reference: colors defined by hand from the Tailwind palette                                    |
+| `dark`             | dark preference                       | mirrored Tailwind weight shift around the 500 pivot                                             |
+| `anti-glare-light` | photophobia, keratoconus, AMD, aniridia | full light theme → perceptual **OKLCH** attenuation (lightness capped, chroma reduced)        |
+| `anti-glare-dark`  | same, dark base                       | full dark theme → same (blacks raised)                                                     |
+| `high-contrast`    | severe vision loss                 | reduction to a fixed palette of pure colors, chosen per role (**yellow on black** variant, default) |
+| `high-contrast-green` | same, "phosphor" preference       | same mechanism, **green on black** map (HC chantier, 2026-07-10)                                     |
+| `high-contrast-white` | same, max contrast without hue      | same mechanism, **white on black** map (action = yellow)                                             |
+| `high-contrast-paper` | same, positive polarity              | same mechanism, **black on white** map (dark system hues, focus/header inverted)             |
+| `deuteranopia`     | red-green color blindness (full)         | **semantic status anchors** (success→violet, danger→orange, weight auto ≥ 4.5:1); grays/accent/links intact (already safe) |
+| `protanopia`       | red color blindness (full)              | same                                                                                                   |
+| `tritanopia`       | blue-yellow color blindness (full)         | **Tailwind family remap** (`amber → orange`, `sky → violet`); statuses intact (red/green well perceived) |
+| `deuteranomaly`    | red-green color blindness (mild)           | soft status anchors: natural hues corrected in weight (emerald-700, redd-600)                  |
+| `protanomaly`      | red color blindness (mild)                | same                                                                                                   |
+| `tritanomaly`      | blue-yellow color blindness (mild)         | tritan tables with an OKLCH perceptual blend (`severity: 0.5`), brought back into the sRGB gamut              |
+| `achromatopsia`    | monochrome vision                   | conversion to `neutral` gray of equivalent luminance                                                  |
 
-## 3. Cartographie des fichiers
+## 3. File mapping
 
-### Côté SCSS (compilation)
+### SCSS side (compilation)
 
-Depuis E3 (2026-07-07), la face SCSS du moteur vit dans le **workspace
-pnpm** `packages/a11y-prefs/` (nom de travail — Simon fixera le nom
-définitif en E7) et le portfolio la consomme via
-`@use "a11y-prefs/scss/…"` (résolution : `sassOptions.includePaths` dans
-`next.config.ts`, `loadPaths` dans extract-themes, `--load-path` en CLI).
+Since E3 (2026-07-07), the engine's SCSS side lives in the **pnpm
+workspace** `packages/a11y-prefs/` (working name — the final name will be
+set in E7) and the portfolio consumes it via
+`@use "a11y-prefs/scss/…"` (resolution: `sassOptions.includePaths` in
+`next.config.ts`, `loadPaths` in extract-themes, `--load-path` on the CLI).
 
-| Fichier                                                                                       | Rôle                                                                                                                                                                              |
+| File                                                                                       | Role                                                                                                                                                                              |
 | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/a11y-prefs/scss/_base-palette.scss` **(paquet)**                                    | Palettes Tailwind (`$colors`) : neutral, stone, slate, amber, sky, redd, emerald, orange, violet — 11 poids chacune ; `get-color()` ; `is-dark()` ; `adjust-lightness-clamped()`   |
-| `packages/a11y-prefs/scss/_state.scss` **(paquet)**                                           | État mutable couches 1+2 (rail 11 crans, primitives, ~15 rôles) + config consommateur (`$gray-family`, `$primitives` — `!default`, via `with()`) + `define-base-colors()`, `apply-roles()` |
-| `packages/a11y-prefs/scss/_theme-utils.scss` **(paquet)**                                     | Le cœur (~1500 lignes) : `get-dark-color`, `analyze-tailwind-color`, moteurs `transform-light-to-*`, remap CVD, ancres statut, math WCAG, gamut-mapping                            |
-| `packages/a11y-prefs/scss/_anti-glare-functions.scss` **(paquet)**                            | Transformation anti-éblouissement perceptuelle (OKLCH)                                                                                                                             |
-| `packages/a11y-prefs/scss/_index.scss` **(paquet)**                                           | Point d'entrée public (`@forward` des quatre modules)                                                                                                                              |
-| `packages/a11y-prefs/scss/modules/_a11y-fonts.scss` **(paquet, E5)**                          | Module opt-in polices d'accessibilité : `a11y-font-faces($path)` (@font-face OpenDyslexic/Andika/Atkinson) + `a11y-font-classes` ; chemin configurable `$a11y-fonts-path`          |
-| `packages/a11y-prefs/scss/modules/_motion.scss` **(paquet, E5)**                              | Module opt-in réduction d'animations : `reduce-motion-class` (classe `html.reduce-motion`) + `motion-safe` (contrat hôte `prefers-reduced-motion`)                                 |
-| `packages/a11y-prefs/scss/modules/_dyslexia.scss` **(paquet, E5)**                            | Module opt-in mode dyslexie : mixin `dyslexia-typography` 3 niveaux configurable (titre/sous-titre/corps), `font-size-adjust`, espacements BDA — calibré visuellement (2026-07-09) |
-| `packages/a11y-prefs/fonts/` **(paquet, E5)**                                                 | Polices OFL embarquées (22 fichiers, 5 familles) + `LICENSES/` (audit, textes à figer en E7)                                                                                       |
-| `src/styles/themes/_theme-variables.scss`                                                     | **Couche 3 du portfolio** : ~70 tokens de composants + `apply-theme-variables()` (dérivés des rôles du paquet)                                                                     |
-| `src/styles/themes/_light.scss`, `_dark.scss`, `_high-contrast.scss`, `_deuteranopia.scss`, … | Un fichier par thème (= **config du projet**) : reset light → transformation du paquet → `apply-theme-variables` → surcharges manuelles                                            |
-| `src/styles/abstracts/_theme-system.scss`                                                     | Point d'assemblage : `generate-theme-css-vars()` (snapshot des globales Sass → custom properties) + les 12 blocs `[data-theme]`, `:root` et `@media (prefers-color-scheme: dark)`  |
-| `src/styles/main.scss`                                                                        | Point d'entrée : porte la **configuration `with()`** du paquet (premier chargement du module state), puis `@use` chaque partial                                                    |
+| `packages/a11y-prefs/scss/_base-palette.scss` **(package)**                                    | Tailwind palettes (`$colors`): neutral, stone, slate, amber, sky, redd, emerald, orange, violet — 11 weights each; `get-color()`; `is-dark()`; `adjust-lightness-clamped()`   |
+| `packages/a11y-prefs/scss/_state.scss` **(package)**                                           | Mutable layer 1+2 state (11-step rail, primitives, ~15 roles) + consumer config (`$gray-family`, `$primitives` — `!default`, via `with()`) + `define-base-colors()`, `apply-roles()` |
+| `packages/a11y-prefs/scss/_theme-utils.scss` **(package)**                                     | The core (~1500 lines): `get-dark-color`, `analyze-tailwind-color`, `transform-light-to-*` engines, CVD remap, status anchors, WCAG math, gamut-mapping                            |
+| `packages/a11y-prefs/scss/_anti-glare-functions.scss` **(package)**                            | Perceptual anti-glare transform (OKLCH)                                                                                                                             |
+| `packages/a11y-prefs/scss/_index.scss` **(package)**                                           | Public entry point (`@forward` of the four modules)                                                                                                                              |
+| `packages/a11y-prefs/scss/modules/_a11y-fonts.scss` **(package, E5)**                          | Opt-in accessibility fonts module: `a11y-font-faces($path)` (@font-face OpenDyslexic/Andika/Atkinson) + `a11y-font-classes`; configurable path `$a11y-fonts-path`          |
+| `packages/a11y-prefs/scss/modules/_motion.scss` **(package, E5)**                              | Opt-in motion-reduction module: `reduce-motion-class` (`html.reduce-motion` class) + `motion-safe` (host `prefers-reduced-motion` contract)                                 |
+| `packages/a11y-prefs/scss/modules/_dyslexia.scss` **(package, E5)**                            | Opt-in dyslexia mode module: `dyslexia-typography` mixin, configurable 3 levels (title/subtitle/body), `font-size-adjust`, BDA spacing — visually calibrated (2026-07-09) |
+| `packages/a11y-prefs/fonts/` **(package, E5)**                                                 | Bundled OFL fonts (22 files, 5 families) + `LICENSES/` (audit, texts to be frozen in E7)                                                                                       |
+| `src/styles/themes/_theme-variables.scss`                                                     | **Portfolio's layer 3**: ~70 component tokens + `apply-theme-variables()` (derived from the package's roles)                                                                     |
+| `src/styles/themes/_light.scss`, `_dark.scss`, `_high-contrast.scss`, `_deuteranopia.scss`, … | One file per theme (= **project config**): light reset → package transform → `apply-theme-variables` → manual overrides                                            |
+| `src/styles/abstracts/_theme-system.scss`                                                     | Assembly point: `generate-theme-css-vars()` (snapshot of the Sass globals → custom properties) + the 12 `[data-theme]` blocks, `:root`, and `@media (prefers-color-scheme: dark)`  |
+| `src/styles/main.scss`                                                                        | Entry point: carries the package's **`with()` configuration** (first load of the state module), then `@use`s each partial                                                    |
 
-### Côté React (runtime)
+### React side (runtime)
 
-Depuis E4 (2026-07-07), le runtime vit dans `packages/a11y-prefs/react/`
-(consommé en source TS : `transpilePackages` Next, `moduleNameMapper`
-Jest, React en peerDependency) ; les fichiers historiques du portfolio
-sont des **shims de ré-export** (les imports `@/config/themes`,
-`@/hooks/…` n'ont pas bougé).
+Since E4 (2026-07-07), the runtime lives in `packages/a11y-prefs/react/`
+(consumed as TS source: Next `transpilePackages`, Jest
+`moduleNameMapper`, React as a peerDependency); the portfolio's historical
+files are **re-export shims** (the `@/config/themes`,
+`@/hooks/…` imports haven't moved).
 
-| Fichier | Rôle |
+| File | Role |
 | --- | --- |
-| `packages/a11y-prefs/react/themes.ts` **(paquet)** | Source unique de la liste des 15 thèmes (`THEMES` + type `ThemeOption`) — module de données pur, sûr côté Server Components |
-| `packages/a11y-prefs/react/useTheme.ts` **(paquet)** | État React du thème (`"use client"`) : init paresseuse localStorage/matchMedia, `setTheme()`, `MutationObserver` ; paramètre `themes` optionnel (défaut : les 12) |
-| `packages/a11y-prefs/react/usePrefersDarkMode.ts` **(paquet)** | Abonnement à `prefers-color-scheme` via `useSyncExternalStore` |
-| `packages/a11y-prefs/react/themeInitScript.ts` **(paquet)** | Génère la chaîne du script anti-FOUC (byte-identique au littéral historique) |
-| `packages/a11y-prefs/react/appliers.ts` **(paquet, E5)** | Appliers DOM SSR-safe : `applyFontSizeFactor`, `applyAccessibilityFont(font, classMap)`, `applyReduceMotion` — les stores du portfolio leur délèguent |
-| `packages/a11y-prefs/react/usePreference.ts` **(paquet, E5)** | Hook générique `usePreference<T>(key, {defaultValue, serialize?, deserialize?, apply})` : localStorage + application DOM (patron § 6.5) — pas encore consommé par le portfolio |
-| `src/config/themes.ts`, `src/hooks/useTheme.ts`, `src/hooks/usePrefersDarkMode.ts` | Shims de ré-export du paquet (compatibilité des chemins d'import) |
-| `src/app/[lang]/layout.tsx` | Injecte `themeInitScript(THEMES)` en `beforeInteractive` : pose `data-theme` avant le premier paint |
-| `src/components/accessibilityMenu/AccessibilityMenu.tsx` | UI de sélection : 3 axes (Mode, Confort, Vision), mémorisation du dernier thème de base (`lastBaseTheme`), reset global — scaffoldée en E6, reste projet |
+| `packages/a11y-prefs/react/themes.ts` **(package)** | Single source for the 15-theme list (`THEMES` + `ThemeOption` type) — a pure data module, safe on the Server Components side |
+| `packages/a11y-prefs/react/useTheme.ts` **(package)** | React theme state (`"use client"`): lazy localStorage/matchMedia init, `setTheme()`, `MutationObserver`; optional `themes` parameter (default: the 12) |
+| `packages/a11y-prefs/react/usePrefersDarkMode.ts` **(package)** | Subscription to `prefers-color-scheme` via `useSyncExternalStore` |
+| `packages/a11y-prefs/react/themeInitScript.ts` **(package)** | Generates the anti-FOUC script string (byte-identical to the historical literal) |
+| `packages/a11y-prefs/react/appliers.ts` **(package, E5)** | SSR-safe DOM appliers: `applyFontSizeFactor`, `applyAccessibilityFont(font, classMap)`, `applyReduceMotion` — the portfolio's stores delegate to them |
+| `packages/a11y-prefs/react/usePreference.ts` **(package, E5)** | Generic `usePreference<T>(key, {defaultValue, serialize?, deserialize?, apply})` hook: localStorage + DOM application (§ 6.5 pattern) — not yet consumed by the portfolio |
+| `src/config/themes.ts`, `src/hooks/useTheme.ts`, `src/hooks/usePrefersDarkMode.ts` | Package re-export shims (import-path compatibility) |
+| `src/app/[lang]/layout.tsx` | Injects `themeInitScript(THEMES)` as `beforeInteractive`: sets `data-theme` before first paint |
+| `src/components/accessibilityMenu/AccessibilityMenu.tsx` | Selection UI: 3 axes (Mode, Comfort, Vision), last-base-theme memory (`lastBaseTheme`), global reset — scaffolded in E6, stays a project file |
 
-### Fichiers hérités (code mort, non importés)
+### Legacy files (dead code, not imported)
 
-*(résolu — voir [CHANGELOG](./CHANGELOG.md) du 2026-07-03, phase 1)*
+*(resolved — see the [CHANGELOG](./CHANGELOG.md) of 2026-07-03, phase 1)*
 
-| Fichier                                         | État                                                                                                                           |
+| File                                         | Status                                                                                                                           |
 | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `src/styles/abstracts/_variables.scss`          | **Purgé le 2026-07-03.** Ancienne définition statique des variables dérivées ; plus importé depuis `main.scss`.                |
-| `src/styles/abstracts/_dark-functions.scss`     | **Purgé le 2026-07-03.** Vide (en-tête de commentaire uniquement).                                                             |
-| `transform-for-dark()` dans `_theme-utils.scss` | **Purgé le 2026-07-03**, avec plusieurs autres fonctions/mixins jamais appelés (voir CHANGELOG pour la liste complète).        |
+| `src/styles/abstracts/_variables.scss`          | **Purged 2026-07-03.** Old static definition of derived variables; no longer imported from `main.scss`.                |
+| `src/styles/abstracts/_dark-functions.scss`     | **Purged 2026-07-03.** Empty (comment header only).                                                             |
+| `transform-for-dark()` in `_theme-utils.scss` | **Purged 2026-07-03**, along with several other never-called functions/mixins (see the CHANGELOG for the full list).        |
 
-## 4. La chaîne en détail
+## 4. The chain in detail
 
-### 4.1 Couches de variables (compilation)
+### 4.1 Variable layers (compilation)
 
-État depuis la migration des fondations (voir § 6 pour l'architecture cible
-et le [CHANGELOG](./CHANGELOG.md) du 2026-07-03 pour le détail des phases) :
-le modèle à trois couches décrit en § 6.1 est maintenant en place.
+State as of the foundations migration (see § 6 for the target
+architecture and the [CHANGELOG](./CHANGELOG.md) of 2026-07-03 for phase
+details): the three-layer model described in § 6.1 is now in place.
 
-1. **Palette brute** — `$colors` : map Sass `famille → poids → hex`,
+1. **Raw palette** — `$colors`: a Sass map `family → weight → hex`,
    accessible via `get-color("amber", 300)` (`_base-palette.scss`).
-2. **Couche 1 — le rail** — 11 crans numériques `$gray-50` … `$gray-950`
-   (famille `stone`), plus les alias `$off-white`/`$near-black` (= `$gray-50`
-   / `$gray-950`, resynchronisés après chaque transformation) ; primitives
-   sémantiques `$accent`, `$accent-strong`, `$accent-ink`, `$accent-soft`,
-   `$link`, `$link-hover`, `$success`, `$danger`. Toutes tirées de la palette
-   via `get-color()` — les transformations retrouvent ensuite ces métadonnées
-   (famille + poids) par recherche inverse (`analyze-tailwind-color`).
-3. **Couche 2 — les rôles** — `apply-roles()` dérive ~15 tokens
+2. **Layer 1 — the rail** — 11 numeric steps `$gray-50` … `$gray-950`
+   (`stone` family), plus the `$off-white`/`$near-black` aliases (=
+   `$gray-50` / `$gray-950`, resynced after every transform); semantic
+   primitives `$accent`, `$accent-strong`, `$accent-ink`, `$accent-soft`,
+   `$link`, `$link-hover`, `$success`, `$danger`. All drawn from the
+   palette via `get-color()` — the transforms later recover this
+   metadata (family + weight) via reverse lookup (`analyze-tailwind-color`).
+3. **Layer 2 — the roles** — `apply-roles()` derives ~15 tokens
    (`$bg-base`, `$bg-subtle`, `$fg-base`, `$fg-on-emphasis`, `$border-base`,
-   `$focus-ring`, …) du rail et des primitives. Appelé par chaque moteur
-   entre la transformation et `apply-theme-variables()`.
-4. **Couche 3 — variables dérivées** — `apply-theme-variables()` : ~70
-   variables (`$color-header-bg`, `$color-portfolio-tag-bg`, …) calculées à
-   partir des rôles (pas directement du rail). C'est la couche qui mappe la
-   sémantique du design vers les éléments concrets de l'UI, propre au
-   portfolio (hors périmètre du futur paquet — voir § 6.1). Ré-invoquer ce
-   mixin après mutation des couches 1/2 recalcule toute la cascade.
-5. **Custom properties CSS** — `generate-theme-css-vars()` photographie
-   l'état courant des globales Sass en `--*` (rail, primitives, rôles,
-   variables dérivées). S'y ajoutent des constantes inter-thèmes :
+   `$focus-ring`, …) from the rail and the primitives. Called by every
+   engine between the transform and `apply-theme-variables()`.
+4. **Layer 3 — derived variables** — `apply-theme-variables()`: ~70
+   variables (`$color-header-bg`, `$color-portfolio-tag-bg`, …) computed
+   from the roles (not directly from the rail). This is the layer that
+   maps design semantics onto the UI's concrete elements, specific to the
+   portfolio (outside the future package's scope — see § 6.1).
+   Re-invoking this mixin after mutating layers 1/2 recomputes the whole
+   cascade.
+5. **CSS custom properties** — `generate-theme-css-vars()` snapshots the
+   current state of the Sass globals into `--*` (rail, primitives, roles,
+   derived variables). Cross-theme constants are added on top:
    `--constant-off-white`, `--constant-near-black`, `--constant-error-color`,
    `--constant-success-color`.
 
-### 4.2 Le patron d'un fichier de thème
+### 4.2 The pattern of a theme file
 
-Chaque `_X.scss` de `src/styles/themes/` suit le même schéma en 3 temps :
+Every `_X.scss` in `src/styles/themes/` follows the same 3-step pattern:
 
 ```scss
 @mixin x-theme-variables() {
@@ -211,366 +212,368 @@ Chaque `_X.scss` de `src/styles/themes/` suit le même schéma en 3 temps :
 }
 ```
 
-Cas particulier : les thèmes anti-glare se **composent** —
-`anti-glare-dark` = light → dark → transformation anti-éblouissement.
+Special case: anti-glare themes are **composed** —
+`anti-glare-dark` = light → dark → anti-glare transformation.
 
-### 4.3 Les moteurs de transformation
+### 4.3 The transformation engines
 
-- **Dark** (`transform-light-to-dark`) : `analyze-tailwind-color()` retrouve
-  famille + poids d'une couleur par recherche inverse dans `$colors`, puis
-  `get-dark-color()` décale le poids de N crans (`steps: 7` par défaut) en
-  miroir autour du pivot 500 : les clairs foncent, les foncés
-  s'éclaircissent. Ajustements par variable (`adjustments`) et exclusions
-  (`overrides`). Fallback `darken()`/`lighten()` pour les couleurs hors
-  palette.
-- **High contrast** (`transform-light-to-high-contrast`) : palette fixe de
-  couleurs pures (`#000`/`#ff0`/`#0ff`/…) choisie par **rôle**, déduit du nom
-  de la variable (`_bg`, `_text`, `link`, `title`, `hover`…) ou, à défaut, de
-  la luminance (`is-dark()`).
-- **Daltonismes (les 6 thèmes non-achromatopsie)**
-  (`transform-light-to-{deuter,prot,trit}{anopia,anomaly}`) — deux
-  mécanismes, selon la classe de rôle :
-  - **Rôles identitaires** (`accent`, `link`…) via `remap-for-cvd()`
-    (chantier E2/refonte daltonienne partie 1, 2026-07-04) : cascade —
-    (1) `special-colors` explicite (prioritaire, vide par défaut),
-    (2) famille Tailwind reconnue **et** présente dans la table
-    `family-remap` du thème → substitution à poids décalé (tritanopie :
-    `amber → orange (0)`, `sky → violet (0)` ; les tables rouge-vertes ne
-    remappent aucun rôle identitaire, `accent`/`link` étant déjà sûrs),
-    (3) famille reconnue mais absente → inchangée, (4) hors palette → repli
-    par rotation de teinte OKLCH. Anomalies : mélange perceptuel OKLCH
-    (`severity: 0.5`) entre original et remappé (n'agit plus que sur les
-    tritan, seuls thèmes gardant un `family-remap` non vide), **ramené dans
-    le gamut sRGB** par réduction de chroma (`gamut-map-srgb`, partie 3) —
-    un mélange OKLCH entre teintes éloignées peut sortir du gamut, que le
-    navigateur clamperait sinon silencieusement.
-  - **Rôles statut** (`success`, `danger`) via `resolve-status-color()`
-    (partie 2, 2026-07-06) : ancre sémantique par type de CVD, poids
-    auto-résolu pour garantir 4.5:1 sur le fond — déficience rouge-verte
-    -opie : `success → violet-600`, `danger → orange-700` ; -omalie
-    (légère) : teintes naturelles corrigées en poids, `success → emerald-700`,
-    `danger → redd-600` ; tritanopie : inchangés (rouge/vert bien perçus).
-    Priorité `special-colors` conservée. Voir § 6.1 (« rôles statut, une
-    classe à part »).
-  L'ancien mécanisme à fenêtres de teinte HSL
-  (`adapt-color-for-colorblindness`/`adapt-color-for-color-anomaly`) est
-  purgé (plus aucun appelant, confirmé par grep). Garanties vérifiées
-  mécaniquement par le système de tests de contrastes (§ 6, chantier E1) :
-  ratio WCAG (aussi calculé côté Sass par `wcag-contrast-ratio()`, aligné
-  culori) **et** distinguabilité ΔE CIEDE2000 sous simulation CVD
-  (`src/accessibility/contrast/cvd-simulation.ts`, matrices de Machado et
-  al. 2009), **et** appartenance au gamut sRGB (partie 3, `gamut.test.ts` :
-  aucune couleur émise ne sort du gamut, sur les 15 thèmes). Robustesse
-  (partie 3) : le résolveur de statut n'échoue jamais en dur — s'il ne peut
-  atteindre la cible de contraste, il renvoie le meilleur effort et `@warn`.
-- **Achromatopsie** (`transform-light-to-achromatopsia`) : conversion des
-  familles de gris vers `neutral` (`convert-to-neutral-gray`), et des
-  couleurs vers un gris de luminance équivalente (`get-adjusted-gray`, qui
-  requantifie la luminance sur les 11 poids Tailwind). Mécanisme séparé,
-  volontairement non touché par la refonte daltonienne ci-dessus (elle ne
-  couvre que les 6 thèmes dichromates/anomaux).
-- **Anti-éblouissement** (`transform-theme-for-anti-glare`) — réécrit
-  chantier E2/revue des moteurs, 2026-07-04 : dérive désormais les ~70
-  tokens de couche 3 en une seule passe depuis les rôles anti-éblouis
-  (couverture totale, au lieu d'une liste explicite d'une vingtaine de
-  tokens) ; la transformation perceptuelle (`transform-for-anti-glare`)
-  travaille en OKLCH (lightness/chroma) plutôt qu'en HSL, pour une
-  atténuation perceptuellement uniforme quelle que soit la teinte. En mode
-  light, plafonne la luminosité des couleurs très claires (pas de blanc
-  pur) et réduit légèrement la chroma ; en mode dark, relève les noirs
-  profonds. L'overlay plein écran `body::before` (`backdrop-filter`) a été
-  supprimé (coût GPU permanent pour un effet mesuré comme négligeable).
+- **Dark** (`transform-light-to-dark`): `analyze-tailwind-color()`
+  recovers a color's family + weight via reverse lookup in `$colors`,
+  then `get-dark-color()` shifts the weight by N steps (`steps: 7` by
+  default), mirrored around the 500 pivot: light colors darken, dark ones
+  lighten. Per-variable adjustments (`adjustments`) and exclusions
+  (`overrides`). `darken()`/`lighten()` fallback for out-of-palette
+  colors.
+- **High contrast** (`transform-light-to-high-contrast`): a fixed palette
+  of pure colors (`#000`/`#ff0`/`#0ff`/…) chosen by **role**, deduced
+  from the variable name (`_bg`, `_text`, `link`, `title`, `hover`…) or,
+  failing that, by luminance (`is-dark()`).
+- **Color blindness (the 6 non-achromatopsia themes)**
+  (`transform-light-to-{deuter,prot,trit}{anopia,anomaly}`) — two
+  mechanisms, depending on the role class:
+  - **Identity roles** (`accent`, `link`…) via `remap-for-cvd()`
+    (E2/color-blind redesign chantier, part 1, 2026-07-04): a cascade —
+    (1) explicit `special-colors` (priority, empty by default),
+    (2) a recognized Tailwind family **and** present in the theme's
+    `family-remap` table → substitution at a shifted weight (tritanopia:
+    `amber → orange (0)`, `sky → violet (0)`; the red-green tables remap
+    no identity role, `accent`/`link` already being safe),
+    (3) a recognized but absent family → unchanged, (4) out of palette →
+    OKLCH hue-rotation fallback. Anomalies: an OKLCH perceptual blend
+    (`severity: 0.5`) between the original and the remapped version
+    (only affects tritan now, the only themes keeping a non-empty
+    `family-remap`), **brought back into the sRGB gamut** via chroma
+    reduction (`gamut-map-srgb`, part 3) — an OKLCH mix between distant
+    hues can fall outside the gamut, which the browser would otherwise
+    silently clamp.
+  - **Status roles** (`success`, `danger`) via `resolve-status-color()`
+    (part 2, 2026-07-06): a semantic anchor per CVD type, weight
+    auto-resolved to guarantee 4.5:1 against the background — red-green
+    -opia deficiency: `success → violet-600`, `danger → orange-700`;
+    -omaly (mild): natural hues corrected in weight, `success →
+    emerald-700`, `danger → redd-600`; tritanopia: unchanged (red/green
+    well perceived). `special-colors` priority kept. See § 6.1 ("status
+    roles, a class of their own").
+  The old HSL hue-window mechanism
+  (`adapt-color-for-colorblindness`/`adapt-color-for-color-anomaly`) is
+  purged (no callers left, confirmed via grep). Guarantees mechanically
+  verified by the contrast testing system (§ 6, E1 chantier): WCAG ratio
+  (also computed on the Sass side by `wcag-contrast-ratio()`, aligned
+  with culori) **and** CIEDE2000 ΔE distinguishability under CVD
+  simulation (`src/accessibility/contrast/cvd-simulation.ts`, Machado et
+  al. 2009 matrices), **and** sRGB gamut membership (part 3,
+  `gamut.test.ts`: no emitted color falls outside the gamut, across the
+  15 themes). Robustness (part 3): the status resolver never hard-fails —
+  if it can't reach the contrast target, it returns the best effort and
+  `@warn`s.
+- **Achromatopsia** (`transform-light-to-achromatopsia`): conversion of
+  gray families to `neutral` (`convert-to-neutral-gray`), and colors to a
+  gray of equivalent luminance (`get-adjusted-gray`, which requantizes
+  luminance onto the 11 Tailwind weights). A separate mechanism,
+  deliberately untouched by the color-blind redesign above (it only
+  covers the 6 dichromat/anomalous themes).
+- **Anti-glare** (`transform-theme-for-anti-glare`) — rewritten during the
+  E2/engine review chantier, 2026-07-04: now derives the ~70 layer-3
+  tokens in a single pass from the anti-glared roles (full coverage,
+  instead of an explicit list of about twenty tokens); the perceptual
+  transform (`transform-for-anti-glare`) works in OKLCH (lightness/chroma)
+  rather than HSL, for perceptually uniform attenuation regardless of
+  hue. In light mode, caps the brightness of very light colors (no pure
+  white) and slightly reduces chroma; in dark mode, raises deep blacks.
+  The full-screen `body::before` overlay (`backdrop-filter`) was removed
+  (a permanent GPU cost for an effect measured as negligible).
 
-### 4.4 L'assemblage CSS
+### 4.4 The CSS assembly
 
-Dans `_theme-system.scss`, pour chaque thème : invocation du mixin du thème
-(mutation des globales Sass) puis `generate-theme-css-vars()` (snapshot).
-Résolution en cascade :
+In `_theme-system.scss`, for each theme: invoking the theme's mixin
+(mutating the Sass globals) then `generate-theme-css-vars()` (snapshot).
+Cascade resolution:
 
-1. `:root` → thème light (défaut) ;
-2. `@media (prefers-color-scheme: dark)` + `:root:not([data-theme])` → dark
-   automatique si aucun choix explicite ;
-3. `[data-theme="…"]` → choix explicite de l'utilisateur (12 blocs).
+1. `:root` → light theme (default);
+2. `@media (prefers-color-scheme: dark)` + `:root:not([data-theme])` →
+   automatic dark if no explicit choice;
+3. `[data-theme="…"]` → the user's explicit choice (12 blocks).
 
-### 4.5 La consommation
+### 4.5 Consumption
 
-Les composants SCSS consomment **exclusivement** `var(--color-…)` (les
-usages directs de variables Sass dans les composants sont tous commentés).
-Aucun composant ne connaît les thèmes : ils ne référencent que la couche
-sémantique.
+SCSS components consume **exclusively** `var(--color-…)` (direct uses of
+Sass variables in components are all comments now). No component knows
+about the themes: they only reference the semantic layer.
 
-### 4.6 Le runtime React
+### 4.6 The React runtime
 
-1. **Anti-FOUC** : script inline `beforeInteractive`
-   (`src/app/[lang]/layout.tsx`) — injecte désormais `THEMES` depuis
-   `src/config/themes.ts` (source unique, voir § 3 ; résolu en phase 7 de la
-   migration des fondations, cf. bug de désynchronisation corrigé le
-   2026-07-01 avant que la source unique n'existe).
-2. **`useTheme()`** : source de vérité côté React. Init paresseuse
-   (localStorage → matchMedia → `"light"`), `setTheme()` écrit l'attribut et
-   localStorage, un `MutationObserver` resynchronise l'état si `data-theme`
-   est modifié par un autre acteur.
-3. **`AccessibilityMenu`** : présente les 15 thèmes en 3 axes orthogonaux (les variantes HC via un sélecteur dédié)
-   pour l'utilisateur (Mode, Contraste/Confort, Vision) alors que le modèle
-   sous-jacent est plat (un seul `data-theme`). Une ref `lastBaseTheme`
-   mémorise le dernier light/dark pour que « anti-glare » ou « retour à
-   vision normale » retombe sur la bonne variante.
+1. **Anti-FOUC**: inline `beforeInteractive` script
+   (`src/app/[lang]/layout.tsx`) — now injects `THEMES` from
+   `src/config/themes.ts` (single source, see § 3; resolved in phase 7 of
+   the foundations migration, cf. the desync bug fixed on 2026-07-01
+   before the single source existed).
+2. **`useTheme()`**: the React-side source of truth. Lazy init
+   (localStorage → matchMedia → `"light"`), `setTheme()` writes the
+   attribute and localStorage, a `MutationObserver` resyncs state if
+   `data-theme` is changed by another actor.
+3. **`AccessibilityMenu`**: presents the 15 themes across 3 orthogonal
+   axes (HC variants via a dedicated selector) to the user (Mode,
+   Contrast/Comfort, Vision) while the underlying model is flat (a single
+   `data-theme`). A `lastBaseTheme` ref remembers the last light/dark so
+   that "anti-glare" or "back to normal vision" lands on the right
+   variant.
 
-## 5. Points relevés (état des lieux, 2026-07-02)
+## 5. Findings (state of play, 2026-07-02)
 
-Constats factuels issus de l'analyse du code, sans hiérarchie :
+Factual findings from analyzing the code, with no ranking:
 
-1. **Code mort et strates historiques** : `_variables.scss` et
-   `_dark-functions.scss` ne sont plus importés ; `transform-for-dark()`
-   référence des maps disparues ; de nombreuses anciennes versions vivent en
-   commentaires dans les fichiers de thèmes (parfois plus longues que le code
-   actif, ex. `_dark.scss` : 85 lignes de commentaires pour 70 de code).
-   *(résolu — voir CHANGELOG du 2026-07-03, phase 1)*
-2. **Mutation séquentielle de globales Sass** : le pipeline fonctionne parce
-   que chaque bloc de thème repart d'un reset `light-theme-variables()`.
-   L'ordre d'exécution est porteur de sens — fragile si on réorganise les
-   imports ou les blocs.
-3. **Duplication massive du patron `@if not(override) { transform }`** :
-   chaque mixin `transform-light-to-X` répète ce bloc pour chaque variable
-   (~8 fois × 8 thèmes). Ajouter une couleur de base impose de toucher tous
-   les mixins.
-4. **La liste des variables existe en plusieurs exemplaires** à garder
-   synchronisés manuellement : `apply-theme-variables()`,
-   `generate-theme-css-vars()`, et chaque mixin de transformation.
-   *(résolu partiellement — voir CHANGELOG du 2026-07-03, phase 6 : les
-   moteurs ne transforment plus que le rail + ~19 primitives/rôles au lieu
-   des ~70 variables de couche 3 directement ; la couche 3 elle-même reste
-   listée séparément dans `apply-theme-variables()` et
-   `generate-theme-css-vars()` — un registre central unifiant les trois
-   reste une piste future, § 7)*
-5. **La liste des thèmes existe en 3 exemplaires** : `VALID_THEMES`
-   (useTheme), le script inline anti-FOUC, et les blocs `[data-theme]` SCSS
-   (+ le type `ThemeOption` et les handlers de l'AccessibilityMenu).
-   *(résolu — voir CHANGELOG du 2026-07-03, phase 7 : source unique
-   `src/config/themes.ts` pour le runtime ; les blocs SCSS restent à
-   synchroniser manuellement jusqu'à l'extraction en paquet)*
-6. **API Sass dépréciée** : `@import` (au lieu de `@use`/`@forward`),
-   `darken()`/`lighten()`, division `/` — tout cela disparaît dans les
-   versions récentes de Dart Sass. Bloquant pour un packaging pérenne.
-   *(résolu — voir CHANGELOG du 2026-07-03, phase 5 : migration complète,
-   compilation sans avertissement de dépréciation)*
-7. **Artefacts de débogage dans `setTheme()`** : reflow forcé, classe
-   `theme-switching` ajoutée/retirée, `console.log` en production.
-   *(résolu — voir CHANGELOG du 2026-07-03, phase 2)*
-8. **Nommage : une convention voulue mais invérifiable.** Le mélange
-   underscore/tiret des variables dérivées suit une convention délibérée de
-   Simon : underscore = séparateur de niveaux (façon BEM :
-   `$color_header_blog-link_bg` = color / header / blog-link / bg), tiret =
-   séparateur de mots à l'intérieur d'un niveau. Limite technique : **Sass
-   traite `-` et `_` comme interchangeables dans les identifiants** —
-   `$color_a-b_c` et `$color_a_b-c` sont la même variable pour le
-   compilateur. La hiérarchie n'existe donc que pour l'œil, ne peut pas être
-   vérifiée, et les « doublons » apparents (`$color-main-bg` /
-   `$color_main-bg`) sont en réalité une même variable assignée deux fois.
-   Décision (cf. § 6) : kebab-case partout, la hiérarchie sera portée par le
-   futur registre (maps), pas par la typographie des noms. Divers : typo
-   `bg-texte`, famille `redd` (double d pour éviter la collision avec le
-   mot-clé CSS `red`).
-   *(résolu partiellement — voir CHANGELOG du 2026-07-03, phase 4 :
-   kebab-case généralisé, doublons dédupliqués, typo `bg-texte` corrigée ;
-   le registre central portant la hiérarchie reste une piste future, § 7)*
-9. **Poids CSS** : 12 blocs × ~80 custom properties + règles imbriquées
-   dupliquées dans certains thèmes ; tout est embarqué même si l'utilisateur
-   n'utilise qu'un thème.
-10. **Certaines transformations ne couvrent pas toutes les variables** :
-    `transform-theme-for-anti-glare` transforme une sous-liste explicite des
-    variables dérivées (les autres restent héritées du thème de base) ; les
-    thèmes daltoniens ne touchent que les couleurs sémantiques (gris
-    intacts, ce qui est voulu, mais implicite).
-    *(résolu pour l'anti-éblouissement — voir CHANGELOG du 2026-07-04,
-    chantier E2/revue des moteurs phase 2 : `transform-theme-for-anti-glare`
-    rederive désormais les ~70 tokens de couche 3 en une seule passe depuis
-    les rôles anti-éblouis (`apply-theme-variables`), couverture totale au
-    lieu d'une liste explicite de ~22 tokens. Le point daltonien reste
-    voulu tel quel — seules les 8 primitives sémantiques (`accent`,
-    `link`, `success`, `danger`…) sont remappées, les gris ne le sont
-    jamais — mais n'est plus *implicite* : voir CHANGELOG du 2026-07-04,
-    chantier E2/refonte daltonienne, qui documente et teste
-    mécaniquement ce périmètre (`remap-for-cvd` ne s'applique qu'aux
-    primitives passées explicitement par les 6 mixins de thème))*
-11. **`--success-color`/`--error-color` ne sont pas exposées en CSS** (lignes
-    commentées dans `generate-theme-css-vars()`) ; à la place, deux
-    constantes `--constant-error-color`/`--constant-success-color` codées en
-    dur — les adaptations daltoniennes de `$success-color`/`$error-color`
-    calculées en Sass ne sont donc jamais visibles côté CSS.
-    *(résolu partiellement — voir CHANGELOG du 2026-07-03, phase 6 :
-    `--success`/`--danger` (renommés, § 6.1) sont désormais émises avec les
-    valeurs thématisées ; les constantes `--constant-success-color`/
-    `--constant-error-color` sont conservées telles quelles, à dessein)*
+1. **Dead code and historical strata**: `_variables.scss` and
+   `_dark-functions.scss` are no longer imported; `transform-for-dark()`
+   references maps that no longer exist; many old versions live on as
+   comments inside the theme files (sometimes longer than the active
+   code, e.g. `_dark.scss`: 85 lines of comments for 70 of code).
+   *(resolved — see the CHANGELOG of 2026-07-03, phase 1)*
+2. **Sequential mutation of Sass globals**: the pipeline works because
+   every theme block starts from a `light-theme-variables()` reset.
+   Execution order carries meaning — fragile if the imports or blocks get
+   reorganized.
+3. **Massive duplication of the `@if not(override) { transform }`
+   pattern**: each `transform-light-to-X` mixin repeats this block for
+   every variable (~8 times × 8 themes). Adding a base color requires
+   touching every mixin.
+4. **The variable list exists in several copies** that must be kept
+   manually in sync: `apply-theme-variables()`,
+   `generate-theme-css-vars()`, and each transform mixin.
+   *(partially resolved — see the CHANGELOG of 2026-07-03, phase 6: the
+   engines now only transform the rail + ~19 primitives/roles instead of
+   the ~70 layer-3 variables directly; layer 3 itself remains listed
+   separately in `apply-theme-variables()` and
+   `generate-theme-css-vars()` — a central registry unifying all three
+   remains a future idea, § 7)*
+5. **The theme list exists in 3 copies**: `VALID_THEMES`
+   (useTheme), the inline anti-FOUC script, and the SCSS `[data-theme]`
+   blocks (+ the `ThemeOption` type and the AccessibilityMenu's
+   handlers). *(resolved — see the CHANGELOG of 2026-07-03, phase 7:
+   single source `src/config/themes.ts` for the runtime; the SCSS blocks
+   remain to be synced manually until the package extraction)*
+6. **Deprecated Sass API**: `@import` (instead of `@use`/`@forward`),
+   `darken()`/`lighten()`, `/` division — all of this disappears in
+   recent Dart Sass versions. Blocking for durable packaging.
+   *(resolved — see the CHANGELOG of 2026-07-03, phase 5: full migration,
+   compiles with zero deprecation warning)*
+7. **Debug artifacts in `setTheme()`**: forced reflow, the
+   `theme-switching` class added/removed, `console.log` in production.
+   *(resolved — see the CHANGELOG of 2026-07-03, phase 2)*
+8. **Naming: an intended but unverifiable convention.** The mix of
+   underscore/hyphen in the derived variables follows a deliberate
+   convention: underscore = level separator (BEM-style:
+   `$color_header_blog-link_bg` = color / header / blog-link / bg),
+   hyphen = word separator within a level. Technical limit: **Sass treats
+   `-` and `_` as interchangeable in identifiers** — `$color_a-b_c` and
+   `$color_a_b-c` are the same variable to the compiler. The hierarchy
+   therefore only exists for the eye, can't be verified, and the
+   apparent "duplicates" (`$color-main-bg` /
+   `$color_main-bg`) are actually the same variable assigned twice.
+   Decision (cf. § 6): kebab-case everywhere, the hierarchy will be
+   carried by the future registry (maps), not by name typography. Misc:
+   the `bg-texte` typo, the `redd` family (double d to avoid the
+   collision with the CSS keyword `red`).
+   *(partially resolved — see the CHANGELOG of 2026-07-03, phase 4:
+   kebab-case generalized, duplicates deduplicated, the `bg-texte` typo
+   fixed; the central registry carrying the hierarchy remains a future
+   idea, § 7)*
+9. **CSS weight**: 12 blocks × ~80 custom properties + nested rules
+   duplicated in some themes; everything ships even if the user only
+   uses one theme.
+10. **Some transforms don't cover every variable**:
+    `transform-theme-for-anti-glare` transforms an explicit sub-list of
+    the derived variables (the rest stay inherited from the base theme);
+    the color-blind themes only touch semantic colors (grays untouched,
+    which is intended, but implicit).
+    *(resolved for anti-glare — see the CHANGELOG of 2026-07-04,
+    E2/engine review chantier phase 2: `transform-theme-for-anti-glare`
+    now re-derives the ~70 layer-3 tokens in a single pass from the
+    anti-glared roles (`apply-theme-variables`), full coverage instead of
+    an explicit list of ~22 tokens. The color-blind point remains
+    intended as-is — only the 8 semantic primitives (`accent`,
+    `link`, `success`, `danger`…) are remapped, grays never are — but is
+    no longer *implicit*: see the CHANGELOG of 2026-07-04,
+    E2/color-blind redesign chantier, which documents and mechanically
+    tests this scope (`remap-for-cvd` only applies to the primitives
+    explicitly passed by the 6 theme mixins))*
+11. **`--success-color`/`--error-color` aren't exposed in CSS**
+    (commented-out lines in `generate-theme-css-vars()`); instead, two
+    hardcoded constants `--constant-error-color`/`--constant-success-color`
+    — the color-blind adaptations of `$success-color`/`$error-color`
+    computed in Sass are therefore never visible on the CSS side.
+    *(partially resolved — see the CHANGELOG of 2026-07-03, phase 6:
+    `--success`/`--danger` (renamed, § 6.1) are now emitted with themed
+    values; the `--constant-success-color`/`--constant-error-color`
+    constants are kept as-is, deliberately)*
 
-## 6. Architecture cible du composant exportable (décisions actées)
+## 6. Target architecture of the exportable component (decisions made)
 
-État de la réflexion au 2026-07-02, issue des discussions de conception avec
-Simon. Ces décisions orientent toutes les migrations à venir. Statut : le
-modèle à trois couches, le périmètre du paquet et la trajectoire sont
-**actés** ; le vocabulaire précis de la couche 2 est **accepté comme base**,
-affinable avant son introduction. Complété le **2026-07-03** par deux
-décisions actées : élargissement du périmètre au **système de préférences
-d'accessibilité complet** (§ 6.5) et **distribution hybride** npm +
-scaffolding (§ 6.3).
+State of the design discussion as of 2026-07-02. These decisions guide
+every future migration. Status: the three-layer model, the package's
+scope, and the trajectory are **decided**; layer 2's exact vocabulary is
+**accepted as a baseline**, refinable before its introduction. Completed
+on **2026-07-03** with two more decisions: widening the scope to the
+**full accessibility preferences system** (§ 6.5) and **hybrid
+distribution** via npm + scaffolding (§ 6.3).
 
-### 6.1 Le modèle à trois couches
+### 6.1 The three-layer model
 
 ```
-Couche 1 — RAIL        $gray-50 … $gray-950 (+ familles Tailwind)
-  (primitives)         coordonnées numériques ; les moteurs de thèmes
-                       font leur arithmétique de décalage ICI
+Layer 1 — RAIL          $gray-50 … $gray-950 (+ Tailwind families)
+  (primitives)          numeric coordinates; theme engines
+                        do their shift arithmetic HERE
         │
-Couche 2 — RÔLES       ~23 tokens : bg-*, fg-*, border-*, accent*, link*,
-  (API du paquet)      focus-ring, success, danger — noms parlants, stables
-        │              à travers les 12 thèmes
-Couche 3 — COMPOSANTS  ~70 $color-* : câblage fin propre au projet,
-  (hors paquet)        jamais transformé par les moteurs
+Layer 2 — ROLES         ~23 tokens: bg-*, fg-*, border-*, accent*, link*,
+  (package API)         focus-ring, success, danger — meaningful names, stable
+        │               across the 12 themes
+Layer 3 — COMPONENTS    ~70 $color-*: fine-grained wiring specific to the
+  (outside the package) project, never transformed by the engines
 ```
 
-**Couche 1 — le rail (primitives).** *(migré le 2026-07-03, voir
+**Layer 1 — the rail (primitives).** *(migrated 2026-07-03, see the
 [CHANGELOG](./CHANGELOG.md) phase 3)*
 
-- 11 crans numériques `$gray-50` … `$gray-950`, le poids Tailwind de
-  référence du thème light dans le nom.
-- Les noms sont **volontairement non parlants** : ce sont des coordonnées
-  sur lesquelles les moteurs font de l'arithmétique de décalage. Personne
-  (humain ou IA) n'est censé les choisir au quotidien — on choisit un rôle
-  (couche 2). Les hex sont commentés au point de définition.
-- Dans les thèmes non-light, `$gray-XXX` contient la valeur _décalée_ : le
-  nom désigne le cran de référence light (un « slot »), pas une valeur fixe.
-- La famille qui joue le rail gris est une **configuration projet** (`stone`
-  ici, `slate`/`zinc` ailleurs). Contrat : toute palette fournie doit
-  respecter la géométrie des 11 poids, dont dépendent les moteurs.
-- Justification du choix numérique (vs les anciens adjectifs) : ordre total
-  évident, correspondance directe avec les configs (`"gray-400": -2` se lit
-  seul), vocabulaire pré-connu des IA et des devs (Tailwind), et surtout les
-  adjectifs _s'inversent_ en dark (`gray-lightest` y contient un gris
-  foncé) alors qu'un numéro de slot reste honnête.
+- 11 numeric steps `$gray-50` … `$gray-950`, the light theme's reference
+  Tailwind weight in the name.
+- The names are **deliberately non-meaningful**: they're coordinates the
+  engines do shift arithmetic on. Nobody (human or AI) is meant to pick
+  them day-to-day — you pick a role (layer 2) instead. Hex values are
+  commented at the point of definition.
+- In non-light themes, `$gray-XXX` holds the _shifted_ value: the name
+  designates the light reference step (a "slot"), not a fixed value.
+- The family playing the gray rail is a **project configuration**
+  (`stone` here, `slate`/`zinc` elsewhere). Contract: any supplied
+  palette must follow the 11-weight geometry the engines depend on.
+- Justification for the numeric choice (vs. the old adjectives): an
+  obvious total order, a direct match with the configs (`"gray-400": -2`
+  reads on its own), a vocabulary devs and AIs already know (Tailwind),
+  and above all adjectives _invert_ in dark (`gray-lightest` there holds
+  a dark gray) whereas a slot number stays honest.
 
-**Couche 2 — les rôles (l'API publique du paquet).** *(migré le 2026-07-03,
-voir [CHANGELOG](./CHANGELOG.md) phase 6)*
+**Layer 2 — the roles (the package's public API).** *(migrated
+2026-07-03, see the [CHANGELOG](./CHANGELOG.md) phase 6)*
 
-- Les **noms** des rôles appartiennent au paquet (ils sont le contrat sur
-  lequel s'appuient moteurs, garanties de contraste et thème high-contrast) ;
-  les **valeurs** (rôle → cran de rail) sont de la configuration projet.
-- Vocabulaire hybride : catégories façon Primer (`bg-`/`fg-`/`border-`) +
-  paires de contraste façon Material (`fg-on-emphasis`, `fg-on-accent`) là
-  où le contraste est critique — chaque paire `X`/`on-X` devient un contrat
-  de contraste testable mécaniquement dans les 12 thèmes.
-- Test décisif d'un bon nom de rôle : **il doit rester vrai dans les 12
-  thèmes** (« bg-emphasis » reste le fond appuyé, qu'il soit sombre ou
-  clair).
-- `primary/secondary/tertiary-color` (noms vagues) se dissolvent dans
-  `accent`/`accent-ink`/`accent-soft` ; `accent-strong` remplace
-  `darken($primary-color, 15%)` par un cran de rail (amber-500).
-- Point d'extension : un projet peut **ajouter** des rôles, mais ne renomme
-  pas le noyau (sinon il casse garanties et tests).
-- Ordre de grandeur sain : 12–20 rôles (23 proposés ci-dessous, léger
-  dépassement assumé). En dessous, les composants retournent piocher dans le
-  rail ; au-dessus, on a recréé une couche 3 déguisée.
+- The role **names** belong to the package (they're the contract the
+  engines, contrast guarantees, and the high-contrast theme rely on);
+  the **values** (role → rail step) are project configuration.
+- Hybrid vocabulary: Primer-style categories (`bg-`/`fg-`/`border-`) +
+  Material-style contrast pairs (`fg-on-emphasis`, `fg-on-accent`) where
+  contrast is critical — each `X`/`on-X` pair becomes a mechanically
+  testable contrast contract across the 12 themes.
+- Decisive test for a good role name: **it must stay true across all 12
+  themes** ("bg-emphasis" stays the emphasized background, whether dark
+  or light).
+- `primary/secondary/tertiary-color` (vague names) dissolve into
+  `accent`/`accent-ink`/`accent-soft`; `accent-strong` replaces
+  `darken($primary-color, 15%)` with a rail step (amber-500).
+- Extension point: a project can **add** roles, but doesn't rename the
+  core (otherwise it breaks the guarantees and tests).
+- Healthy order of magnitude: 12–20 roles (23 proposed below, a slight
+  overshoot accepted). Below that, components go back to picking from
+  the rail; above it, you've recreated a disguised layer 3.
 
-Base proposée (valeurs light du portfolio — vocabulaire affinable) :
+Proposed baseline (the portfolio's light values — vocabulary refinable):
 
-| Rôle                 | Rail (light) | Couvre notamment                                    |
+| Role                 | Rail (light) | Notably covers                                    |
 | -------------------- | ------------ | --------------------------------------------------- |
-| `bg-base`            | gray-50      | fond principal, hero, sections paires, panneau a11y |
-| `bg-subtle`          | gray-200     | sections impaires, modale contact                   |
-| `bg-container`       | gray-300     | cartes, collapse, formulaire contact                |
-| `bg-container-high`  | gray-400     | cartes des sections impaires                        |
-| `bg-emphasis`        | gray-700     | footer, titres de collapse, lang-toggle actif       |
-| `bg-emphasis-strong` | gray-800     | sticky footer                                       |
-| `bg-inverse`         | gray-950     | overlay À propos, base du tooltip                   |
-| `fg-base`            | gray-950     | texte courant, titres de pages                      |
-| `fg-muted`           | gray-700     | texte secondaire, désactivé                         |
-| `fg-on-emphasis`     | gray-50      | texte sur bg-emphasis/inverse/focus                 |
-| `fg-on-accent`       | gray-950     | texte du header (sur accent)                        |
-| `border-subtle`      | gray-500     | bordures boutons, scrollbar, curseur                |
-| `border-base`        | gray-600     | bordure panneau, indicateurs scroll                 |
-| `border-strong`      | gray-700     | bordures collapse, lang-toggle                      |
-| `accent`             | amber-300    | fond header, accent du curseur                      |
-| `accent-strong`      | amber-500    | hover de l'accent                                   |
-| `accent-soft`        | amber-100    | tags portfolio, icônes skills                       |
-| `accent-ink`         | amber-950    | titres de sections, texte des tags                  |
-| `link`               | sky-900      | liens, bouton À propos                              |
-| `link-hover`         | sky-800      | hover des liens                                     |
-| `focus-ring`         | sky-900      | outline et fond de focus                            |
-| `success`            | emerald-700  | validations (toast succès du contact) — 700 depuis le 2026-07-07, ≥ 4.5:1 |
-| `danger`             | redd-600     | erreurs                                             |
+| `bg-base`            | gray-50      | main background, hero, even sections, a11y panel |
+| `bg-subtle`          | gray-200     | odd sections, contact modal                   |
+| `bg-container`       | gray-300     | cards, collapse, contact form                   |
+| `bg-container-high`  | gray-400     | odd-section cards                               |
+| `bg-emphasis`        | gray-700     | footer, collapse titles, active lang-toggle       |
+| `bg-emphasis-strong` | gray-800     | sticky footer                                     |
+| `bg-inverse`         | gray-950     | About overlay, tooltip base                       |
+| `fg-base`            | gray-950     | running text, page titles                       |
+| `fg-muted`           | gray-700     | secondary, disabled text                        |
+| `fg-on-emphasis`     | gray-50      | text on bg-emphasis/inverse/focus                 |
+| `fg-on-accent`       | gray-950     | header text (on accent)                          |
+| `border-subtle`      | gray-500     | button borders, scrollbar, cursor                |
+| `border-base`        | gray-600     | panel border, scroll indicators                  |
+| `border-strong`      | gray-700     | collapse borders, lang-toggle                    |
+| `accent`             | amber-300    | header background, cursor accent                 |
+| `accent-strong`      | amber-500    | accent hover                                     |
+| `accent-soft`        | amber-100    | portfolio tags, skills icons                     |
+| `accent-ink`         | amber-950    | section titles, tag text                         |
+| `link`               | sky-900      | links, About button                              |
+| `link-hover`         | sky-800      | link hover                                       |
+| `focus-ring`         | sky-900      | focus outline and background                     |
+| `success`            | emerald-700  | validations (contact success toast) — 700 since 2026-07-07, ≥ 4.5:1 |
+| `danger`             | redd-600     | errors                                             |
 
-**Les rôles statut, une classe à part (acté et implémenté le
-2026-07-06).** `success` et `danger` — et, réservés pour l'extension
-future de l'API, `warning` et `info` — se distinguent des rôles
-identitaires (`accent`, `link`…) : leur sémantique est une convention
-quasi universelle (vert = OK, rouge = problème), identique d'un projet à
-l'autre. Le paquet embarque donc pour eux des **ancres sémantiques par
-type de daltonisme** (déficience rouge-verte : `success` → ancre bleue,
-`danger` → ancre orange — la paire sûre canonique ; tritanopie :
-rouge/vert conservés), résolues dans la palette du projet avec un
-**poids auto-calculé** pour satisfaire le ratio WCAG sur le fond du
-thème. Les rôles identitaires, eux, restent adaptés par les tables de
-remap configurables par projet. Implémenté dans le résolveur Sass
-`resolve-status-color` (voir § 4.3) ; les -opies vont à l'ancre pleine
-(ex. `violet-600`, `orange-700` dans ce portfolio), les -omalies gardent
-la teinte naturelle corrigée en poids (`emerald-700`, `redd-600`).
-Mécanisme détaillé et arbitrages restants :
+**Status roles, a class of their own (decided and implemented
+2026-07-06).** `success` and `danger` — and, reserved for future API
+extension, `warning` and `info` — stand apart from identity roles
+(`accent`, `link`…): their semantics form a near-universal convention
+(green = OK, red = problem), the same from one project to another. The
+package therefore embeds **semantic anchors per color-blindness type**
+for them (red-green deficiency: `success` → blue anchor,
+`danger` → orange anchor — the canonical safe pair; tritanopia:
+red/green kept), resolved within the project's palette with an
+**auto-computed weight** to satisfy the WCAG ratio against the theme's
+background. Identity roles, on the other hand, remain adapted by the
+per-project configurable remap tables. Implemented in the Sass resolver
+`resolve-status-color` (see § 4.3); -opias go to the full anchor
+(e.g. `violet-600`, `orange-700` in this portfolio), -omalies keep the
+natural hue corrected in weight (`emerald-700`, `redd-600`).
+Detailed mechanism and remaining decisions:
 [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E2.
 
-**Politique de palette par classe de déficience (partie 3).** La sévérité
-justifie l'intensité de l'intervention : une **-omalie** (déficience
-légère) reste **strictement dans la palette** (couleur Tailwind pure) ; une
-**-opie** (déficience complète) peut, si besoin, employer une couleur
-**in-gamut hors palette** — jamais hors gamut sRGB, qui serait du CSS
-invalide clampé par le navigateur (garanti par `gamut.test.ts`). En
-pratique, le moteur ne pilote sa dégradation que par le **contraste**
-(calculable en Sass) ; le vrai motif pour sortir de la palette — une
-**collision de distinguabilité** (teinte trop proche d'un autre rôle sous
-simulation) — n'étant vérifiable qu'après compilation (suite TypeScript),
-son recours sanctionné est une **`special-colors`** explicite : in-gamut,
-tolérée hors palette en -opie, à garder dans la palette en -omalie.
+**Per-deficiency-class palette policy (part 3).** Severity justifies the
+intervention's intensity: an **-omaly** (mild deficiency) stays
+**strictly within the palette** (a pure Tailwind color); an
+**-opia** (full deficiency) may, if needed, use an
+**in-gamut off-palette** color — never outside the sRGB gamut, which
+would be invalid CSS clamped by the browser (guaranteed by
+`gamut.test.ts`). In practice, the engine only drives its degradation by
+**contrast** (computable in Sass); the real reason to step outside the
+palette — a **distinguishability collision** (a hue too close to another
+role under simulation) — being only verifiable after compilation
+(TypeScript suite), its sanctioned escape hatch is an explicit
+**`special-colors`**: in-gamut, tolerated off-palette for -opia, to be
+kept within the palette for -omaly.
 
-**Couche 3 — les tokens de composants (hors paquet).**
+**Layer 3 — component tokens (outside the package).**
 
-- Les ~70 `$color_*` : câblage fin, personnel à chaque projet, jamais
-  transformé par les moteurs. Recâblés vers les rôles
+- The ~70 `$color_*`: fine-grained wiring, personal to each project,
+  never transformed by the engines. Rewired toward the roles
   (`$color_collapse_bg: $bg-container;`).
-- Livrés dans le paquet uniquement comme **exemples commentés** (recettes
-  issues du portfolio).
-- Les custom properties émises (`--color-*`) ne changent pas : les fichiers
-  de composants SCSS existants restent intacts.
+- Shipped in the package only as **commented examples** (recipes drawn
+  from the portfolio).
+- The emitted custom properties (`--color-*`) don't change: existing
+  SCSS component files stay intact.
 
-Gains systémiques attendus : les moteurs transforment ~19 tokens (rail +
-accent/link/feedback) au lieu de raisonner sur 70 ; le high-contrast devient
-déclaratif (`bg-* → noir`, `fg-* → jaune`…) au lieu de deviner le rôle en
-cherchant `_bg`/`_text` dans les noms ; chaque paire `X`/`on-X` est testable
-WCAG dans les 12 thèmes ; styler un nouveau composant = choisir un `bg`, un
-`fg`, une `border` — zéro travail de thème.
+Expected systemic gains: the engines transform ~19 tokens (rail +
+accent/link/feedback) instead of reasoning over 70; high-contrast becomes
+declarative (`bg-* → black`, `fg-* → yellow`…) instead of guessing the
+role by searching for `_bg`/`_text` in names; every `X`/`on-X` pair is
+WCAG-testable across the 12 themes; styling a new component = picking a
+`bg`, an `fg`, a `border` — zero theming work.
 
-### 6.2 Périmètre du paquet
+### 6.2 Package scope
 
-| Inclus dans le paquet                                                                                  | Fourni par chaque projet                                     |
+| Included in the package                                                                                  | Provided by each project                                     |
 | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------ |
-| Moteurs de transformation (dark, high-contrast, daltonismes, anti-glare)                               | Choix des familles de palette + famille du rail gris         |
-| **Noms** des rôles de la couche 2 (+ valeurs par défaut)                                               | **Valeurs** des rôles (affectations rôle → rail)             |
-| Liste des thèmes — source unique dont dérivent type TS, `VALID_THEMES`, script anti-FOUC et blocs SCSS **(✅ E6.5 : `generate-all-themes()` + `$default-themes`)** | Sous-ensemble de thèmes émis (à la carte, pour un CSS léger) |
-| Palettes Tailwind embarquées (maps statiques)                                                          | Palettes maison éventuelles (contrat : 11 poids)             |
-| Émetteur des blocs `[data-theme]`                                                                      | Couche 3 (tokens de composants)                              |
-| Runtime : cœur des préférences (persistance, application DOM, anti-FOUC), `useTheme`                  | Rôles additionnels éventuels (extension, pas renommage)      |
-| UI **scaffoldée** : déclencheur (icône) + carte d'accessibilité complète, copiées dans le projet (§ 6.3) | Personnalisation libre de l'UI copiée (libellés, styles, modules) |
-| Polices d'accessibilité **embarquées** (module opt-in — licences à vérifier avant publication, § 6.5) | Polices de base du site (inchangées)                         |
-| Vérificateur de contrastes WCAG sur les paires de rôles **(✅ E6.6 : `a11y-prefs/testing/` — moteur + paires de rôles par défaut)** | Respect des contrats hôte (§ 6.5) ; ses paires de couche 3 + config (`configureThemeExtraction`) |
-| Exemples de couche 3 commentés                                                                         | —                                                            |
+| Transform engines (dark, high-contrast, color blindness, anti-glare)                               | Choice of palette families + gray rail family         |
+| Layer-2 role **names** (+ default values)                                                               | Role **values** (role → rail assignments)             |
+| Theme list — single source `ThemeOption`, `VALID_THEMES`, the anti-FOUC script, and the SCSS blocks all derive from **(✅ E6.5: `generate-all-themes()` + `$default-themes`)** | Subset of emitted themes (à la carte, for lighter CSS) |
+| Bundled Tailwind palettes (static maps)                                                          | Any custom palettes (contract: 11 weights)             |
+| `[data-theme]` block emitter                                                                      | Layer 3 (component tokens)                            |
+| Runtime: preferences core (persistence, DOM application, anti-FOUC), `useTheme`                  | Any additional roles (extension, not renaming)      |
+| **Scaffolded** UI: trigger (icon) + full accessibility card, copied into the project (§ 6.3) | Free customization of the copied UI (labels, styles, modules) |
+| **Bundled** accessibility fonts (opt-in module — licenses to verify before publication, § 6.5) | The site's base fonts (unchanged)                         |
+| WCAG contrast verifier on role pairs **(✅ E6.6: `a11y-prefs/testing/` — engine + default role pairs)** | Compliance with host contracts (§ 6.5); their layer-3 pairs + config (`configureThemeExtraction`) |
+| Commented layer-3 examples                                                                         | —                                                            |
 
-Esquisse de structure et de consommation :
+Sketch of structure and consumption:
 
 ```
-@lostintab/a11y-prefs             (nom à décider)
-├── scss/       palettes, rail, rôles, moteurs, émetteur [data-theme]
-├── react/      cœur des préférences, useTheme, script anti-FOUC
-├── fonts/      polices d'accessibilité embarquées (@font-face, opt-in)
-├── cli/        init (scaffolding de l'UI + config), init --diff
-├── testing/    vérificateur de contrastes WCAG
-└── examples/   couche 3 commentée (recettes du portfolio)
+@lostintab/a11y-prefs             (name to be decided)
+├── scss/       palettes, rail, roles, engines, [data-theme] emitter
+├── react/      preferences core, useTheme, anti-FOUC script
+├── fonts/      bundled accessibility fonts (@font-face, opt-in)
+├── cli/        init (UI + config scaffolding), init --diff
+├── testing/    WCAG contrast verifier
+└── examples/   commented layer 3 (portfolio recipes)
 ```
 
 ```scss
@@ -592,251 +595,248 @@ Esquisse de structure et de consommation :
 );
 ```
 
-Prérequis technique : la migration `@import` → `@use`/`@forward` — le modèle
-de configuration `@use … with ()` n'existe pas avec `@import`.
+Technical prerequisite: the `@import` → `@use`/`@forward` migration — the
+`@use … with ()` configuration model doesn't exist with `@import`.
 
-### 6.3 Distribution : modèle hybride (acté le 2026-07-03)
+### 6.3 Distribution: hybrid model (decided 2026-07-03)
 
-**Décision** : distribution **hybride**, découpée selon la nature de chaque
-partie — c'est l'anatomie de shadcn/ui lui-même (couche stylée copiée chez le
-dev, primitives critiques via npm/Radix) :
+**Decision**: **hybrid** distribution, split by the nature of each part —
+this is shadcn/ui's own anatomy (styled layer copied to the dev, critical
+primitives via npm/Radix):
 
-| Partie | Nature | Canal |
+| Part | Nature | Channel |
 | --- | --- | --- |
-| Les **moteurs** (transformations, cœur des préférences, anti-FOUC, garanties et tests de contraste) | doit rester correct, correctifs centralisés | **npm** — un fix d'accessibilité se déploie partout par bump de version |
-| L'**UI** (déclencheur + carte) + config + exemples de couche 3 | chaque projet la restyle, la traduit, la réorganise | **copiée dans le projet** via une CLI de scaffolding — le dev la possède |
+| The **engines** (transforms, preferences core, anti-FOUC, contrast guarantees and tests) | must stay correct, centralized fixes | **npm** — an accessibility fix rolls out everywhere with a version bump |
+| The **UI** (trigger + card) + config + layer-3 examples | every project restyles it, translates it, reorganizes it | **copied into the project** via a scaffolding CLI — the dev owns it |
 
-Expérience dev cible :
+Target dev experience:
 
 ```bash
-pnpm add @lostintab/a11y-prefs        # moteurs (mis à jour par versions)
-pnpm dlx @lostintab/a11y-prefs init   # copie l'UI + theme.config.scss +
-                                      # exemples dans le projet
-pnpm dlx @lostintab/a11y-prefs init --diff   # voir les évolutions de l'UI
-                                             # de référence, à reporter ou non
+pnpm add @lostintab/a11y-prefs        # engines (updated via versions)
+pnpm dlx @lostintab/a11y-prefs init   # copies the UI + theme.config.scss +
+                                      # examples into the project
+pnpm dlx @lostintab/a11y-prefs init --diff   # see the reference UI's
+                                             # changes, port over or not
 ```
 
-Points ayant motivé la décision (discussion du 2026-07-03) : un paquet npm
-livre de toute façon le SCSS/TS **en source lisible** (pas une boîte noire) ;
-`pnpm patch` reste l'échappatoire pour modifier proprement la partie moteur ;
-la copie intégrale (shadcn pur) a été écartée comme modèle *unique* car elle
-prive les sites des correctifs d'accessibilité centralisés.
+Points that drove the decision (discussion of 2026-07-03): an npm
+package ships the SCSS/TS **as readable source** anyway (not a black
+box); `pnpm patch` remains the escape hatch for cleanly modifying the
+engine part; a full copy (pure shadcn) was dropped as the *only* model
+since it deprives sites of centralized accessibility fixes.
 
-Historique des options étudiées avant décision : (1) workspace pnpm seul,
-(2) npm seul, (3) copie shadcn seule. Le workspace pnpm reste le **point de
-départ** de l'extraction (étape 3 de la trajectoire) ; le modèle hybride
-décrit la forme **publiée** (étape 4).
+History of the options studied before deciding: (1) a pnpm workspace
+alone, (2) npm alone, (3) a shadcn-only copy. The pnpm workspace remains
+the extraction's **starting point** (trajectory step 3); the hybrid model
+describes the **published** shape (step 4).
 
-Trajectoire décidée (faire mûrir l'API dans un vrai site avant de la
-graver — extraire d'abord serait l'anti-pattern) :
+Decided trajectory (letting the API mature inside a real site before
+freezing it — extracting first would be the anti-pattern):
 
-1. ✅ **Migration du rail** (couche 1) dans le portfolio — **faite le
-   2026-07-03**, voir [PLAN-migration-fondations.md](./PLAN-migration-fondations.md)
-   (phase 3) et le [CHANGELOG](./CHANGELOG.md).
-2. ✅ **Introduction de la couche 2** in situ — **faite le 2026-07-03**
-   (même plan, phase 6) ; validation des rôles contre le site réel encore à
-   faire dans la durée (usage quotidien), mais le câblage complet des ~70
-   tokens de couche 3 vers les rôles est en place.
-3. **Extraction en workspace pnpm** — le portfolio consomme le paquet. *(pas
-   commencé — chantier suivant, cf. mémoire de suivi du projet)*
-4. **Publication npm** quand un deuxième projet arrive.
+1. ✅ **Rail migration** (layer 1) inside the portfolio — **done
+   2026-07-03**, see [PLAN-migration-fondations.md](./PLAN-migration-fondations.md)
+   (phase 3) and the [CHANGELOG](./CHANGELOG.md).
+2. ✅ **Introducing layer 2** in-situ — **done 2026-07-03**
+   (same plan, phase 6); validating the roles against the real site is
+   still ongoing (day-to-day use), but the full wiring of the ~70
+   layer-3 tokens onto the roles is in place.
+3. **Extraction into a pnpm workspace** — the portfolio consumes the
+   package. *(not started — next chantier, cf. project tracking memory)*
+4. **npm publication** once a second project shows up.
 
-### 6.4 Quelles décisions bloquent quelles étapes
+### 6.4 Which decisions gate which steps
 
-À trancher **avant** les migrations (fait) : nommage du rail (acté),
-base des rôles (acceptée, vocabulaire affinable jusqu'à l'étape 2),
-convention kebab-case + hiérarchie portée par le registre (actée).
+To settle **before** the migrations (done): rail naming (decided), role
+baseline (accepted, vocabulary refinable until step 2), kebab-case
+convention + hierarchy carried by the registry (decided).
 
-Étapes 1 et 2 de la trajectoire (§ 6.3) exécutées le 2026-07-03. Avant
-l'étape 3 (extraction), deux chantiers explicitement hors périmètre de
-cette migration restaient à faire in situ (cf. « Hors périmètre » du
-plan) : réécriture déclarative du moteur high-contrast sur les rôles
-(reste à faire, chantier E2), et tests automatiques de contraste WCAG sur
-les paires de rôles — **fait le 2026-07-04** (chantier E1, voir
-[PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) et
-[CONTRAST-REPORT.md](./CONTRAST-REPORT.md) ; 7 paires waivées comme
-échecs préexistants, en attente d'arbitrage — aucune couleur retouchée,
-chantier purement additif).
+Trajectory steps 1 and 2 (§ 6.3) executed 2026-07-03. Before step 3
+(extraction), two chantiers explicitly out of this migration's scope
+remained to do in-situ (cf. this plan's "Out of scope" section):
+declarative rewrite of the high-contrast engine onto roles (still to do,
+E2 chantier), and automated WCAG contrast tests on role pairs — **done
+2026-07-04** (E1 chantier, see
+[PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) and
+[CONTRAST-REPORT.md](./CONTRAST-REPORT.md); 7 pairs waived as
+pre-existing failures, awaiting review — no color changed, a purely
+additive chantier).
 
-Le canal de distribution, initialement identifié comme reportable, a été
-**acté le 2026-07-03** (modèle hybride, § 6.3). Restent reportables sans
-risque : le nom définitif du paquet, et le choix registre npm public vs
-privé.
+The distribution channel, initially flagged as deferrable, was
+**decided on 2026-07-03** (hybrid model, § 6.3). Still deferrable without
+risk: the package's final name, and the choice of a public vs. private
+npm registry.
 
-### 6.5 Élargissement : du système de thèmes au système de préférences d'accessibilité (acté le 2026-07-03)
+### 6.5 Widening scope: from theme system to accessibility preferences system (decided 2026-07-03)
 
-Le composant exportable ne couvre pas seulement les thèmes de couleurs :
-c'est l'**ensemble du menu d'accessibilité actuel** (retour à la vision
-d'origine de `darkmode-plus-a11y`). Le livrable visible : le site hôte
-installe le **déclencheur** (l'icône d'accessibilité) et obtient au clic une
-**carte d'accessibilité complète et fonctionnelle**, personnalisable puisque
-scaffoldée dans son projet (§ 6.3).
+The exportable component doesn't only cover color themes: it's the
+**entire current accessibility menu** (back to `darkmode-plus-a11y`'s
+original vision). The visible deliverable: the host site installs the
+**trigger** (the accessibility icon) and gets, on click, a
+**fully functional accessibility card**, customizable since it's
+scaffolded into their project (§ 6.3).
 
-Toutes les fonctionnalités partagent le même patron, qui constitue le cœur
-du paquet :
+Every feature shares the same pattern, which forms the package's core:
 
 ```
-préférence utilisateur → persistance (localStorage) → application au DOM
-(attribut, classe ou variable CSS sur <html>) → le CSS du site y répond
+user preference → persistence (localStorage) → DOM application
+(attribute, class, or CSS variable on <html>) → the site's CSS responds
 ```
 
-Modules (chacun **opt-in** — un projet peut ne prendre que les thèmes) :
+Modules (each **opt-in** — a project can take only the themes):
 
-| Module | Mécanisme DOM | Difficulté | Point d'attention |
+| Module | DOM mechanism | Difficulty | Point of attention |
 | --- | --- | --- | --- |
-| Thèmes de couleurs | `data-theme` | fait (fondations 2026-07-03) | — |
-| Taille de texte (zoom) | `--font-size-factor` | **fait (E5, 2026-07-09)** — applier `applyFontSizeFactor` | **contrat hôte** : tailles en `rem`/`em` sensibles au facteur |
-| Réduction des animations | classe `reduce-motion` | **fait (E5)** — module `motion` (mixins `reduce-motion-class`, `motion-safe`) + applier | **contrat hôte** : les animations doivent s'y soumettre (mixin fourni) |
-| Polices d'accessibilité | classes de police | **fait (E5)** — module `a11y-fonts` (@font-face + classes) + applier `applyAccessibilityFont` | licences auditées (2026-07-08) : **embarquées** = OpenDyslexic, Andika, Atkinson Next, Lexend Giga/Deca (OFL) ; **exclues** = Sylexiad (EULA propriétaire — recommandée aux consommateurs via sylexiad.com), Tiresias (GPLv3, non utilisée), Raleway Dots (non utilisée). N'affecte pas les polices de base du site hôte |
-| Mode dyslexie optimisé | classe `dyslexia-optimized` | **fait (E5 phase 4)** — mixin `dyslexia-typography` 3 niveaux (titre/sous-titre/corps), `font-size-adjust: 0.56`, espacements BDA ; corps défaut = Andika, portfolio = Sylexiad | valeurs calibrées visuellement par Simon (2026-07-09, preview versionnée dans `docs/theme-system/previews/`) |
-| UI (déclencheur + carte) | — | moyen | scaffoldée, pas dans npm (§ 6.3) |
+| Color themes | `data-theme` | done (foundations 2026-07-03) | — |
+| Text size (zoom) | `--font-size-factor` | **done (E5, 2026-07-09)** — `applyFontSizeFactor` applier | **host contract**: sizes in `rem`/`em` responsive to the factor |
+| Motion reduction | `reduce-motion` class | **done (E5)** — `motion` module (`reduce-motion-class`, `motion-safe` mixins) + applier | **host contract**: animations must honor it (mixin supplied) |
+| Accessibility fonts | font classes | **done (E5)** — `a11y-fonts` module (@font-face + classes) + `applyAccessibilityFont` applier | licenses audited (2026-07-08): **bundled** = OpenDyslexic, Andika, Atkinson Next, Lexend Giga/Deca (OFL); **excluded** = Sylexiad (proprietary EULA — recommended to consumers via sylexiad.com), Tiresias (GPLv3, unused), Raleway Dots (unused). Doesn't affect the host site's base fonts |
+| Optimized dyslexia mode | `dyslexia-optimized` class | **done (E5 phase 4)** — `dyslexia-typography` mixin, 3 levels (title/subtitle/body), `font-size-adjust: 0.56`, BDA spacing; default body = Andika, portfolio = Sylexiad | values visually calibrated (2026-07-09, preview versioned in `docs/theme-system/previews/`) |
+| UI (trigger + card) | — | medium | scaffolded, not in npm (§ 6.3) |
 
-Conséquence sur le nom et le concept : « système de thèmes » devient un
-module — le paquet est un **système de préférences d'accessibilité**
-(`a11y-prefs` comme nom de travail).
+Consequence on the name and the concept: "theme system" becomes a
+module — the package is an **accessibility preferences system**
+(`a11y-prefs` as the working name).
 
-### 6.6 Mécanique du fort contraste : histoire et architecture cible (acté le 2026-07-11)
+### 6.6 High-contrast mechanics: history and target architecture (decided 2026-07-11)
 
-Rappel du vocabulaire des **trois couches** (celui de Simon) : couche 1 =
-palettes Tailwind ; couche 2 = variables de **rôle** (~19, l'API du
-paquet : `$link`, `$accent`, `$gray-50`…) ; couche 3 = noms
-d'**assignation** (la config du consommateur : `$color-header-bg`…).
+Recap of the **three-layer** vocabulary: layer 1 = Tailwind palettes;
+layer 2 = **role** variables (~19, the package's API: `$link`, `$accent`,
+`$gray-50`…); layer 3 = **assignment** names (the consumer's config:
+`$color-header-bg`…).
 
-**Le design d'origine de Simon** capturait la sémantique **par les noms de
-couche 3** : `transform-for-high-contrast($color, $element-type)` lisait
-les mots des noms (`str-index`) et attribuait la couleur HC :
+**The original design** captured semantics **through layer-3 names**:
+`transform-for-high-contrast($color, $element-type)` read words in the
+names (`str-index`) and assigned the HC color:
 
-| Mot dans le nom | Couleur HC |
+| Word in the name | HC color |
 | --- | --- |
-| `_bg`, `background` | fond (noir) |
-| `_text`, `text` | texte (jaune) |
+| `_bg`, `background` | background (black) |
+| `_text`, `text` | text (yellow) |
 | `link` | cyan |
-| `heading`, `title` | vert-jaune |
-| `hover`, `focus` | blanc |
-| `success` | vert |
-| _aucun_ | selon la clarté (foncé → texte, clair → fond) |
+| `heading`, `title` | yellow-green |
+| `hover`, `focus` | white |
+| `success` | green |
+| _none_ | based on lightness (dark → text, light → background) |
 
-Ce mécanisme garantissait notamment le **focus par son nom**. Il a été
-**supplanté sans décision** pendant le chantier d'extraction (commit
-`3195de4`, Claude) par le mécanisme actuel, puis supprimé en tant que code
-mort au nettoyage du 2026-07-03 (`f16842d`). Archéologie reconstituée le
-2026-07-11 — cette section existe pour que l'information ne se reperde
-plus.
+This mechanism notably guaranteed **focus by its name**. It was
+**superseded without a decision** during the extraction chantier (commit
+`3195de4`, Claude) by the current mechanism, then removed as dead code
+during the 2026-07-03 cleanup (`f16842d`). Archaeology reconstructed on
+2026-07-11 — this section exists so the information doesn't get lost
+again.
 
-**Le mécanisme actuel** : les ~19 rôles de couche 2 reçoivent leur couleur
-HC par assignation **explicite** dans le moteur (`$link` → slot `"link"`…) ;
-les non-assignés (gris intermédiaires, `$accent*`) passent par la clarté
-(`is-dark()`) ; la couche 3 hérite **par branchement** (`$color-main-text:
-$fg-base`) — le nom du token n'a plus aucun rôle. **Trou identifié** : une
-assignation de couche 3 NON branchée (valeur brute) échappe silencieusement
-au mode HC — risque principal pour un paquet implémenté surtout par des IA.
+**The current mechanism**: the ~19 layer-2 roles get their HC color via
+**explicit** assignment in the engine (`$link` → `"link"` slot…);
+unassigned ones (intermediate grays, `$accent*`) go through lightness
+(`is-dark()`); layer 3 inherits **through wiring** (`$color-main-text:
+$fg-base`) — the token's name no longer plays any role. **Identified
+gap**: an UNWIRED layer-3 assignment (a raw value) silently escapes HC
+mode — the main risk for a package implemented mostly by AIs.
 
-**L'architecture cible** (décisions du 2026-07-11, plan
-`PLAN-hc-mecanique-controles.md`) :
+**The target architecture** (decisions of 2026-07-11, plan
+`PLAN-hc-mecanique-controles.md`):
 
-1. **Décision des couleurs = branchement couche 2 seul.** La capture par
-   noms ne revient pas comme mécanisme : Sass ne sait pas lire les noms —
-   l'ancienne fonction exigeait de lui passer chaque nom à la main, soit
-   la même discipline que le branchement (le filet a les mêmes trous que
-   le sol).
-2. **Le focus devient un rôle de couche 2** (restaure la garantie du
-   design d'origine, pour tous les consommateurs). **Implémenté le
-   2026-07-11** : slots `focus`/`focus-text` dans `$hc-palette` (moteur)
-   et dans la carte du mixin consommateur (fusion avec les défauts — une
-   variante ne déclare que ce qui change) ; CSS byte-identique.
-3. **Deux contrôles en lecture seule** dans l'outillage (warnings au
-   build/test, ne modifient jamais une couleur) : **par valeur** (en HC,
-   toute couleur émise ∈ palette du thème → attrape les tokens non
-   branchés) et **par noms** (la sémantique d'origine recyclée en
-   inspecteur : nom `*_text` qui émet la couleur de fond → warning →
-   attrape les branchements de travers, angle mort du contrôle par
-   valeur). Complémentaires, pas concurrents. **Implémentés le
-   2026-07-11** : test `hc-palette-conformance` (calibré : 101/106
-   conformes par thème, waiver `--constant-*`, alpha tolérée si la
-   teinte ∈ palette) + inspecteur `pnpm hc:audit`
-   (`hc-semantic-audit.ts` : matching par segment entier, appariement
-   bg/texte par composant — un bloc inversé légitime ne déclenche rien,
-   texte == fond d'une paire = alerte ; artefact `HC-SEMANTIC-AUDIT.md` ;
-   calibré : 0 avertissement actif, 15 waivés argumentés).
-4. **Notice d'implémentation orientée IA** (livrable E6/E7, pattern
-   AGENTS.md/llms.txt du paquet) : le contrat « couche 3 = toujours
-   dérivée d'un rôle de couche 2, jamais une valeur brute » écrit pour
-   les implémenteurs.
-5. **Garé, à réfléchir** : le sort des 4 rôles `$accent*` en HC
-   (aujourd'hui écrasés par clarté ; le header de Simon était une
-   surcharge manuelle — l'accent n'a jamais fait partie de son design HC).
+1. **Color decisions = layer-2 wiring only.** Name-based capture doesn't
+   come back as a mechanism: Sass can't read names — the old function
+   required passing it every name by hand, the same discipline as
+   wiring (the safety net has the same holes as the floor).
+2. **Focus becomes a layer-2 role** (restores the original design's
+   guarantee, for every consumer). **Implemented 2026-07-11**:
+   `focus`/`focus-text` slots in `$hc-palette` (engine) and in the
+   consumer mixin's map (merged with the defaults — a variant only
+   declares what changes); byte-identical CSS.
+3. **Two read-only controls** in the tooling (warnings at build/test
+   time, never modify a color): **by value** (in HC, every emitted color
+   ∈ the theme's palette → catches unwired tokens) and **by name** (the
+   original semantics recycled as an inspector: a `*_text` name emitting
+   the background color → warning → catches crossed wiring, the blind
+   spot of value-based control). Complementary, not competing.
+   **Implemented 2026-07-11**: the `hc-palette-conformance` test
+   (calibrated: 101/106 compliant per theme, `--constant-*` waiver, alpha
+   tolerated if the hue ∈ palette) + the `pnpm hc:audit` inspector
+   (`hc-semantic-audit.ts`: whole-segment matching, per-component
+   bg/text pairing — a legitimately inverted block triggers nothing,
+   text == background in a pair = an alert; `HC-SEMANTIC-AUDIT.md`
+   artifact; calibrated: 0 active warnings, 15 justified waivers).
+4. **AI-oriented implementation guide** (E6/E7 deliverable, package's
+   AGENTS.md/llms.txt pattern): the contract "layer 3 is always derived
+   from a layer-2 role, never a raw value" written for implementers.
+5. **Parked, needs thought**: the fate of the 4 `$accent*` roles in HC
+   (currently overridden for clarity; Simon's header was a manual
+   override — accent was never part of his HC design).
 
-## 7. Pistes d'amélioration envisagées
+## 7. Ideas considered
 
-Non planifiées, par ordre de valeur estimée. Certaines sont devenues des
-décisions actées — voir § 6 ; elles restent listées ici pour la traçabilité.
-Chaque chantier entamé devra être tracé dans le
-[CHANGELOG.md](./CHANGELOG.md) dédié.
+Unplanned, in order of estimated value. Some have become decisions made
+— see § 6; they stay listed here for traceability. Every started
+chantier must be tracked in the dedicated
+[CHANGELOG.md](./CHANGELOG.md).
 
-### Assainissement (préalable au packaging)
+### Cleanup (a prerequisite for packaging)
 
-*(faite — voir [PLAN-migration-fondations.md](./PLAN-migration-fondations.md)
-et le [CHANGELOG](./CHANGELOG.md) du 2026-07-03, phases 1 à 7)*
+*(done — see [PLAN-migration-fondations.md](./PLAN-migration-fondations.md)
+and the [CHANGELOG](./CHANGELOG.md) of 2026-07-03, phases 1 to 7)*
 
-- **Purger le code mort** : `_variables.scss`, `_dark-functions.scss`,
-  `transform-for-dark()`, et les blocs commentés historiques (l'historique
-  git suffit). *(fait, phase 1)*
-- **Nettoyer `setTheme()`** : retirer reflow forcé, classe `theme-switching`
-  et `console.log` (ou les conditionner à un mode debug). *(fait, phase 2)*
-- **Unifier le nommage** des variables (une seule convention, supprimer les
-  doublons underscore/tiret). *(fait, phase 4)*
-- **Migrer vers l'API Sass moderne** : `@use`/`@forward`, `math.div`,
-  `color.adjust`/`color.scale`. Condition nécessaire pour publier un paquet
-  utilisable durablement. *(fait, phase 5)*
+- **Purge dead code**: `_variables.scss`, `_dark-functions.scss`,
+  `transform-for-dark()`, and the historical commented-out blocks (git
+  history is enough). *(done, phase 1)*
+- **Clean up `setTheme()`**: remove the forced reflow, the
+  `theme-switching` class, and the `console.log` (or gate them behind a
+  debug mode). *(done, phase 2)*
+- **Unify variable naming** (a single convention, remove the
+  underscore/hyphen duplicates). *(done, phase 4)*
+- **Migrate to the modern Sass API**: `@use`/`@forward`, `math.div`,
+  `color.adjust`/`color.scale`. A necessary condition to publish a
+  durably usable package. *(done, phase 5)*
 
 ### Architecture
 
-- **Registre central des variables de thème** : décrire les ~17 couleurs de
-  base (et idéalement les ~70 dérivées) dans **une seule map Sass**
-  (`nom → (famille, poids, rôle)`), puis générer par boucles :
-  `define-base-colors`, `apply-theme-variables`, `generate-theme-css-vars`
-  et les transformations. Élimine les duplications n° 3 et 4, et supprime le
-  besoin de `analyze-tailwind-color()` (recherche inverse) puisque les
-  métadonnées famille/poids seraient portées par le registre.
-- **Source de vérité unique pour la liste des thèmes** : *(fait côté
-  runtime, phase 7 — `src/config/themes.ts` dont dérivent `ThemeOption`,
-  le script anti-FOUC et l'AccessibilityMenu)*. Reste : dériver aussi les
-  blocs `[data-theme]` SCSS de la même source (nécessiterait une boucle
-  Sass ou une génération de code — pas de mécanisme simple sous `@use`
-  sans un pas de build dédié).
-- **Modéliser les 3 axes de l'UI dans l'état** : le menu présente
-  Mode/Confort/Vision comme indépendants mais le modèle est un thème plat —
-  d'où la ref `lastBaseTheme` et l'impossibilité de combiner (ex. dark +
-  deutéranopie). À terme, un état composite `{base, contrast, vision}` avec
-  résolution vers un thème effectif serait plus juste.
+- **Central registry of theme variables**: describe the ~17 base colors
+  (and ideally the ~70 derived ones) in **a single Sass map**
+  (`name → (family, weight, role)`), then generate via loops:
+  `define-base-colors`, `apply-theme-variables`, `generate-theme-css-vars`,
+  and the transforms. Eliminates duplications #3 and #4, and removes the
+  need for `analyze-tailwind-color()` (reverse lookup) since the
+  family/weight metadata would be carried by the registry.
+- **Single source of truth for the theme list**: *(done on the runtime
+  side, phase 7 — `src/config/themes.ts`, from which `ThemeOption`, the
+  anti-FOUC script, and the AccessibilityMenu all derive)*. Remaining:
+  also derive the SCSS `[data-theme]` blocks from the same source (would
+  require a Sass loop or code generation — no simple mechanism under
+  `@use` without a dedicated build step).
+- **Model the UI's 3 axes in state**: the menu presents Mode/Comfort/
+  Vision as independent but the underlying model is a flat theme — hence
+  the `lastBaseTheme` ref and the impossibility of combining them (e.g.
+  dark + deuteranopia). Eventually, a composite `{base, contrast,
+  vision}` state resolving to an effective theme would be more accurate.
 
-### Qualité perceptive et conformité
+### Perceptual quality and compliance
 
-- **Vérification automatique des contrastes** *(fait — chantier E1,
-  2026-07-04 : suite WCAG + distinguabilité ΔE sous simulation CVD + garde
-  anti-gamut, `src/accessibility/contrast/`)*.
-- **Exposer `--success-color`/`--error-color` thématisées** *(fait —
-  fondations phase 6 : `--success`/`--danger` émis thématisés ; les
-  constantes conservées à dessein)*.
-- **Support de `prefers-contrast` et `forced-colors`** : respecter les
-  préférences système au même titre que `prefers-color-scheme`. *(reste à
-  faire)*
-- Espaces colorimétriques perceptuels (**OKLCH**) *(fait — E2 2026-07-04 :
-  anti-glare réécrit en OKLCH ; repli OKLCH du moteur daltonien ;
-  gamut-mapping `local-minde`. Le décalage de poids du dark reste en
-  géométrie Tailwind, à dessein)*.
+- **Automatic contrast verification** *(done — E1 chantier,
+  2026-07-04: WCAG suite + ΔE distinguishability under CVD simulation +
+  anti-gamut guard, `src/accessibility/contrast/`)*.
+- **Expose themed `--success-color`/`--error-color`** *(done —
+  foundations phase 6: `--success`/`--danger` emitted themed; the
+  constants kept deliberately)*.
+- **Support `prefers-contrast` and `forced-colors`**: honor system
+  preferences on the same footing as `prefers-color-scheme`. *(still to
+  do)*
+- Perceptual color spaces (**OKLCH**) *(done — E2 2026-07-04:
+  anti-glare rewritten in OKLCH; OKLCH fallback in the color-blind
+  engine; `local-minde` gamut-mapping. Dark's weight shift stays in
+  Tailwind geometry, deliberately)*.
 
-### Packaging (objectif final)
+### Packaging (the end goal)
 
-- Extraire en **workspace pnpm** (`packages/`), en repartant de zéro plutôt
-  que de la branche `feature/darkmode-plus-a11y-package` (antérieure aux
-  refontes).
-- API de configuration : le consommateur fournit sa palette et son registre
-  de variables ; le paquet fournit les moteurs de transformation, le hook,
-  le script anti-FOUC et (optionnellement) le composant de menu.
-- Livrer les thèmes en **fichiers CSS séparés ou en build à la carte** pour
-  ne pas imposer les 12 thèmes à tous les projets.
+- Extract into a **pnpm workspace** (`packages/`), starting fresh rather
+  than from the `feature/darkmode-plus-a11y-package` branch (predating
+  the redesigns).
+- Configuration API: the consumer supplies their palette and variable
+  registry; the package supplies the transform engines, the hook, the
+  anti-FOUC script, and (optionally) the menu component.
+- Ship themes as **separate CSS files or an à-la-carte build** so as not
+  to impose all 12 themes on every project.
 
-## 8. Historique
+## 8. History
 
-Voir le [CHANGELOG.md](./CHANGELOG.md) dédié à cette fonctionnalité.
+See the [CHANGELOG.md](./CHANGELOG.md) dedicated to this feature.

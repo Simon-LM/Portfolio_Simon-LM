@@ -12,7 +12,7 @@
 	overflow-y: auto;
 	padding-inline: 0.5rem;
 
-	// Style de scrollbar personnalisé
+	// Custom scrollbar style
 	&::-webkit-scrollbar {
 		width: 0.375rem; // 6px
 	}
@@ -55,8 +55,8 @@
 
 	&__close-footer-button {
 		padding: 0.5rem 1rem;
-		// (background/color en var(--color-button-bg/-text) retirés
-		// 2026-07-07 : jamais émises -> déclarations inertes, rendu inchangé)
+		// (background/color via var(--color-button-bg/-text) removed
+		// 2026-07-07: never emitted -> inert declarations, rendering unchanged)
 		border: 1px solid var(--color-button-border);
 		border-radius: 0.25rem;
 		font-size: 0.9rem;
@@ -75,49 +75,49 @@
 		color: var(--color-main-text);
 	}
 
-	// Catégorie d'accessibilité
+	// Accessibility category
 	&__category {
 		display: flex;
 		flex-direction: column;
 		gap: 0.75rem;
 	}
 
-	// Titre de catégorie
+	// Category title
 	&__category-title {
 		font-size: 1rem;
 		font-weight: 600;
 		margin: 0;
 		padding-bottom: 0.25rem;
-		// var(--color-divider) n'a jamais été émise : c'était toujours le
-		// fallback qui s'appliquait — simplifié 2026-07-07, rendu inchangé.
+		// var(--color-divider) was never emitted: the fallback always
+		// applied — simplified 2026-07-07, rendering unchanged.
 		border-bottom: 0.0625rem solid var(--gray-400);
 	}
 
-	// Groupe avec label
+	// Group with label
 	&__group-label {
 		font-size: 0.875rem;
 		font-weight: 500;
 		margin: 0 0 0.5rem 0;
 	}
 
-	// Conteneur de boutons
+	// Button container
 	&__buttons-row {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.5rem;
 	}
 
-	// Rangée des boutons de variantes du fort contraste : espacement propre
-	// à cette rangée, SANS toucher au gap générique ci-dessus. Les boutons
-	// étant en flex-basis 100%, le gap est vertical. Valeurs = le rendu
-	// réglé par Simon (ex-margin-top 1rem des boutons + gap 0.5rem),
-	// consolidé ici — un seul endroit à ajuster.
+	// Row of high-contrast variant buttons: spacing specific to this row,
+	// WITHOUT touching the generic gap above. Since the buttons are
+	// flex-basis 100%, the gap is vertical. Values = the rendering tuned
+	// by Simon (former margin-top 1rem on the buttons + gap 0.5rem),
+	// consolidated here — a single place to adjust.
 	&__buttons-row--hc-variants {
-		gap: 0.5rem; // entre les boutons de variantes
-		margin-top: 1rem; // sous le bouton « Contraste élevé »
+		gap: 0.5rem; // between variant buttons
+		margin-top: 1rem; // below the "High contrast" button
 	}
 
-	// Boutons standards
+	// Standard buttons
 	&__button {
 		padding: 0.5rem 0.75rem;
 		background: transparent;
@@ -168,8 +168,8 @@
 
 	&__help-description {
 		font-size: 0.75rem;
-		// var(--color-text-secondary) n'a jamais été émise : fallback simplifié
-		// 2026-07-07, rendu inchangé.
+		// var(--color-text-secondary) was never emitted: fallback simplified
+		// 2026-07-07, rendering unchanged.
 		color: var(--gray-700);
 		margin: 0 0 0.5rem 0;
 		font-style: italic;
@@ -186,13 +186,13 @@
 		padding: 0.5rem;
 		border-radius: 0.25rem;
 		border: 0.0625rem solid var(--color-button-border, var(--color-main-text)); // 1px
-		// var(--color-input-bg) n'a jamais été émise : fallback simplifié
-		// 2026-07-07, rendu inchangé.
+		// var(--color-input-bg) was never emitted: fallback simplified
+		// 2026-07-07, rendering unchanged.
 		background-color: var(--off-white);
 		color: var(--color-main-text);
 		font-size: 0.875rem; // 14px
 		width: 100%;
-		appearance: none; // Supprimer le style par défaut
+		appearance: none; // Remove the default style
 		background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
 		background-repeat: no-repeat;
 		background-position: right 0.7rem top 50%;
@@ -209,7 +209,7 @@
 		margin-top: 0.5rem;
 	}
 
-	// Contrôle de taille de police
+	// Font size control
 	&__slider-header {
 		display: flex;
 		justify-content: space-between;
@@ -314,7 +314,7 @@
 	}
 
 	&__slider-label {
-		// (color: var(--color-text) retiré 2026-07-07 : jamais émise, inerte)
+		// (color: var(--color-text) removed 2026-07-07: never emitted, inert)
 		font-size: 0.8rem;
 		flex-shrink: 0;
 		min-width: 1rem;
@@ -365,7 +365,7 @@
 		font-size: 0.875rem;
 	}
 
-	// Pour le skeleton loader
+	// For the skeleton loader
 	&.skeleton {
 		width: 9.375rem; // 150px
 		height: 1.875rem; // 30px
@@ -467,27 +467,27 @@
 		}
 	}
 
-	// Boutons de variantes du fort contraste (chantier HC, décision Simon
-	// 2026-07-10) : 4 gros boutons directs — pas de sélecteur, plus robuste
-	// pour NVDA et les gros zooms. Chaque bouton = mini-prévisualisation :
-	// libellé complet dans les couleurs réelles de sa variante. Même patron
-	// que __high-contrast-button : hover/focus = inversion de SA paire,
-	// actif = inversion + anneau.
-	// Boutons de variantes du fort contraste (chantier HC, décision Simon
-	// 2026-07-10) : 4 gros boutons directs — pas de sélecteur, plus robuste
-	// pour NVDA et les gros zooms. Chaque bouton = mini-prévisualisation :
-	// libellé complet dans les couleurs réelles de sa variante. Même patron
-	// que __high-contrast-button : hover/focus = inversion de SA paire.
+	// High-contrast variant buttons (HC workstream, Simon's decision
+	// 2026-07-10): 4 large direct buttons — no selector, more robust
+	// for NVDA and large zoom levels. Each button = mini preview:
+	// full label in the real colors of its variant. Same pattern
+	// as __high-contrast-button: hover/focus = inversion of ITS pair,
+	// active = inversion + ring.
+	// High-contrast variant buttons (HC workstream, Simon's decision
+	// 2026-07-10): 4 large direct buttons — no selector, more robust
+	// for NVDA and large zoom levels. Each button = mini preview:
+	// full label in the real colors of its variant. Same pattern
+	// as __high-contrast-button: hover/focus = inversion of ITS pair.
 	&__hc-variant-button {
 		flex-basis: 100%;
 		font-family: "Atkinson Hyperlegible", sans-serif;
 		font-size: 1.1rem;
 		font-weight: 500;
 
-		// La coche ✓ est un <span> : la base typo donne aux span une couleur
-		// PROPRE (var(--color-main-text)), qui ignore l'inversion du hover
-		// (coche invisible sur le fond inversé). inherit = la coche suit
-		// toujours la couleur du texte du bouton.
+		// The ✓ checkmark is a <span>: the typography base gives spans their
+		// OWN color (var(--color-main-text)), which ignores the hover
+		// inversion (checkmark invisible on the inverted background).
+		// inherit = the checkmark always follows the button's text color.
 		span {
 			color: inherit;
 		}
@@ -497,11 +497,11 @@
 			color: #ffff00;
 			border: 0.1875rem solid #ffff00; // 3px
 
-			// Actif : le bouton garde ses couleurs de preview — la coche ✓
-			// dans le libellé marque la sélection (décision Simon,
-			// 2026-07-11). Ce bloc neutralise le .active générique du menu
-			// (fond accent). Déclaré AVANT :hover : à spécificité égale, le
-			// hover (plus bas) doit gagner même sur le bouton actif.
+			// Active: the button keeps its preview colors — the ✓ checkmark
+			// in the label marks the selection (Simon's decision,
+			// 2026-07-11). This block neutralizes the menu's generic .active
+			// (accent background). Declared BEFORE :hover: at equal
+			// specificity, hover (below) must win even on the active button.
 			&.active {
 				background-color: #000000;
 				color: #ffff00;
@@ -520,11 +520,11 @@
 			color: #00ff00;
 			border: 0.1875rem solid #00ff00; // 3px
 
-			// Actif : le bouton garde ses couleurs de preview — la coche ✓
-			// dans le libellé marque la sélection (décision Simon,
-			// 2026-07-11). Ce bloc neutralise le .active générique du menu
-			// (fond accent). Déclaré AVANT :hover : à spécificité égale, le
-			// hover (plus bas) doit gagner même sur le bouton actif.
+			// Active: the button keeps its preview colors — the ✓ checkmark
+			// in the label marks the selection (Simon's decision,
+			// 2026-07-11). This block neutralizes the menu's generic .active
+			// (accent background). Declared BEFORE :hover: at equal
+			// specificity, hover (below) must win even on the active button.
 			&.active {
 				background-color: #000000;
 				color: #00ff00;
@@ -543,11 +543,11 @@
 			color: #ffffff;
 			border: 0.1875rem solid #ffffff; // 3px
 
-			// Actif : le bouton garde ses couleurs de preview — la coche ✓
-			// dans le libellé marque la sélection (décision Simon,
-			// 2026-07-11). Ce bloc neutralise le .active générique du menu
-			// (fond accent). Déclaré AVANT :hover : à spécificité égale, le
-			// hover (plus bas) doit gagner même sur le bouton actif.
+			// Active: the button keeps its preview colors — the ✓ checkmark
+			// in the label marks the selection (Simon's decision,
+			// 2026-07-11). This block neutralizes the menu's generic .active
+			// (accent background). Declared BEFORE :hover: at equal
+			// specificity, hover (below) must win even on the active button.
 			&.active {
 				background-color: #000000;
 				color: #ffffff;
@@ -566,11 +566,11 @@
 			color: #000000;
 			border: 0.1875rem solid #000000; // 3px
 
-			// Actif : le bouton garde ses couleurs de preview — la coche ✓
-			// dans le libellé marque la sélection (décision Simon,
-			// 2026-07-11). Ce bloc neutralise le .active générique du menu
-			// (fond accent). Déclaré AVANT :hover : à spécificité égale, le
-			// hover (plus bas) doit gagner même sur le bouton actif.
+			// Active: the button keeps its preview colors — the ✓ checkmark
+			// in the label marks the selection (Simon's decision,
+			// 2026-07-11). This block neutralizes the menu's generic .active
+			// (accent background). Declared BEFORE :hover: at equal
+			// specificity, hover (below) must win even on the active button.
 			&.active {
 				background-color: #ffffff;
 				color: #000000;
@@ -587,12 +587,12 @@
 	}
 }
 
-// // React-Select styles - regroupés en bas du fichier
+// // React-Select styles - grouped at the bottom of the file
 // .react-select-container {
 // 	width: 100%;
 // 	margin-bottom: 0.5rem;
 
-// 	// Control (bouton principal du select)
+// 	// Control (main select button)
 // 	.react-select__control {
 // 		background-color: var(--color-panel-bg) !important;
 // 		border: 0.0625rem solid var(--color-button-border, var(--color-main-text)) !important;
@@ -632,19 +632,19 @@
 // 		fill: white !important;
 // 	}
 
-// 	// Texte à l'intérieur du control
+// 	// Text inside the control
 // 	.react-select__single-value {
 // 		color: var(--color-main-text) !important;
 // 	}
 
-// 	// Menu déroulant
+// 	// Dropdown menu
 // 	.react-select__menu {
 // 		background-color: var(--color-panel-bg) !important;
 // 		border: 0.0625rem solid var(--color-button-border) !important;
 // 		z-index: 9999 !important;
 // 	}
 
-// 	// Options dans le menu
+// 	// Options in the menu
 // 	.react-select__option {
 // 		color: var(--color-main-text) !important;
 
@@ -661,12 +661,12 @@
 // 		// }
 // 	}
 
-// 	// Suppression du séparateur
+// 	// Separator removal
 // 	.react-select__indicator-separator {
 // 		display: none !important;
 // 	}
 
-// 	// Flèche dropdown
+// 	// Dropdown arrow
 // 	.react-select__dropdown-indicator {
 // 		color: var(--color-main-text) !important;
 
@@ -675,7 +675,7 @@
 // 		}
 // 	}
 
-// 	// Groupes d'options
+// 	// Option groups
 // 	.react-select__group-heading {
 // 		color: var(--color-main-text) !important;
 // 		font-weight: bold;
@@ -687,7 +687,7 @@
 // 		opacity: 0.8;
 // 	}
 
-// 	// Input (recherche)
+// 	// Input (search)
 // 	.react-select__input {
 // 		color: var(--color-main-text) !important;
 // 	}
@@ -788,7 +788,7 @@
 
 // // // // // // // // // // // // // // // // // //
 
-// Sélecteur pour les selects natifs uniquement, éviter de cibler les composants React-Select
+// Selector for native selects only, avoid targeting React-Select components
 select.accessibility-menu__select:not(.react-select__control) {
 	appearance: none;
 	background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
@@ -798,9 +798,9 @@ select.accessibility-menu__select:not(.react-select__control) {
 	padding-right: 1.75rem;
 }
 
-// // Style pour les selects en mode high-contrast
+// // Style for selects in high-contrast mode
 // [data-theme="high-contrast"] .accessibility-menu {
-// 	// Adaptation du slider en high-contrast
+// 	// Slider adaptation in high-contrast
 // 	&__slider {
 // 		background: #ffff00;
 
@@ -818,20 +818,20 @@ select.accessibility-menu__select:not(.react-select__control) {
 
 // // // // // // // // // // //
 
-// // Désactiver le "double scroll" quand un menu déroulant est ouvert
+// // Disable "double scroll" when a dropdown menu is open
 // body.react-select__menu-open {
 // 	.accessibility-menu {
 // 		overflow: hidden !important;
 // 	}
 // }
 
-// // S'assurer que le menu est visible au-dessus de tous les éléments
+// // Ensure the menu is visible above all elements
 // .react-select__menu-portal {
 // 	z-index: 10000 !important;
 // 	position: fixed !important;
 // }
 
-// // Meilleure visibilité des options au hover/focus
+// // Better visibility of options on hover/focus
 // .react-select__option {
 // 	&:hover,
 // 	&--is-focused {
@@ -856,15 +856,15 @@ select.accessibility-menu__select:not(.react-select__control) {
 
 // // // // // // // // // // // // // //
 
-// Remplacer toute la partie React-Select par ce code mieux structuré
-// ==================== STYLES REACT-SELECT ====================
+// Replace the entire React-Select section with this better-structured code
+// ==================== REACT-SELECT STYLES ====================
 
-// Styles de base pour React-Select
+// Base styles for React-Select
 .react-select-container {
 	width: 100%;
 	margin-bottom: 0.5rem;
 
-	// Control (bouton principal du select)
+	// Control (main select button)
 	.react-select__control {
 		background-color: var(--color-panel-bg) !important;
 		border: 0.0625rem solid var(--color-button-border) !important;
@@ -887,7 +887,7 @@ select.accessibility-menu__select:not(.react-select__control) {
 		}
 	}
 
-	// Styles pour l'état hover du control
+	// Styles for the control's hover state
 	.react-select__control:hover {
 		.react-select__single-value,
 		.react-select__dropdown-indicator svg {
@@ -896,7 +896,7 @@ select.accessibility-menu__select:not(.react-select__control) {
 		}
 	}
 
-	// Styles pour l'état focus du control
+	// Styles for the control's focus state
 	.react-select__control--is-focused {
 		.react-select__single-value,
 		.react-select__dropdown-indicator svg {
@@ -905,19 +905,19 @@ select.accessibility-menu__select:not(.react-select__control) {
 		}
 	}
 
-	// Texte à l'intérieur du control
+	// Text inside the control
 	.react-select__single-value {
 		color: var(--color-main-text) !important;
 	}
 
-	// Menu déroulant
+	// Dropdown menu
 	.react-select__menu {
 		background-color: var(--color-panel-bg) !important;
 		border: 0.0625rem solid var(--color-button-border) !important;
 		z-index: 1000 !important;
 	}
 
-	// Options dans le menu
+	// Options in the menu
 	.react-select__option {
 		color: var(--color-main-text) !important;
 
@@ -939,12 +939,12 @@ select.accessibility-menu__select:not(.react-select__control) {
 		}
 	}
 
-	// Suppression du séparateur
+	// Separator removal
 	.react-select__indicator-separator {
 		display: none !important;
 	}
 
-	// Flèche dropdown
+	// Dropdown arrow
 	.react-select__dropdown-indicator {
 		color: var(--color-main-text) !important;
 
@@ -953,7 +953,7 @@ select.accessibility-menu__select:not(.react-select__control) {
 		}
 	}
 
-	// Groupes d'options
+	// Option groups
 	.react-select__group-heading {
 		color: var(--color-main-text) !important;
 		font-weight: bold;
@@ -965,7 +965,7 @@ select.accessibility-menu__select:not(.react-select__control) {
 		opacity: 0.8;
 	}
 
-	// Input (recherche)
+	// Input (search)
 	.react-select__input {
 		color: var(--color-main-text) !important;
 	}
@@ -973,13 +973,13 @@ select.accessibility-menu__select:not(.react-select__control) {
 
 // ===================== HIGH CONTRAST MODE =====================
 
-// Styles pour les selects en high contrast — TOUTES les variantes
-// (chantier HC, 2026-07-10) : sélecteur ^= et couleurs du thème à la place
-// du jaune codé en dur. Équivalence vérifiée en jaune : --near-black =
-// #ffff00 (texte), --off-white = #000000 (fond), --link-hover = #ffffff
-// (action) → rendu jaune strictement identique, variantes correctes.
+// Styles for selects in high contrast — ALL variants
+// (HC workstream, 2026-07-10): ^= selector and theme colors instead
+// of hardcoded yellow. Equivalence verified in yellow: --near-black =
+// #ffff00 (text), --off-white = #000000 (background), --link-hover =
+// #ffffff (action) → strictly identical yellow rendering, correct variants.
 [data-theme^="high-contrast"] {
-	// Styles généraux pour le menu d'accessibilité
+	// General styles for the accessibility menu
 	.accessibility-menu {
 		&__slider {
 			background: var(--near-black);
@@ -996,7 +996,7 @@ select.accessibility-menu__select:not(.react-select__control) {
 		}
 	}
 
-	// Styles spécifiques pour React-Select
+	// Specific styles for React-Select
 	.react-select-container {
 		.react-select__control {
 			background-color: var(--off-white) !important;
@@ -1016,9 +1016,9 @@ select.accessibility-menu__select:not(.react-select__control) {
 			}
 		}
 
-		// Styles pour les états hover et focus
+		// Styles for hover and focus states
 		.react-select__control {
-			// État hover
+			// Hover state
 			&:hover {
 				.react-select__single-value,
 				.react-select__dropdown-indicator svg {
@@ -1027,7 +1027,7 @@ select.accessibility-menu__select:not(.react-select__control) {
 				}
 			}
 
-			// État focus
+			// Focus state
 			&--is-focused {
 				.react-select__single-value,
 				.react-select__dropdown-indicator svg {
@@ -1037,7 +1037,7 @@ select.accessibility-menu__select:not(.react-select__control) {
 			}
 		}
 
-		// Indicateur de dropdown
+		// Dropdown indicator
 		.react-select__dropdown-indicator {
 			color: var(--near-black) !important;
 
@@ -1048,16 +1048,16 @@ select.accessibility-menu__select:not(.react-select__control) {
 
 		// Options
 		.react-select__option {
-			// États normaux
+			// Normal states
 			color: var(--near-black) !important;
 
-			// Option sélectionnée
+			// Selected option
 			&--is-selected {
 				background-color: var(--near-black) !important;
 				color: var(--off-white) !important;
 				font-weight: bold;
 
-				// État hover sur option sélectionnée
+				// Hover state on selected option
 				&:hover,
 				&:focus,
 				&--is-focused {
@@ -1066,7 +1066,7 @@ select.accessibility-menu__select:not(.react-select__control) {
 				}
 			}
 
-			// États hover et focus
+			// Hover and focus states
 			&:hover,
 			&--is-focused {
 				background-color: var(--link-hover) !important;
@@ -1076,15 +1076,15 @@ select.accessibility-menu__select:not(.react-select__control) {
 			}
 		}
 
-		// Titres de groupes (blanc sur gris sombre : lisible quelle que soit
-		// la variante — volontairement non thémé)
+		// Group headings (white on dark gray: readable regardless of
+		// variant — deliberately not themed)
 		.react-select__group-heading {
 			color: white !important;
 			background-color: #222222 !important;
 		}
 	}
 
-	// // Styles pour menus portés dans le DOM
+	// // Styles for menus portaled into the DOM
 	// body > div[id^="react-select-"] {
 	// 	.react-select__option {
 	// 		color: #ffff00 !important;
@@ -1111,7 +1111,7 @@ select.accessibility-menu__select:not(.react-select__control) {
 	// }
 }
 
-// Portail des menus
+// Menu portal
 .react-select__menu-portal {
 	z-index: 1100 !important;
 	position: fixed !important;
@@ -1119,19 +1119,19 @@ select.accessibility-menu__select:not(.react-select__control) {
 
 // // // // // // // // // //
 
-// // Désactiver le double scroll quand un menu est ouvert
+// // Disable double scroll when a menu is open
 // body.react-select__menu-open {
 // 	.accessibility-menu {
 // 		overflow: hidden !important;
 // 	}
 // }
 
-// Désactiver le double scroll quand un menu est ouvert
+// Disable double scroll when a menu is open
 // body.react-select__menu-open {
-// 	// Annuler le comportement par défaut qui bloque le scroll de la page
-// 	overflow: auto !important; // Réactiver le défilement de la page
+// 	// Cancel the default behavior that blocks page scroll
+// 	overflow: auto !important; // Re-enable page scrolling
 
-// 	// Empêcher seulement le défilement du menu d'accessibilité pour éviter le double scroll
+// 	// Only prevent the accessibility menu from scrolling to avoid double scroll
 // 	.accessibility-panel .accessibility-menu {
 // 		overflow: hidden !important;
 // 	}
@@ -1139,7 +1139,7 @@ select.accessibility-menu__select:not(.react-select__control) {
 
 // // // // // // //
 
-// Styles de base pour les options React-Select (tous thèmes)
+// Base styles for React-Select options (all themes)
 html body .react-select__option--is-selected {
 	background-color: var(--accent) !important;
 	color: var(--constant-near-black) !important;
@@ -1162,7 +1162,7 @@ html body .react-select__option--is-focused {
 
 // // // // // // // // // //
 
-/* Sélecteur ultra-spécifique pour les options sélectionnées en high-contrast */
+/* Ultra-specific selector for selected options in high-contrast */
 // [data-theme="high-contrast"] div[class*="react-select__menu-portal"],
 [data-theme^="high-contrast"] div[class*="react-select__menu"] {
 	.react-select__option--is-selected {

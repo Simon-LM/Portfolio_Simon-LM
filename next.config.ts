@@ -127,14 +127,14 @@ import type { NextConfig } from "next/types";
 
 const nextConfig: NextConfig = {
 	reactStrictMode: true,
-	// Résolution des @use "a11y-prefs/scss/…" (paquet du workspace pnpm,
-	// symlinké dans node_modules) — Dart Sass ne résout pas les modules
-	// Node par défaut. Chantier E3, docs/theme-system/PLAN-extraction-monorepo.md.
+	// Resolves @use "a11y-prefs/scss/…" (the pnpm workspace package,
+	// symlinked into node_modules) — Dart Sass doesn't resolve Node
+	// modules by default. E3 chantier, docs/theme-system/PLAN-extraction-monorepo.md.
 	sassOptions: {
 		includePaths: ["node_modules"],
 	},
-	// Le paquet du workspace est consommé en source TypeScript (le dist
-	// publiable est un sujet E7) — Next doit le transpiler. Chantier E4.
+	// The workspace package is consumed as TypeScript source (a publishable
+	// dist is an E7 topic) — Next must transpile it. E4 chantier.
 	transpilePackages: ["a11y-prefs"],
 	// Dev-server only: without this, Next.js rejects the HMR WebSocket handshake
 	// when the dev server is reached via a LAN IP instead of localhost, which

@@ -1,21 +1,21 @@
 /** @format */
 
-// Module opt-in — polices d'accessibilité embarquées (chantier E5).
-// Le consommateur @use ce module puis @include les mixins où il veut
-// émettre les @font-face et les classes. Le chemin des assets est
-// configurable ($a11y-fonts-path) — défaut "/fonts", la valeur du
-// portfolio, pour un rendu identique.
+// Opt-in module — bundled accessibility fonts (E5).
+// The consumer @use's this module then @include's the mixins wherever
+// they want to emit the @font-face rules and classes. The asset path is
+// configurable ($a11y-fonts-path) — default "/fonts", the portfolio's
+// value, for identical rendering.
 //
-// Polices livrées (OFL, cf. packages/a11y-prefs/fonts/LICENSES/) :
-// OpenDyslexic, Andika, Atkinson Hyperlegible Next. Lexend Giga/Deca sont
-// aussi livrées dans fonts/ mais restent déclarées côté consommateur (ce
-// sont souvent des polices de marque — le portfolio les a dans son bloc
-// marque). Sylexiad n'est PAS livrée (EULA propriétaire) : le consommateur
-// la branche via ses propres classes.
+// Bundled fonts (OFL, see packages/a11y-prefs/fonts/LICENSES/):
+// OpenDyslexic, Andika, Atkinson Hyperlegible Next. Lexend Giga/Deca are
+// also bundled in fonts/ but stay declared on the consumer's side (they're
+// often brand fonts — the portfolio has them in its brand block). Sylexiad
+// is NOT bundled (proprietary EULA): the consumer wires it in via their
+// own classes.
 
 $a11y-fonts-path: "/fonts" !default;
 
-// Émet les @font-face des polices d'accessibilité embarquées.
+// Emits the @font-face rules for the bundled accessibility fonts.
 @mixin a11y-font-faces($path: $a11y-fonts-path) {
 	//  Dyslexic font
 	@font-face {
@@ -51,7 +51,7 @@ $a11y-fonts-path: "/fonts" !default;
 		font-display: swap;
 	}
 
-	// Andika - Police SIL
+	// Andika - SIL font
 	@font-face {
 		font-family: "Andika";
 		src: url("#{$path}/Andika-Regular.woff2") format("woff2"),
@@ -85,29 +85,29 @@ $a11y-fonts-path: "/fonts" !default;
 		font-display: swap;
 	}
 
-	// Atkinson Hyperlegible Next (variable) - lisibilité / basse vision
+	// Atkinson Hyperlegible Next (variable) - legibility / low vision
 	@font-face {
 		font-family: "Atkinson Hyperlegible";
 		src: url("#{$path}/AtkinsonHyperlegibleNextVF-Variable.woff2")
 				format("woff2-variations"),
 			url("#{$path}/AtkinsonHyperlegibleNextVF-Variable.ttf")
 				format("truetype-variations");
-		font-weight: 100 900; // Plage de poids disponible
+		font-weight: 100 900; // Available weight range
 		font-style: normal;
 		font-display: swap;
 	}
 }
 
-// Classe du sélecteur de police : la police choisie s'applique PARTOUT
-// (titres compris) — c'est ce que demande l'utilisateur qui la choisit ; la
-// hiérarchie fine est l'affaire du mode dyslexie (module dyslexia). Design
-// acté avec Simon le 2026-07-10.
+// Font selector class: the chosen font applies EVERYWHERE (headings
+// included) — that's what the user picking it expects; fine-grained
+// hierarchy is the dyslexia mode's job (dyslexia module). Design decided
+// on 2026-07-10.
 //
-// Corps : `font-size-adjust` normalise la hauteur d'x (une police au petit
-// œil, Atkinson/Sylexiad…, cesse de paraître plus petite — passer null pour
-// une police naturellement grande comme OpenDyslexic) + espacements alignés
-// sur ceux du mode dyslexie (mêmes valeurs, validées visuellement).
-// Titres : espacements propres, inchangés par rapport à l'historique.
+// Body: `font-size-adjust` normalizes x-height (a font with a small
+// x-height, Atkinson/Sylexiad…, stops looking smaller — pass null for a
+// naturally large font like OpenDyslexic) + spacing aligned with dyslexia
+// mode's (same values, visually validated).
+// Headings: their own spacing, unchanged from history.
 @mixin a11y-font-class(
 	$class,
 	$font,
@@ -169,9 +169,9 @@ $a11y-fonts-path: "/fonts" !default;
 	}
 }
 
-// Les classes des polices embarquées. Le consommateur ajoute les siennes
-// avec a11y-font-class (ex. portfolio : Sylexiad, OpenDyslexic + surcharges
-// site-spécifiques par-dessus).
+// Classes for the bundled fonts. The consumer adds their own with
+// a11y-font-class (e.g. portfolio: Sylexiad, OpenDyslexic + site-specific
+// overrides on top).
 @mixin a11y-font-classes {
 	@include a11y-font-class("atkinson-font", "Atkinson Hyperlegible");
 	@include a11y-font-class("andika-font", "Andika");

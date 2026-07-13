@@ -96,8 +96,8 @@ const techIconsVariants = {
 	visible: {
 		opacity: 1,
 		transition: {
-			staggerChildren: 0.2, // Ralentir le délai entre chaque icône
-			delayChildren: 0.5, // Augmenter le délai initial
+			staggerChildren: 0.2, // Slow down the delay between each icon
+			delayChildren: 0.5, // Increase the initial delay
 		},
 	},
 };
@@ -116,10 +116,10 @@ const iconVariants = {
 		scale: 1,
 		transition: {
 			type: "spring",
-			stiffness: 70, // Réduire la rigidité
-			damping: 15, // Augmenter l'amortissement
-			mass: 1, // Augmenter la masse
-			duration: 2.5, // Augmenter la durée
+			stiffness: 70, // Reduce stiffness
+			damping: 15, // Increase damping
+			mass: 1, // Increase mass
+			duration: 2.5, // Increase duration
 		},
 	},
 };

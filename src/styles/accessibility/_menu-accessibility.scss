@@ -1,6 +1,6 @@
 /** @format */
 
-// Styles pour le bouton d'accessibilité
+// Styles for the accessibility button
 .accessibility-control {
 	// position: relative;
 	// display: flex;
@@ -20,7 +20,7 @@
 		// 	background-color: var(--color-button-hover-bg, rgba(0, 0, 0, 0.1));
 		// }
 
-		// Style du tooltip
+		// Tooltip style
 		&[data-tooltip]:hover::after,
 		&[data-tooltip]:focus-visible::after {
 			content: attr(data-tooltip);
@@ -46,7 +46,7 @@
 	// }
 }
 
-// // Styles spécifiques pour le thème high-contrast
+// // Styles specific to the high-contrast theme
 // [data-theme="high-contrast"] {
 // 	.accessibility-control__button {
 // 		&[data-tooltip]:hover::after,
@@ -59,11 +59,11 @@
 // 	}
 // }
 
-// Styles pour les tooltips en mode high-contrast
-// Toutes les variantes de fort contraste (chantier HC) — couleurs du
-// thème, équivalentes au jaune historique dans la variante jaune.
+// Styles for tooltips in high-contrast mode
+// All high-contrast variants (HC chantier) — theme colors, equivalent to
+// the historical yellow in the yellow variant.
 html[data-theme^="high-contrast"] {
-	// Style global pour tous les tooltips
+	// Global style for every tooltip
 	[data-tooltip]:hover::after,
 	[data-tooltip]:focus-visible::after {
 		background: var(--near-black) !important;
@@ -72,7 +72,7 @@ html[data-theme^="high-contrast"] {
 		font-weight: 600 !important;
 	}
 
-	// Flèches de tooltip (si présentes)
+	// Tooltip arrows (if present)
 	[data-tooltip]:hover::before,
 	[data-tooltip]:focus-visible::before {
 		border-color: transparent transparent var(--near-black) transparent !important;

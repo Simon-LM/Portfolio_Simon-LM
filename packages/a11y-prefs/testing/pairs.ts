@@ -1,9 +1,9 @@
 /** @format */
 
-// Types et paires de RÔLES par défaut du vérificateur de contrastes
-// (chantier E6.6). Le paquet livre les définitions de paires sur ses ~19
-// rôles — l'API que tout consommateur hérite. Le consommateur y applique ses
-// propres waivers (overlay) et ajoute ses paires de couche 3.
+// Types and default ROLE pairs for the contrast verifier (E6.6). The
+// package ships pair definitions for its ~19 roles — the API every
+// consumer inherits. The consumer applies their own waivers (overlay) on
+// top and adds their layer-3 pairs.
 
 import type { ContrastLevel } from "./wcag";
 import type { CvdTheme } from "./cvd-simulation";
@@ -12,23 +12,23 @@ export type { ContrastLevel };
 
 export type Waiver = {
 	reason: string;
-	/** true = déjà en échec quand le système de tests a été introduit. */
+	/** true = already failing when the test system was introduced. */
 	preexisting: boolean;
-	/** thème -> ratio mesuré. */
+	/** theme -> measured ratio. */
 	measured?: Record<string, number>;
 };
 
 export type ContrastPair = {
-	/** Identifiant stable, ex. "role/fg-base-on-bg-base". */
+	/** Stable identifier, e.g. "role/fg-base-on-bg-base". */
 	id: string;
-	/** Custom property de la couleur de premier plan, ex. "--fg-base". */
+	/** Custom property of the foreground color, e.g. "--fg-base". */
 	fg: string;
-	/** Custom property de la couleur de fond. */
+	/** Custom property of the background color. */
 	bg: string;
 	level: ContrastLevel;
-	/** Custom property sur laquelle composer `fg`/`bg` si alpha < 1. */
+	/** Custom property to composite `fg`/`bg` over if alpha < 1. */
 	composeOver?: string;
-	/** Thèmes concernés (défaut : tous ceux passés au rapport). */
+	/** Themes concerned (default: all those passed to the report). */
 	themes?: readonly string[];
 	waiver?: Waiver;
 };
@@ -44,8 +44,8 @@ export type DistinguishabilityPair = {
 	waiver?: Waiver;
 };
 
-// Applique un overlay de waivers (id -> waiver) sur une liste de paires —
-// le consommateur documente SES échecs sans redéfinir les paires du paquet.
+// Applies a waiver overlay (id -> waiver) to a list of pairs — the
+// consumer documents THEIR failures without redefining the package's pairs.
 export function withWaivers<T extends { id: string; waiver?: Waiver }>(
 	pairs: readonly T[],
 	waivers: Readonly<Record<string, Waiver>>,
@@ -55,8 +55,8 @@ export function withWaivers<T extends { id: string; waiver?: Waiver }>(
 	);
 }
 
-// Paires de rôles par défaut (couche 2). Définitions seules, sans waiver :
-// un consommateur frais n'en a aucun. Il ajoute les siens via withWaivers().
+// Default role pairs (layer 2). Definitions only, no waivers: a fresh
+// consumer starts with none. They add their own via withWaivers().
 export const defaultRolePairs: readonly ContrastPair[] = [
 	{ id: "role/fg-base-on-bg-base", fg: "--fg-base", bg: "--bg-base", level: "text" },
 	{ id: "role/fg-base-on-bg-subtle", fg: "--fg-base", bg: "--bg-subtle", level: "text" },
@@ -89,11 +89,11 @@ export const ALL_CVD_THEMES: readonly CvdTheme[] = [
 	"achromatopsia",
 ];
 
-// Seuils ΔE de distinguabilité (calibrés au chantier daltonien).
+// ΔE distinguishability thresholds (calibrated in the color-blind chantier).
 export const DEFAULT_MIN_DELTA_E = 20;
 export const LINK_PAIR_MIN_DELTA_E = 12;
 
-// Paires de distinguabilité par défaut (sur les rôles statut/accent/link).
+// Default distinguishability pairs (on the status/accent/link roles).
 export const defaultDistinguishabilityPairs: readonly DistinguishabilityPair[] = [
 	{ id: "distinguish/success-vs-danger", colorA: "--success", colorB: "--danger", themes: ALL_CVD_THEMES, minDeltaE: DEFAULT_MIN_DELTA_E },
 	{ id: "distinguish/accent-vs-danger", colorA: "--accent", colorB: "--danger", themes: ALL_CVD_THEMES, minDeltaE: DEFAULT_MIN_DELTA_E },

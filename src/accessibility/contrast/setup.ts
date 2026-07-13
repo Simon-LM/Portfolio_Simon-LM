@@ -1,8 +1,8 @@
 /** @format */
 
-// Configure le vérificateur de contrastes du paquet pour CE projet : point
-// d'entrée SCSS, loadPaths, liste des thèmes. Effet de bord, à importer
-// avant tout usage (jest.setup.js + les scripts report/audit).
+// Configures the package's contrast verifier for THIS project: SCSS entry
+// point, loadPaths, theme list. Side effect, import before any use
+// (jest.setup.js + the report/audit scripts).
 
 import path from "node:path";
 import { configureThemeExtraction } from "a11y-prefs/testing/extract-themes";

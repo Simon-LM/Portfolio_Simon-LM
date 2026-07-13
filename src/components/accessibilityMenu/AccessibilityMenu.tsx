@@ -21,16 +21,16 @@ type Props = {
 	onClose?: () => void;
 };
 
-// Variantes du mode fort contraste (chantier HC) — « high-contrast » =
-// jaune sur noir, valeur historique conservée
+// High-contrast mode variants (HC chantier) — "high-contrast" = yellow on
+// black, historical value kept
 type HcVariant =
 	| "high-contrast"
 	| "high-contrast-green"
 	| "high-contrast-white"
 	| "high-contrast-paper";
 
-// Modificateur SCSS de chaque bouton de variante (les couleurs réelles
-// vivent dans _accessibility-menu.scss, patron __high-contrast-button)
+// SCSS modifier for each variant button (the actual colors live in
+// _accessibility-menu.scss, __high-contrast-button pattern)
 const HC_VARIANT_MODIFIERS: Record<HcVariant, string> = {
 	"high-contrast": "yellow",
 	"high-contrast-green": "green",
@@ -63,8 +63,8 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 	);
 	const colorVisionSelectRef = useRef<SelectInstance<OptionType> | null>(null);
 	const fontTypeSelectRef = useRef<SelectInstance<OptionType> | null>(null);
-	// Dernière variante de fort contraste utilisée (patron ZoomText : le
-	// toggle réactive le dernier schéma choisi) — init paresseuse localStorage
+	// Last high-contrast variant used (ZoomText pattern: the toggle
+	// reactivates the last chosen scheme) — lazy localStorage init
 	const [hcVariant, setHcVariant] = useState<HcVariant>(() => {
 		if (typeof window === "undefined") return "high-contrast";
 		const saved = localStorage.getItem("hc-variant");
@@ -75,26 +75,26 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 			: "high-contrast";
 	});
 
-	// Fonction pour basculer le mode dyslexie optimisé
+	// Function to toggle the optimized dyslexia mode
 	const toggleDyslexicMode = () => {
 		const newMode = !isDyslexicMode;
 		setIsDyslexicMode(newMode);
 
 		if (newMode) {
-			// Activer le mode dyslexie optimisé et désactiver les autres
+			// Activate the optimized dyslexia mode and deactivate the others
 			document.documentElement.classList.add("dyslexia-optimized");
 
-			// Réinitialiser le sélecteur de police
+			// Reset the font selector
 			if (fontType !== "none") {
 				setFontType("none");
 			}
 		} else {
-			// Désactiver le mode dyslexie optimisé
+			// Deactivate the optimized dyslexia mode
 			document.documentElement.classList.remove("dyslexia-optimized");
 		}
 	};
 
-	// Ajouter cet useEffect pour initialiser
+	// Add this useEffect to initialize
 	useEffect(() => {
 		if (mounted && typeof document !== "undefined") {
 			if (isDyslexicMode) {
@@ -105,11 +105,11 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 		}
 	}, [mounted, isDyslexicMode]);
 
-	// Ajoutez un nouvel effet pour gérer la coordination entre les deux fonctionnalités
+	// Add a new effect to handle coordination between the two features
 	// Removed: the Select onChange handler already calls setIsDyslexicMode(false)
 	// when a non-'none' font is selected, making this effect redundant.
 
-	// Mettre à jour la référence du dernier thème de base
+	// Update the reference to the last base theme
 	useEffect(() => {
 		if (theme === "light" || theme === "dark") {
 			lastBaseTheme.current = theme;
@@ -118,7 +118,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 
 	useEffect(() => {
 		if (typeof document !== "undefined" && mounted) {
-			// Applique la taille initiale au chargement
+			// Apply the initial size on load
 			document.documentElement.style.setProperty(
 				"--font-size-factor",
 				`${fontSize / 100}`,
@@ -128,14 +128,14 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 
 	useEffect(() => {
 		if (mounted && typeof document !== "undefined") {
-			// La fonction setFontType du store va gérer l'application des classes
+			// The store's setFontType function will handle applying the classes
 			setFontType(fontType);
 		}
 	}, [mounted, fontType, setFontType]);
 
 	useEffect(() => {
 		if (mounted && typeof document !== "undefined") {
-			// La classe typo s'applique à TOUTES les variantes de fort contraste
+			// The typography class applies to ALL high-contrast variants
 			if (theme.startsWith("high-contrast")) {
 				document.documentElement.classList.add("high-contrast");
 			} else {
@@ -144,23 +144,23 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 		}
 	}, [mounted, theme]);
 
-	// Mémoriser la dernière variante de fort contraste utilisée (le toggle
-	// la réactivera). Appelée par le sélecteur de variante — pas d'effet,
-	// la règle du projet interdit setState dans un effet.
+	// Remember the last high-contrast variant used (the toggle will
+	// reactivate it). Called by the variant selector — no effect, the
+	// project rule forbids setState inside an effect.
 	const selectHcVariant = (variant: HcVariant) => {
 		setHcVariant(variant);
 		localStorage.setItem("hc-variant", variant);
 		setTheme(variant);
 	};
 
-	// Fonction pour activer le mode anti-éblouissement
+	// Function to activate anti-glare mode
 	const activateAntiGlare = () => {
 		setTheme(
 			lastBaseTheme.current === "dark" ? "anti-glare-dark" : "anti-glare-light",
 		);
 	};
 
-	// Extraire le mode de vision des couleurs du thème
+	// Extract the color vision mode from the theme
 	const getColorVisionMode = (currentTheme: string): string => {
 		if (
 			currentTheme === "light" ||
@@ -172,7 +172,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 			return "normal";
 		}
 
-		// Extraire le type de daltonisme du nom du thème
+		// Extract the color blindness type from the theme name
 		const colorVisionTypes = [
 			"protanomaly",
 			"protanopia",
@@ -192,15 +192,15 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 		return "normal";
 	};
 
-	// Gérer le changement de mode de vision
+	// Handle the color vision mode change
 	const handleColorVisionChange = (mode: string) => {
 		if (mode === "normal") {
-			// Revenir au thème de base (light/dark)
+			// Return to the base theme (light/dark)
 			setTheme(lastBaseTheme.current);
 			return;
 		}
 
-		// Appliquer le thème de daltonisme sélectionné
+		// Apply the selected color blindness theme
 		setTheme(mode as ThemeOption);
 	};
 
@@ -209,19 +209,19 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 		setReduceMotion(newValue);
 
 		if (typeof document !== "undefined") {
-			// Sauvegarder la préférence (DOM class is synced by the useEffect below)
+			// Save the preference (DOM class is synced by the useEffect below)
 			localStorage.setItem("reduce-motion", newValue.toString());
 		}
 	};
 
 	// Sync reduce-motion DOM class from state (correct effect direction: state → external system)
 	// reduceMotion is lazily initialised — this also applies the initial value on first render.
-	// L'application DOM est déléguée à l'applier du paquet (E5) — comportement identique.
+	// DOM application is delegated to the package's applier (E5) — identical behavior.
 	useEffect(() => {
 		applyReduceMotion(reduceMotion);
 	}, [reduceMotion]);
 
-	// Labels selon la langue
+	// Labels depending on the language
 	const labels = {
 		categories: {
 			mode: language === "fr" ? "Mode" : "Mode",
@@ -316,31 +316,31 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 	if (!mounted) {
 		return <div className="accessibility-menu skeleton"></div>;
 	}
-	// Fonction spécifique pour le bouton anti-éblouissement dans Vision
+	// Function specific to the anti-glare button in Vision
 	const activateAntiGlareLight = () => {
-		// Toujours activer la version light pour ce bouton spécifique
+		// Always activate the light version for this specific button
 		setTheme("anti-glare-light");
 	};
 
-	// Vérifier si l'un des modes anti-glare est actif
+	// Check whether one of the anti-glare modes is active
 	const isAntiGlareActive =
 		theme === "anti-glare-light" || theme === "anti-glare-dark";
 
 	const resetAllAccessibilitySettings = () => {
-		// Réinitialiser le thème au thème par défaut basé sur les préférences système
+		// Reset the theme to the default theme based on system preferences
 		setTheme(prefersDarkMode ? "dark" : "light");
 
-		// Réinitialiser la taille de police à 100%
+		// Reset the font size to 100%
 		useFontSizeStore.getState().setFontSize(100);
 
-		// Réinitialiser le type de police
+		// Reset the font type
 		setFontType("none");
 
-		// Réinitialiser la variante de fort contraste mémorisée
+		// Reset the remembered high-contrast variant
 		setHcVariant("high-contrast");
 		localStorage.removeItem("hc-variant");
 
-		// Désactiver le mode dyslexie optimisé
+		// Deactivate the optimized dyslexia mode
 		if (isDyslexicMode) {
 			document.documentElement.classList.remove("dyslexia-optimized");
 			setIsDyslexicMode(false);
@@ -352,7 +352,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 		false,
 		GroupBase<OptionType>
 	> => {
-		// Styles par défaut adaptés au thème courant
+		// Default styles adapted to the current theme
 		return {
 			control: (base) => ({
 				...base,
@@ -437,7 +437,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 				)}
 			</div>
 
-			{/* Catégorie Mode */}
+			{/* Mode category */}
 			<div className="accessibility-menu__category">
 				<h3 className="accessibility-menu__category-title">
 					{labels.categories.mode}
@@ -467,12 +467,12 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 				</div>
 			</div>
 
-			{/* Catégorie Vision */}
+			{/* Vision category */}
 			<div className="accessibility-menu__category">
 				<h3 className="accessibility-menu__category-title">
 					{labels.categories.vision}
 				</h3>
-				{/* Sous-section Hight Contraste */}
+				{/* High contrast subsection */}
 				<div className="accessibility-menu__visual-help-group">
 					<p className="accessibility-menu__group-label">
 						{labels.categories.contrast}
@@ -490,11 +490,11 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 						</button>
 					</div>
 
-					{/* Variantes du fort contraste — 4 boutons directs, visibles quand
-					    le mode est actif (décision Simon 2026-07-10 : pas de sélecteur,
-					    plus robuste pour NVDA et les gros zooms). Chaque bouton =
-					    mini-prévisualisation : libellé complet dans les couleurs
-					    réelles de sa variante. */}
+					{/* High-contrast variants — 4 direct buttons, visible when
+					    the mode is active (decision 2026-07-10: no selector,
+					    more robust for NVDA and high zoom). Each button =
+					    a mini preview: full label rendered in its variant's
+					    actual colors. */}
 					{theme.startsWith("high-contrast") && (
 						<div
 							className="accessibility-menu__buttons-row accessibility-menu__buttons-row--hc-variants"
@@ -515,8 +515,8 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 									}`}
 									aria-pressed={theme === variant}
 									onClick={() => selectHcVariant(variant)}>
-									{/* Coche = marqueur visuel de la variante active ; la
-									    sémantique est portée par aria-pressed */}
+									{/* Checkmark = visual marker of the active variant; the
+									    semantics are carried by aria-pressed */}
 									{theme === variant && <span aria-hidden="true">✓ </span>}
 									{labels.visualHelps.highContrast.variants[variant]}
 								</button>
@@ -525,7 +525,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 					)}
 				</div>
 
-				{/* Sous-section Anti-éblouissement */}
+				{/* Anti-glare subsection */}
 				<div className="accessibility-menu__visual-help-group">
 					{/* <p className="accessibility-menu__group-label">
 						{labels.visualHelps.antiGlare.name}
@@ -544,7 +544,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 					</div>
 				</div>
 
-				{/* Sous-section Réduire les animations */}
+				{/* Reduce animations subsection */}
 				<div className="accessibility-menu__visual-help-group">
 					<p className="accessibility-menu__help-description">
 						{labels.visualHelps.reduceMotion.description}
@@ -561,7 +561,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 					</div>
 				</div>
 
-				{/* Sous-section Daltonisme - inchangée */}
+				{/* Color blindness subsection - unchanged */}
 				<div className="accessibility-menu__visual-help-group">
 					<label
 						htmlFor="color-vision-select"
@@ -609,28 +609,28 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 						menuShouldBlockScroll={true}
 						openMenuOnFocus={false}
 						closeMenuOnSelect={true}
-						// Gestionnaire simplifié qui ne bloque pas le comportement standard
+						// Simplified handler that doesn't block standard behavior
 						onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
 							const menuOpen =
 								document.querySelector('[role="listbox"]') !== null;
 
-							// Si le menu est fermé et Enter ou Espace est pressé
+							// If the menu is closed and Enter or Space is pressed
 							if (!menuOpen && (e.key === "Enter" || e.key === " ")) {
 								e.preventDefault();
 
-								// Ouvrir le menu de manière fiable
+								// Reliably open the menu
 								if (colorVisionSelectRef.current) {
 									colorVisionSelectRef.current.openMenu("first");
 								}
 							}
 
-							// Si le menu est ouvert
+							// If the menu is open
 							if (menuOpen) {
-								// Pour Tab et Shift+Tab, simuler les flèches
+								// For Tab and Shift+Tab, simulate the arrow keys
 								if (e.key === "Tab") {
 									e.preventDefault();
 
-									// Simuler flèche bas ou haut selon Shift
+									// Simulate arrow down or up depending on Shift
 									const key = e.shiftKey ? "ArrowUp" : "ArrowDown";
 									const event = new KeyboardEvent("keydown", {
 										key,
@@ -644,13 +644,13 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 				</div>
 			</div>
 
-			{/* Catégorie Lecture */}
+			{/* Reading category */}
 			<div className="accessibility-menu__category">
 				<h3 className="accessibility-menu__category-title">
 					{labels.categories.reading}
 				</h3>
 
-				{/* Button dyslexique */}
+				{/* Dyslexia button */}
 				<div className="accessibility-menu__visual-help-group">
 					{/* <p className="accessibility-menu__help-description">
 						{labels.dyslexic.modeDescription}
@@ -670,7 +670,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 					</div>
 				</div>
 
-				{/* Contrôle de taille de police */}
+				{/* Font size control */}
 				<div className="accessibility-menu__font-control">
 					<div className="accessibility-menu__slider-header">
 						<label
@@ -708,7 +708,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 							value={fontSize}
 							onChange={(e) => {
 								const value = parseInt(e.target.value);
-								// Utiliser la fonction setFontSize du store
+								// Use the store's setFontSize function
 								useFontSizeStore.getState().setFontSize(value);
 							}}
 							aria-label={labels.fontSize.label}
@@ -722,7 +722,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 					</div>
 				</div>
 
-				{/* Toggle police dyslexique */}
+				{/* Dyslexia font toggle */}
 				<div className="accessibility-menu__select-control">
 					<label
 						htmlFor="font-type-select"
@@ -731,7 +731,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 					</label>
 
 					<Select
-						ref={fontTypeSelectRef} // Ajouter la référence
+						ref={fontTypeSelectRef} // Add the reference
 						inputId="font-type-select"
 						className="react-select-container"
 						classNamePrefix="react-select"
@@ -786,33 +786,33 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 						isSearchable={false}
 						menuPortalTarget={
 							typeof document !== "undefined" ? document.body : null
-						} // 👈 Ajouter ceci
-						menuPosition="fixed" // 👈 Ajouter ceci
+						} // 👈 Add this
+						menuPosition="fixed" // 👈 Add this
 						menuShouldBlockScroll={true}
 						openMenuOnFocus={false}
 						closeMenuOnSelect={true}
-						// Ajouter le gestionnaire d'événements clavier pour la navigation
+						// Add the keyboard event handler for navigation
 						onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
 							const menuOpen =
 								document.querySelector('[role="listbox"]') !== null;
 
-							// Si le menu est fermé et Enter ou Espace est pressé
+							// If the menu is closed and Enter or Space is pressed
 							if (!menuOpen && (e.key === "Enter" || e.key === " ")) {
 								e.preventDefault();
 
-								// Ouvrir le menu de manière fiable
+								// Reliably open the menu
 								if (fontTypeSelectRef.current) {
 									fontTypeSelectRef.current.openMenu("first");
 								}
 							}
 
-							// Si le menu est ouvert
+							// If the menu is open
 							if (menuOpen) {
-								// Pour Tab et Shift+Tab, simuler les flèches
+								// For Tab and Shift+Tab, simulate the arrow keys
 								if (e.key === "Tab") {
 									e.preventDefault();
 
-									// Simuler flèche bas ou haut selon Shift
+									// Simulate arrow down or up depending on Shift
 									const key = e.shiftKey ? "ArrowUp" : "ArrowDown";
 									const event = new KeyboardEvent("keydown", {
 										key,
@@ -893,7 +893,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 								| "tiresias"
 								| "ralewaydots";
 
-							// Si le mode dyslexie optimisé est actif, le désactiver
+							// If the optimized dyslexia mode is active, deactivate it
 							if (isDyslexicMode && value !== "none") {
 								setIsDyslexicMode(false);
 							}
@@ -923,7 +923,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 				</div>
 			</div>
 
-			{/* Section de réinitialisation */}
+			{/* Reset section */}
 			<div className="accessibility-menu__reset-section">
 				<button
 					className="accessibility-menu__reset-all-button"
@@ -939,7 +939,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 				</button>
 			</div>
 
-			{/* Lien vers la déclaration d'accessibilité */}
+			{/* Link to the accessibility statement */}
 			<div className="accessibility-menu__compliance-link">
 				<Link
 					href={`/${language}/accessibility`}

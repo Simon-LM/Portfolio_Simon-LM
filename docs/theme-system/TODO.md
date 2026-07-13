@@ -1,144 +1,148 @@
 <!-- @format -->
 
-# Choses à faire — système de thèmes / futur paquet
+# To do — theme system / future package
 
-Liste unique des travaux et décisions en suspens pour le système de thèmes.
-La **feuille de route** d'extraction en paquet (chantiers E3→E7) vit dans
-[GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) ; ce fichier ne
-liste que les **fils qui pendent** et les **décisions en attente**, pour ne
-rien oublier. Mettre à jour au fil de l'eau (cocher / retirer une fois fait).
+Single list of pending work and decisions for the theme system. The
+package-extraction **roadmap** (chantiers E3→E7) lives in
+[GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md); this file only
+lists **loose ends** and **pending decisions**, so nothing gets forgotten.
+Update as you go (check off / remove once done).
 
-## Décisions en attente (arbitrage de Simon)
+## Pending decisions (awaiting a call)
 
-- [ ] **Plancher de lisibilité du résolveur de statut** — constante
-      `$status-legibility-floor` dans `src/styles/abstracts/_theme-utils.scss`
-      (défaut **3:1**). En dessous, la dégradation gracieuse émet un `@warn`
-      « quasi invisible ». Ne conditionne rien aujourd'hui (chemin latent) ;
-      valeur à confirmer ou ajuster. Ajouté partie 3 (2026-07-06).
+- [ ] **Status resolver's legibility floor** — constant
+      `$status-legibility-floor` in `src/styles/abstracts/_theme-utils.scss`
+      (default **3:1**). Below it, graceful degradation emits a "nearly
+      invisible" `@warn`. Doesn't gate anything today (latent path); value
+      to confirm or adjust. Added in part 3 (2026-07-06).
 
-## À faire AVANT publication (E7)
+## To do BEFORE publication (E7)
 
-- [x] **Renommé la famille de palette `redd` → `red`** (fait le 2026-07-13). Cause racine confirmée par test : une clé de map NON quotée `red:` est lue comme la couleur CSS `red`, donc `map.get($colors, "red")` renvoyait null. Fix cohérent avec `"orange"`/`"violet"` (déjà quotées) : clé quotée `"red":`. 6 fichiers ; CSS byte-identique.
+- [x] **Renamed the `redd` → `red` palette family** (done 2026-07-13). Root
+      cause confirmed by test: an UNQUOTED map key `red:` is read as the
+      CSS color `red`, so `map.get($colors, "red")` returned null. Fix
+      consistent with `"orange"`/`"violet"` (already quoted): quoted key
+      `"red":`. 6 files; byte-identical CSS.
 
-## Micro-chantiers proposés (non planifiés, sous filet des tests)
+## Proposed micro-chantiers (unplanned, under the test safety net)
 
-- [x] **Corrections de rôles** (proposé après E1) — **terminé le 2026-07-07**
-      (branche `refactor/theme-role-corrections`, 2 commits, en attente de
-      validation visuelle avant merge) :
-  - [x] Jeton mort `--color-button-active-outline` **supprimé** (+ sa paire
-        de contraste).
-  - [x] **Titre** du header corrigé (`--fg-on-accent` par luminance) —
-        changement visuel nul.
-  - [x] **Sous-titre** ancré à un gris atténué fixe (décision Simon :
-        « gris atténué ») — en dark, passe de near-black à `stone-700`.
-  - [x] **Lien blog** : design d'origine de Simon restauré — **chip grisé +
-        texte amber dans les deux modes** (light et dark identiques :
-        `#44403c` + `#fcd34d`). Le chip quasi-blanc en dark était un défaut
-        antérieur aux chantiers (inversion automatique du gris, partie en
-        prod), pas le design voulu. Sans rustine, paire verte partout.
-  - [x] Toutes les rustines `.header` de `_dark.scss` supprimées ; les
-        4 waivers header/accent levés (anti-zombie).
+- [x] **Role corrections** (proposed after E1) — **done 2026-07-07**
+      (branch `refactor/theme-role-corrections`, 2 commits, awaiting visual
+      validation before merge):
+  - [x] Dead token `--color-button-active-outline` **removed** (+ its
+        contrast pair).
+  - [x] Header **title** fixed (`--fg-on-accent` by luminance) — zero
+        visual change.
+  - [x] **Subtitle** anchored to a fixed muted gray (decision: "muted
+        gray") — in dark, goes from near-black to `stone-700`.
+  - [x] **Blog link**: original design restored — **grayed chip + amber
+        text in both modes** (light and dark identical: `#44403c` +
+        `#fcd34d`). The near-white chip in dark was a defect predating
+        these chantiers (automatic gray inversion, partly in prod), not
+        the intended design. No patch needed, green pair everywhere.
+  - [x] Every `.header` patch in `_dark.scss` removed; the 4 header/accent
+        waivers lifted (anti-zombie).
 
-## Trouvailles de la relecture du 2026-07-07 (audit émis/consommés)
+## Findings from the 2026-07-07 review (emitted/consumed audit)
 
-- [x] **Micro-chantier « variables fantômes »** — fait le 2026-07-07
-      (branche `chore/theme-token-cleanup`) : les 5 déclarations inertes
-      **retirées** (rendu strictement inchangé — elles ne faisaient rien,
-      la couleur héritée s'appliquait déjà) et les 3 fallbacks simplifiés
+- [x] **"Phantom variables" micro-chantier** — done 2026-07-07 (branch
+      `chore/theme-token-cleanup`): the 5 inert declarations **removed**
+      (rendering strictly unchanged — they did nothing, the inherited
+      color already applied) and the 3 fallbacks simplified
       (`--color-divider`/`--color-input-bg`/`--color-text-secondary` →
-      leur fallback directement).
-- [x] **5 jetons émis jamais consommés supprimés** (mandat « tout sauf
-      E3 ») : `--color-hero-bg`, `--color-hero-text` (+ leur paire de
-      contraste), `--color-collapse-border`, `--color-section-even-card-bg`,
-      `--constant-success-color`.
-- [x] **Toast de succès du formulaire contact** — décidé et fait le
-      2026-07-07 : rôle `--success` passé à **emerald-700** (5.25:1) et le
-      toast câblé sur `var(--success)` (vert thématisé dans les 12 thèmes,
-      premier consommateur du rôle). Waiver réduit à l'achromatopsie seule.
+      their fallback directly).
+- [x] **5 emitted-but-never-consumed tokens removed** (under a "everything
+      except E3" mandate): `--color-hero-bg`, `--color-hero-text` (+ their
+      contrast pair), `--color-collapse-border`,
+      `--color-section-even-card-bg`, `--constant-success-color`.
+- [x] **Contact form success toast** — decided and done 2026-07-07: the
+      `--success` role bumped to **emerald-700** (5.25:1) and the toast
+      wired to `var(--success)` (themed green across all 12 themes, the
+      role's first consumer). Waiver reduced to achromatopsia alone.
 
-## À optimiser plus tard (noté, pas urgent)
+## To optimize later (noted, not urgent)
 
-- [x] **Typographie du high-contrast** — soldé au chantier HC (2026-07-10) :
-      `html.high-contrast` passe par `a11y-font-class` (Atkinson partout,
-      `font-size-adjust: 0.56`, corps 0.04em/1.75/0.128em). Reste un seul
-      micro-arbitrage, non bloquant : l'interligne des TITRES en HC (1.5
-      aujourd'hui, cohérent avec les classes de police).
+- [x] **High-contrast typography** — closed out in the HC chantier
+      (2026-07-10): `html.high-contrast` now goes through
+      `a11y-font-class` (Atkinson everywhere, `font-size-adjust: 0.56`,
+      body 0.04em/1.75/0.128em). One micro-decision remains, non-blocking:
+      HEADING line-height in HC (1.5 today, consistent with the font
+      classes).
 
-## Écarté (décision fermée — ne pas re-proposer)
+## Dropped (closed decision — do not re-propose)
 
-- [x] **Préview du site entier au survol des boutons de variantes HC**
-      (écarté le 2026-07-11, décision Simon). Raison principale : la
-      navigation CLAVIER induirait en erreur — le focus déclencherait la
-      préview et l'utilisateur croirait avoir sélectionné. Raisons
-      secondaires : flashs plein écran en rafale (photosensibilité, le
-      public HC est le plus exposé), hover ≠ intention, inexistant au
-      tactile, confusion état réel/préview. Le clic est déjà une préview
-      réversible à coût nul.
+- [x] **Full-site preview on hover of the HC variant buttons** (dropped
+      2026-07-11, decision). Main reason: KEYBOARD navigation would
+      mislead — focus would trigger the preview and the user would think
+      they'd made a selection. Secondary reasons: rapid full-screen
+      flashes (photosensitivity, and the HC audience is the most exposed),
+      hover ≠ intent, doesn't exist on touch, real-state/preview
+      confusion. A click is already a zero-cost reversible preview.
 
-## Fait (chantier hc-mécanique, 2026-07-11)
+## Done (hc-mécanique chantier, 2026-07-11)
 
-- [x] **Mécanique HC — « second temps », volet architecture** : focus
-      promu rôle de la carte ; contrôle par valeur (palette) ; inspecteur
-      sémantique par noms (`pnpm hc:audit`). Voir README § 6.6. Restent
-      ouverts : le sort des `$accent*` en HC (garé, décision Simon) et la
-      refonte techno de fond (toujours reportée).
+- [x] **HC mechanics — "second pass," architecture part**: focus promoted
+      to a map role; value-based control (palette); name-based semantic
+      inspector (`pnpm hc:audit`). See README § 6.6. Still open: the fate
+      of `$accent*` in HC (parked, decision pending) and the underlying
+      tech redesign (still deferred).
 
-## Reporté explicitement (ne pas toucher sans décision)
+## Explicitly deferred (do not touch without a decision)
 
-- [ ] **Réécriture déclarative du thème high-contrast** — reportée à
-      l'extraction du paquet (décision Simon). Le mécanisme actuel (déduction
-      du rôle par le nom de variable) a ses raisons ; ne pas y toucher tant
-      que ce n'est pas décidé.
+- [ ] **Declarative rewrite of the high-contrast theme** — deferred to the
+      package extraction (decision). The current mechanism (deducing the
+      role from the variable name) has its reasons; do not touch it until
+      this is decided.
 
-## Bloquant avant publication open source
+## Blocking before open-source publication
 
-- [x] **Audit des licences des polices d'accessibilité** — fait le
-      2026-07-08. Décisions actées : **embarquées** (OFL) = OpenDyslexic,
-      Andika, Atkinson, Lexend Giga/Deca ; **exclues** = Sylexiad (EULA
-      propriétaire), **Tiresias** (GPLv3 + inutilisée + police de
-      signalétique), **Raleway Dots** (inutilisée). Détail :
-      [PLAN-extraction-modules.md](./PLAN-extraction-modules.md).
-- [ ] **Question Simon — Sylexiad servie par le site** : l'EULA exige des
-      webfonts « non téléchargeables publiquement » ; les woff2 du
-      portfolio le sont techniquement. À trancher (hors chantier E5).
+- [x] **Accessibility font license audit** — done 2026-07-08. Decisions
+      made: **bundled** (OFL) = OpenDyslexic, Andika, Atkinson, Lexend
+      Giga/Deca; **excluded** = Sylexiad (proprietary EULA), **Tiresias**
+      (GPLv3 + unused + a signage font), **Raleway Dots** (unused).
+      Details: [PLAN-extraction-modules.md](./PLAN-extraction-modules.md).
+- [ ] **Question — Sylexiad served by the site**: the EULA requires
+      webfonts that are "not publicly downloadable"; the portfolio's
+      woff2 files technically are. To be settled (outside the E5 chantier).
 
-## Corrections de rôles — détail
+## Role corrections — details
 
-Les deux défauts partagent une même racine : **`--accent` est
-volontairement figé** (amber-300 clair) dans les 12 thèmes — il ne s'inverse
-pas en dark, c'est un choix de marque. Mais des jetons qui reposent dessus,
-eux, suivent l'inversion générale → clair-sur-clair.
+Both defects share a common root: **`--accent` is deliberately fixed**
+(light amber-300) across all 12 themes — it doesn't invert in dark, that's
+a brand choice. But tokens that build on top of it follow the general
+inversion → light-on-light.
 
-### 1. Contour de bouton actif invisible
+### 1. Invisible active-button outline
 
-- `--color-button-active-outline` = `$accent` (amber-300 clair). Posé sur
-  `--color-panel-bg` = `$bg-base` (quasi blanc en thème clair) → sous le
-  seuil non-texte 3:1. En **high-contrast**, `$accent` et `$bg-base` valent
-  tous deux `#000000` → **1.00:1**, le contour est littéralement invisible.
-- **Correctif** : recâbler le jeton vers un rôle plus contrasté déjà
-  existant — `$accent-strong` (amber-500) ou un rôle de bordure. Une ligne
-  dans `_theme-variables.scss` (déf. + mixin), à valider par la suite +
-  visuellement.
+- `--color-button-active-outline` = `$accent` (light amber-300). Set on
+  `--color-panel-bg` = `$bg-base` (near-white in the light theme) → below
+  the 3:1 non-text threshold. In **high-contrast**, `$accent` and
+  `$bg-base` both equal `#000000` → **1.00:1**, the outline is literally
+  invisible.
+- **Fix**: rewire the token to a more contrasted, already-existing role —
+  `$accent-strong` (amber-500) or a border role. One line in
+  `_theme-variables.scss` (definition + mixin), to validate via the test
+  suite + visually.
 
-### 2. Texte du header clair-sur-clair en dark (masqué par des hacks)
+### 2. Light-on-light header text in dark (masked by hacks)
 
-- Le header a pour fond `--color-header-bg` = `$accent` (amber clair,
-  **figé**). Son texte `--color-header-text` = `$fg-on-accent`, et
-  `--color-header-text-role` = `$fg-muted`. Or `$fg-on-accent` = `$gray-950`
-  et `$fg-muted` = `$gray-700` : dans les thèmes basés sur le dark, le rail
-  gris **s'inverse**, donc ces jetons deviennent **clairs** → texte clair
-  sur amber clair (~1.15:1).
-- Aujourd'hui **invisible à l'œil** parce que `_dark.scss` (lignes ~57-72)
-  contient des surcharges `.header` codées en dur qui reforcent le texte en
-  `var(--constant-near-black)` (dont un `!important`). Ce sont des
-  **rustines** qui compensent le mauvais modèle de rôle.
-- **Correctif** : puisque l'accent est figé, son encre doit l'être aussi.
-  Lier `fg-on-accent` (et le rôle du texte header) à une encre **stable**
-  (near-black constant / `accent-ink`) plutôt qu'au rail qui s'inverse. Le
-  header devient correct par construction dans les 12 thèmes, et les
-  surcharges `.header` de `_dark.scss` **peuvent alors être supprimées**
-  (elles ne compensent plus rien). Les waivers `fg-on-accent` /
-  header-* deviennent obsolètes → retirés par l'anti-zombie.
-- Contrainte : ce changement touche le **modèle de rôle** (couche 2, API du
-  futur paquet) — donc à faire proprement, avec un mini-plan, la suite de
-  contrastes comme filet, et validation visuelle du header en dark.
+- The header's background is `--color-header-bg` = `$accent` (light amber,
+  **fixed**). Its text `--color-header-text` = `$fg-on-accent`, and
+  `--color-header-text-role` = `$fg-muted`. But `$fg-on-accent` =
+  `$gray-950` and `$fg-muted` = `$gray-700`: in dark-based themes, the
+  gray rail **inverts**, so these tokens become **light** → light text on
+  light amber (~1.15:1).
+- Today **invisible to the eye** because `_dark.scss` (lines ~57-72)
+  contains hardcoded `.header` overrides that force the text back to
+  `var(--constant-near-black)` (one with `!important`). These are
+  **patches** compensating for the flawed role model.
+- **Fix**: since accent is fixed, its ink must be fixed too. Bind
+  `fg-on-accent` (and the header text role) to a **stable** ink (constant
+  near-black / `accent-ink`) instead of the rail that inverts. The header
+  becomes correct by construction across all 12 themes, and the `.header`
+  overrides in `_dark.scss` **can then be removed** (they no longer
+  compensate for anything). The `fg-on-accent` / header-* waivers become
+  obsolete → removed by the anti-zombie check.
+- Constraint: this change touches the **role model** (layer 2, the future
+  package's API) — so do it properly, with a mini-plan, the contrast test
+  suite as a safety net, and visual validation of the header in dark.

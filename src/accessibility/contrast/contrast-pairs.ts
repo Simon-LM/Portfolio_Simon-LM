@@ -1,9 +1,8 @@
 /** @format */
 
-// Registre de paires de contraste DU PORTFOLIO (config du consommateur,
-// chantier E6.6). Les définitions de paires de RÔLES + les types viennent du
-// paquet (`a11y-prefs/testing/pairs`) ; ici on applique NOS waivers en
-// overlay et on ajoute NOS paires de couche 3.
+// PORTFOLIO's contrast pairs registry (consumer config, E6.6). ROLE pair
+// definitions + types come from the package (`a11y-prefs/testing/pairs`);
+// here we apply OUR waivers as an overlay and add OUR layer-3 pairs.
 
 import {
 	type ContrastPair,
@@ -17,8 +16,8 @@ import {
 
 export type { ContrastPair, DistinguishabilityPair, ContrastLevel };
 
-// Waivers du portfolio sur les paires de rôles (échecs documentés, jamais
-// supprimés — anti-zombie).
+// Portfolio waivers on role pairs (documented failures, never removed —
+// anti-zombie).
 const rolePairWaivers: Readonly<Record<string, Waiver>> = {
 	"role/success-on-bg-base": {
 		reason:
@@ -52,8 +51,8 @@ const rolePairWaivers: Readonly<Record<string, Waiver>> = {
 	},
 };
 
-// Paires de COUCHE 3 (câblage composants du portfolio) — jamais dans le
-// paquet ; un consommateur ajoute les siennes de la même façon.
+// LAYER-3 pairs (portfolio component wiring) — never in the package; a
+// consumer adds their own the same way.
 const sitePairs: ContrastPair[] = [
 	{ id: "site/main-text-on-main-bg", fg: "--color-main-text", bg: "--color-main-bg", level: "text" },
 	{ id: "site/header-text-on-header-bg", fg: "--color-header-text", bg: "--color-header-bg", level: "text" },
@@ -82,7 +81,7 @@ const sitePairs: ContrastPair[] = [
 	{ id: "site/scroll-progress-indicator-on-bg-base", fg: "--color-scroll-progress-indicator", bg: "--bg-base", level: "non-text" },
 ];
 
-// Waivers du portfolio sur les paires de distinguabilité.
+// Portfolio waivers on distinguishability pairs.
 const distinguishabilityWaivers: Readonly<Record<string, Waiver>> = {
 	"distinguish/accent-vs-success": {
 		reason:

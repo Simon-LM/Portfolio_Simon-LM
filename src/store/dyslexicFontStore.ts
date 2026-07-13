@@ -19,9 +19,9 @@ interface DyslexicFontState {
 	setFontType: (type: DyslexicFontType) => void;
 }
 
-// Correspondance type → classe DOM. Sylexiad reste ici (police du site, non
-// embarquée dans le paquet) ; tiresias/ralewaydots conservés pour un retrait
-// DOM identique même si leurs options ne sont plus offertes.
+// Type → DOM class mapping. Sylexiad stays here (the site's font, not
+// bundled in the package); tiresias/ralewaydots kept for identical DOM
+// removal even though their options are no longer offered.
 const DYSLEXIC_FONT_CLASSES: Readonly<Record<string, string>> = {
 	opendyslexic: "dyslexic-font",
 	sylexiad: "sylexiad-font",
@@ -32,8 +32,8 @@ const DYSLEXIC_FONT_CLASSES: Readonly<Record<string, string>> = {
 	ralewaydots: "ralewaydots-font",
 };
 
-// Délègue l'application DOM à l'applier du paquet (E5) — comportement
-// identique (retire toutes les classes, pose la bonne, SSR-safe).
+// Delegates DOM application to the package's applier (E5) — identical
+// behavior (removes every class, sets the right one, SSR-safe).
 const updateDyslexicFont = (type: DyslexicFontType) =>
 	applyAccessibilityFont(type, DYSLEXIC_FONT_CLASSES);
 

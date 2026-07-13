@@ -1,12 +1,12 @@
 /** @format */
 "use client";
 
-// Câblage des préférences d'accessibilité (template scaffoldé — vous le
-// possédez, modifiez-le librement). Remplace les stores d'état par le hook
-// générique `usePreference` du paquet : zéro dépendance d'état à installer.
+// Accessibility preferences wiring (scaffolded template — you own it, edit
+// freely). Replaces state stores with the package's generic `usePreference`
+// hook: zero state dependency to install.
 //
-// ⚠️ `a11y-prefs` = nom d'import du paquet. Le CLI le réécrit vers le nom
-// que vous avez installé (par défaut « darkmode-plus-a11y ») lors de `init`.
+// ⚠️ `a11y-prefs` = the package's import name. The CLI rewrites it to the
+// name you installed (default "darkmode-plus-a11y") during `init`.
 
 import { usePreference } from "a11y-prefs/react";
 import {
@@ -14,8 +14,8 @@ import {
 	applyAccessibilityFont,
 } from "a11y-prefs/react/appliers";
 
-// Taille de texte en pourcentage (100 % = normal). Applique la variable
-// CSS --font-size-factor ; vos tailles en rem/em la suivent (contrat hôte).
+// Text size as a percentage (100% = normal). Applies the CSS variable
+// --font-size-factor; your rem/em sizes follow it (host contract).
 export function useFontSize() {
 	return usePreference<number>("a11y-font-size", {
 		defaultValue: 100,
@@ -25,9 +25,9 @@ export function useFontSize() {
 	});
 }
 
-// Police d'accessibilité → classe DOM émise par le mixin `a11y-font-class`
-// de votre SCSS. Pour ajouter une police : une entrée ici + un
-// `@include a11y-font-class("ma-classe", "Ma Police")` côté SCSS.
+// Accessibility font → DOM class emitted by your SCSS's `a11y-font-class`
+// mixin. To add a font: one entry here + a
+// `@include a11y-font-class("my-class", "My Font")` on the SCSS side.
 export const ACCESSIBILITY_FONT_CLASSES: Readonly<Record<string, string>> = {
 	opendyslexic: "dyslexic-font",
 	atkinson: "atkinson-font",

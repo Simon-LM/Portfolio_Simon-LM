@@ -1,27 +1,27 @@
 /** @format */
 
-// Configuration de thème — COUCHE 3 de l'UI d'accessibilité (template
-// scaffoldé, vous le possédez). Câble les variables CSS que la carte + le
-// déclencheur consomment, dérivées des RÔLES (couche 2) que le moteur du
-// paquet a transformés pour chaque thème.
+// Theme configuration — LAYER 3 of the accessibility UI (scaffolded
+// template, you own it). Wires the CSS variables the card + trigger
+// consume, derived from the ROLES (layer 2) the package's engine has
+// transformed for each theme.
 //
-// ⚠️ RÈGLE D'OR (voir la notice AGENTS.md) : chaque token se définit À PARTIR
-// D'UN RÔLE de couche 2 (`$accent`, `$bg-base`, `$link`…), jamais une valeur
-// brute. C'est ce qui garantit que le fort contraste et les thèmes daltoniens
-// s'appliquent correctement. Les contrôles d'outillage (`pnpm hc:audit` +
-// test de conformité) vérifient ce câblage.
+// ⚠️ GOLDEN RULE (see the AGENTS.md guide): every token is defined FROM A
+// LAYER-2 ROLE (`$accent`, `$bg-base`, `$link`…), never a raw value.
+// This is what guarantees high contrast and color-blind themes apply
+// correctly. The tooling checks (`pnpm hc:audit` + the conformance test)
+// verify this wiring.
 //
-// ⚠️ `a11y-prefs` = nom d'import du paquet ; le CLI le réécrit vers le nom
-// installé (défaut « darkmode-plus-a11y ») lors de `init`.
+// ⚠️ `a11y-prefs` = the package's import name; the CLI rewrites it to the
+// installed name (default "darkmode-plus-a11y") during `init`.
 
 @use "a11y-prefs/scss/base-palette" as *;
 @use "a11y-prefs/scss/state" as *;
 
-// Émet les variables CSS consommées par l'UI d'accessibilité, dérivées des
-// rôles courants. À inclure DANS chaque bloc [data-theme], APRÈS le
-// transform du moteur + apply-roles (cf. theme-example.scss).
+// Emits the CSS variables consumed by the accessibility UI, derived from
+// the current roles. To be included INSIDE each [data-theme] block, AFTER
+// the engine's transform + apply-roles (see theme-example.scss).
 @mixin a11y-ui-theme-vars {
-	// --- Rôles / rail utilisés directement par l'UI (passe-plats) ---
+	// --- Roles / rail used directly by the UI (pass-throughs) ---
 	--accent: #{$accent};
 	--link: #{$link};
 	--link-hover: #{$link-hover};
@@ -31,12 +31,12 @@
 	--gray-400: #{$gray-400};
 	--gray-700: #{$gray-700};
 
-	// --- Constantes athématiques (mêmes valeurs dans tous les thèmes ;
-	//     leur nom --constant-* le déclare) ---
+	// --- Athematic constants (same values in every theme; their
+	//     --constant-* name declares it) ---
 	--constant-near-black: #0c0a09;
 	--constant-error-color: #dc2626;
 
-	// --- Tokens de l'UI, dérivés des rôles ---
+	// --- UI tokens, derived from the roles ---
 	--color-main-bg: #{$bg-base};
 	--color-main-text: #{$fg-base};
 	--color-panel-bg: #{$bg-base};

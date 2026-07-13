@@ -1,8 +1,8 @@
 /** @format */
-// Ré-export du paquet (E4) : la source unique de la liste des thèmes vit
-// désormais dans packages/a11y-prefs/react/themes.ts. Ce shim préserve les
-// chemins d'import existants (@/config/themes) — zéro churn.
-// Import granulaire (module de données pur, sans hook) : ce shim est
-// consommé aussi par des Server Components (layout.tsx) — passer par le
-// barrel ./react tirerait les hooks client dans le graphe serveur.
+// Package re-export (E4): the single source for the theme list now lives
+// in packages/a11y-prefs/react/themes.ts. This shim preserves the
+// existing import paths (@/config/themes) — zero churn.
+// Granular import (a pure data module, no hook): this shim is also
+// consumed by Server Components (layout.tsx) — going through the
+// ./react barrel would pull client hooks into the server graph.
 export { THEMES, type ThemeOption } from "a11y-prefs/react/themes";

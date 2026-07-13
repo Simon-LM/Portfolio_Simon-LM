@@ -6,7 +6,7 @@ import { THEMES, ThemeOption } from "./themes";
 
 // Read initial theme from localStorage or system preference.
 // Called as a lazy useState initializer — runs on server (returns "light") and on client.
-// `themes` restreint la validation (défaut : les 12 du paquet).
+// `themes` narrows validation (default: the package's 15).
 function getInitialTheme(themes: readonly string[]): ThemeOption {
 	if (typeof window === "undefined") return "light"; // SSR default
 	const savedTheme = localStorage.getItem("theme") as ThemeOption | null;
@@ -21,7 +21,7 @@ export function useTheme(themes: readonly string[] = THEMES) {
 		getInitialTheme(themes),
 	);
 
-	// Fonction pour définir le thème
+	// Function to set the theme
 	const setTheme = (newTheme: ThemeOption) => {
 		if (typeof document !== "undefined") {
 			document.documentElement.setAttribute("data-theme", newTheme);
@@ -38,7 +38,7 @@ export function useTheme(themes: readonly string[] = THEMES) {
 		// Apply the theme determined by the lazy initializer to the DOM attribute
 		document.documentElement.setAttribute("data-theme", getInitialTheme(themes));
 
-		// Observer les changements d'attribut data-theme (utile si modifié ailleurs)
+		// Observe data-theme attribute changes (useful if modified elsewhere)
 		const observer = new MutationObserver((mutations) => {
 			mutations.forEach((mutation) => {
 				if (mutation.attributeName === "data-theme") {
@@ -58,8 +58,8 @@ export function useTheme(themes: readonly string[] = THEMES) {
 	}, []);
 
 	return {
-		theme, // Thème actuel
-		setTheme, // Fonction pour changer de thème
+		theme, // Current theme
+		setTheme, // Function to change the theme
 		isLight: theme === "light",
 		isDark: theme === "dark",
 		isAntiGlareLight: theme === "anti-glare-light",

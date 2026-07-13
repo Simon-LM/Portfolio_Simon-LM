@@ -1,43 +1,43 @@
 <!-- @format -->
 
-# Polices d'accessibilité embarquées — licences
+# Bundled accessibility fonts — licenses
 
-Toutes les polices livrées dans `packages/a11y-prefs/fonts/files/` sont sous
-**SIL Open Font License 1.1** (OFL), qui autorise l'embarquement et la
-redistribution (y compris commerciale) tant que la police n'est pas vendue
-seule et que la licence accompagne les fichiers.
+All fonts shipped in `packages/a11y-prefs/fonts/files/` are under the
+**SIL Open Font License 1.1** (OFL), which allows embedding and
+redistribution (including commercial) as long as the font is not sold on
+its own and the license accompanies the files.
 
-Audit réalisé le 2026-07-08. **Textes canoniques figés le 2026-07-13**
-(préparation E7) : chaque fichier `*.txt` de ce dossier EST le texte OFL 1.1
-canonique, téléchargé verbatim depuis la source officielle du projet de
-police (en-tête de copyright + corps OFL intégral). Copyrights réels tels
-que déclarés dans ces textes :
+Audit performed on 2026-07-08. **Canonical texts frozen on 2026-07-13**
+(E7 preparation): each `*.txt` file in this folder IS the canonical OFL 1.1
+text, downloaded verbatim from the font project's official source
+(copyright header + full OFL body). Actual copyright holders as declared
+in these texts:
 
-| Famille | Fichier | Copyright (verbatim OFL) | Source officielle |
+| Family | File | Copyright (verbatim OFL) | Official source |
 | --- | --- | --- | --- |
 | OpenDyslexic | `OpenDyslexic.txt` | Abbie Gonzalez | github.com/antijingoist/opendyslexic |
 | Andika | `Andika.txt` | SIL Global | github.com/silnrsi/font-andika |
 | Atkinson Hyperlegible Next | `AtkinsonHyperlegibleNext.txt` | The Atkinson Hyperlegible Next Project Authors | github.com/googlefonts/atkinson-hyperlegible-next |
 | Lexend Giga + Deca | `Lexend.txt` | The Lexend Project Authors | github.com/googlefonts/lexend |
 
-## Police recommandée mais NON embarquée : Sylexiad
+## Recommended but NOT bundled font: Sylexiad
 
-**Sylexiad Sans** (Dr Robert Hillier) est la police de corps **recommandée**
-pour le mode dyslexie de ce paquet — légère, élégante, conçue pour les
-lecteurs dyslexiques adultes. Elle est **sous EULA propriétaire** (fév.
-2022) qui interdit la redistribution publique : **elle n'est donc pas
-livrée avec le paquet**.
+**Sylexiad Sans** (Dr Robert Hillier) is the **recommended** body font for
+this package's dyslexia mode — light, elegant, designed for adult
+dyslexic readers. It is under a **proprietary EULA** (Feb. 2022) that
+prohibits public redistribution: **it is therefore not shipped with the
+package**.
 
-➡️ Pour l'utiliser : téléchargez-la sur **https://www.sylexiad.com** et
-branchez-la via le point d'extension du module de polices
-(`$dyslexia-fonts` côté SCSS + `extraClasses` côté runtime). Sans cela, le
-mode dyslexie utilise **Andika** (défaut OFL livré), qui fonctionne sans
-rien installer.
+To use it: download it from **<https://www.sylexiad.com>** and wire it
+through the font module's extension point (`$dyslexia-fonts` on the SCSS
+side + `extraClasses` on the runtime side). Without it, dyslexia mode
+falls back to **Andika** (the bundled OFL default), which works with
+nothing to install.
 
-## Polices écartées
+## Fonts excluded
 
-- **Tiresias Infofont** (RNIB) : GPL v3 — friction avec la licence MIT du
-  paquet ; conçue pour la signalétique (étiquettes à 30-100 cm), pas la
-  lecture web. Non embarquée.
-- **Raleway Dots** : police décorative pointillée, sans usage
-  d'accessibilité pertinent. Non embarquée.
+- **Tiresias Infofont** (RNIB): GPL v3 — friction with the package's MIT
+  license; designed for signage (labels read at 30-100 cm), not web
+  reading. Not bundled.
+- **Raleway Dots**: a decorative dotted font, with no relevant
+  accessibility use case. Not bundled.

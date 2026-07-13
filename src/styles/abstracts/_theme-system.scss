@@ -5,14 +5,14 @@
 @use "../themes/theme-variables" as *;
 @use "./theme-overrides" as *;
 
-// Assemblage des thèmes (chantier E6.5) : le générateur du PAQUET émet un
-// bloc [data-theme] par thème (rail + rôles transformés + variables de
-// rôle), le portfolio injecte sa couche 3 et ses surcharges site via
-// @content. Les 15 recettes de thème vivent désormais dans le paquet
-// (apply-theme) ; ne restent ici que la config couche 3 et les règles site.
+// Theme assembly (E6.5): the PACKAGE's generator emits one [data-theme]
+// block per theme (rail + transformed roles + role variables), the
+// portfolio injects its layer 3 and site overrides via @content. The 15
+// theme recipes now live in the package (apply-theme); only the layer-3
+// config and site rules remain here.
 //
-// Ordre des thèmes = ordre historique du portfolio (préserve l'ordre des
-// blocs émis). Un consommateur peut passer un sous-ensemble.
+// Theme order = the portfolio's historical order (preserves the order of
+// emitted blocks). A consumer can pass a subset.
 $portfolio-themes: (
 	"light",
 	"dark",
@@ -31,26 +31,26 @@ $portfolio-themes: (
 	"anti-glare-dark"
 );
 
-// Émission consommateur pour un thème : couche 3 + règles site + variables.
-// Ordre calé sur l'ancien (byte-identique) : règles site d'abord, puis
-// variables de rôle (paquet), puis couche 3.
+// Consumer emission for a theme: layer 3 + site rules + variables.
+// Order matches the old one (byte-identical): site rules first, then
+// role variables (package), then layer 3.
 @mixin emit-consumer-vars($name) {
-	@include apply-theme-variables; // couche 3 dérivée des rôles transformés
-	@include theme-overrides($name); // règles site + surcharges header par thème
-	@include emit-role-vars; // variables couches 1+2 (paquet)
-	@include emit-layer3-vars; // variables couche 3 (~70 --color-*)
+	@include apply-theme-variables; // layer 3 derived from the transformed roles
+	@include theme-overrides($name); // site rules + per-theme header overrides
+	@include emit-role-vars; // layer 1+2 variables (package)
+	@include emit-layer3-vars; // layer 3 variables (~70 --color-*)
 }
 
-// Ordre historique (byte-identique) : :root et @media AVANT les blocs
-// [data-theme].
+// Historical order (byte-identical): :root and @media BEFORE the
+// [data-theme] blocks.
 
-// Thème par défaut (sans attribut data-theme) = light.
+// Default theme (no data-theme attribute) = light.
 :root {
 	@include apply-theme("light");
 	@include emit-consumer-vars("light");
 }
 
-// Défaut système sombre : dark quand aucun thème n'est explicitement choisi.
+// System dark default: dark when no theme is explicitly chosen.
 @media (prefers-color-scheme: dark) {
 	:root:not([data-theme]) {
 		@include apply-theme("dark");

@@ -123,7 +123,7 @@ export default function NavigationSticky() {
 
 		if (event.key === "ArrowDown" || event.key === "ArrowUp") {
 			event.preventDefault();
-			// Sélectionner tous les éléments interactifs du menu
+			// Select every interactive element in the menu
 			const menuItems = document.querySelectorAll(
 				'#menu-list [role="menuitem"]:not([disabled])'
 				// '[role="menuitem"]:not([disabled]):not([data-lang-selector])'

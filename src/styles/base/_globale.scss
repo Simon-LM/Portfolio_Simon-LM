@@ -16,7 +16,7 @@ $breakpoints: (
 // 	--effective-font-size: 1;
 // }
 
-// /* Modifier les styles globaux pour utiliser --effective-font-size */
+// /* Update the global styles to use --effective-font-size */
 // html,
 // body {
 // 	font-size: calc(
@@ -33,7 +33,7 @@ body {
 	font-size: calc(1rem * var(--font-size-factor)) !important;
 }
 
-// Appliquez aussi aux éléments spécifiques pour garantir l'effet
+// Also apply to specific elements to guarantee the effect
 p,
 div,
 span,

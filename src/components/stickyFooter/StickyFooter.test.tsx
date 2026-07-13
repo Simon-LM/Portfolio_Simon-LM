@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import StickyFooter from "./StickyFooter";
 import "@testing-library/jest-dom";
 
-// Mock du store de langue
+// Mock of the language store
 jest.mock("../../store/langueStore", () => ({
 	useLanguageStore: () => ({
 		language: "fr",
@@ -11,20 +11,20 @@ jest.mock("../../store/langueStore", () => ({
 }));
 
 describe("StickyFooter", () => {
-	it("rend le footer", () => {
+	it("renders the footer", () => {
 		render(<StickyFooter />);
 		const footer = screen.getByRole("contentinfo");
 		expect(footer).toBeInTheDocument();
 	});
 
-	it("affiche le texte d'accessibilité en français", () => {
+	it("displays the accessibility text in French", () => {
 		render(<StickyFooter />);
 		expect(
 			screen.getByText("Accessibilité : déclaration de conformité")
 		).toBeInTheDocument();
 	});
 
-	// it("contient tous les liens sociaux", () => {
+	// it("contains every social link", () => {
 	// 	render(<StickyFooter />);
 	// 	expect(screen.getByLabelText("Twitter")).toHaveAttribute(
 	// 		"href",
@@ -44,7 +44,7 @@ describe("StickyFooter", () => {
 	// 	);
 	// });
 
-	it("vérifie les attributs d'accessibilité", () => {
+	it("checks the accessibility attributes", () => {
 		render(<StickyFooter />);
 		const links = screen.getAllByRole("link");
 		links.forEach((link) => {
@@ -52,7 +52,7 @@ describe("StickyFooter", () => {
 		});
 	});
 
-	it("vérifie les attributs de sécurité des liens externes", () => {
+	it("checks the security attributes of external links", () => {
 		render(<StickyFooter />);
 		const externalLinks = screen.getAllByRole("link");
 		externalLinks.forEach((link) => {

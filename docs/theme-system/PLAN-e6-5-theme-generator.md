@@ -1,126 +1,128 @@
 <!-- @format -->
 
-# Plan — Chantier E6.5 : extraction du générateur de thèmes dans le paquet
+# Plan — E6.5: extracting the theme generator into the package
 
-Rédigé le 2026-07-12, après l'audit de réconciliation §6.2 (README). Comble
-l'écart n°1 : l'**émetteur `[data-theme]` + les définitions de thèmes
-standards** sont encore côté site alors que le §6.2 les met dans le paquet.
-Exécution sur branche `feat/e6-5-theme-generator`.
+Written 2026-07-12, after the §6.2 reconciliation audit (README). Closes
+gap #1: the **`[data-theme]` emitter + standard theme definitions** are
+still on the site side while §6.2 places them in the package. Executed on
+branch `feat/e6-5-theme-generator`.
 
-## Objectif (la vision de Simon, packagée)
+## Goal (Simon's vision, packaged)
 
-Aujourd'hui, un consommateur devrait réécrire ses 15 blocs `[data-theme]` à
-la main. Cible :
+Today, a consumer would have to rewrite their 15 `[data-theme]` blocks by
+hand. Target:
 
 ```scss
-// côté consommateur : il configure son LIGHT une fois…
+// consumer side: configure LIGHT once…
 @use "darkmode-plus-a11y/scss/state" with ($gray-family: …, $primitives: …);
 
-// …liste les thèmes voulus, et le PAQUET les génère tous :
+// …list the themes wanted, and the PACKAGE generates them all:
 @include generate-all-themes(("light", "dark", "high-contrast", …)) {
-	@include emit-layer3-vars;   // sa couche 3 (via @content), dérivée des rôles
+	@include emit-layer3-vars;   // their layer 3 (via @content), derived from the roles
 }
 ```
 
-**« Je définis le light → tous les autres thèmes sont générés automatiquement »**
-devient vrai côté paquet, pas seulement côté site.
+**"I define light → every other theme is generated automatically"**
+becomes true on the package side, not just on the site side.
 
-## La coupe (vérifiée dans le code)
+## The cut (verified in the code)
 
-`generate-theme-css-vars()` (site, `_theme-system.scss`) se scinde **nettement** :
+`generate-theme-css-vars()` (site, `_theme-system.scss`) splits **cleanly**:
 
-- **lignes 22-72 = variables du PAQUET** : `--off-white`, `--near-black`,
+- **lines 22-72 = PACKAGE variables**: `--off-white`, `--near-black`,
   `--constant-*`, `--gray-*` (rail), `--accent*`, `--link*`, `--success`,
-  `--danger`, tous les rôles `--bg-*`/`--fg-*`/`--border-*`/`--focus-ring`.
-- **lignes 74+ = COUCHE 3 du site** : les ~70 `--color-*`.
+  `--danger`, every `--bg-*`/`--fg-*`/`--border-*`/`--focus-ring` role.
+- **lines 74+ = site LAYER 3**: the ~70 `--color-*`.
 
-Les 16 fichiers de thème (753 lignes) sont ~90 % config-moteur + émission
-(**product** → paquet) ; le reste = quelques règles site (focus/header dans
-high-contrast, 1-2 dans dark/anti-glare → **restent consommateur**).
+The 16 theme files (753 lines) are ~90% engine config + emission
+(**product** → package); the rest = a few site rules (focus/header in
+high-contrast, 1-2 in dark/anti-glare → **stay with the consumer**).
 
-## Conception
+## Design
 
-Le paquet gagne un module `theme-generator` fournissant :
+The package gains a `theme-generator` module providing:
 
-1. **`apply-theme($name)`** — aiguille vers le bon transform avec la **config
-   standard** du thème : `define-base-colors()` + `apply-roles()` +
-   (selon `$name`) `transform-light-to-dark($dark-config)`,
-   `transform-light-to-high-contrast($map)` (× 4 variantes),
-   remaps daltoniens, anti-glare… Les **configs standards** (le `$dark-config`
-   à 11 crans, les 4 cartes HC, les ancres CVD, l'anti-glare) **migrent du
-   site vers le paquet** — c'est le cœur du product.
-2. **`emit-role-vars()`** — émet les variables du paquet (ex-lignes 22-72).
-3. **`generate-all-themes($themes) { @content }`** — pour chaque thème :
+1. **`apply-theme($name)`** — dispatches to the right transform with the
+   theme's **standard config**: `define-base-colors()` + `apply-roles()` +
+   (depending on `$name`) `transform-light-to-dark($dark-config)`,
+   `transform-light-to-high-contrast($map)` (× 4 variants), color-blind
+   remaps, anti-glare… The **standard configs** (the 11-step `$dark-config`,
+   the 4 HC maps, the CVD anchors, anti-glare) **migrate from the site to
+   the package** — this is the heart of the product.
+2. **`emit-role-vars()`** — emits the package's variables (ex-lines 22-72).
+3. **`generate-all-themes($themes) { @content }`** — for each theme:
    ```scss
    [data-theme="#{$name}"] {
-     @include apply-theme($name);   // transform → rôles transformés
-     @include emit-role-vars();     // variables paquet
-     @content;                      // couche 3 du consommateur (mêmes rôles)
+     @include apply-theme($name);   // transform → transformed roles
+     @include emit-role-vars();     // package variables
+     @content;                      // consumer's layer 3 (same roles)
    }
    ```
-   Le `@content` lit les rôles **déjà transformés** (le transform a tourné
-   avant) → la couche 3 du consommateur sort juste pour chaque thème.
-4. **`$default-themes`** — les 15 noms standards (défaut de `generate-all-themes`).
+   The `@content` reads the **already-transformed** roles (the transform
+   has already run) → the consumer's layer 3 simply comes out for each
+   theme.
+4. **`$default-themes`** — the 15 standard names (default for
+   `generate-all-themes`).
 
-Côté **consommateur** (le portfolio devient client de sa propre API) :
-`emit-layer3-vars` = l'ex-bloc lignes 74+, et les **surcharges de règles
-site** (header HC, focus, tweaks dark/anti-glare) passent par un **hook par
-thème** `@include theme-overrides($name)` inclus dans le `@content`.
+On the **consumer** side (the portfolio becomes a client of its own API):
+`emit-layer3-vars` = the ex-lines-74+ block, and the **site rule
+overrides** (HC header, focus, dark/anti-glare tweaks) go through a
+**per-theme hook** `@include theme-overrides($name)` included inside the
+`@content`.
 
 ## Oracle
 
-**CSS compilé du site byte-identique** (le portfolio bascule sur
-`generate-all-themes` mais produit exactement le même CSS). C'est la
-garantie que l'extraction ne change rien — même méthode qu'E3/E5. La coupe
-paquet-vars (22-72) puis couche-3 (74+) préserve l'ordre d'émission actuel.
+**Byte-identical compiled site CSS** (the portfolio switches to
+`generate-all-themes` but produces exactly the same CSS). This is the
+guarantee that the extraction changes nothing — same method as E3/E5. The
+package-vars (22-72) then layer-3 (74+) cut preserves the current emission
+order.
 
 ## Phases
 
-### Phase 0 — Préparation
-Baseline : CSS de référence + build. Recensement exhaustif des configs de
-thème à migrer (dark, 4× HC, 6× CVD, 2× anti-glare) et des règles site à
-garder.
+### Phase 0 — Preparation
+Baseline: reference CSS + build. Exhaustive inventory of the theme configs
+to migrate (dark, 4× HC, 6× CVD, 2× anti-glare) and the site rules to keep.
 
-### Phase 1 — Module `theme-generator` dans le paquet (ajout pur)
+### Phase 1 — `theme-generator` module in the package (pure addition)
 `apply-theme($name)` + `emit-role-vars()` + `generate-all-themes()` +
-`$default-themes`, avec les configs standards migrées **en défauts du
-paquet**. Aucun changement du site encore. Tests unitaires SCSS : chaque
-thème standard émis par le paquet == valeurs attendues.
-**Commit** : `feat(theme): e6.5 phase 1 — package theme generator`.
+`$default-themes`, with the standard configs migrated **as package
+defaults**. No site change yet. SCSS unit tests: each standard theme
+emitted by the package == expected values.
+**Commit**: `feat(theme): e6.5 phase 1 — package theme generator`.
 
-### Phase 2 — Le portfolio consomme le générateur
-`_theme-system.scss` réduit à `@include generate-all-themes($portfolio-themes) { @include emit-layer3-vars; @include theme-overrides($name); }`.
-Les 16 `_*.scss` de thème disparaissent (leur product est dans le paquet ;
-leurs surcharges site vont dans `theme-overrides`).
-**Oracle** : **CSS byte-identique**. **Commit** : `refactor(theme): e6.5 phase 2 — portfolio consumes generate-all-themes`.
+### Phase 2 — The portfolio consumes the generator
+`_theme-system.scss` reduced to `@include generate-all-themes($portfolio-themes) { @include emit-layer3-vars; @include theme-overrides($name); }`.
+The 16 theme `_*.scss` files disappear (their product is in the package;
+their site overrides go into `theme-overrides`).
+**Oracle**: **byte-identical CSS**. **Commit**: `refactor(theme): e6.5 phase 2 — portfolio consumes generate-all-themes`.
 
-### Phase 3 — Surcharges site par thème
-`theme-overrides($name)` regroupe proprement les règles site (header HC,
-focus HC, tweaks dark/anti-glare) — vérifié byte-identique.
-**Commit** : `refactor(theme): e6.5 phase 3 — per-theme site overrides hook`.
+### Phase 3 — Per-theme site overrides
+`theme-overrides($name)` cleanly groups the site rules (HC header, HC
+focus, dark/anti-glare tweaks) — verified byte-identical.
+**Commit**: `refactor(theme): e6.5 phase 3 — per-theme site overrides hook`.
 
-### Phase 4 — Finalisation
-- Mettre à jour l'exemple E6 : `theme-example.scss` se réduit à
+### Phase 4 — Wrap-up
+- Update the E6 example: `theme-example.scss` reduces to
   `@include generate-all-themes(...) { @include a11y-ui-theme-vars; }`.
-- README (§ 6.2 : item 3+5 cochés paquet ; § 1 inchangé), changelog, GUIDE
-  (chantier E6.5 dans la feuille de route). Rapport final.
-**Commit** : `docs(theme): e6.5 phase 4 — finalisation`.
+- README (§ 6.2: items 3+5 checked off for the package; § 1 unchanged),
+  changelog, GUIDE (E6.5 in the roadmap). Final report.
+**Commit**: `docs(theme): e6.5 phase 4 — wrap-up`.
 
-## Risques / points d'attention
+## Risks / points of attention
 
-- **Byte-identique sur 15 thèmes × ~94 vars** : le risque est l'ordre
-  d'émission et les surcharges site. Diff normalisé à chaque phase (comme
-  E3, qui a réussi la même sorte d'extraction).
-- **Configuration `with()`** : `generate-all-themes` doit voir la config du
-  consommateur (`$gray-family`, `$primitives`) — chargée en premier, comme
-  aujourd'hui dans `main.scss`.
-- **Enchevêtrement couche 3** : la clé est le `@content` — le paquet n'émet
-  QUE ses variables, la couche 3 reste chez le consommateur, injectée par
-  thème. Aucune couche 3 ne fuit dans le paquet.
+- **Byte-identical across 15 themes × ~94 vars**: the risk is emission
+  order and site overrides. Normalized diff at each phase (like E3, which
+  pulled off the same kind of extraction).
+- **`with()` configuration**: `generate-all-themes` must see the
+  consumer's config (`$gray-family`, `$primitives`) — loaded first, as is
+  already the case in `main.scss`.
+- **Layer-3 entanglement**: the key is `@content` — the package emits ONLY
+  its own variables, layer 3 stays with the consumer, injected per theme.
+  No layer 3 leaks into the package.
 
-## Hors périmètre
+## Out of scope
 
-- Extraction du **vérificateur de contrastes** (écart n°2 de l'audit) →
-  chantier E6.6 séparé.
-- Registre central rôle→cran complet (README § 7) — non requis ici.
-- Changement de rendu : zéro. C'est une extraction, pas une refonte.
+- Extracting the **contrast verifier** (audit gap #2) → separate E6.6 chantier.
+- Full central role→step registry (README § 7) — not required here.
+- Rendering change: zero. This is an extraction, not a redesign.

@@ -1,37 +1,37 @@
 /** @format */
 
-// Fonctionnalités d'accessibilité — SCSS (template scaffoldé, vous le
-// possédez). Émet : les @font-face des polices embarquées, les classes du
-// sélecteur de police, le mode dyslexie optimisé (3 niveaux) et la classe
-// de réduction d'animations. Tout provient des modules opt-in du paquet.
+// Accessibility features — SCSS (scaffolded template, you own it). Emits:
+// @font-face rules for the bundled fonts, the font selector classes, the
+// optimized dyslexia mode (3 levels), and the motion-reduction class.
+// Everything comes from the package's opt-in modules.
 //
-// ⚠️ Chemin des polices : `$a11y-fonts-path` (défaut "/fonts"). Copiez les
-// fichiers de polices du paquet (fonts/files/) dans ce dossier public, ou
-// changez le chemin ci-dessous.
+// ⚠️ Font path: `$a11y-fonts-path` (default "/fonts"). Copy the package's
+// font files (fonts/files/) into this public folder, or change the path
+// below.
 //
-// ⚠️ `a11y-prefs` = nom d'import du paquet ; le CLI le réécrit vers le nom
-// installé (défaut « darkmode-plus-a11y ») lors de `init`.
+// ⚠️ `a11y-prefs` = the package's import name; the CLI rewrites it to the
+// installed name (default "darkmode-plus-a11y") during `init`.
 
 @use "a11y-prefs/scss/modules/a11y-fonts" as * with ($a11y-fonts-path: "/fonts");
 @use "a11y-prefs/scss/modules/dyslexia" as *;
 @use "a11y-prefs/scss/modules/motion" as *;
 
-// @font-face des polices embarquées (OpenDyslexic, Andika, Atkinson).
+// @font-face rules for the bundled fonts (OpenDyslexic, Andika, Atkinson).
 @include a11y-font-faces();
 
-// Classes du sélecteur de police : Atkinson + Andika (émises par le paquet).
+// Font selector classes: Atkinson + Andika (emitted by the package).
 @include a11y-font-classes;
 
-// OpenDyslexic : le sélecteur mappe « opendyslexic » → .dyslexic-font. Pas
-// de font-size-adjust (OpenDyslexic est naturellement grande).
+// OpenDyslexic: the selector maps "opendyslexic" → .dyslexic-font. No
+// font-size-adjust (OpenDyslexic is naturally large).
 @include a11y-font-class("dyslexic-font", "OpenDyslexic", $font-size-adjust: null);
 
-// Mode dyslexie optimisé (3 niveaux : titre / sous-titre / corps). Défauts
-// = Lexend Giga / Lexend Deca / Andika. Surchargez le corps si besoin, ex.
-// @include dyslexia-typography($body-font: "Ma Police").
+// Optimized dyslexia mode (3 levels: title / subtitle / body). Defaults
+// = Lexend Giga / Lexend Deca / Andika. Override the body font if needed,
+// e.g. @include dyslexia-typography($body-font: "My Font").
 html.dyslexia-optimized {
 	@include dyslexia-typography();
 }
 
-// Classe opt-in de réduction d'animations (html.reduce-motion).
+// Opt-in motion-reduction class (html.reduce-motion).
 @include reduce-motion-class;

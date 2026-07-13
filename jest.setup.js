@@ -1,7 +1,7 @@
 /** @format */
 
 import "@testing-library/jest-dom";
-// Configure le vérificateur de contrastes du paquet (extract-themes) pour ce
-// projet, avant toute suite de tests.
+// Configures the package's contrast verifier (extract-themes) for this
+// project, before any test suite.
 import "@/accessibility/contrast/setup";
 // import "./__mocks__/nextRouterMock";

@@ -1,9 +1,9 @@
 /** @format */
 
-// Extraction des variables de thème (chantier E6.6, extrait du site).
-// GÉNÉRIQUE : le consommateur passe SON point d'entrée SCSS, ses loadPaths
-// et sa liste de thèmes via configureThemeExtraction(). Le vérificateur
-// compile ce SCSS et lit les custom properties de chaque bloc [data-theme].
+// Theme variable extraction (E6.6, extracted from the site). GENERIC: the
+// consumer passes THEIR SCSS entry point, their loadPaths, and their theme
+// list via configureThemeExtraction(). The verifier compiles this SCSS and
+// reads the custom properties of each [data-theme] block.
 
 import { compile } from "sass";
 import postcss from "postcss";
@@ -12,18 +12,18 @@ export type ThemeVars = Map<string, string>;
 export type ThemeVarsMap = Map<string, ThemeVars>;
 
 export type ThemeExtractionConfig = {
-	/** Chemin absolu du SCSS d'entrée (celui qui émet les blocs [data-theme]). */
+	/** Absolute path to the entry SCSS (the one that emits the [data-theme] blocks). */
 	entry: string;
-	/** loadPaths Sass (ex. node_modules pour résoudre le paquet). */
+	/** Sass loadPaths (e.g. node_modules to resolve the package). */
 	loadPaths?: string[];
-	/** Thèmes attendus — l'extraction échoue si l'un manque. */
+	/** Expected themes — extraction fails if one is missing. */
 	themes: readonly string[];
 };
 
 let config: ThemeExtractionConfig | null = null;
 
-// À appeler UNE fois par le consommateur (avant tout getVar/getThemeVars),
-// typiquement au chargement de son module de contrastes ou en setup Jest.
+// To be called ONCE by the consumer (before any getVar/getThemeVars),
+// typically when loading their contrast module or in Jest setup.
 export function configureThemeExtraction(next: ThemeExtractionConfig): void {
 	config = next;
 	cache = null;
@@ -32,15 +32,15 @@ export function configureThemeExtraction(next: ThemeExtractionConfig): void {
 function requireConfig(): ThemeExtractionConfig {
 	if (!config) {
 		throw new Error(
-			"extract-themes : appelez configureThemeExtraction({ entry, loadPaths, themes }) d'abord.",
+			"extract-themes: call configureThemeExtraction({ entry, loadPaths, themes }) first.",
 		);
 	}
 	return config;
 }
 
-// Matche le sélecteur [data-theme="x"] NU (jamais un descendant comme
-// [data-theme="dark"] .header). Dart Sass retire les guillemets autour des
-// valeurs identifiantes, donc les deux formes sont acceptées.
+// Matches the BARE [data-theme="x"] selector (never a descendant like
+// [data-theme="dark"] .header). Dart Sass strips the quotes around
+// identifier-like values, so both forms are accepted.
 const THEME_SELECTOR = /^\[data-theme=(?:"([^"]*)"|'([^']*)'|([^\]"'\s]+))\]$/;
 
 function parseThemeSelector(selector: string): string | null {
@@ -79,10 +79,10 @@ function compileAndExtract(): Extracted {
 	root.walkRules((rule) => {
 		const selector = rule.selector.trim();
 
-		// Le thème par défaut (light) vit dans le :root de tête ; d'autres
-		// composants déclarent aussi des :root { --foo } sans rapport. On les
-		// fusionne (la dernière déclaration gagne, comme la cascade). Le variant
-		// @media utilise :root:not([data-theme]), donc naturellement exclu.
+		// The default theme (light) lives in the leading :root; other
+		// components also declare unrelated :root { --foo } rules. These are
+		// merged (last declaration wins, like the cascade). The @media
+		// variant uses :root:not([data-theme]), so it's naturally excluded.
 		if (selector === ":root") {
 			for (const [prop, value] of collectCustomProps(rule)) {
 				rootVars.set(prop, value);
@@ -109,8 +109,8 @@ function compileAndExtract(): Extracted {
 	return { css: result.css, themeVars, rootVars };
 }
 
-// Compiler Sass + parser le CSS est coûteux ; un seul run partagé par tous
-// les appelants (invalidé par configureThemeExtraction).
+// Compiling Sass + parsing the CSS is expensive; a single run shared by
+// every caller (invalidated by configureThemeExtraction).
 let cache: Extracted | null = null;
 
 function getExtracted(): Extracted {

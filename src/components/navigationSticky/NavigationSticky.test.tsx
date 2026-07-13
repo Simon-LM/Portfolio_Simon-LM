@@ -26,7 +26,7 @@ describe("NavigationSticky", () => {
 	});
 });
 
-// Mock du LanguageSelector
+// Mock of LanguageSelector
 jest.mock("../languageSelector/LanguageSelector", () => {
 	return function MockLanguageSelector() {
 		return (
@@ -42,7 +42,7 @@ jest.mock("../languageSelector/LanguageSelector", () => {
 	};
 });
 
-// Mock du store de langue
+// Mock of the language store
 // jest.mock("../../store/langueStore", () => ({
 // 	useLanguageStore: () => ({
 // 		language: "fr",
@@ -51,7 +51,7 @@ jest.mock("../languageSelector/LanguageSelector", () => {
 // }));
 
 // describe("NavigationSticky", () => {
-// it("affiche les liens avec les bons href", () => {
+// it("displays the links with the right href", () => {
 // 	render(<NavigationSticky />);
 // 	const menuButton = screen.getByLabelText("Menu");
 // 	fireEvent.click(menuButton);
@@ -64,14 +64,14 @@ jest.mock("../languageSelector/LanguageSelector", () => {
 // 		"/fr#portfolio"
 // 	);
 // });
-// it("contient le sélecteur de langue", () => {
+// it("contains the language selector", () => {
 // 	render(<NavigationSticky />);
 // 	const menuButton = screen.getByLabelText("Menu");
 // 	fireEvent.click(menuButton);
 // 	expect(screen.getByText("Français")).toBeInTheDocument();
 // 	expect(screen.getByText("English")).toBeInTheDocument();
 // });
-// it("a les attributs ARIA corrects pour le sélecteur de langue", () => {
+// it("has the correct ARIA attributes for the language selector", () => {
 // 	render(<NavigationSticky />);
 // 	const menuButton = screen.getByLabelText("Menu");
 // 	fireEvent.click(menuButton);

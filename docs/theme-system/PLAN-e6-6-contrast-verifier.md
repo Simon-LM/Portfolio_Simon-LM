@@ -1,93 +1,95 @@
 <!-- @format -->
 
-# Plan — Chantier E6.6 : extraction du vérificateur de contrastes
+# Plan — E6.6: extracting the contrast verifier
 
-Rédigé le 2026-07-12. Comble l'**écart n°2** de l'audit §6.2 : l'outillage
-`src/accessibility/contrast/` (vérificateur WCAG, ~1840 lignes) est côté
-site alors que le §6.2 le met dans le paquet (« Vérificateur de contrastes
-WCAG sur les paires de rôles » + gate CI pour les consommateurs).
-Exécution sur branche `feat/e6-6-contrast-verifier`.
+Written 2026-07-12. Closes **gap #2** of the §6.2 audit: the
+`src/accessibility/contrast/` tooling (WCAG verifier, ~1840 lines) lives on
+the site side while §6.2 places it in the package ("WCAG contrast verifier
+on role pairs" + CI gate for consumers). Executed on branch
+`feat/e6-6-contrast-verifier`.
 
-## Objectif
+## Goal
 
-Le paquet livre un **moteur de vérification de contrastes** générique + le
-**registre des paires de RÔLES** (l'API du paquet). Le consommateur importe
-le moteur, y ajoute ses paires de couche 3, et obtient la garantie WCAG +
-un rapport, dans ses tests / sa CI.
+The package ships a generic **contrast verification engine** + the
+**ROLE pairs registry** (the package's API). The consumer imports the
+engine, adds their layer-3 pairs, and gets the WCAG guarantee + a report,
+in their tests / CI.
 
-## La frontière (générique = paquet / spécifique = consommateur)
+## The boundary (generic = package / specific = consumer)
 
-| Fichier | Rôle | Destination |
+| File | Role | Destination |
 | --- | --- | --- |
-| `wcag.ts` | math WCAG (ratio, seuils, composite alpha) | **paquet** |
-| `measure.ts` | mesure ratio/ΔE d'une paire | **paquet** |
-| `cvd-simulation.ts` | simulation daltonienne (culori) | **paquet** |
-| `gamut.ts` | garde anti-gamut sRGB | **paquet** |
-| `extract-themes.ts` | compile un SCSS → extrait les vars par `[data-theme]` | **paquet** (paramétré : chemin d'entrée + node_modules + liste de thèmes passés par le consommateur) |
-| `contrast-pairs.ts` | registre des paires | **scindé** : paires de **rôles** (`--fg-base`/`--bg-base`…) → paquet (défauts) ; paires de **couche 3** (`--color-header-bg`…) → consommateur |
-| `report.ts` | génère la matrice markdown | **paquet** (moteur) ; chemins/labels = config consommateur |
-| `hc-semantic-audit.ts` | inspecteur sémantique HC | **paquet** (moteur) ; `HC_SLOTS` (cartes HC) = déjà dans le paquet (theme-generator `hc-carte`) → à brancher dessus |
+| `wcag.ts` | WCAG math (ratio, thresholds, alpha compositing) | **package** |
+| `measure.ts` | measures a pair's ratio/ΔE | **package** |
+| `cvd-simulation.ts` | color-blind simulation (culori) | **package** |
+| `gamut.ts` | anti-gamut sRGB guard | **package** |
+| `extract-themes.ts` | compiles SCSS → extracts vars per `[data-theme]` | **package** (parameterized: entry path + node_modules + theme list passed by the consumer) |
+| `contrast-pairs.ts` | pair registry | **split**: **role** pairs (`--fg-base`/`--bg-base`…) → package (defaults); **layer-3** pairs (`--color-header-bg`…) → consumer |
+| `report.ts` | generates the markdown matrix | **package** (engine); paths/labels = consumer config |
+| `hc-semantic-audit.ts` | HC semantic inspector | **package** (engine); `HC_SLOTS` (HC maps) already in the package (theme-generator `hc-color-map`) → wire onto it |
 
-Couplages actuels à défaire :
-- `extract-themes.ts` : `MAIN_SCSS` et `NODE_MODULES` **codés en dur** →
-  paramètres. `THEMES` vient déjà du paquet (via le shim `config/themes`).
-- `contrast-pairs.ts` : importe `ThemeOption` du shim (déjà paquet).
-- `hc-semantic-audit.ts` : `HC_SLOTS` recopie les cartes HC → lire
-  `hc-carte()` du paquet (source unique).
+Current couplings to undo:
+- `extract-themes.ts`: `MAIN_SCSS` and `NODE_MODULES` **hardcoded** →
+  parameters. `THEMES` already comes from the package (via the
+  `config/themes` shim).
+- `contrast-pairs.ts`: imports `ThemeOption` from the shim (already package).
+- `hc-semantic-audit.ts`: `HC_SLOTS` duplicates the HC maps → read the
+  package's `hc-color-map()` (single source).
 
-## Périmètre du paquet (nouveau dossier `testing/`)
+## Package scope (new `testing/` folder)
 
 ```
 packages/a11y-prefs/testing/
 ├── wcag.ts, measure.ts, cvd-simulation.ts, gamut.ts
 ├── extract-themes.ts        # extractThemes({ entry, loadPaths, themes })
-├── role-pairs.ts            # paires de rôles par défaut (API paquet)
+├── role-pairs.ts            # default role pairs (package API)
 ├── report.ts                # generateReport(pairs, { out, labels })
-└── semantic-audit.ts        # audit HC générique (lit hc-carte)
+└── semantic-audit.ts        # generic HC audit (reads hc-color-map)
 ```
-Dépendances du paquet : `culori`, `postcss`, `sass` (déjà présentes au repo,
-à déclarer en `dependencies`/`peer` du paquet). Export `./testing/*`.
+Package dependencies: `culori`, `postcss`, `sass` (already present in the
+repo, to be declared as `dependencies`/`peer` of the package). Export
+`./testing/*`.
 
-## Côté consommateur (le portfolio, premier client)
+## Consumer side (the portfolio, first client)
 
-- `src/accessibility/contrast/` se réduit à : sa **config** (chemin
-  `main.scss`, node_modules), ses **paires de couche 3** (étendent les
-  role-pairs du paquet), l'appel au rapport + à l'audit.
-- Les **tests** se scindent : tests du **moteur** (wcag, gamut, cvd,
-  distinguishability) → paquet ; tests de **conformité du site**
-  (report freshness, hc-palette-conformance, hc-semantic sur les thèmes du
-  site, font-drift) → restent côté portfolio.
+- `src/accessibility/contrast/` shrinks down to: its **config** (`main.scss`
+  path, node_modules), its **layer-3 pairs** (extending the package's
+  role-pairs), the calls to the report + the audit.
+- **Tests** split: **engine** tests (wcag, gamut, cvd, distinguishability)
+  → package; **site conformance** tests (report freshness,
+  hc-palette-conformance, hc-semantic on the site's themes, font-drift) →
+  stay on the portfolio side.
 
 ## Oracle
 
-- `CONTRAST-REPORT.md` **byte-identique** (même matrice).
-- `pnpm hc:audit` : sortie inchangée (0 avertissement actif, 15 waivés).
-- **748 tests toujours verts** (répartis paquet + site).
-- Aucun changement du CSS du site (l'outillage ne touche pas au rendu).
+- `CONTRAST-REPORT.md` **byte-identical** (same matrix).
+- `pnpm hc:audit`: unchanged output (0 active warning, 15 waived).
+- **748 tests still green** (split across package + site).
+- No change to the site's CSS (the tooling doesn't touch rendering).
 
 ## Phases
 
-### Phase 0 — Préparation
-Baseline : `CONTRAST-REPORT.md`, sortie `hc:audit`, suite de tests.
+### Phase 0 — Preparation
+Baseline: `CONTRAST-REPORT.md`, `hc:audit` output, test suite.
 
-### Phase 1 — Déplacer le moteur générique dans le paquet
-wcag/measure/cvd/gamut + `extract-themes` paramétré + `role-pairs` +
-`report`/`semantic-audit` moteurs. Le paquet compile/typecheck seul.
-**Commit** : `feat(theme): e6.6 phase 1 — contrast verifier engine into package`.
+### Phase 1 — Move the generic engine into the package
+wcag/measure/cvd/gamut + parameterized `extract-themes` + `role-pairs` +
+`report`/`semantic-audit` engines. The package compiles/typechecks on its own.
+**Commit**: `feat(theme): e6.6 phase 1 — contrast verifier engine into package`.
 
-### Phase 2 — Le portfolio consomme le moteur
-Réduire `src/accessibility/contrast/` à la config + paires couche 3 + appels.
-Scinder les tests (moteur → paquet, conformité site → portfolio).
-**Oracle** : rapport + audit + tests byte-identiques / verts.
-**Commit** : `refactor(theme): e6.6 phase 2 — portfolio consumes verifier`.
+### Phase 2 — The portfolio consumes the engine
+Reduce `src/accessibility/contrast/` to config + layer-3 pairs + calls.
+Split the tests (engine → package, site conformance → portfolio).
+**Oracle**: report + audit + tests byte-identical / green.
+**Commit**: `refactor(theme): e6.6 phase 2 — portfolio consumes verifier`.
 
-### Phase 3 — Finalisation
-`package.json` (export `./testing/*`, deps), README §6.2 item 9 coché,
-changelog, GUIDE (E6.6 fait), notice (le consommateur branche le gate CI).
-**Commit** : `docs(theme): e6.6 phase 3 — finalisation`.
+### Phase 3 — Wrap-up
+`package.json` (export `./testing/*`, deps), README §6.2 item 9 checked off,
+changelog, GUIDE (E6.6 done), guide (the consumer wires up the CI gate).
+**Commit**: `docs(theme): e6.6 phase 3 — wrap-up`.
 
-## Hors périmètre
+## Out of scope
 
-- Refonte des algos (WCAG/CVD inchangés — extraction pure).
-- `forced-colors`/`prefers-contrast` (README §7, plus tard).
-- Publication npm (E7).
+- Algorithm redesign (WCAG/CVD unchanged — pure extraction).
+- `forced-colors`/`prefers-contrast` (README §7, later).
+- npm publication (E7).

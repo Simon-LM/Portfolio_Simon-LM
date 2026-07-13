@@ -2,13 +2,13 @@
 
 "use client";
 
-// Déclencheur d'accessibilité (template scaffoldé — vous le possédez,
-// modifiez-le librement) : un bouton qui ouvre la carte d'accessibilité.
+// Accessibility trigger (scaffolded template — you own it, edit freely):
+// a button that opens the accessibility card.
 //
-// ⚠️ PLACEMENT : ce composant est prévu pour être posé DANS LE FLUX de la
-// page (typiquement dans votre header), PAS en `position: fixed` flottant —
-// un bouton flottant chevauche le contenu aux grands zooms (faute
-// d'accessibilité). Rendez-le où vous voulez : <AccessibilityControl … />.
+// ⚠️ PLACEMENT: this component is meant to be placed IN THE PAGE FLOW
+// (typically in your header), NOT as a floating `position: fixed` — a
+// floating button overlaps content at high zoom (an accessibility defect).
+// Render it wherever you want: <AccessibilityControl … />.
 
 import { useState, useRef, useEffect, type ReactNode } from "react";
 import { FaUniversalAccess } from "react-icons/fa";
@@ -16,12 +16,12 @@ import AccessibilityMenu from "./AccessibilityMenu";
 
 interface AccessibilityControlProps {
 	language: "fr" | "en";
-	/** Coin vers lequel le panneau s'ouvre. */
+	/** Corner the panel opens toward. */
 	position?: "top-right" | "top-left" | "bottom-right" | "bottom-left";
 	className?: string;
-	/** Icône du bouton (défaut : icône d'accessibilité universelle). */
+	/** Button icon (default: universal accessibility icon). */
 	icon?: ReactNode;
-	/** Lien vers votre déclaration d'accessibilité (optionnel). */
+	/** Link to your accessibility statement (optional). */
 	complianceUrl?: string;
 }
 
@@ -36,7 +36,7 @@ export default function AccessibilityControl({
 	const menuRef = useRef<HTMLDivElement>(null);
 	const buttonRef = useRef<HTMLButtonElement>(null);
 
-	// Fermer au clic extérieur.
+	// Close on outside click.
 	useEffect(() => {
 		function handleClickOutside(event: MouseEvent) {
 			if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -47,7 +47,7 @@ export default function AccessibilityControl({
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, []);
 
-	// Fermer à Échap, en rendant le focus au bouton.
+	// Close on Escape, returning focus to the button.
 	useEffect(() => {
 		function handleEscapeKey(event: KeyboardEvent) {
 			if (event.key === "Escape" && menuOpen) {

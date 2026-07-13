@@ -78,7 +78,7 @@ export default function SiteMapClient({ initialDictionary }: SiteMapProps) {
 							className="sitemap__line"
 						/> */}
 
-				{/* Niveau 3 - Pages légales */}
+				{/* Level 3 - Legal pages */}
 				{/* <text x="200" y="250">
 							{language === "fr" ? "Mentions légales" : "Legal Notice"}
 						</text>
@@ -94,7 +94,7 @@ export default function SiteMapClient({ initialDictionary }: SiteMapProps) {
 					</svg>
 				</div> */}
 
-				{/* Liste de liens hiérarchique */}
+				{/* Hierarchical list of links */}
 				<nav className="sitemap__nav" aria-label="Plan du site">
 					<ul className="sitemap__list">
 						<li>

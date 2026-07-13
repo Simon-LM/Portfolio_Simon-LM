@@ -1,196 +1,194 @@
 <!-- @format -->
 
-# Plan d'exécution — E5 : modules de préférences (zoom, polices, animations)
+# Execution plan — E5: preference modules (zoom, fonts, animations)
 
-**Document d'exécution destiné à une IA.** Mêmes règles générales que les
-plans précédents : branche dédiée, un commit par phase, sortie brute des
-vérifications, arrêt en cas d'imprévu, entrées [CHANGELOG.md](./CHANGELOG.md).
-Conception de référence : [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md)
-§ E5 et README § 6.5 (modules opt-in).
+**Execution document meant for an AI.** Same general rules as previous
+plans: dedicated branch, one commit per phase, raw check output, stop on
+anything unexpected, entries in [CHANGELOG.md](./CHANGELOG.md). Reference
+design: [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E5
+and README § 6.5 (opt-in modules).
 
-> **Statut : rédigé le 2026-07-07, révisé le 2026-07-08 (décisions de Simon
-> sur les polices, la taille et les espacements du mode dyslexie), à
-> exécuter.**
+> **Status: written 2026-07-07, revised 2026-07-08 (decisions on fonts,
+> dyslexia-mode size and spacing), ready to execute.**
 
-## ⛔ Prérequis bloquants
+## ⛔ Blocking prerequisites
 
-1. **E3 et E4 mergés** (fait : `812d5d5`, `19df328`).
-2. **Audit de licences des polices** (fait) et **décisions de Simon** (ci-dessous)
-   actées.
+1. **E3 and E4 merged** (done: `812d5d5`, `19df328`).
+2. **Font license audit** (done) and **decisions** (below) made.
 
-Branche : `feat/e5-modules`.
+Branch: `feat/e5-modules`.
 
-## Décisions actées (2026-07-08)
+## Decisions made (2026-07-08)
 
-- **Polices embarquées dans le paquet** (toutes OFL, redistribuables) :
+- **Fonts bundled in the package** (all OFL, redistributable):
   **OpenDyslexic, Andika, Atkinson Hyperlegible Next, Lexend Giga, Lexend
   Deca**.
-- **Exclues du paquet** :
-  - **Sylexiad Sans/Serif** — EULA propriétaire (fév. 2022), pas de
-    redistribution publique, donc **non embarquée**. Mais c'est la police
-    de corps **recommandée** pour le mode dyslexie : le paquet la
-    **recommande explicitement** (docs + `LICENSES/README`), invite à la
-    télécharger sur [sylexiad.com](https://www.sylexiad.com) et à la
-    brancher via le point d'extension. Andika est le **défaut OFL livré**
-    (fonctionne sans rien installer) ; Sylexiad est l'**upgrade
-    recommandé**.
-  - **Tiresias Infofont** — GPL v3 (friction dans un paquet MIT) **et**
-    absente du sélecteur actif du portfolio **et** police de signalétique
-    (RNIB, étiquettes à 30-100 cm), pas de lecture web. Exclue.
-  - **Raleway Dots** — absente du sélecteur actif, police décorative
-    pointillée sans place en accessibilité. Exclue.
-- **Mode dyslexie optimisé (`.dyslexia-optimized`)** : reconstruit en
-  **module configurable à 3 niveaux** — titre (`h1`), sous-titre (`h2-h6`),
-  corps (paragraphes + texte courant). Défauts : titre = Lexend Giga,
-  sous-titre = Lexend Deca, **corps = Andika** ; le portfolio surcharge le
-  corps avec **Sylexiad**. Différentes polices par niveau = choix de
-  conception assumé (préserver la hiérarchie, ne pas aplatir).
-- **Correction de rendu volontaire** (bug constaté le 2026-07-08) : le mode
-  dyslexie **rétrécit** aujourd'hui les paragraphes (police de substitution
-  à petite hauteur d'x, aucune compensation ; l'ancienne compensation est
-  commentée). Fix propre : **`font-size-adjust`** (normalise la hauteur
-  d'x) → le corps garde la bonne taille quelle que soit la police.
-  Reco Simon : **compenser + ~+10 %** sur le corps. **Espacements** (British
-  Dyslexia Association, points de calibration validés visuellement) :
-  line-height **~1.7**, letter-spacing **~0.05em**, word-spacing **~0.16em**.
-- **Sélecteur de police individuel** (OpenDyslexic / Atkinson / Andika +
-  Sylexiad côté site) : reçoit aussi la compensation `font-size-adjust`
-  (même bug de rétrécissement).
-- **High-contrast (taille/espacements/`font-size-adjust`)** : hors
-  périmètre E5, noté au [TODO.md](./TODO.md) « à optimiser plus tard ».
+- **Excluded from the package**:
+  - **Sylexiad Sans/Serif** — proprietary EULA (Feb. 2022), no public
+    redistribution, so **not bundled**. But it's the **recommended** body
+    font for dyslexia mode: the package **explicitly recommends it**
+    (docs + `LICENSES/README`), pointing to downloading it from
+    [sylexiad.com](https://www.sylexiad.com) and wiring it in via the
+    extension point. Andika is the **bundled OFL default** (works with
+    nothing to install); Sylexiad is the **recommended upgrade**.
+  - **Tiresias Infofont** — GPL v3 (friction inside an MIT package) **and**
+    absent from the portfolio's active selector **and** a signage font
+    (RNIB, labels read at 30-100 cm), not for web reading. Excluded.
+  - **Raleway Dots** — absent from the active selector, a decorative
+    dotted font with no accessibility use case. Excluded.
+- **Optimized dyslexia mode (`.dyslexia-optimized`)**: rebuilt as a
+  **configurable 3-level module** — title (`h1`), subtitle (`h2-h6`),
+  body (paragraphs + running text). Defaults: title = Lexend Giga,
+  subtitle = Lexend Deca, **body = Andika**; the portfolio overrides the
+  body with **Sylexiad**. Different fonts per level is a deliberate design
+  choice (preserve the hierarchy, don't flatten it).
+- **Deliberate rendering fix** (bug found 2026-07-08): dyslexia mode
+  currently **shrinks** paragraphs (a substitute font with a small
+  x-height, no compensation; the old compensation is commented out).
+  Clean fix: **`font-size-adjust`** (normalizes x-height) → the body keeps
+  the right size regardless of the font. Recommendation: **compensate +
+  ~10%** on the body. **Spacing** (British Dyslexia Association,
+  visually-validated calibration points): line-height **~1.7**,
+  letter-spacing **~0.05em**, word-spacing **~0.16em**.
+- **Individual font selector** (OpenDyslexic / Atkinson / Andika +
+  Sylexiad on the site side): also gets the `font-size-adjust`
+  compensation (same shrinking bug).
+- **High-contrast (size/spacing/`font-size-adjust`)**: out of scope for
+  E5, noted in [TODO.md](./TODO.md) as "to optimize later."
 
-## Objectif et périmètre
+## Goal and scope
 
-| Va dans le paquet | Reste dans le portfolio |
+| Goes into the package | Stays in the portfolio |
 | --- | --- |
-| `fonts/` : OpenDyslexic, Andika, Atkinson, Lexend Giga/Deca + `LICENSES/` | `public/fonts/` inchangé (le site sert SES fichiers, Sylexiad comprise) |
-| `scss/modules/_a11y-fonts.scss` : `@font-face` (chemin `$a11y-fonts-path !default`), classes du sélecteur (`.dyslexic-font`, `.atkinson-font`, `.andika-font`) **+ `font-size-adjust`**, et le mixin du **mode dyslexie configurable** (`$dyslexia-fonts`, `$dyslexia-spacing` `!default`) | classes/`@font-face` **Sylexiad**, marque (Inter, Quicksand), surcharges site-spécifiques du mode dyslexie (`.header__title-name`…), config `with(body: Sylexiad)` |
-| `scss/modules/_motion.scss` : `@media (prefers-reduced-motion)` générique, classe `.reduce-motion`, mixin `motion-safe` | sélecteurs motion propres au site (`.portfolio__card`…) |
-| `react/` : appliers DOM SSR-safe + `usePreference` générique + types | stores zustand (`fontSizeStore`, `dyslexicFontStore`) + toggle motion : **conservés**, délèguent l'application DOM ; clés/formats localStorage inchangés |
+| `fonts/`: OpenDyslexic, Andika, Atkinson, Lexend Giga/Deca + `LICENSES/` | `public/fonts/` unchanged (the site serves ITS OWN files, Sylexiad included) |
+| `scss/modules/_a11y-fonts.scss`: `@font-face` (path `$a11y-fonts-path !default`), selector classes (`.dyslexic-font`, `.atkinson-font`, `.andika-font`) **+ `font-size-adjust`**, and the **configurable dyslexia mode** mixin (`$dyslexia-fonts`, `$dyslexia-spacing` `!default`) | **Sylexiad** classes/`@font-face`, brand fonts (Inter, Quicksand), site-specific dyslexia-mode overrides (`.header__title-name`…), `with(body: Sylexiad)` config |
+| `scss/modules/_motion.scss`: generic `@media (prefers-reduced-motion)`, `.reduce-motion` class, `motion-safe` mixin | site-specific motion selectors (`.portfolio__card`…) |
+| `react/`: SSR-safe DOM appliers + generic `usePreference` + types | zustand stores (`fontSizeStore`, `dyslexicFontStore`) + motion toggle: **kept**, delegate DOM application; localStorage keys/formats unchanged |
 
 ## Oracles
 
-- **Phases 1-3 (relocation)** : CSS byte-identique modulo pragmas (règle
-  E3) ; comportement identique (clés localStorage `font-size-storage`,
-  `reduce-motion`, store dyslexique ; mêmes classes DOM ; bornes de zoom
-  75-150). Diff normalisé exigé.
-- **Phase 4 (corrections volontaires)** : **le rendu change exprès** pour
-  le mode dyslexie et les classes de police (taille compensée + agrandie,
-  espacements). L'oracle byte-identique **ne s'applique pas** à ces
-  blocs ; il reste exigé partout ailleurs (thèmes, autres composants).
-  **Validation visuelle de Simon requise.**
-- **Anti-dérive des polices** : test comparant les checksums des fichiers
-  `packages/a11y-prefs/fonts/` avec `public/fonts/` (copies identiques
-  jusqu'au CLI E6).
-- Suite complète + build + lint + tsc verts à chaque phase.
+- **Phases 1-3 (relocation)**: byte-identical CSS modulo pragmas (the E3
+  rule); identical behavior (localStorage keys `font-size-storage`,
+  `reduce-motion`, dyslexia store; same DOM classes; 75-150 zoom bounds).
+  Normalized diff required.
+- **Phase 4 (deliberate fixes)**: **rendering intentionally changes** for
+  dyslexia mode and the font classes (compensated + enlarged size,
+  spacing). The byte-identical oracle **does not apply** to these blocks;
+  it stays required everywhere else (themes, other components). **Visual
+  validation required.**
+- **Font drift guard**: a test comparing checksums of
+  `packages/a11y-prefs/fonts/` files against `public/fonts/` (identical
+  copies until the E6 CLI).
+- Full suite + build + lint + tsc green at every phase.
 
-## Phase 0 — Préparation
+## Phase 0 — Preparation
 
-Arbre propre, branche, baseline CSS (`/tmp/e5-modules/phase0.css`,
-`--load-path=node_modules`). Inventaire exact et **capture du rendu
-actuel** des blocs qui changeront en phase 4 (`.dyslexia-optimized`, les
-classes `.dyslexic-font`/`.atkinson-font`/`.andika-font`) pour comparaison
-avant/après. Localiser `@font-face`, classes de police, bloc
-`.reduce-motion` et `@media prefers-reduced-motion`.
+Clean tree, branch, CSS baseline (`/tmp/e5-modules/phase0.css`,
+`--load-path=node_modules`). Exact inventory and **capture of the current
+rendering** of the blocks that will change in phase 4
+(`.dyslexia-optimized`, the `.dyslexic-font`/`.atkinson-font`/
+`.andika-font` classes) for a before/after comparison. Locate
+`@font-face`, font classes, the `.reduce-motion` block and
+`@media prefers-reduced-motion`.
 
-## Phase 1 — Polices redistribuables + licences dans le paquet
+## Phase 1 — Redistributable fonts + licenses into the package
 
-1. Copier (pas déplacer) vers `packages/a11y-prefs/fonts/` : OpenDyslexic,
-   Andika, Atkinson Hyperlegible Next, Lexend Giga, Lexend Deca. **Jamais
-   Sylexiad, ni Tiresias, ni Raleway Dots.**
-2. `packages/a11y-prefs/fonts/LICENSES/` : un fichier OFL par famille
-   (copyright propre) + `README.md` récapitulatif de l'audit qui
-   **recommande explicitement Sylexiad** comme police de corps du mode
-   dyslexie (à télécharger sur sylexiad.com et brancher via le point
-   d'extension), Andika restant le défaut OFL livré.
-3. Test anti-dérive (checksums) dans la suite Jest.
-4. `"files"` du package.json du paquet : ajouter `fonts`.
+1. Copy (don't move) into `packages/a11y-prefs/fonts/`: OpenDyslexic,
+   Andika, Atkinson Hyperlegible Next, Lexend Giga, Lexend Deca. **Never
+   Sylexiad, Tiresias, or Raleway Dots.**
+2. `packages/a11y-prefs/fonts/LICENSES/`: one OFL file per family (own
+   copyright) + a summary `README.md` from the audit that **explicitly
+   recommends Sylexiad** as the dyslexia mode's body font (to download
+   from sylexiad.com and wire in via the extension point), Andika
+   remaining the bundled OFL default.
+3. Drift-guard test (checksums) in the Jest suite.
+4. The package's package.json `"files"`: add `fonts`.
 
-**Oracle** : CSS byte-identique strict (aucun SCSS touché).
-**Commit** : `feat(theme): e5 phase 1 — redistributable fonts + licenses into the package`.
+**Oracle**: strictly byte-identical CSS (no SCSS touched).
+**Commit**: `feat(theme): e5 phase 1 — redistributable fonts + licenses into the package`.
 
-## Phase 2 — Modules SCSS opt-in (relocation byte-identique)
+## Phase 2 — Opt-in SCSS modules (byte-identical relocation)
 
-Déplacement **sans changement de rendu** (les corrections sont en phase 4) :
+Relocation **with no rendering change** (fixes are in phase 4):
 
-1. `scss/modules/_a11y-fonts.scss` : les `@font-face` des familles du
-   paquet (chemin `$a11y-fonts-path: "/fonts" !default`) + les classes du
-   sélecteur telles quelles (`.dyslexic-font`, `.atkinson-font`,
-   `.andika-font`) et le bloc `.dyslexia-optimized` **copié à l'identique**
-   (sa refonte configurable est en phase 4).
-2. `scss/modules/_motion.scss` : `@media (prefers-reduced-motion)` +
-   `.reduce-motion` génériques + mixin `motion-safe`.
-3. Portfolio : `_typography.scss` garde marque + **Sylexiad** (classes +
-   `@font-face`) ; il `@use` les modules et conserve ses sélecteurs
-   site-spécifiques. Les `@font-face`/classes **Tiresias et Raleway Dots
-   morts** (fonts non embarquées, absentes du sélecteur actif) sont
-   **retirés** — suppression de code mort, aucun élément ne les portait.
+1. `scss/modules/_a11y-fonts.scss`: the package fonts' `@font-face` rules
+   (path `$a11y-fonts-path: "/fonts" !default`) + the selector classes
+   as-is (`.dyslexic-font`, `.atkinson-font`, `.andika-font`) and the
+   `.dyslexia-optimized` block **copied identically** (its configurable
+   redesign is in phase 4).
+2. `scss/modules/_motion.scss`: generic `@media (prefers-reduced-motion)`,
+   `.reduce-motion`, and the `motion-safe` mixin.
+3. Portfolio: `_typography.scss` keeps the brand fonts + **Sylexiad**
+   (classes + `@font-face`); it `@use`s the modules and keeps its
+   site-specific selectors. The **dead** Tiresias and Raleway Dots
+   `@font-face`/classes (fonts not bundled, absent from the active
+   selector) are **removed** — dead-code removal, nothing was using them.
 
-**Oracle** : CSS byte-identique modulo pragmas **et** modulo la suppression
-des règles mortes Tiresias/Raleway (diff attendu = uniquement ces règles ;
-sortie brute au rapport).
-**Commit** : `refactor(theme): e5 phase 2 — opt-in scss modules (relocation)`.
+**Oracle**: byte-identical CSS modulo pragmas **and** modulo removing the
+dead Tiresias/Raleway rules (expected diff = only those rules; raw output
+in the report).
+**Commit**: `refactor(theme): e5 phase 2 — opt-in scss modules (relocation)`.
 
-## Phase 3 — Appliers DOM + usePreference (react)
+## Phase 3 — DOM appliers + usePreference (react)
 
-1. `react/appliers.ts` : `applyFontSizeFactor(percent)` (`--font-size-factor`,
-   formule `size/100`), `applyAccessibilityFont(font, extraClasses?)`
-   (retire toutes les classes, pose la bonne — `extraClasses` couvre
-   Sylexiad côté portfolio), `applyReduceMotion(enabled)`. SSR-safe.
-2. `react/usePreference.ts` : `usePreference<T>(key, { defaultValue,
-   serialize?, deserialize?, apply })` — init paresseuse localStorage,
-   application DOM, setter persistant. **Tests unitaires** (jsdom).
-   `useTheme` n'est PAS migré dessus (zéro churn, itération ultérieure).
-3. Portfolio : `fontSizeStore`/`dyslexicFontStore`/toggle motion délèguent
-   l'application DOM aux appliers — état, clés, formats inchangés.
+1. `react/appliers.ts`: `applyFontSizeFactor(percent)` (`--font-size-factor`,
+   formula `size/100`), `applyAccessibilityFont(font, extraClasses?)`
+   (removes every class, sets the right one — `extraClasses` covers
+   Sylexiad on the portfolio side), `applyReduceMotion(enabled)`.
+   SSR-safe.
+2. `react/usePreference.ts`: `usePreference<T>(key, { defaultValue,
+   serialize?, deserialize?, apply })` — lazy localStorage init, DOM
+   application, a persisting setter. **Unit tests** (jsdom). `useTheme` is
+   NOT migrated onto it (zero churn, a later iteration).
+3. Portfolio: `fontSizeStore`/`dyslexicFontStore`/motion toggle delegate
+   DOM application to the appliers — state, keys, formats unchanged.
 
-**Oracle** : comportement identique (mêmes classes, mêmes clés — tests du
-menu + test de non-régression des noms de classes), CSS intact.
-**Commit** : `refactor(theme): e5 phase 3 — DOM appliers + generic usePreference`.
+**Oracle**: identical behavior (same classes, same keys — menu tests +
+class-name regression test), CSS untouched.
+**Commit**: `refactor(theme): e5 phase 3 — DOM appliers + generic usePreference`.
 
-## Phase 4 — Corrections de rendu (VISUEL, validé par Simon)
+## Phase 4 — Rendering fixes (VISUAL, validated)
 
-1. **`font-size-adjust`** sur les classes du sélecteur
-   (`.dyslexic-font`/`.atkinson-font`/`.andika-font`) et sur le corps du
-   mode dyslexie : normalise la hauteur d'x → plus de rétrécissement.
-   Valeur cible = calibration (viser l'apparence d'Inter ; `from-font` si
-   le support le permet, sinon valeur numérique). **+~10 %** sur le corps
-   du mode dyslexie.
-2. **Mode dyslexie configurable** : réécrire `.dyslexia-optimized` via un
-   mixin piloté par `$dyslexia-fonts` (title/subtitle/body) et
+1. **`font-size-adjust`** on the selector classes
+   (`.dyslexic-font`/`.atkinson-font`/`.andika-font`) and on the dyslexia
+   mode's body: normalizes x-height → no more shrinking. Target value =
+   calibration (aim for Inter's appearance; `from-font` if support allows,
+   otherwise a numeric value). **+~10%** on the dyslexia mode's body.
+2. **Configurable dyslexia mode**: rewrite `.dyslexia-optimized` through a
+   mixin driven by `$dyslexia-fonts` (title/subtitle/body) and
    `$dyslexia-spacing` (line-height ~1.7, letter-spacing ~0.05em,
-   word-spacing ~0.16em), ciblant les niveaux **sémantiques**
-   (`h1`, `h2-h6`, corps). Défaut corps = **Andika**. Le portfolio passe
-   `with (body: Sylexiad)` + garde ses surcharges de classes
-   site-spécifiques (`.header__title-name`…).
-3. Retirer les traces de compensation commentées obsolètes.
-4. **Diff CSS attendu** confiné aux blocs `.dyslexia-optimized` et aux
-   classes de police ; sortie brute au rapport ; captures avant/après.
+   word-spacing ~0.16em), targeting the **semantic** levels
+   (`h1`, `h2-h6`, body). Default body = **Andika**. The portfolio passes
+   `with (body: Sylexiad)` + keeps its site-specific class overrides
+   (`.header__title-name`…).
+3. Remove obsolete, commented-out compensation leftovers.
+4. **Expected CSS diff** confined to the `.dyslexia-optimized` blocks and
+   the font classes; raw output in the report; before/after screenshots.
 
-**Oracle** : NON byte-identique (changements voulus) ; reste du CSS
-inchangé ; **validation visuelle de Simon** (mode dyslexie : taille des
-paragraphes, espacements ; chaque police du sélecteur : taille correcte).
-**Commit** : `feat(theme): e5 phase 4 — fix a11y font sizing + configurable dyslexia mode`.
+**Oracle**: NOT byte-identical (intended changes); the rest of the CSS
+unchanged; **visual validation required** (dyslexia mode: paragraph size,
+spacing; each selector font: correct size).
+**Commit**: `feat(theme): e5 phase 4 — fix a11y font sizing + configurable dyslexia mode`.
 
-## Phase 5 — Finalisation
+## Phase 5 — Wrap-up
 
-1. Suites complètes + build + `contrast:report` (inchangé) ; smoke manuel
-   (zoom, chaque police — dont Sylexiad —, mode dyslexie, réduction
-   d'animations, persistance au reload).
-2. Docs : README § 3 et § 6.5, guide § E5 (fait), TODO (audit coché,
-   décisions Tiresias/Raleway/Sylexiad consignées) ; changelog de synthèse
-   avec tableau avant/après du mode dyslexie ; rapport final.
+1. Full suites + build + `contrast:report` (unchanged); manual smoke test
+   (zoom, each font — including Sylexiad —, dyslexia mode, motion
+   reduction, persistence on reload).
+2. Docs: README § 3 and § 6.5, guide § E5 (done), TODO (audit checked off,
+   Tiresias/Raleway/Sylexiad decisions logged); summary changelog entry
+   with a before/after dyslexia-mode table; final report.
 
-**Commit** : `docs(theme): e5 phase 5 — finalization`.
+**Commit**: `docs(theme): e5 phase 5 — finalization`.
 
-## Hors périmètre (ne PAS faire)
+## Out of scope (do NOT do)
 
-- Migrer `useTheme` sur `usePreference` (itération ultérieure).
-- Migrer les stores zustand vers les hooks du paquet (le consommateur
-  garde son état ; le paquet fournit les appliers).
-- **Optimisation typographique du high-contrast** (taille, espacements,
-  `font-size-adjust`) — notée au TODO, après E5.
-- L'UI (E6), le dist publiable et la publication + le nom (E7).
-- La question Sylexiad-servie-par-le-site (décision Simon, hors chantier).
-- Anti-FOUC des préférences non-thème (zoom/police à la réhydratation
-  zustand) — amélioration future, pas ici.
+- Migrating `useTheme` onto `usePreference` (a later iteration).
+- Migrating the zustand stores onto the package's hooks (the consumer
+  keeps their state; the package provides the appliers).
+- **High-contrast typography optimization** (size, spacing,
+  `font-size-adjust`) — noted in the TODO, after E5.
+- The UI (E6), the publishable dist, and publication + the name (E7).
+- The Sylexiad-served-by-the-site question (decision, outside this chantier).
+- Anti-FOUC for non-theme preferences (zoom/font on zustand rehydration)
+  — a future improvement, not here.

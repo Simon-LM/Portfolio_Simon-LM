@@ -23,7 +23,7 @@ export default function AccessibilityControl({
 	const menuRef = useRef<HTMLDivElement>(null);
 	const buttonRef = useRef<HTMLButtonElement>(null);
 
-	// Fermer le menu quand on clique ailleurs
+	// Close the menu when clicking elsewhere
 	useEffect(() => {
 		function handleClickOutside(event: MouseEvent) {
 			if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -41,7 +41,7 @@ export default function AccessibilityControl({
 		function handleEscapeKey(event: KeyboardEvent) {
 			if (event.key === "Escape" && accessibilityMenuOpen) {
 				setAccessibilityMenuOpen(false);
-				buttonRef.current?.focus(); // Remettre le focus sur le bouton
+				buttonRef.current?.focus(); // Return focus to the button
 			}
 		}
 

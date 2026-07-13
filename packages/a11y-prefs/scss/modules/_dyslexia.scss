@@ -1,28 +1,27 @@
 /** @format */
 
-// Module opt-in — mode dyslexie « optimisé » (chantier E5).
+// Opt-in module — "optimized" dyslexia mode (E5).
 //
-// Contrairement aux menus qui posent la MÊME police dyslexique partout, ce
-// module hiérarchise : une police par rôle (titre / sous-titre / corps). Ça
-// garde une hiérarchie lisible et n'alourdit pas la page.
+// Unlike menus that apply the SAME dyslexia font everywhere, this module
+// establishes a hierarchy: one font per role (title / subtitle / body).
+// This keeps a readable hierarchy without bloating the page.
 //
-// Le vrai correctif du corps est `font-size-adjust` : il normalise la
-// hauteur d'x, donc une police au petit œil (Sylexiad…) cesse de « rétrécir »
-// les paragraphes. La cible 0.56 dépasse légèrement les grandes polices de
-// corps (Inter ≈ 0.545) : le mode ne paraît jamais plus petit que le site
-// hôte, quel qu'il soit. Espacements inspirés de la British Dyslexia
-// Association / WCAG 1.4.12, calibrés visuellement (validation Simon,
-// 2026-07-09) : inter-lettres 0.04em, inter-mots ×3.2, interligne 1.75
-// (la fourchette recommandée va de 1.5 à 2.0).
+// The body's real fix is `font-size-adjust`: it normalizes x-height, so a
+// font with a small x-height (Sylexiad…) stops "shrinking" paragraphs. The
+// 0.56 target slightly exceeds large body fonts (Inter ≈ 0.545): the mode
+// never looks smaller than the host site, whatever it is. Spacing inspired
+// by the British Dyslexia Association / WCAG 1.4.12, visually calibrated
+// (validation, 2026-07-09): letter-spacing 0.04em, word-spacing ×3.2,
+// line-height 1.75 (the recommended range is 1.5 to 2.0).
 //
-// Tout est configurable. Défauts = polices OFL embarquées (corps = Andika).
-// Le consommateur surcharge ce qu'il veut, p.ex. corps = Sylexiad sur son
-// site. Les surcharges site-spécifiques (header, navigation) restent chez lui.
+// Everything is configurable. Defaults = bundled OFL fonts (body = Andika).
+// The consumer overrides whatever they want, e.g. body = Sylexiad on their
+// site. Site-specific overrides (header, navigation) stay on their side.
 //
-// Usage :
+// Usage:
 //   html.dyslexia-optimized {
 //     @include dyslexia-typography($body-font: "SylexiadSans");
-//     // … surcharges maison (.header, .navigation-sticky) …
+//     // … custom overrides (.header, .navigation-sticky) …
 //   }
 
 @mixin dyslexia-typography(
@@ -35,7 +34,7 @@
 	$body-letter-spacing: 0.04em,
 	$body-word-spacing: 0.128em
 ) {
-	// Niveau 1 — titre
+	// Level 1 — title
 	h1 {
 		font-family: $title-font, sans-serif !important;
 		font-weight: 600;
@@ -43,7 +42,7 @@
 		letter-spacing: -0.025em;
 	}
 
-	// Niveau 2 — sous-titres
+	// Level 2 — subtitles
 	h2,
 	h3,
 	h4,
@@ -54,9 +53,9 @@
 		letter-spacing: -0.02em;
 	}
 
-	// Niveau 3 — corps. font-size-adjust normalise la hauteur d'x (correctif
-	// du rétrécissement), puis espacements BDA. Hérité par les enfants inline,
-	// donc pas de compounding.
+	// Level 3 — body. font-size-adjust normalizes x-height (fixing the
+	// shrinking effect), then BDA spacing. Inherited by inline children,
+	// so no compounding.
 	p,
 	div,
 	span,
@@ -76,10 +75,10 @@
 		word-spacing: $body-word-spacing;
 	}
 
-	// Agrandissement optionnel, désactivé par défaut ($body-size-scale: 1) :
-	// font-size-adjust suffit à restaurer la taille perçue. Si activé, il ne
-	// touche que les porteurs de bloc (p, li) pour éviter le compounding
-	// qu'entraînerait un facteur em sur div/span imbriqués.
+	// Optional enlargement, disabled by default ($body-size-scale: 1):
+	// font-size-adjust is enough to restore the perceived size. If enabled,
+	// it only touches block carriers (p, li) to avoid the compounding an
+	// em factor would cause on nested div/span.
 	@if $body-size-scale != 1 {
 		p,
 		li {

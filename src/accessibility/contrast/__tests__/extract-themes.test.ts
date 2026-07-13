@@ -47,8 +47,8 @@ describe("getVar", () => {
 	});
 
 	it("throws for an unknown theme", () => {
-		// theme est typé `string` côté paquet (générique) ; le contrôle est
-		// désormais au runtime seulement.
+		// theme is typed `string` on the package side (generic); the check is
+		// now runtime-only.
 		expect(() => getVar("not-a-theme", "--fg-base")).toThrow(/unknown theme/);
 	});
 

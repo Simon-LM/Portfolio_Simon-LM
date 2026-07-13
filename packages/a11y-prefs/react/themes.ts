@@ -5,8 +5,8 @@
 // (consumer-side, src/styles/abstracts/_theme-system.scss in the
 // portfolio) must stay in sync manually until theme-list generation is
 // extracted too (see GUIDE-extraction-paquet.md).
-// high-contrast* : « high-contrast » = jaune sur noir (valeur historique,
-// conservée pour les localStorage existants) + 3 variantes (chantier HC).
+// high-contrast*: "high-contrast" = yellow on black (historical value,
+// kept for existing localStorage entries) + 3 variants (HC chantier).
 export const THEMES = [
 	"light",
 	"dark",

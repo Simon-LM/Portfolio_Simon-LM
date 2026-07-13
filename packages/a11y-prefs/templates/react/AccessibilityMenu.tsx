@@ -2,13 +2,13 @@
 
 "use client";
 
-// Carte d'accessibilité (template scaffoldé — vous la possédez, modifiez-la
-// librement). Généralisée depuis le portfolio de référence : état via le
-// hook `usePreference` du paquet (pas de store à installer), polices du
-// paquet uniquement, aucune dépendance à un framework (pas de next/link).
+// Accessibility card (scaffolded template — you own it, edit freely).
+// Generalized from the reference portfolio: state via the package's
+// `usePreference` hook (no store to install), package fonts only, no
+// framework dependency (no next/link).
 //
-// ⚠️ `a11y-prefs` = nom d'import du paquet ; le CLI le réécrit vers le nom
-// installé (défaut « darkmode-plus-a11y ») lors de `init`.
+// ⚠️ `a11y-prefs` = the package's import name; the CLI rewrites it to the
+// installed name (default "darkmode-plus-a11y") during `init`.
 
 import {
 	useState,
@@ -28,7 +28,7 @@ import {
 	useAccessibilityFont,
 } from "./accessibilityPreferences";
 
-// false au serveur, true après hydratation — sans enfreindre
+// false on the server, true after hydration — without violating
 // react-hooks/set-state-in-effect.
 function useIsMounted(): boolean {
 	return useSyncExternalStore(
@@ -41,19 +41,19 @@ function useIsMounted(): boolean {
 type Props = {
 	language: string;
 	onClose?: () => void;
-	/** Lien vers votre déclaration d'accessibilité (optionnel). */
+	/** Link to your accessibility statement (optional). */
 	complianceUrl?: string;
 };
 
-// Variantes du mode fort contraste — « high-contrast » = jaune sur noir.
+// High-contrast mode variants — "high-contrast" = yellow on black.
 type HcVariant =
 	| "high-contrast"
 	| "high-contrast-green"
 	| "high-contrast-white"
 	| "high-contrast-paper";
 
-// Modificateur SCSS de chaque bouton de variante (couleurs réelles dans le
-// SCSS, patron __hc-variant-button).
+// SCSS modifier for each variant button (actual colors live in the SCSS,
+// __hc-variant-button pattern).
 const HC_VARIANT_MODIFIERS: Record<HcVariant, string> = {
 	"high-contrast": "yellow",
 	"high-contrast-green": "green",
@@ -74,7 +74,7 @@ export default function AccessibilityMenu({
 	const [fontSize, setFontSize] = useFontSize();
 	const [fontType, setFontType] = useAccessibilityFont();
 	const [isDyslexicMode, setIsDyslexicMode] = useState(false);
-	// reduceMotion : init paresseuse (localStorage / prefers-reduced-motion)
+	// reduceMotion: lazy init (localStorage / prefers-reduced-motion)
 	const [reduceMotion, setReduceMotion] = useState<boolean>(() => {
 		if (typeof window === "undefined") return false;
 		const saved = localStorage.getItem("reduce-motion");
@@ -87,7 +87,7 @@ export default function AccessibilityMenu({
 	);
 	const colorVisionSelectRef = useRef<SelectInstance<OptionType> | null>(null);
 	const fontTypeSelectRef = useRef<SelectInstance<OptionType> | null>(null);
-	// Dernière variante de fort contraste utilisée (le toggle la réactive).
+	// Last high-contrast variant used (the toggle reactivates it).
 	const [hcVariant, setHcVariant] = useState<HcVariant>(() => {
 		if (typeof window === "undefined") return "high-contrast";
 		const saved = localStorage.getItem("hc-variant");
@@ -98,7 +98,7 @@ export default function AccessibilityMenu({
 			: "high-contrast";
 	});
 
-	// Basculer le mode dyslexie optimisé (classe DOM dyslexia-optimized).
+	// Toggle the optimized dyslexia mode (dyslexia-optimized DOM class).
 	const toggleDyslexicMode = () => {
 		const newMode = !isDyslexicMode;
 		setIsDyslexicMode(newMode);
@@ -125,7 +125,7 @@ export default function AccessibilityMenu({
 		}
 	}, [theme]);
 
-	// La classe typo du fort contraste s'applique à TOUTES les variantes.
+	// The high-contrast typography class applies to ALL variants.
 	useEffect(() => {
 		if (mounted && typeof document !== "undefined") {
 			document.documentElement.classList.toggle(
@@ -135,8 +135,8 @@ export default function AccessibilityMenu({
 		}
 	}, [mounted, theme]);
 
-	// Mémoriser la dernière variante de fort contraste (pas d'effet : la
-	// règle du projet interdit setState dans un effet).
+	// Remember the last high-contrast variant (no effect: the project rule
+	// forbids setState inside an effect).
 	const selectHcVariant = (variant: HcVariant) => {
 		setHcVariant(variant);
 		localStorage.setItem("hc-variant", variant);
@@ -192,7 +192,7 @@ export default function AccessibilityMenu({
 		}
 	};
 
-	// state → système externe (application DOM déléguée à l'applier du paquet)
+	// state → external system (DOM application delegated to the package's applier)
 	useEffect(() => {
 		applyReduceMotion(reduceMotion);
 	}, [reduceMotion]);
@@ -339,9 +339,9 @@ export default function AccessibilityMenu({
 		return map[mode] ?? mode;
 	};
 
-	// Ouverture fiable du select au clavier (Enter/Espace fermés → ouvre ;
-	// Tab dans le menu ouvert → flèches). Appelée dans une closure au keydown
-	// (la ref est lue à l'événement, jamais au rendu).
+	// Reliable keyboard opening of the select (Enter/Space while closed →
+	// open; Tab in the open menu → arrows). Called in a keydown closure
+	// (the ref is read at the event, never at render).
 	const handleSelectKeyDown = (
 		e: ReactKeyboardEvent<HTMLElement>,
 		ref: RefObject<SelectInstance<OptionType> | null>,
@@ -383,7 +383,7 @@ export default function AccessibilityMenu({
 				)}
 			</div>
 
-			{/* Catégorie Mode */}
+			{/* Mode category */}
 			<div className="accessibility-menu__category">
 				<h3 className="accessibility-menu__category-title">
 					{labels.categories.mode}
@@ -413,13 +413,13 @@ export default function AccessibilityMenu({
 				</div>
 			</div>
 
-			{/* Catégorie Vision */}
+			{/* Vision category */}
 			<div className="accessibility-menu__category">
 				<h3 className="accessibility-menu__category-title">
 					{labels.categories.vision}
 				</h3>
 
-				{/* Fort contraste */}
+				{/* High contrast */}
 				<div className="accessibility-menu__visual-help-group">
 					<p className="accessibility-menu__group-label">
 						{labels.categories.contrast}
@@ -437,9 +437,9 @@ export default function AccessibilityMenu({
 						</button>
 					</div>
 
-					{/* 4 boutons de variantes, visibles quand le mode est actif —
-					    chaque bouton = mini-prévisualisation (libellé complet dans
-					    les couleurs réelles de sa variante). */}
+					{/* 4 variant buttons, visible when the mode is active —
+					    each button = a mini preview (full label rendered in
+					    its variant's actual colors). */}
 					{theme.startsWith("high-contrast") && (
 						<div
 							className="accessibility-menu__buttons-row accessibility-menu__buttons-row--hc-variants"
@@ -468,7 +468,7 @@ export default function AccessibilityMenu({
 					)}
 				</div>
 
-				{/* Anti-éblouissement */}
+				{/* Anti-glare */}
 				<div className="accessibility-menu__visual-help-group">
 					<p className="accessibility-menu__help-description">
 						{labels.visualHelps.antiGlare.description}
@@ -484,7 +484,7 @@ export default function AccessibilityMenu({
 					</div>
 				</div>
 
-				{/* Réduction des animations */}
+				{/* Reduce animations */}
 				<div className="accessibility-menu__visual-help-group">
 					<p className="accessibility-menu__help-description">
 						{labels.visualHelps.reduceMotion.description}
@@ -501,7 +501,7 @@ export default function AccessibilityMenu({
 					</div>
 				</div>
 
-				{/* Daltonisme */}
+				{/* Color blindness */}
 				<div className="accessibility-menu__visual-help-group">
 					<label
 						htmlFor="color-vision-select"
@@ -545,13 +545,13 @@ export default function AccessibilityMenu({
 				</div>
 			</div>
 
-			{/* Catégorie Lecture */}
+			{/* Reading category */}
 			<div className="accessibility-menu__category">
 				<h3 className="accessibility-menu__category-title">
 					{labels.categories.reading}
 				</h3>
 
-				{/* Mode dyslexie optimisé */}
+				{/* Optimized dyslexia mode */}
 				<div className="accessibility-menu__visual-help-group">
 					<div className="accessibility-menu__buttons-row">
 						<button
@@ -566,7 +566,7 @@ export default function AccessibilityMenu({
 					</div>
 				</div>
 
-				{/* Taille de texte */}
+				{/* Text size */}
 				<div className="accessibility-menu__font-control">
 					<div className="accessibility-menu__slider-header">
 						<label
@@ -610,7 +610,7 @@ export default function AccessibilityMenu({
 					</div>
 				</div>
 
-				{/* Police d'accessibilité */}
+				{/* Accessibility font */}
 				<div className="accessibility-menu__select-control">
 					<label
 						htmlFor="font-type-select"
@@ -666,7 +666,7 @@ export default function AccessibilityMenu({
 				</div>
 			</div>
 
-			{/* Réinitialisation */}
+			{/* Reset */}
 			<div className="accessibility-menu__reset-section">
 				<button
 					className="accessibility-menu__reset-all-button"
@@ -682,7 +682,7 @@ export default function AccessibilityMenu({
 				</button>
 			</div>
 
-			{/* Lien vers la déclaration d'accessibilité (si fourni) */}
+			{/* Link to the accessibility statement (if provided) */}
 			{complianceUrl && (
 				<div className="accessibility-menu__compliance-link">
 					<a

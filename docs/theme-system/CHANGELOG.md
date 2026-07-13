@@ -1,852 +1,867 @@
 <!-- @format -->
 
-# Changelog — Système de thèmes de couleurs
+# Changelog — Color theme system
 
-Suivi des modifications apportées à la gestion des thèmes de couleurs
-(SCSS `abstracts/` + `themes/`, `useTheme`, script anti-FOUC,
-`AccessibilityMenu`). Complète le [CHANGELOG](../../CHANGELOG.md) global du
-projet : toute évolution du système de thèmes doit être consignée **ici**,
-avec le niveau de détail utile à la future extraction en paquet réutilisable.
+Tracks changes to color theme management (SCSS `abstracts/` + `themes/`,
+`useTheme`, the anti-FOUC script, `AccessibilityMenu`). Complements the
+project's global [CHANGELOG](../../CHANGELOG.md): every change to the
+theme system must be logged **here**, with the level of detail useful for
+the future extraction into a reusable package.
 
-Format : groupé par date (le projet est déployé en continu, pas de versions).
-Sections : `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
+Format: grouped by date (the project deploys continuously, no versions).
+Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
-## 2026-07-12 (chantier E6.6 — vérificateur de contrastes dans le paquet)
+## 2026-07-12 (E6.6 chantier — contrast verifier into the package)
 
-### Added / Changed (branche `feat/e6-6-contrast-verifier`)
+### Added / Changed (branch `feat/e6-6-contrast-verifier`)
 
-Comble l'**écart n°2** de l'audit §6.2 : l'outillage `contrast/` était côté
-site. Le paquet livre désormais le **moteur** ; le site le **consomme**.
+Closes audit **gap #2** (§6.2): the `contrast/` tooling was on the site
+side. The package now ships the **engine**; the site **consumes** it.
 
-- **`packages/a11y-prefs/testing/`** : `wcag`, `measure`, `cvd-simulation`,
-  `gamut`, `extract-themes` (paramétré — `configureThemeExtraction({ entry,
-  loadPaths, themes })`, le chemin `main.scss` codé en dur devient un
+- **`packages/a11y-prefs/testing/`**: `wcag`, `measure`, `cvd-simulation`,
+  `gamut`, `extract-themes` (parameterized — `configureThemeExtraction({ entry,
+  loadPaths, themes })`, the hardcoded `main.scss` path becomes an
   argument), `pairs` (types + `defaultRolePairs` + `defaultDistinguishability
-  Pairs` + `withWaivers`). Export `./testing/*` ; deps culori/postcss/sass.
-- **Le portfolio consomme le moteur** : `contrast-pairs.ts` importe les
-  défauts du paquet, applique **ses** waivers en overlay + ajoute ses paires
-  de **couche 3** ; `setup.ts` configure l'extraction (entrée + node_modules
-  + THEMES), branché dans `jest.setup.js` + les scripts report/audit ;
-  `moduleNameMapper` a11y-prefs/testing.
-- **Théme names → `string`** dans le moteur (générique, plus lié au type
-  `ThemeOption` du site).
-- **Oracle** : `CONTRAST-REPORT.md` **byte-identique** (hors date de
-  génération), `hc:audit` inchangé (0 actif, 15 waivés), **748 tests** verts,
-  build + tsc + lint OK.
-- Les **tests moteur** (wcag, gamut, cvd) restent dans la suite du site pour
-  l'instant (ils importent le paquet) ; ils rejoindront la CI propre du
-  paquet en E7.
+  Pairs` + `withWaivers`). Export `./testing/*`; culori/postcss/sass deps.
+- **The portfolio consumes the engine**: `contrast-pairs.ts` imports the
+  package's defaults, applies **its own** waivers as an overlay + adds its
+  **layer-3** pairs; `setup.ts` configures the extraction (entry +
+  node_modules + THEMES), wired into `jest.setup.js` + the report/audit
+  scripts; `moduleNameMapper` a11y-prefs/testing.
+- **Theme names → `string`** in the engine (generic, no longer tied to
+  the site's `ThemeOption` type).
+- **Oracle**: `CONTRAST-REPORT.md` **byte-identical** (aside from the
+  generation date), `hc:audit` unchanged (0 active, 15 waived), **748
+  tests** green, build + tsc + lint OK.
+- The **engine tests** (wcag, gamut, cvd) stay in the site's suite for now
+  (they import the package); they'll move into the package's own CI in
+  E7.
 
-**Les DEUX écarts de l'audit §6.2 sont comblés** → le paquet correspond au
-périmètre cible. Reste E7 (dist publiable + npm), et le renommage `redd`→
-`red` (TODO).
+**BOTH audit-§6.2 gaps are now closed** → the package matches the target
+scope. What's left: E7 (publishable dist + npm), and the `redd`→
+`red` rename (TODO).
 
-## 2026-07-12 (chantier E6.5 — générateur de thèmes dans le paquet)
+## 2026-07-12 (E6.5 chantier — theme generator into the package)
 
-### Added / Changed (branche `feat/e6-5-theme-generator`)
+### Added / Changed (branch `feat/e6-5-theme-generator`)
 
-Comble l'écart n°1 de l'audit de réconciliation §6.2 : l'émetteur
-`[data-theme]` + les définitions de thèmes standards étaient encore côté
-site alors que le §6.2 les met dans le paquet. Réalise la vision « je
-définis mon light → tous les thèmes sont générés » **côté paquet**.
+Closes gap #1 of the §6.2 reconciliation audit: the `[data-theme]`
+emitter + the standard theme definitions were still on the site side
+while §6.2 places them in the package. Realizes the "I define my light
+theme → all themes are generated" vision **on the package side**.
 
-- **`packages/a11y-prefs/scss/_theme-generator.scss`** (paquet) :
-  `apply-theme($name)` (15 recettes standards migrées : dark, 4× fort
-  contraste, 6× daltoniens, achromatopsie, 2× anti-glare ; swap accent dark
-  généralisé — dérive des primitives, plus d'amber en dur),
-  `emit-role-vars()` (variables couches 1+2), `generate-all-themes($themes)`
-  avec `@content($name)` pour la couche 3, `hc-carte($name)`, `$default-themes`.
-- **Le portfolio consomme `generate-all-themes`** : `_theme-system.scss`
-  réduit à un appel + `:root`/`@media` (défaut light / défaut système dark) ;
-  couche 3 et règles site (header/focus HC, lang-toggle anti-glare) injectées
-  via `emit-consumer-vars` + `theme-overrides($name)` ; `emit-layer3-vars`
-  extrait dans `_theme-variables`. **Les 15 fichiers de thème supprimés.**
-- **Oracle** : CSS **byte-identique modulo pragmas** (0 écart de règle ou de
-  variable ; 25 lignes `/** @format */` en moins, l'ex-bruit des fichiers de
-  thème). Vérifié aussi : 15 thèmes × 39 rôles identiques au site. 748 tests.
-- **Exemple E6** (`templates/scss/theme-example.scss`) réduit à un seul
-  `@include generate-all-themes() { @include a11y-ui-theme-vars; }`.
+- **`packages/a11y-prefs/scss/_theme-generator.scss`** (package):
+  `apply-theme($name)` (15 standard recipes migrated: dark, 4× high
+  contrast, 6× color-blind, achromatopsia, 2× anti-glare; generalized dark
+  accent swap — derives from the primitives, no more hardcoded amber),
+  `emit-role-vars()` (layer 1+2 variables), `generate-all-themes($themes)`
+  with `@content($name)` for layer 3, `hc-color-map($name)`, `$default-themes`.
+- **The portfolio consumes `generate-all-themes`**: `_theme-system.scss`
+  reduced to a single call + `:root`/`@media` (light default / system dark
+  default); layer 3 and site rules (HC header/focus, anti-glare
+  lang-toggle) injected via `emit-consumer-vars` + `theme-overrides($name)`;
+  `emit-layer3-vars` extracted into `_theme-variables`. **The 15 theme
+  files removed.**
+- **Oracle**: **byte-identical CSS modulo pragmas** (0 rule or variable
+  gap; 25 fewer `/** @format */` lines, the ex-noise from the theme
+  files). Also verified: 15 themes × 39 roles identical to the site. 748
+  tests.
+- **E6 example** (`templates/scss/theme-example.scss`) reduced to a
+  single `@include generate-all-themes() { @include a11y-ui-theme-vars; }`.
 
-Reste E6.6 (extraction du vérificateur de contrastes, écart n°2) avant E7.
+E6.6 (extracting the contrast verifier, gap #2) remains before E7.
 
-## 2026-07-12 (chantier E6 — templates UI + CLI de scaffolding)
+## 2026-07-12 (E6 chantier — UI templates + scaffolding CLI)
 
-### Added (branche `feat/e6-cli` ; le site ne change pas — byte-identique)
+### Added (branch `feat/e6-cli`; the site doesn't change — byte-identical)
 
-Modèle shadcn : le moteur reste sur npm (mise à jour par version), l'UI est
-**copiée** dans le projet du consommateur (il la possède). Le portfolio ne
-consomme PAS les templates (son UI en est l'ancêtre) ; oracle du chantier =
-CSS du site byte-identique, tenu à chaque phase.
+shadcn model: the engine stays on npm (updated via version bumps), the UI
+is **copied** into the consumer's project (they own it). The portfolio
+does NOT consume the templates (its UI is their ancestor); the chantier
+oracle = byte-identical site CSS, held at every phase.
 
-- **Templates React** (`packages/a11y-prefs/templates/react/`) : déclencheur
-  + carte + câblage `accessibilityPreferences` (via `usePreference` du
-  paquet, plus de store zustand). Généralisés : polices du paquet seules
-  (Sylexiad retiré), aucune dépendance framework (next/link + next/image
-  retirés ; icône react-icons, lien conformité en prop), déclencheur
-  in-flow. N'importent que l'API publique. tsc + lint OK.
-- **Templates SCSS** (`templates/scss/`) : copie fidèle de l'architecture
-  rem-first (menu + trigger, pilotés par variables CSS), `accessibility-
-  features` (font-faces + classes + dyslexie + motion via modules du
-  paquet), `theme.config` (couche 3 de l'UI dérivée des rôles, règle d'or
-  documentée), `theme-example` (assemblage light + HC qui compile). Tous
-  compilent.
-- **CLI** (`bin/cli.mjs`, Node pur, `bin` du paquet) : `init` copie les
-  templates + polices en réécrivant l'import `a11y-prefs` → nom installé
-  (défaut `darkmode-plus-a11y`), refuse d'écraser sans `--force` ;
-  `init --diff` compare la copie locale à la référence (nouveau / modifié /
-  identique). Vérifié en projet-test.
-- **Notice IA** (`templates/AGENTS.md`) : contrat couche 3 (règle d'or +
-  liste des 25 rôles vérifiés), prérequis Tailwind, câblage, placement
-  in-flow (jamais fixed), renvoi vers `hc:audit` + test de conformité.
+- **React templates** (`packages/a11y-prefs/templates/react/`): trigger,
+  card, and `accessibilityPreferences` wiring (via the package's
+  `usePreference`, no more zustand store). Generalized: package fonts
+  only (Sylexiad removed), no framework dependency (next/link +
+  next/image removed; react-icons icon, compliance link as a prop),
+  in-flow trigger. Import only the public API. tsc + lint OK.
+- **SCSS templates** (`templates/scss/`): a faithful copy of the
+  rem-first architecture (menu + trigger, driven by CSS variables),
+  `accessibility-features` (font-faces + classes + dyslexia + motion via
+  the package's modules), `theme.config` (the UI's layer 3 derived from
+  the roles, golden rule documented), `theme-example` (a light + HC
+  assembly that compiles). All compile.
+- **CLI** (`bin/cli.mjs`, pure Node, package `bin`): `init` copies the
+  templates + fonts while rewriting the `a11y-prefs` import → the
+  installed name (default `darkmode-plus-a11y`), refuses to overwrite
+  without `--force`; `init --diff` compares the local copy against the
+  reference (new / modified / identical). Verified in a test project.
+- **AI guide** (`templates/AGENTS.md`): layer-3 contract (golden rule +
+  list of the 25 verified roles), Tailwind prerequisite, wiring, in-flow
+  placement (never fixed), pointers to `hc:audit` + the conformance test.
 
-Reste E7 : nom `darkmode-plus-a11y` acté, dist publiable + publication npm
-(voir GUIDE § E7, politique de versionnage semver).
+E7 remains: name `darkmode-plus-a11y` settled, publishable dist + npm
+publication (see GUIDE § E7, semver versioning policy).
 
-## 2026-07-11 (chantier hc-mécanique — exécution)
+## 2026-07-11 (hc-mécanique chantier — execution)
 
-### Added (focus en rôle + les deux contrôles, branche `feat/hc-mecanique`)
+### Added (focus as a role + the two controls, branch `feat/hc-mecanique`)
 
-- **Focus promu rôle de la carte HC** : slots `focus`/`focus-text` dans
-  `$hc-palette` (moteur) et dans la carte du mixin consommateur, qui
-  FUSIONNE désormais la carte passée avec les défauts (une variante ne
-  déclare que ce qui change) ; les arguments `$focus-*` deviennent des
-  surcharges optionnelles ; la variante papier porte son focus dans sa
-  carte. **CSS byte-identique** (vérifié).
-- **Contrôle par valeur** (`hc-palette-conformance.test.ts`) : en thème
-  `high-contrast*`, toute couleur émise ∈ palette du thème (alpha tolérée
-  si la teinte ∈ palette). Calibration : 101/106 conformes par thème ;
-  waiver `--constant-*` (constantes volontairement athématiques) + garde
-  anti-zombie.
-- **Inspecteur sémantique** (`pnpm hc:audit` → `HC-SEMANTIC-AUDIT.md`) :
-  le design d'origine de Simon recyclé en contrôle lecture seule. Matching
-  par segment entier (« context » ≠ « text »), synonymes par famille,
-  **appariement bg/texte par composant** (la vérité d'une paire est dans
-  la paire — un bloc inversé légitime ne déclenche rien ; texte == fond
-  = alerte « invisible »), règle globale nom↔slot pour les orphelins.
-  Calibrage : 70 → 20 → 8 → **0 avertissement actif**, 15 waivés
-  argumentés (dont `--bg-emphasis-strong` et `--color-collapse-bg-title`,
-  surfaces d'emphase inversées par conception — arbitrables par Simon).
+- **Focus promoted to an HC map role**: `focus`/`focus-text` slots in
+  `$hc-palette` (engine) and in the consumer mixin's map, which now
+  MERGES the passed-in map with the defaults (a variant only declares
+  what changes); the `$focus-*` arguments become optional overrides; the
+  paper variant carries its focus in its map. **Byte-identical CSS**
+  (verified).
+- **Value-based control** (`hc-palette-conformance.test.ts`): in an
+  `high-contrast*` theme, every emitted color ∈ the theme's palette
+  (alpha tolerated if the hue ∈ palette). Calibration: 101/106 compliant
+  per theme; `--constant-*` waiver (deliberately athematic constants) +
+  anti-zombie guard.
+- **Semantic inspector** (`pnpm hc:audit` → `HC-SEMANTIC-AUDIT.md`): the
+  original design recycled as a read-only control. Whole-segment
+  matching ("context" ≠ "text"), per-family synonyms,
+  **per-component bg/text pairing** (a pair's truth lies in the pair — a
+  legitimately inverted block triggers nothing; text == background =
+  an "invisible" alert), a global name↔slot rule for orphans. Calibration:
+  70 → 20 → 8 → **0 active warnings**, 15 justified waivers (including
+  `--bg-emphasis-strong` and `--color-collapse-bg-title`, emphasis
+  surfaces inverted by design — open to review).
 
 ## 2026-07-11
 
-### Docs (mécanique HC — archéologie reconstituée + architecture cible actée)
+### Docs (HC mechanics — archaeology reconstructed + target architecture decided)
 
-Réflexion « second temps HC » menée avec Simon. Découverte importante :
-le **design d'origine** (capture sémantique par les noms de couche 3 —
-`transform-for-high-contrast` + `str-index` sur `_bg`/`_text`/`link`/
-`focus`…) avait été **supplanté sans décision** pendant le chantier
-(commit `3195de4`, Claude), puis supprimé comme code mort (`f16842d`).
-Le mécanisme actuel capture en couche 2 (assignations explicites +
-branchement + clarté) — trou identifié : un token de couche 3 non branché
-échappe silencieusement au HC.
+"HC second pass" reflection. Important discovery: the **original
+design** (semantic capture via layer-3 names —
+`transform-for-high-contrast` + `str-index` on `_bg`/`_text`/`link`/
+`focus`…) had been **superseded without a decision** during the chantier
+(commit `3195de4`, Claude), then removed as dead code (`f16842d`).
+The current mechanism captures at layer 2 (explicit assignments +
+wiring + lightness) — identified gap: an unwired layer-3 token silently
+escapes HC.
 
-Décisions (détail : README § 6.6, plan `PLAN-hc-mecanique-controles.md`) :
-branchement couche 2 seul pour décider des couleurs ; **focus promu rôle
-de couche 2** ; deux contrôles en lecture seule dans l'outillage (par
-**valeur** : tout ∈ palette HC ; par **noms** : la sémantique d'origine
-recyclée en inspecteur) ; notice d'implémentation orientée IA (E6/E7) ;
-`$accent*` en HC garé. Également actées ce jour : préview du site au
-survol des variantes **écartée** (navigation clavier trompeuse) ; carte
-des documents du README resynchronisée (E5 et variantes HC soldés).
+Decisions (details: README § 6.6, plan `PLAN-hc-mecanique-controles.md`):
+layer-2 wiring alone decides colors; **focus promoted to a layer-2
+role**; two read-only controls in the tooling (by **value**: everything
+∈ the HC palette; by **name**: the original semantics recycled as an
+inspector); AI-oriented implementation guide (E6/E7); `$accent*` in HC
+parked. Also decided today: full-site preview on hovering the variants
+**dropped** (misleading for keyboard navigation); the README's document
+map resynced (E5 and the HC variants closed out).
 
-## 2026-07-10 (chantier HC — variantes de fort contraste)
+## 2026-07-10 (HC chantier — high-contrast variants)
 
-### Added (3 variantes + sélecteur, branche `feat/hc-variants`)
+### Added (3 variants + selector, branch `feat/hc-variants`)
 
-Concept inspiré de ZoomText (presets deux-couleurs + toggle mémorisant le
-dernier choix), plan : `PLAN-high-contrast-variants.md`. Cadrage Simon :
-**mécanisme inchangé, seules les couleurs changent** (refonte sémantique/
-technologique = second temps).
+Concept inspired by ZoomText (two-color presets + a toggle remembering
+the last choice), plan: `PLAN-high-contrast-variants.md`. Scope: **the
+mechanism is unchanged, only the colors change** (semantic/technological
+redesign = a second pass).
 
-- **3 variantes de thème** : `high-contrast-green` (vert sur noir,
-  « phosphore »), `high-contrast-white` (blanc sur noir, action = jaune),
-  `high-contrast-paper` (noir sur blanc, polarité positive — teintes
-  système foncées : lien `#0000cc`, succès `#007700`, erreur `#cc0000` ;
-  focus et header inversés). `high-contrast` = jaune sur noir, valeur
-  historique conservée (localStorage existants valides). 15 thèmes,
-  rapport de contrastes **0 échec**.
-- **Fix moteur** : dans `transform-light-to-high-contrast`, `$hc-palette`
-  était réassignée sans `!global` → la carte passée en config était
-  silencieusement ignorée (invisible tant que le seul consommateur passait
-  la carte par défaut).
-- **Mixin consommateur paramétré** (`_high-contrast.scss`) : carte +
-  focus/header en arguments, défauts = valeurs historiques (jaune
-  **byte-identique**, vérifié).
-- **UI** : le bouton « Contraste élevé » réactive la **dernière variante
-  utilisée** (persistée `hc-variant`) ; sélecteur de variante (react-select,
-  patron du sélecteur de police) visible quand le mode est actif ; i18n
-  FR/EN ; reset global → variante jaune. La classe typo
-  `html.high-contrast` et `getColorVisionMode` couvrent les 4 variantes
+- **3 theme variants**: `high-contrast-green` (green on black,
+  "phosphor"), `high-contrast-white` (white on black, action = yellow),
+  `high-contrast-paper` (black on white, positive polarity — dark system
+  hues: link `#0000cc`, success `#007700`, error `#cc0000`;
+  focus and header inverted). `high-contrast` = yellow on black,
+  historical value kept (existing localStorage entries stay valid). 15
+  themes, contrast report **0 failures**.
+- **Engine fix**: in `transform-light-to-high-contrast`, `$hc-palette`
+  was reassigned without `!global` → the map passed in config was
+  silently ignored (invisible as long as the only consumer passed the
+  default map).
+- **Parameterized consumer mixin** (`_high-contrast.scss`): map +
+  focus/header as arguments, defaults = historical values (yellow
+  **byte-identical**, verified).
+- **UI**: the "High contrast" button reactivates the **last variant
+  used** (persisted as `hc-variant`); a variant selector (react-select,
+  the font-selector pattern) visible when the mode is active; FR/EN
+  i18n; global reset → the yellow variant. The `html.high-contrast`
+  typography class and `getColorVisionMode` cover all 4 variants
   (`startsWith`).
 
-### Fixed (retour de smoke Simon — habillage des variantes + aperçu couleurs)
+### Fixed (feedback from a smoke test — variant styling + color preview)
 
-- **L'habillage HC du menu ne s'appliquait qu'au jaune** : les blocs
-  `[data-theme="high-contrast"]` (selects du menu, tooltips, bouton
-  flottant, options du portail) passent en `[data-theme^="high-contrast"]`
-  et leurs couleurs codées en dur (#ffff00/#000000/blanc) deviennent les
-  variables du thème (`--near-black`/`--off-white`/`--link-hover`) —
-  équivalence vérifiée en jaune (rendu identique), chaque variante
-  récupère ses couleurs. Icône du bouton flottant (filter, non
-  thémable par variable) : blanche par défaut, jaune historique en
-  variante jaune, sombre en papier.
-- **Le sélecteur de variante est remplacé par 4 boutons directs**
-  (décision Simon après deux itérations — un react-select est le pire
-  widget pour un fort malvoyant sous NVDA, et une pastille « Aa » ne sert
-  à rien) : chaque bouton = **mini-prévisualisation** — le libellé complet
-  (« Vert sur noir »…) écrit dans les couleurs réelles de sa variante,
-  même patron que le bouton « Contraste élevé » historique (hover/focus =
-  inversion de SA paire, actif = inversion + anneau, Atkinson,
-  pleine largeur). Visibles uniquement quand le mode est actif ;
-  `role="group"` + `aria-pressed`. Le bouton « Contraste élevé » reste
-  **toujours jaune/noir** (décision Simon). Piste future notée :
-  prévisualisation du site entier au survol.
+- **The menu's HC styling only applied to yellow**: the
+  `[data-theme="high-contrast"]` blocks (menu selects, tooltips, floating
+  button, portal options) become `[data-theme^="high-contrast"]` and
+  their hardcoded colors (#ffff00/#000000/white) become theme variables
+  (`--near-black`/`--off-white`/`--link-hover`) — equivalence verified
+  in yellow (identical rendering), each variant now picks up its own
+  colors. Floating-button icon (a filter, not themable via a variable):
+  white by default, historical yellow for the yellow variant, dark for
+  paper.
+- **The variant selector is replaced by 4 direct buttons** (decision
+  after two iterations — a react-select is the worst widget for a
+  severely low-vision user on NVDA, and an "Aa" swatch serves no
+  purpose): each button = a **mini preview** — the full label ("Green on
+  black"…) rendered in its variant's actual colors, same pattern as the
+  historical "High contrast" button (hover/focus = inversion of ITS
+  pair, active = inversion + ring, Atkinson, full width). Visible only
+  when the mode is active; `role="group"` + `aria-pressed`. The "High
+  contrast" button stays **always yellow/black** (decision made). A
+  future idea noted: full-site preview on hover.
 
-### Changed (typographie HC — phase 1 du chantier)
+### Changed (HC typography — chantier phase 1)
 
-Bloc typo `html.high-contrast` remplacé par
-`@include a11y-font-class("high-contrast", "Atkinson Hyperlegible")` :
-`font-size-adjust: 0.56` (compensation de taille), corps ls 0.02→**0.04em**,
-ws 0.064→**0.128em** (valeurs calibrées du 2026-07-09), titres inchangés.
-Atkinson confirmée adaptée (conçue par le Braille Institute pour la basse
-vision). Hors périmètre acté : mode « teinte unique » façon ZoomText Blue
-Dye (piste anti-éblouissement, pas HC).
+The `html.high-contrast` typography block replaced with
+`@include a11y-font-class("high-contrast", "Atkinson Hyperlegible")`:
+`font-size-adjust: 0.56` (size compensation), body ls 0.02→**0.04em**,
+ws 0.064→**0.128em** (values calibrated 2026-07-09), headings unchanged.
+Atkinson confirmed suitable (designed by the Braille Institute for low
+vision). Decided out of scope: a ZoomText-Blue-Dye-style "single hue"
+mode (an anti-glare idea, not HC).
 
 ## 2026-07-10
 
-### Changed (sélecteur de police — même police partout + compensation)
+### Changed (font selector — same font everywhere + compensation)
 
-Design acté avec Simon : le sélecteur force **une police partout** (titres
-compris — c'est ce que demande l'utilisateur qui la choisit) ; la hiérarchie
-fine reste l'affaire du mode dyslexie. Smoke Simon : le rétrécissement
-d'Atkinson/Sylexiad au sélecteur est corrigé.
+Decision: the selector forces **one font everywhere** (headings
+included — that's what the user picking it expects); fine-grained
+hierarchy remains dyslexia mode's job. Smoke test: the shrinking of
+Atkinson/Sylexiad in the selector is fixed.
 
-- **Mixin `a11y-font-class`** (module `a11y-fonts` du paquet) : émet une
-  classe complète — police partout + `font-size-adjust` (défaut **0.56**,
-  passer `null` pour une police naturellement grande) + espacements du
-  corps alignés sur le mode dyslexie (ls 0.04em, ws 0.128em, lh 1.75) ;
-  titres inchangés (ls 0.02em, lh 1.5, paramétrables). Une ligne par
-  police pour le consommateur.
-- Les 5 classes régénérées par le mixin : Atkinson/Andika (paquet),
-  Sylexiad ×2 (portfolio, adjust 0.56), **OpenDyslexic sans adjust**
-  (naturellement grande, décision Simon ; titres ls 0.01em historique).
-  Surcharges site OpenDyslexic (header, nav) conservées à part.
-- Diff CSS confiné aux 5 classes `html.*-font`.
+- **`a11y-font-class` mixin** (package's `a11y-fonts` module): emits a
+  complete class — font everywhere + `font-size-adjust` (default
+  **0.56**, pass `null` for a naturally large font) + body spacing
+  aligned with dyslexia mode's (ls 0.04em, ws 0.128em, lh 1.75); headings
+  unchanged (ls 0.02em, lh 1.5, parameterizable). One line per font for
+  the consumer.
+- The 5 classes regenerated by the mixin: Atkinson/Andika (package),
+  Sylexiad ×2 (portfolio, adjust 0.56), **OpenDyslexic with no adjust**
+  (naturally large, deliberate; headings ls 0.01em historical). Site
+  OpenDyslexic overrides (header, nav) kept separately.
+- CSS diff confined to the 5 `html.*-font` classes.
 
 ## 2026-07-09
 
-### Changed (E5 phase 4 — correction volontaire du rendu, validée par Simon)
+### Changed (E5 phase 4 — deliberate rendering fix, validated)
 
-Seule phase d'E5 **hors oracle byte-identique** : le rendu change, calibré
-via une preview interactive à curseurs (témoin Inter / corps Sylexiad /
-corps Andika) — valeurs choisies à l'œil par Simon le 2026-07-09.
+The only E5 phase **outside the byte-identical oracle**: rendering
+changes, calibrated via an interactive slider preview (control Inter /
+Sylexiad body / Andika body) — values picked by eye on 2026-07-09.
 
-- **Module `dyslexia` du paquet** (`scss/modules/_dyslexia.scss`) : mixin
-  `dyslexia-typography` configurable à 3 niveaux — titre (Lexend Giga),
-  sous-titres (Lexend Deca), corps (**Andika** par défaut ; le portfolio
-  surcharge avec `$body-font: "SylexiadSans"`). Corps : **`font-size-adjust:
-  0.56`** (normalise la hauteur d'x → fin du rétrécissement des paragraphes,
-  et cible légèrement au-dessus d'Inter ≈ 0.545 donc jamais plus petit que
-  le site hôte), `line-height: 1.75`, `letter-spacing: 0.04em`,
-  `word-spacing: 0.128em` (×3.2, ratio BDA/WCAG 1.4.12).
-  L'agrandissement optionnel `$body-size-scale` existe mais vaut **1**
-  (désactivé) : la normalisation suffit, décision Simon. Les surcharges
-  site-spécifiques (header, navigation) restent côté portfolio.
-- **Site en mode normal** : `p { line-height }` 1.6 → **1.5** (décision
-  Simon — les 1.5 des classes de police et le 1.3 des titres inchangés).
-- **High-contrast (corps)** : `line-height` 1.5 → **1.75** et ajout de
-  `word-spacing: 0.064em` (mêmes ratios que le mode dyslexie). Titres
-  inchangés (1.5) ; le reste de l'optimisation HC reste au TODO.
+- **Package's `dyslexia` module** (`scss/modules/_dyslexia.scss`):
+  `dyslexia-typography` mixin, configurable across 3 levels — title
+  (Lexend Giga), subtitles (Lexend Deca), body (**Andika** by default;
+  the portfolio overrides with `$body-font: "SylexiadSans"`). Body:
+  **`font-size-adjust: 0.56`** (normalizes x-height → ends paragraph
+  shrinking, and targets slightly above Inter ≈ 0.545 so it's never
+  smaller than the host site), `line-height: 1.75`, `letter-spacing:
+  0.04em`, `word-spacing: 0.128em` (×3.2, BDA/WCAG 1.4.12 ratio). The
+  optional `$body-size-scale` enlargement exists but is set to **1**
+  (disabled): normalization is enough, decision made. Site-specific
+  overrides (header, navigation) stay on the portfolio side.
+- **Site in normal mode**: `p { line-height }` 1.6 → **1.5** (decision —
+  the font classes' 1.5 and headings' 1.3 unchanged).
+- **High-contrast (body)**: `line-height` 1.5 → **1.75** and added
+  `word-spacing: 0.064em` (same ratios as dyslexia mode). Headings
+  unchanged (1.5); the rest of the HC typography optimization stays in
+  the TODO.
 
-Avant/après du corps du mode dyslexie :
+Before/after of dyslexia mode's body:
 
-| Propriété (corps)  | Avant  | Après       |
+| Property (body)  | Before  | After       |
 | ------------------ | ------ | ----------- |
 | `font-size-adjust` | —      | **0.56**    |
 | `line-height`      | 1.6    | **1.75**    |
 | `letter-spacing`   | 0.02em | **0.04em**  |
 | `word-spacing`     | —      | **0.128em** |
-| agrandissement     | —      | 1 (off)     |
+| enlargement     | —      | 1 (off)     |
 
-### Added (preview visuelle versionnée)
+### Added (versioned visual preview)
 
-- `docs/theme-system/previews/` : comparateur interactif
-  `preview-dyslexie.html` (polices embarquées en data-URI, s'ouvre en
-  `file://`) + générateur `generate-preview-dyslexie.py` + README. Hors
-  `public/` → jamais servi en production (Sylexiad, EULA propriétaire).
+- `docs/theme-system/previews/`: interactive comparator
+  `preview-dyslexie.html` (fonts embedded as data-URIs, opens via
+  `file://`) + generator `generate-preview-dyslexie.py` + README. Outside
+  `public/` → never served in production (Sylexiad, proprietary EULA).
 
 ## 2026-07-08
 
-### Docs (plan E5 révisé — décisions polices + mode dyslexie configurable)
+### Docs (E5 plan revised — font decisions + configurable dyslexia mode)
 
-Après une revue approfondie du code avec Simon (fonts, tailles,
-espacements), le plan E5 est révisé :
+After an in-depth code review (fonts, sizes, spacing), the E5 plan is
+revised:
 
-- **Polices tranchées** : embarquées = OpenDyslexic, Andika, Atkinson,
-  Lexend Giga/Deca (OFL) ; **exclues** = Sylexiad (propriétaire),
-  **Tiresias** (GPLv3 + absente du sélecteur actif + police de
-  signalétique, pas de lecture web), **Raleway Dots** (absente du sélecteur
-  actif). Corps par défaut du mode dyslexie = **Andika** ; le portfolio
-  surcharge avec Sylexiad ; note « télécharger sur sylexiad.com » pour les
-  consommateurs.
-- **Bugs de dimensionnement constatés et intégrés au plan** : le mode
-  dyslexie **rétrécit** les paragraphes (police de substitution à petite
-  hauteur d'x, compensation commentée/perdue) ; le sélecteur individuel a
-  le même défaut. Fix : **`font-size-adjust`** (normalisation de la hauteur
-  d'x) + hausse ~+10 % du corps + espacements dyslexie (line-height ~1.7,
-  letter-spacing ~0.05em, word-spacing ~0.16em, BDA). **Le mode dyslexie
-  devient un module configurable à 3 niveaux** (titre/sous-titre/corps).
-- **Conséquence sur les oracles** : phases 1-3 = relocation byte-identique ;
-  **phase 4 = correction volontaire du rendu** (mode dyslexie + polices),
-  donc **hors oracle byte-identique, validation visuelle de Simon**.
-- **High-contrast** : vérifié byte-identique à la référence `918526f`
-  (change la police → Atkinson + letter-spacing, jamais augmenté la taille ;
-  les chantiers ne l'ont pas cassé). Optimisation typographique (taille,
-  espacements, `font-size-adjust`) **notée au TODO** pour après E5.
+- **Fonts decided**: bundled = OpenDyslexic, Andika, Atkinson, Lexend
+  Giga/Deca (OFL); **excluded** = Sylexiad (proprietary),
+  **Tiresias** (GPLv3 + absent from the active selector + a signage
+  font, not for web reading), **Raleway Dots** (absent from the active
+  selector). Default dyslexia-mode body = **Andika**; the portfolio
+  overrides with Sylexiad; a "download from sylexiad.com" note for
+  consumers.
+- **Sizing bugs found and folded into the plan**: dyslexia mode
+  **shrinks** paragraphs (a substitute font with a small x-height,
+  compensation commented out/lost); the individual selector has the same
+  defect. Fix: **`font-size-adjust`** (x-height normalization) + a ~+10%
+  body increase + dyslexia spacing (line-height ~1.7, letter-spacing
+  ~0.05em, word-spacing ~0.16em, BDA). **Dyslexia mode becomes a
+  configurable 3-level module** (title/subtitle/body).
+- **Consequence on the oracles**: phases 1-3 = byte-identical relocation;
+  **phase 4 = deliberate rendering fix** (dyslexia mode + fonts), so
+  **outside the byte-identical oracle, visual validation required**.
+- **High-contrast**: verified byte-identical to the `918526f` reference
+  (changes the font → Atkinson + letter-spacing, never increased size;
+  the chantiers didn't break it). Typography optimization (size,
+  spacing, `font-size-adjust`) **noted in the TODO** for after E5.
 
-### Docs (E4 mergé ; audit licences polices + plan E5 rédigé)
+### Docs (E4 merged; font license audit + E5 plan written)
 
-- **E4 mergé dans `main`** (`19df328`) après smoke de Simon.
-- **Audit des licences des polices d'accessibilité** (bloquant avant
-  publication, jusque-là en suspens dans le TODO) réalisé :
-  - **SIL OFL, embarquables** : OpenDyslexic, Andika, Raleway Dots,
-    **Atkinson Hyperlegible Next** (confirmé Braille Institute 2025).
-  - **Sylexiad Sans/Serif : EULA propriétaire (fév. 2022)** — pas de
-    redistribution publique, webfonts « non téléchargeables
-    publiquement » exigé → **exclue du paquet** (reste au portfolio via
-    le point d'extension du sélecteur de police). Question séparée notée
-    pour Simon (les woff2 servis par le site sont techniquement
-    téléchargeables — hors chantier).
-  - **Tiresias Infofont : GPL v3 + exception d'embarquement (RNIB 2007)**
-    — redistribuable, mais GPL dans un paquet MIT = **arbitrage de
-    Simon** (inclure avec sa licence jointe, ou exclure).
-- **[PLAN-extraction-modules.md](./PLAN-extraction-modules.md) créé**
-  (chantier E5, 4 phases, branche `feat/e5-modules`) : polices
-  redistribuables + `LICENSES/` dans le paquet, modules SCSS opt-in
-  (`_a11y-fonts.scss`, `_motion.scss`), appliers DOM SSR-safe +
-  `usePreference` générique (reporté d'E4). Les stores zustand
-  (`fontSizeStore`, `dyslexicFontStore`) et le toggle motion restent au
-  portfolio et délèguent seulement l'application DOM — clés/formats
-  localStorage inchangés (zéro migration utilisateur). Oracles : CSS
-  identique modulo pragmas, comportement identique, test anti-dérive des
-  fichiers de polices. Hors périmètre : migration de `useTheme`/des
-  stores, UI (E6), dist/publication (E7).
+- **E4 merged into `main`** (`19df328`) after a smoke test.
+- **Accessibility font license audit** (blocking before publication,
+  until now pending in the TODO) done:
+  - **SIL OFL, bundlable**: OpenDyslexic, Andika, Raleway Dots,
+    **Atkinson Hyperlegible Next** (confirmed Braille Institute 2025).
+  - **Sylexiad Sans/Serif: proprietary EULA (Feb. 2022)** — no public
+    redistribution, webfonts required to be "not publicly downloadable"
+    → **excluded from the package** (stays with the portfolio via the
+    font selector's extension point). A separate question noted (the
+    woff2 files served by the site are technically downloadable — out of
+    scope for this chantier).
+  - **Tiresias Infofont: GPL v3 + an embedding exception (RNIB 2007)** —
+    redistributable, but GPL inside an MIT package = **a call to make**
+    (include with its license attached, or exclude).
+- **[PLAN-extraction-modules.md](./PLAN-extraction-modules.md) created**
+  (E5 chantier, 4 phases, branch `feat/e5-modules`): redistributable
+  fonts + `LICENSES/` in the package, opt-in SCSS modules
+  (`_a11y-fonts.scss`, `_motion.scss`), SSR-safe DOM appliers +
+  generic `usePreference` (deferred from E4). The zustand stores
+  (`fontSizeStore`, `dyslexicFontStore`) and the motion toggle stay in
+  the portfolio and only delegate DOM application — localStorage
+  keys/formats unchanged (zero user migration). Oracles: CSS identical
+  modulo pragmas, identical behavior, a font-file drift-guard test. Out
+  of scope: migrating `useTheme`/the stores, the UI (E6), dist/
+  publication (E7).
 
 ## 2026-07-07
 
-### Changed (chantier E4 exécuté — runtime React dans le paquet)
+### Changed (E4 chantier executed — React runtime into the package)
 
-Branche `feat/e4-runtime` (4 commits — **smoke + revue avant merge**).
-Exécuté par Claude sur feu vert de Simon. **Aucun changement de
-comportement ni de rendu** attendu.
+Branch `feat/e4-runtime` (4 commits — **smoke test + review before
+merge**). Executed by Claude with sign-off. **No behavior or rendering
+change** expected.
 
-- **Phase 1** : entrée `./react` du paquet (source TS, React en
-  peerDependency), `transpilePackages` Next, `moduleNameMapper` Jest —
-  résolution prouvée par sonde sur les trois canaux (Jest, tsc, build).
-- **Phase 2** : `THEMES`/`ThemeOption`, `useTheme` (paramètre `themes`,
-  défaut = les 12), `usePrefersDarkMode` déplacés dans
-  `packages/a11y-prefs/react` ; `src/config/themes.ts` et les deux hooks
-  du portfolio deviennent des shims de ré-export (les ~8 importeurs
-  inchangés). **Imprévu attrapé par le build Next et corrigé** :
-  frontière Server/Client Components — le barrel tirait le hook client
-  dans `layout.tsx` (serveur) via le shim ; résolu par `"use client"`
-  sur `useTheme` (il ne le portait pas et dépendait de ses importeurs),
-  exports granulaires `./react/*`, shim `themes` pointant sur le module
-  de données pur.
-- **Phase 3** : `themeInitScript(themes = THEMES)` dans le paquet ;
-  `layout.tsx` consomme la chaîne générée. Le générateur a été produit
-  **programmatiquement depuis le littéral historique** ; oracle vérifié :
-  chaîne **byte-identique** (648 octets) à la baseline de phase 0, script
-  présent dans la sortie RSC du build.
-- Oracles globaux : CSS strictement byte-identique, 589 tests, tsc,
-  lint, build Next verts à chaque phase.
+- **Phase 1**: package `./react` entry point (TS source, React as a
+  peerDependency), Next `transpilePackages`, Jest `moduleNameMapper` —
+  resolution proven via a probe across all three channels (Jest, tsc,
+  build).
+- **Phase 2**: `THEMES`/`ThemeOption`, `useTheme` (`themes` parameter,
+  default = the 12), `usePrefersDarkMode` moved into
+  `packages/a11y-prefs/react`; `src/config/themes.ts` and the portfolio's
+  two hooks become re-export shims (the ~8 importers unchanged).
+  **Unexpected issue caught by the Next build and fixed**:
+  the Server/Client Components boundary — the barrel was pulling the
+  client hook into `layout.tsx` (server) through the shim; resolved with
+  `"use client"` on `useTheme` (it didn't carry it and depended on its
+  importers), granular `./react/*` exports, a `themes` shim pointing to
+  the pure data module.
+- **Phase 3**: `themeInitScript(themes = THEMES)` in the package;
+  `layout.tsx` consumes the generated string. The generator was produced
+  **programmatically from the historical literal**; oracle verified: the
+  string is **byte-identical** (648 bytes) to the phase 0 baseline,
+  script present in the build's RSC output.
+- Global oracles: strictly byte-identical CSS, 589 tests, tsc, lint,
+  Next build green at every phase.
 
-### Docs (E3 mergé ; plan E4 rédigé — extraction du runtime React)
+### Docs (E3 merged; E4 plan written — extracting the React runtime)
 
-- **E3 mergé dans `main`** (`812d5d5`) après validation de Simon
-  (`pnpm dev` fonctionnel, aucun impact visuel).
-- **[PLAN-extraction-runtime.md](./PLAN-extraction-runtime.md) créé**
-  (chantier E4, 4 phases, branche `feat/e4-runtime`). Périmètre :
-  `THEMES`/`ThemeOption`, `useTheme`, `usePrefersDarkMode` et le script
-  anti-FOUC (généré par `themeInitScript()`) déménagent dans
-  `packages/a11y-prefs/react` ; les fichiers portfolio deviennent des
-  ré-exports (zéro churn chez les ~8 importeurs). Oracles : CSS
-  strictement byte-identique, chaîne anti-FOUC byte-identique,
-  comportement inchangé. Outillage : `exports ./react` + peerDependency
-  React, `transpilePackages`, `moduleNameMapper` Jest. La généralisation
-  `usePreference(key, applyFn)` du guide est explicitement reportée à E5
-  (staging documenté). Hors périmètre : UI (E6), modules (E5),
-  dist/publication (E7).
+- **E3 merged into `main`** (`812d5d5`) after validation
+  (`pnpm dev` works, no visual impact).
+- **[PLAN-extraction-runtime.md](./PLAN-extraction-runtime.md) created**
+  (E4 chantier, 4 phases, branch `feat/e4-runtime`). Scope:
+  `THEMES`/`ThemeOption`, `useTheme`, `usePrefersDarkMode`, and the
+  anti-FOUC script (generated by `themeInitScript()`) move into
+  `packages/a11y-prefs/react`; the portfolio files become re-exports
+  (zero churn for the ~8 importers). Oracles: strictly byte-identical
+  CSS, byte-identical anti-FOUC string, unchanged behavior. Tooling:
+  `exports ./react` + React peerDependency, `transpilePackages`, Jest
+  `moduleNameMapper`. The guide's `usePreference(key, applyFn)`
+  generalization is explicitly deferred to E5 (documented staging). Out
+  of scope: the UI (E6), modules (E5), dist/publication (E7).
 
-### Changed (chantier E3 exécuté — workspace pnpm + extraction SCSS)
+### Changed (E3 chantier executed — pnpm workspace + SCSS extraction)
 
-Branche `feat/e3-monorepo` (6 commits, un par phase — **revue avant
-merge**). Exécuté par Claude sur feu vert de Simon. **Zéro changement
-visuel** : CSS identique à la baseline, modulo une déviation mesurée et
-documentée (voir plus bas).
+Branch `feat/e3-monorepo` (6 commits, one per phase — **review before
+merge**). Executed by Claude with sign-off. **Zero visual change**: CSS
+identical to the baseline, modulo one measured and documented deviation
+(see below).
 
-- **Phase 1** : `pnpm-workspace.yaml` + `packages/a11y-prefs/` (nom de
-  travail, privé, lié via `"a11y-prefs": "workspace:*"`). Résolution
-  `@use "a11y-prefs/scss/…"` prouvée par sonde sur les trois canaux
-  (CLI `--load-path`, Next `sassOptions.includePaths`, extract-themes
-  `loadPaths`) **avant** tout déménagement.
-- **Phase 2 — inversion de dépendance** : les 9 moteurs
-  `transform-light-to-*` et l'anti-glare s'arrêtent désormais à
-  `apply-roles()` ; chacun des 11 fichiers de thèmes appelle
-  `apply-theme-variables` lui-même après son transform (ordre d'exécution
-  inchangé → byte-identique). Purge d'une écriture morte trouvée au
-  passage : le bloc « ajustements par mode » de l'anti-glare assignait
-  `$color-collapse-border`, jeton supprimé au nettoyage du 2026-07-07.
-- **Phase 3** : `git mv` de `_base-palette`, `_theme-utils`,
-  `_anti-glare-functions` vers `packages/a11y-prefs/scss/` ;
-  `_index.scss` public ; 16 consommateurs re-câblés.
-- **Phase 4 — scission de l'état** : `packages/a11y-prefs/scss/_state.scss`
-  possède couches 1+2 (rail, alias, primitives, rôles,
-  `define-base-colors`, `apply-roles`) ; le `_theme-variables.scss` du
-  portfolio ne garde que ses ~70 tokens de couche 3 +
-  `apply-theme-variables`. Plus aucun `@use` du paquet vers `src/`.
-  Purge des 4 écritures couche 3 mortes du moteur achromatopsie
-  (`$color-link`, `$color-focus-*` — écrasées par apply-theme-variables
-  depuis les fondations).
-- **Phase 5 — configuration** : `$gray-family` + map `$primitives` en
-  `!default` dans le paquet ; `main.scss` porte le `with()` du portfolio
-  (premier chargement du module state). Vérifié vivant : une config
-  alternative (`slate`) produit bien un rail slate.
-- **Déviation mesurée de l'oracle byte-identique** : les pragmas prettier
-  `/** @format */` placés avant les `@use` sont ré-émis **une fois par
-  importeur** (règle établie empiriquement par marqueurs-sondes) ; la
-  réorganisation des imports change leur nombre (80 → 68, moins de spam).
-  Diff normalisé (pragmas exclus) : **byte-identique** à chaque phase.
-  Zéro changement de valeur ou de règle.
-- 589 tests, lint, tsc, build Next et `contrast:report` verts à chaque
+- **Phase 1**: `pnpm-workspace.yaml` + `packages/a11y-prefs/` (working
+  name, private, linked via `"a11y-prefs": "workspace:*"`). Resolution
+  of `@use "a11y-prefs/scss/…"` proven via a probe across all three
+  channels (CLI `--load-path`, Next `sassOptions.includePaths`,
+  extract-themes `loadPaths`) **before** any relocation.
+- **Phase 2 — dependency inversion**: the 9
+  `transform-light-to-*` engines and anti-glare now stop at
+  `apply-roles()`; each of the 11 theme files calls
+  `apply-theme-variables` itself after its transform (execution order
+  unchanged → byte-identical). Purged a dead write found along the way:
+  the anti-glare "per-mode adjustments" block was assigning
+  `$color-collapse-border`, a token removed in the 2026-07-07 cleanup.
+- **Phase 3**: `git mv` of `_base-palette`, `_theme-utils`,
+  `_anti-glare-functions` into `packages/a11y-prefs/scss/`; a public
+  `_index.scss`; 16 consumers rewired.
+- **Phase 4 — splitting state**: `packages/a11y-prefs/scss/_state.scss`
+  holds layers 1+2 (rail, aliases, primitives, roles,
+  `define-base-colors`, `apply-roles`); the portfolio's
+  `_theme-variables.scss` keeps only its ~70 layer-3 tokens +
+  `apply-theme-variables`. No more package `@use` pointing into `src/`.
+  Purged the achromatopsia engine's 4 dead layer-3 writes
+  (`$color-link`, `$color-focus-*` — overwritten by
+  apply-theme-variables ever since the foundations).
+- **Phase 5 — configuration**: `$gray-family` + `$primitives` map as
+  `!default` in the package; `main.scss` carries the portfolio's
+  `with()` (the state module's first load). Verified live: an
+  alternative config (`slate`) does produce a slate rail.
+- **Measured deviation from the byte-identical oracle**: the prettier
+  `/** @format */` pragmas placed before a module's `@use`s get
+  re-emitted **once per importer** (a rule established empirically via
+  probe markers); reorganizing the imports changes their count (80 → 68,
+  less spam). Normalized diff (pragmas excluded): **byte-identical** at
+  every phase. Zero value or rule change.
+- 589 tests, lint, tsc, Next build, and `contrast:report` green at every
   phase.
 
-### Docs (plan E3 rédigé — extraction monorepo)
+### Docs (E3 plan written — monorepo extraction)
 
-- **[PLAN-extraction-monorepo.md](./PLAN-extraction-monorepo.md) créé**
-  (feu vert de Simon pour lancer l'extraction E3→E7). 6 phases, branche
-  `feat/e3-monorepo`, **oracle CSS byte-identique de bout en bout** (un
-  déménagement, pas une refonte). Points structurants : workspace pnpm +
-  paquet `packages/a11y-prefs` (nom de travail, décision finale = Simon en
-  E7) ; sonde de résolution Sass avant tout déplacement (`includePaths`
-  Next + `loadPaths` extract-themes + CLI) ; **phase 2 = inversion de
-  dépendance** (les moteurs s'arrêtent à `apply-roles()`, la couche 3 est
-  dérivée par les fichiers de thèmes du consommateur) ; scission de l'état
-  (rail/primitives/rôles → paquet, ~70 tokens couche 3 → portfolio) ;
-  configuration `with()` minimale (`$gray-family` + primitives), registre
-  complet reporté. Hors périmètre : runtime React (E4), modules (E5), CLI
-  (E6), publication (E7), suite de contrastes (reste côté portfolio).
+- **[PLAN-extraction-monorepo.md](./PLAN-extraction-monorepo.md)
+  created** (sign-off to kick off the E3→E7 extraction). 6 phases,
+  branch `feat/e3-monorepo`, **end-to-end byte-identical CSS oracle** (a
+  move, not a redesign). Structuring points: a pnpm workspace + the
+  `packages/a11y-prefs` package (working name, final decision in E7);
+  a Sass resolution probe before any relocation (Next `includePaths` +
+  extract-themes `loadPaths` + CLI); **phase 2 = dependency inversion**
+  (engines stop at `apply-roles()`, layer 3 is derived by the consumer's
+  theme files); state split (rail/primitives/roles → package, ~70
+  layer-3 tokens → portfolio); minimal `with()` configuration
+  (`$gray-family` + primitives), the full registry deferred. Out of
+  scope: the React runtime (E4), modules (E5), the CLI (E6), publication
+  (E7), the contrast suite (stays on the portfolio side).
 
-### Changed (`--success` → emerald-700, toast de succès du contact câblé)
+### Changed (`--success` → emerald-700, contact success toast wired)
 
-Décision de Simon (« emerald-700 ») en réponse à la question ouverte du
-nettoyage : le toast de succès du formulaire contact devait être vert.
+Decision ("emerald-700") in response to the open question from the
+cleanup: the contact form's success toast should have been green.
 
-- **Rôle `--success` : emerald-600 → emerald-700** (`#047857`, 5.25:1 sur
-  `bg-base` en light — emerald-600 était sous le seuil texte depuis
-  l'origine, 3.61:1). Effets par thème : light/tritan 5.25, anti-glare-light
-  4.56, dark 9.75 (vert pâle décalé), ancres CVD rouge-vertes inchangées
-  (résolues indépendamment), achromatopsie inchangée (même gris quantifié,
-  2.42 — seule entrée restante du waiver), high-contrast inchangé.
-- **Toast `[data-type="success"]` du contact : `color: var(--success)`** —
-  premier consommateur du rôle, garanti par la paire
-  `role/success-on-bg-base` dans les 12 thèmes. **Changement visuel** : le
-  message de succès du formulaire s'affiche désormais en vert (au lieu de
-  la couleur de texte héritée).
-- Waiver `role/success-on-bg-base` réduit à la seule achromatopsie
-  (anti-zombie : 4 entrées levées). 589 tests, build/lint/tsc verts,
-  rapport régénéré.
+- **`--success` role: emerald-600 → emerald-700** (`#047857`, 5.25:1 on
+  `bg-base` in light — emerald-600 had been below the text threshold
+  from the start, 3.61:1). Per-theme effects: light/tritan 5.25,
+  anti-glare-light 4.56, dark 9.75 (shifted pale green), red-green CVD
+  anchors unchanged (resolved independently), achromatopsia unchanged
+  (same quantized gray, 2.42 — the waiver's only remaining entry),
+  high-contrast unchanged.
+- **Contact `[data-type="success"]` toast: `color: var(--success)`** —
+  the role's first consumer, guaranteed by the `role/success-on-bg-base`
+  pair across the 12 themes. **Visual change**: the form's success
+  message is now displayed in green (instead of the inherited text
+  color).
+- The `role/success-on-bg-base` waiver reduced to achromatopsia alone
+  (anti-zombie: 4 entries lifted). 589 tests, build/lint/tsc green,
+  report regenerated.
 
-### Removed (nettoyage jetons morts + variables fantômes — suites de l'audit)
+### Removed (dead-token + phantom-variable cleanup — audit follow-up)
 
-Branche `chore/theme-token-cleanup`, mandat de Simon (« tout sauf E3 »).
-**Rendu strictement inchangé** : uniquement des déclarations inertes et des
-jetons jamais consommés. Vérifié : diff CSS = 79 suppressions + 3
-réécritures équivalentes (fallbacks), re-scan émis/consommés à zéro des
-deux côtés, 589 tests (la paire hero retirée = −12), build/lint/tsc verts.
+Branch `chore/theme-token-cleanup`, under an "everything except E3"
+mandate. **Rendering strictly unchanged**: only inert declarations and
+never-consumed tokens. Verified: CSS diff = 79 removals + 3 equivalent
+rewrites (fallbacks), an emitted/consumed re-scan at zero on both sides,
+589 tests (the removed hero pair = −12), build/lint/tsc green.
 
-- **5 déclarations fantômes retirées** (elles référençaient des custom
-  properties jamais émises → déjà sans effet, la couleur héritée
-  s'appliquait) : `_privacy-policy.scss` (`--color-bg-light`),
+- **5 phantom declarations removed** (they referenced custom properties
+  that were never emitted → already had no effect, the inherited color
+  applied): `_privacy-policy.scss` (`--color-bg-light`),
   `_accessibility-menu.scss` (`--color-button-bg`, `--color-button-text`,
-  `--color-text`), `_contact.scss` (`--color-success` — voir la question
-  « toast vert » au [TODO.md](./TODO.md)), `_skills.scss`
-  (`--color-text-secondary`). 3 fallbacks simplifiés en leur valeur
-  effective (`--color-divider`→`--gray-400`, `--color-input-bg`→
+  `--color-text`), `_contact.scss` (`--color-success` — see the "green
+  toast" question in [TODO.md](./TODO.md)), `_skills.scss`
+  (`--color-text-secondary`). 3 fallbacks simplified to their effective
+  value (`--color-divider`→`--gray-400`, `--color-input-bg`→
   `--off-white`, `--color-text-secondary`→`--gray-700`).
-- **5 jetons émis jamais consommés supprimés** (défs, assignations,
-  émissions) : `--color-hero-bg`, `--color-hero-text` (+ leur paire
-  `site/hero-text-on-hero-bg` du registre — retirée parce que les jetons
-  n'existent plus, pas pour masquer un échec ; le héros s'affiche sur
+- **5 emitted-but-never-consumed tokens removed** (definitions,
+  assignments, emissions): `--color-hero-bg`, `--color-hero-text` (+
+  their `site/hero-text-on-hero-bg` registry pair — removed because the
+  tokens no longer exist, not to mask a failure; the hero now renders on
   `--color-main-bg`), `--color-collapse-border`,
-  `--color-section-even-card-bg`, `--constant-success-color` (à recréer si
-  le toast de succès redevient vert).
+  `--color-section-even-card-bg`, `--constant-success-color` (to recreate
+  if the success toast turns green again).
 
-### Docs (relecture complète post-merges + audit émis/consommés)
+### Docs (full review after merges + emitted/consumed audit)
 
-- **Relecture générale** demandée par Simon (docs + code) après le merge de
-  role-corrections (`a97d699`). Verdict code : sain (moteurs, runtime,
-  suites). Statuts périmés corrigés dans les docs :
-  - carte des documents du README (P2/P3 daltoniennes : mergées `5c8dce9`,
-    plus « validation requise ») ; idem en-têtes du plan daltonien et
-    mentions du guide § E2 ;
-  - README § 2 : méthodes de génération des 12 thèmes mises à jour
-    (ancres statut, remap tritan, OKLCH anti-glare — les descriptions
-    dataient d'avant les refontes) ;
-  - README § 3 : ligne `_anti-glare-functions.scss` (OKLCH, overlay
-    supprimé) ; carte : CONTRAST-REPORT = 39 paires WCAG + 5 ΔE ;
-  - README § 7 « Qualité perceptive » : 3 pistes marquées faites (tests de
-    contrastes = E1, exposition `--success`/`--danger`, OKLCH) — reste
-    `prefers-contrast`/`forced-colors`.
-- **Audit émis/consommés** (nouveau, scan du CSS compilé vs `var()` du
-  code) : 5 variables fantômes consommées mais jamais émises (couleur en
-  héritage — antérieures à la référence `918526f`) et 5 jetons émis jamais
-  consommés. Consignés dans [TODO.md](./TODO.md) (micro-chantier + arbitrage
-  Simon), aucun changement de code dans cette entrée.
+- **General review** requested (docs + code) after the role-corrections
+  merge (`a97d699`). Code verdict: sound (engines, runtime, suites).
+  Stale statuses fixed in the docs:
+  - README document map (CVD parts 2/3: merged `5c8dce9`, no longer
+    "validation required"); likewise the color-blind plan's headers and
+    the guide's § E2 mentions;
+  - README § 2: the 12 themes' generation methods updated (status
+    anchors, tritan remap, OKLCH anti-glare — the descriptions predated
+    the redesigns);
+  - README § 3: the `_anti-glare-functions.scss` line (OKLCH, overlay
+    removed); the map: CONTRAST-REPORT = 39 WCAG pairs + 5 ΔE;
+  - README § 7 "Perceptual quality": 3 ideas marked done (contrast tests
+    = E1, exposing `--success`/`--danger`, OKLCH) — `prefers-contrast`/
+    `forced-colors` remain.
+- **Emitted/consumed audit** (new, a scan of the compiled CSS vs.
+  `var()` usage in the code): 5 phantom variables consumed but never
+  emitted (color inherited — predating the `918526f` reference) and 5
+  emitted-but-never-consumed tokens. Logged in [TODO.md](./TODO.md) (a
+  micro-chantier + a decision to make), no code change in this entry.
 
-### Fixed (lien blog — restauration du design d'origine de Simon)
+### Fixed (blog link — restoring the original design)
 
-Après deux corrections insuffisantes (recâblage `fg-on-emphasis` = lien
-blanc en light, rejeté « extrêmement moche » ; puis amber-en-light seulement,
-toujours faux en dark), l'intention réelle a été clarifiée par Simon et
-**vérifiée par compilation de la version pré-chantiers** (`4bf78f0`) :
+After two insufficient fixes (rewiring `fg-on-emphasis` = a white link in
+light, rejected as "extremely ugly"; then amber-in-light only, still
+wrong in dark), the actual intent was clarified and **verified by
+compiling the pre-chantiers version** (`4bf78f0`):
 
-- **Découverte importante** : le chip quasi-blanc du lien blog en dark est
-  un **défaut antérieur à tous les chantiers 2026-07** — la version
-  pré-fondations compilait déjà `--color-header-blog-link-bg: #fafaf9` en
-  dark (l'automatisation light→dark inversait le gris du chip), la rustine
-  `_dark.scss` ne noircissait que le texte, et ce rendu erroné est parti en
-  production. Le design voulu : **chip grisé + texte amber dans les deux
-  modes**, comme en light.
-- **Correctif** : `--color-header-blog-link-bg` par luminance —
-  `bg-emphasis` du thème s'il est sombre (light, daltoniens, achromatopsie :
-  inchangés), sinon `stone-700` constant (thèmes dark : même grisé qu'en
-  light) ; `--color-header-blog-link-text: $accent` (amber partout, décliné
-  par thème : orange-300 en tritanopie, etc.). Hover : `--off-white` →
-  `--constant-off-white` dans `_header.scss` (l'inversion du rail aurait
-  rendu le hover gris-sur-gris en dark). Le logo LostInTab retrouve son
-  fond grisé. High-contrast intact (surcharges propres).
-- **Résultat** : light et dark identiques (`#44403c` + `#fcd34d`, 7.12:1),
-  paire verte dans les 12 thèmes (6.09–19.56) sans waiver, aucune rustine.
-  601 tests, build/lint/tsc verts.
-- **Sous-titre** : conservé en gris atténué (validé par Simon — cohérent
-  avec l'aspect atténué du light).
-- Leçons : (1) les arbitrages visuels doivent être présentés en rendu
-  concret avant/après par thème, jamais en termes de câblage ; (2) « le
-  rendu actuel » n'est pas une référence fiable — le design de référence est
-  celui de Simon, à lui faire confirmer quand un doute existe (ici le rendu
-  déployé était lui-même déjà cassé).
+- **Important discovery**: the near-white blog-link chip in dark is a
+  **defect predating every 2026-07 chantier** — the pre-foundations
+  version already compiled `--color-header-blog-link-bg: #fafaf9` in
+  dark (the light→dark automation was inverting the chip's gray), the
+  `_dark.scss` patch only blackened the text, and this broken rendering
+  had shipped to production. The intended design: a **grayed chip +
+  amber text in both modes**, as in light.
+- **Fix**: `--color-header-blog-link-bg` by luminance —
+  the theme's `bg-emphasis` if it's dark (light, color-blind,
+  achromatopsia: unchanged), otherwise a constant `stone-700` (dark
+  themes: the same gray tone as light); `--color-header-blog-link-text:
+  $accent` (amber everywhere, varying per theme: orange-300 in
+  tritanopia, etc.). Hover: `--off-white` →
+  `--constant-off-white` in `_header.scss` (the rail's inversion would
+  have made the hover gray-on-gray in dark). The LostInTab logo gets its
+  grayed background back. High-contrast intact (its own overrides).
+- **Result**: light and dark identical (`#44403c` + `#fcd34d`, 7.12:1),
+  a green pair across the 12 themes (6.09–19.56) with no waiver, no
+  patch left. 601 tests, build/lint/tsc green.
+- **Subtitle**: kept as a muted gray (validated — consistent with
+  light's muted look).
+- Lessons: (1) visual decisions must be presented as concrete before/
+  after renderings per theme, never in terms of wiring; (2) "the current
+  rendering" isn't a reliable reference — the reference design is the
+  intended one, to confirm when in doubt (here the deployed rendering
+  was itself already broken).
 
-### Changed (chantier « corrections de rôles » — partie 2/2, décisions de Simon)
+### Changed ("role corrections" chantier — part 2/2, decisions)
 
-Même branche `refactor/theme-role-corrections` (2ᵉ commit). Les deux
-décisions visuelles ont été tranchées par Simon : sous-titre « gris
-atténué », lien blog « suit son chip ».
+Same branch `refactor/theme-role-corrections` (2nd commit). The two
+visual decisions were settled: subtitle "muted gray", blog link "follows
+its chip".
 
-- **Sous-titre du header** (`--color-header-text-role`) : ancré à un gris
-  atténué **fixe** choisi par luminance (même logique que `fg-on-accent` :
-  accent sombre → `$fg-muted` du thème ; accent clair → le `gray-700` du
-  thème s'il est sombre, sinon `stone-700` constant). **Changement visuel :
-  en dark/anti-glare-dark uniquement**, le sous-titre passe de near-black
-  (rustine) à `stone-700` (gris atténué, 7.12:1 sur l'accent). Light,
-  daltoniens, achromatopsie (garde son `neutral-700`), high-contrast
-  (surcharges propres dans `_high-contrast.scss`) : inchangés.
-- **Lien blog** (`--color-header-blog-link-text`) : recâblé de `$accent`
-  vers **`$fg-on-emphasis`** — le texte suit son chip (`bg-emphasis`), et la
-  paire `fg-on-emphasis`/`bg-emphasis` est déjà garantie par la suite dans
-  les 12 thèmes. **Changement visuel : en light et thèmes clairs**, le lien
-  passe d'amber à near-white sur le chip sombre ; **en dark**, near-black →
-  `#44403c` sur chip clair (9.84:1), quasi identique à l'ancienne rustine.
-- **Toutes les rustines `.header` de `_dark.scss` supprimées** — le header
-  est correct par construction dans les 12 thèmes.
-- **Les 2 derniers waivers header levés** (anti-zombie :
+- **Header subtitle** (`--color-header-text-role`): anchored to a
+  **fixed** muted gray chosen by luminance (same logic as
+  `fg-on-accent`: dark accent → the theme's `$fg-muted`; light accent →
+  the theme's `gray-700` if it's dark, otherwise a constant `stone-700`).
+  **Visual change: dark/anti-glare-dark only**, the subtitle goes from
+  near-black (a patch) to `stone-700` (muted gray, 7.12:1 on the
+  accent). Light, color-blind, achromatopsia (keeps its `neutral-700`),
+  high-contrast (its own overrides in `_high-contrast.scss`): unchanged.
+- **Blog link** (`--color-header-blog-link-text`): rewired from `$accent`
+  to **`$fg-on-emphasis`** — the text follows its chip (`bg-emphasis`),
+  and the `fg-on-emphasis`/`bg-emphasis` pair is already guaranteed by
+  the suite across the 12 themes. **Visual change: in light and light
+  themes**, the link goes from amber to near-white on the dark chip; **in
+  dark**, near-black → `#44403c` on the light chip (9.84:1), nearly
+  identical to the old patch.
+- **Every `.header` patch in `_dark.scss` removed** — the header is
+  correct by construction across the 12 themes.
+- **The last 2 header waivers lifted** (anti-zombie:
   `site/header-text-role-on-header-bg` 1.38 → 7.12,
-  `site/header-blog-link-text-on-bg` 1.38 → 9.84). Avec la partie 1/2, le
-  chantier supprime au total **4 waivers + la paire du jeton mort** ; les
-  paires restent dans le registre, désormais conformes sans exception.
+  `site/header-blog-link-text-on-bg` 1.38 → 9.84). With part 1/2, the
+  chantier removes a total of **4 waivers + the dead-token's pair**; the
+  pairs stay in the registry, now compliant with no exception.
 
-### Fixed / Removed (chantier « corrections de rôles » — partie 1/2)
+### Fixed / Removed ("role corrections" chantier — part 1/2)
 
-Branche `refactor/theme-role-corrections` (non mergée — validation visuelle
-de Simon requise, mais **changement visuel nul** attendu). Deux des trois
-symptômes du micro-chantier traités ; deux décisions restent (voir
+Branch `refactor/theme-role-corrections` (not merged — visual validation
+required, but **zero visual change** expected). Two of the three
+micro-chantier symptoms addressed; two decisions remain (see
 [TODO.md](./TODO.md)).
 
-- **Removed — jeton mort `--color-button-active-outline`** : émis mais
-  consommé par aucun composant (`var(--color-button-active-outline)`
-  introuvable). Retiré des 3 points SCSS + de son émission + de sa paire de
-  contraste `site/button-active-outline-on-panel-bg` (qui était le pire
-  waiver, 1.00:1 en high-contrast). Suppression parce que le jeton n'existe
-  plus, pas pour masquer un échec.
-- **Fixed — titre du header clair-sur-clair en dark** : `--fg-on-accent`
-  suivait le rail (`$gray-950`), qui s'inverse en dark → texte quasi-blanc
-  sur l'accent amber figé (~1.15:1), masqué par des rustines `.header`
-  codées en dur dans `_dark.scss`. Désormais choisi **par luminance** :
-  accent sombre (high-contrast) → encre claire ; accent clair → le
-  `gray-950` du thème s'il est sombre (light/daltoniens/achromatopsie :
-  inchangés), sinon (thèmes dark) une near-black constante. `is-dark()`
-  déplacée dans `_base-palette.scss` pour être accessible à `apply-roles`.
-  Rustines `name`/`separator` retirées ; waivers `role/fg-on-accent-on-accent`
-  et `site/header-text-on-header-bg` obsolètes (13.70:1 en dark) → retirés
-  par l'anti-zombie. Diff CSS = jeton mort (12 thèmes) + `--color-header-text`
-  dark/anti-glare-dark passant de near-blanc à `#0c0a09` (identique au rendu
-  masqué → **invisible**). 601 tests, build/lint/tsc verts.
-- **Restant (décisions visuelles)** : le **sous-titre** du header
-  (`--color-header-text-role = fg-muted`, gris atténué en light) et le
-  **lien blog** (`--color-header-blog-link-text = accent` amber) — toujours
-  waivés, rustines conservées. Cf. TODO.md.
+- **Removed — dead token `--color-button-active-outline`**: emitted but
+  consumed by no component (`var(--color-button-active-outline)` not
+  found anywhere). Removed from the 3 SCSS spots + its emission + its
+  `site/button-active-outline-on-panel-bg` contrast pair (which was the
+  worst waiver, 1.00:1 in high-contrast). Removed because the token no
+  longer exists, not to mask a failure.
+- **Fixed — light-on-light header title in dark**: `--fg-on-accent`
+  followed the rail (`$gray-950`), which inverts in dark → near-white
+  text on the fixed amber accent (~1.15:1), masked by hardcoded
+  `.header` patches in `_dark.scss`. Now chosen **by luminance**:
+  dark accent (high-contrast) → light ink; light accent → the theme's
+  `gray-950` if it's dark (light/color-blind/achromatopsia: unchanged),
+  otherwise (dark themes) a constant near-black. `is-dark()` moved into
+  `_base-palette.scss` to be reachable from `apply-roles`.
+  The `name`/`separator` patches removed; the `role/fg-on-accent-on-accent`
+  and `site/header-text-on-header-bg` waivers became obsolete (13.70:1
+  in dark) → removed by the anti-zombie check. CSS diff = the dead
+  token (12 themes) + `--color-header-text` in dark/anti-glare-dark
+  going from near-white to `#0c0a09` (identical to the masked rendering
+  → **invisible**). 601 tests, build/lint/tsc green.
+- **Remaining (visual decisions)**: the header **subtitle**
+  (`--color-header-text-role = fg-muted`, muted gray in light) and the
+  **blog link** (`--color-header-blog-link-text = accent` amber) — still
+  waived, patches kept. Cf. TODO.md.
 
 ## 2026-07-06
 
-### Changed (chantier E2 — refonte daltonienne, partie 3 exécutée)
+### Changed (E2 chantier — color-blind redesign, part 3 executed)
 
-Robustesse du moteur daltonien, branche `refactor/theme-cvd-degradation`
-(5 commits, non mergée — **validation visuelle de Simon requise avant
-merge**, thème `tritanomaly`). Exécutée par Claude (Opus).
+Color-blind engine robustness, branch `refactor/theme-cvd-degradation`
+(5 commits, not merged — **visual validation required before
+merge**, `tritanomaly` theme). Executed by Claude (Opus).
 
-- **Phase 1 — garde anti-gamut** (`gamut.test.ts`, `gamut.ts`, additif) :
-  scanne chaque custom property de couleur des 12 thèmes (+ `:root`) dans le
-  CSS compilé et échoue si une valeur sort du gamut sRGB (hsl s/l hors
-  [0,100], canal rgb hors [0,255]). Détection sur la **chaîne brute** :
-  culori clampe ces valeurs au parsing, donc son `inGamut` ne les voit pas.
-  Premier run = inventaire : **11 déclarations hors gamut** en `tritanomaly`
-  (3 primitives racines + 8 tokens dérivés), waivées (anti-zombie). CSS
-  byte-identique.
-- **Phase 2 — dégradation gracieuse** (`_theme-utils.scss`) :
-  `resolve-anchor-weight` ne fait plus d'`@error` (échec dur du build) si
-  aucun poids n'atteint la cible — il renvoie le cran au plus fort contraste
-  (« meilleur effort ») et `@warn` (message distinct sous le plancher de
-  lisibilité `$status-legibility-floor`, défaut 3:1). Cible de contraste
-  paramétrable (défaut 4.5). Chemin latent pour le portfolio → CSS
-  byte-identique ; test unitaire via sondes Sass compilées (nominal +
-  absence d'échec dur). **Déviation assumée** : pas de chemin « couleur
-  calculée hors palette » — mesuré quasi inutile (le contraste est dominé
-  par la lightness, la palette couvre déjà 50→950 ; si aucun cran ne passe,
-  le fond est de lightness moyenne, cas où aucune teinte ne passe non plus).
-  Le motif réel pour sortir de la palette (distinguabilité) n'étant pas
-  calculable en Sass, son recours reste `special-colors`.
-- **Phase 3 — correction du gamut tritan** (`_theme-utils.scss`) : helper
-  `gamut-map-srgb` (built-in Dart Sass 1.101 `color.to-gamut(..., $method:
-  local-minde)` — réduction de chroma standard CSS Color 4, teinte
-  préservée) appliqué à la sortie du mélange `severity` et, défensivement,
-  au repli OKLCH. Court-circuit si déjà in-gamut → **pas de re-sérialisation
-  parasite** (les couleurs valides des autres thèmes restent identiques).
-  Les 11 valeurs `tritanomaly` repassent in-gamut ; waivers de phase 1
-  retirés (anti-zombie). **Écart perceptuel négligeable** : ΔE 0.15 / 0.92 /
-  0.41 entre le rendu clampé d'avant et le gamut-mapping. Diff CSS confiné à
-  `[data-theme="tritanomaly"]` (11 propriétés).
-- **Phases 4-5 — vérifications, docs, finalisation** : garde anti-gamut à
-  zéro waiver sur les 12 thèmes ; suites contraste/distinguabilité
-  inchangées ; `CONTRAST-REPORT.md` régénéré (léger ajustement des ratios
-  liés à l'accent en `tritanomaly`, ΔE < 1) ; politique de palette par
-  classe documentée (README § 6.1, guide § E2). Build/lint/test/tsc verts.
+- **Phase 1 — anti-gamut guard** (`gamut.test.ts`, `gamut.ts`, additive):
+  scans every color custom property of the 12 themes (+ `:root`) in the
+  compiled CSS and fails if a value falls outside the sRGB gamut (hsl s/l
+  outside [0,100], an rgb channel outside [0,255]). Detection on the
+  **raw string**: culori clamps these values at parse time, so its
+  `inGamut` can't see them. First run = inventory: **11 out-of-gamut
+  declarations** in `tritanomaly` (3 root primitives + 8 derived
+  tokens), waived (anti-zombie). Byte-identical CSS.
+- **Phase 2 — graceful degradation** (`_theme-utils.scss`):
+  `resolve-anchor-weight` no longer does an `@error` (hard build
+  failure) if no weight reaches the target — it returns the
+  highest-contrast step ("best effort") and `@warn`s (a distinct message
+  below the legibility floor `$status-legibility-floor`, default 3:1).
+  Configurable contrast target (default 4.5). A latent path for the
+  portfolio → byte-identical CSS; unit-tested via compiled Sass probes
+  (nominal + no hard failure). **Deliberate deviation**: no "color
+  computed outside the palette" path — measured as nearly useless
+  (contrast is dominated by lightness, the palette already covers
+  50→950; if no step passes, the background has mid-range lightness, a
+  case where no hue passes either). The real reason to step outside the
+  palette (distinguishability) not being computable in Sass, its escape
+  hatch remains `special-colors`.
+- **Phase 3 — fixing the tritan gamut issue** (`_theme-utils.scss`):
+  a `gamut-map-srgb` helper (Dart Sass 1.101's built-in
+  `color.to-gamut(..., $method: local-minde)` — standard CSS Color 4
+  chroma reduction, hue preserved) applied to the output of the
+  `severity` blend and, defensively, to the OKLCH fallback. Short-circuits
+  if already in-gamut → **no spurious re-serialization** (other themes'
+  valid colors stay identical). The 11 `tritanomaly` values come back
+  in-gamut; phase 1's waivers removed (anti-zombie). **Negligible
+  perceptual gap**: ΔE 0.15 / 0.92 / 0.41 between the previously clamped
+  rendering and the gamut-mapped one. CSS diff confined to
+  `[data-theme="tritanomaly"]` (11 properties).
+- **Phases 4-5 — verification, docs, wrap-up**: anti-gamut guard at zero
+  waivers across the 12 themes; contrast/distinguishability suites
+  unchanged; `CONTRAST-REPORT.md` regenerated (slight adjustment of the
+  accent-related ratios in `tritanomaly`, ΔE < 1); per-class palette
+  policy documented (README § 6.1, guide § E2). Build/lint/test/tsc
+  green.
 
-**Point restant pour Simon** : validation visuelle de `tritanomaly` (le
-virage de couleur est imperceptible, ΔE < 1 — le navigateur affichait déjà
-la version clampée) ; arbitrage du plancher de lisibilité (3:1).
+**Point remaining**: visual validation of `tritanomaly` (the color
+shift is imperceptible, ΔE < 1 — the browser was already showing the
+clamped version); a call on the legibility floor (3:1).
 
-### Docs (décision de conception — ancres sémantiques pour les rôles statut)
+### Docs (design decision — semantic anchors for status roles)
 
-- **Décision actée par Simon** à la suite de l'arbitrage
-  `role/success-on-bg-base` (1.60:1 en deutér/protanopie, remonté par la
-  refonte daltonienne) : les rôles **statut** — `--success` et
-  `--danger`, plus `--warning` et `--info` réservés pour l'extension
-  future de l'API — forment une classe à part dans le moteur daltonien.
-  Leur sémantique étant quasi universelle d'un projet à l'autre, le
-  paquet embarquera des **ancres de teinte par type de CVD**
-  (rouge-vert : success → bleu, danger → orange ; tritanopie :
-  rouge/vert conservés), résolues dans la palette du projet avec un
-  **poids auto-calculé** par la contrainte de contraste WCAG — les deux
-  contraintes (distinguabilité/contraste) sont ainsi découplées, là où
-  le décalage de poids fixe des tables les faisait s'affronter. Les
-  seuils ΔE de la suite de distinguabilité deviendront **par classe de
-  paire** (`success`/`danger` critique, `link`/statut réduit — WCAG
-  1.4.1 couvrant déjà les liens par le soulignement) ; valeurs à
-  arbitrer par Simon au moment du plan d'exécution.
-- Conception détaillée :
-  [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E2 ;
-  résumé dans le README § 6.1. Aucun changement de code ni de CSS —
-  futur plan d'exécution dédié.
-- Statuts mis à jour dans le README (carte des documents) et le guide :
-  chantier E2 (moteurs + refonte daltonienne) mergé dans `main` le
-  2026-07-05 (`d12264f`) après validation visuelle de Simon et revue
-  indépendante.
-- **Plan d'exécution rédigé** :
+- **Decision made** following the `role/success-on-bg-base` issue
+  (1.60:1 in deuter/protanopia, surfaced by the color-blind redesign):
+  the **status** roles — `--success` and
+  `--danger`, plus `--warning` and `--info` reserved for future API
+  extension — form a class of their own in the color-blind engine.
+  Since their semantics are near-universal from one project to another,
+  the package will embed **hue anchors per CVD type**
+  (red-green: success → blue, danger → orange; tritanopia:
+  red/green kept), resolved within the project's palette with an
+  **auto-computed weight** via the WCAG contrast constraint — the two
+  constraints (distinguishability/contrast) are thereby decoupled, where
+  the tables' fixed weight shift used to make them clash. The
+  distinguishability suite's ΔE thresholds will become **per pair
+  class** (`success`/`danger` critical, `link`/status reduced — WCAG
+  1.4.1 already covering links via underlining); values to be decided at
+  plan time.
+- Detailed design:
+  [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E2;
+  summarized in README § 6.1. No code or CSS change —
+  a dedicated execution plan to follow.
+- Statuses updated in the README (document map) and the guide:
+  E2 chantier (engines + color-blind redesign) merged into `main` on
+  2026-07-05 (`d12264f`) after visual validation and
+  independent review.
+- **Execution plan written**:
   [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md)
-  restructuré en deux parties — partie 1 (remap de familles, exécutée et
-  mergée) conservée pour référence ; **partie 2 « ancres sémantiques pour
-  les rôles statut »** ajoutée (6 phases, branche
-  `refactor/theme-status-anchors`). Points de départ mesurés contre le
-  CSS compilé de main + simulation Machado : `success → violet` (poids
-  auto attendu violet-600, 5.46:1, ΔE success/link 18.0 — sky écarté car
-  occupé par le lien, sky-700 ne serait qu'à ΔE 9.4) ; `danger → orange`
-  (poids auto attendu orange-700, 4.96:1). Seuils ΔE par classe de paire
-  proposés (20 critiques / 12 paires lien, arbitrage Simon en phase 1) ;
-  poids des anomalies résolu sur le mélange `severity` (leçon des
-  waivers à 2.33). Thèmes tritan explicitement inchangés.
+  restructured into two parts — part 1 (family remap, executed and
+  merged) kept for reference; **part 2 "semantic anchors for
+  status roles"** added (6 phases, branch
+  `refactor/theme-status-anchors`). Starting points measured against
+  main's compiled CSS + Machado simulation: `success → violet` (expected
+  auto-weight violet-600, 5.46:1, ΔE success/link 18.0 — sky ruled out
+  since it's taken by the link, sky-700 would only sit at ΔE 9.4);
+  `danger → orange` (expected auto-weight orange-700, 4.96:1). Proposed
+  per-pair-class ΔE thresholds (20 critical / 12 link pairs, to decide
+  in phase 1); the anomalies' weight resolved on the `severity` blend
+  (a lesson from the 2.33 waivers). Tritan themes explicitly unchanged.
 
-### Changed (chantier E2 — refonte daltonienne, partie 2 exécutée)
+### Changed (E2 chantier — color-blind redesign, part 2 executed)
 
-Ancres sémantiques pour les rôles statut implémentées sur la branche
-`refactor/theme-status-anchors` (5 commits, non mergée — **validation
-visuelle de Simon requise avant merge**). Exécutée par Claude (Opus),
-pas par l'IA d'exécution habituelle, à la demande de Simon.
+Semantic anchors for status roles implemented on branch
+`refactor/theme-status-anchors` (5 commits, not merged — **visual
+validation required before merge**). Executed by Claude (Opus),
+not the usual execution AI, at Simon's request.
 
-- **Phase 1 — seuils ΔE par classe de paire** (`contrast-pairs.ts`) : les
-  deux paires « lien » (`link-vs-success`, `link-vs-fg-base`) passent à
-  ΔE ≥ 12 ; les paires critiques (`success/danger`, `accent/statut`)
-  restent à 20. Justification WCAG 2.2 SC 1.4.1 : un lien n'est jamais
-  porté par la couleur seule (souligné ici). Le waiver achromatopsie de
-  `link-vs-fg-base` (16.00) devient caduc sous 12 et est retiré. CSS
-  byte-identique.
-- **Phase 2 — moteur** (`_theme-utils.scss`) : ajout des fonctions WCAG
-  Sass (`wcag-relative-luminance`, `wcag-contrast-ratio`, alignées culori :
-  seuil 0.04045, gamma 2.4) et de `resolve-status-color` /
-  `resolve-anchor-weight` (choisit dans la famille d'ancre le premier cran
-  Tailwind atteignant 4.5:1 sur le fond). Les 6 mixins CVD routent
-  `success`/`danger` par ce résolveur. CSS byte-identique (aucune config
-  n'a encore d'ancre).
-- **Phase 3 — bascule des 4 thèmes rouge-verts** :
-  - -opie (deutéranopie, protanopie) : `success → violet-600` (5.46:1),
-    `danger → orange-700` (4.96:1). `violet` et non `sky` car `--link`
-    occupe déjà sky-900 ; violet est perçu bleu sous CVD rouge-verte.
-  - -omalie (déficience légère) : teintes naturelles conservées, poids
-    corrigé seulement — `success → emerald-700` (5.25:1),
+- **Phase 1 — per-pair-class ΔE thresholds** (`contrast-pairs.ts`): the
+  two "link" pairs (`link-vs-success`, `link-vs-fg-base`) move to
+  ΔE ≥ 12; the critical pairs (`success/danger`, `accent/status`)
+  stay at 20. WCAG 2.2 SC 1.4.1 justification: a link is never carried
+  by color alone (underlined here). The achromatopsia waiver of
+  `link-vs-fg-base` (16.00) becomes moot under 12 and is removed. CSS
+  byte-identical.
+- **Phase 2 — engine** (`_theme-utils.scss`): added the Sass WCAG
+  functions (`wcag-relative-luminance`, `wcag-contrast-ratio`, aligned
+  with culori: threshold 0.04045, gamma 2.4) and `resolve-status-color` /
+  `resolve-anchor-weight` (picks the first Tailwind step in the anchor
+  family that reaches 4.5:1 against the background). The 6 CVD mixins
+  route `success`/`danger` through this resolver. Byte-identical CSS (no
+  config has an anchor yet).
+- **Phase 3 — switching the 4 red-green themes**:
+  - -opia (deuteranopia, protanopia): `success → violet-600` (5.46:1),
+    `danger → orange-700` (4.96:1). `violet` and not `sky` since
+    `--link` already occupies sky-900; violet reads as blue under
+    red-green CVD.
+  - -omaly (mild deficiency): natural hues kept, weight corrected
+    only — `success → emerald-700` (5.25:1),
     `danger → redd-600` (4.62:1).
-  - **Déviation mesurée du plan** : le plan résolvait le poids des -omalies
-    sur le *mélange severity* (ancre mixée à 50 % avec l'origine). Mesuré,
-    ce mélange OKLCH entre deux teintes quasi complémentaires (emerald +
-    violet) **sort du gamut sRGB** — Sass l'a sérialisé
-    `hsl(194, 257%, 19%)`, invalide et hors palette (viole la contrainte
-    « rester dans la palette »). Le résolveur renvoie donc une couleur
-    Tailwind **pure**, sans mélange ; la douceur des -omalies vient du
-    choix d'ancre (familles naturelles emerald/redd) et non d'un mélange.
-    Toutes les valeurs émises sont des couleurs Tailwind propres, in-gamut.
-  - Diff CSS strictement confiné à `--success`/`--danger` des 4 blocs
-    rouge-verts ; tritan et achromatopsie **byte-identiques** (vérifié).
-- **Phase 4 — vérifications** :
-  - **Contraste** : `role/success-on-bg-base` perd ses 4 entries
-    rouge-vertes (1.60/2.33 → 5.25–5.46, désormais conformes) ; le
-    mécanisme anti-zombie a forcé leur retrait. Restent waivés : light
-    (3.61), anti-glare-light (3.13), tritan (3.61) et achromatopsie (2.42),
-    tous hors périmètre. `role/danger-on-bg-base` : tous les thèmes CVD
-    conformes, seul anti-glare-light reste waivé (3.94).
-  - **Cohérence Sass/TypeScript** : ratios de `wcag-contrast-ratio` (Sass)
-    comparés à culori — correspondance exacte à 4+ décimales (violet-600
+  - **Measured deviation from the plan**: the plan resolved the
+    -omalies' weight on the *severity blend* (the anchor mixed 50% with
+    the original). Measured, this OKLCH mix between two nearly
+    complementary hues (emerald + violet) **falls outside the sRGB
+    gamut** — Sass serialized it as
+    `hsl(194, 257%, 19%)`, invalid and off-palette (violating the
+    "stay within the palette" constraint). The resolver therefore
+    returns a **pure** Tailwind color, with no blend; the -omalies'
+    softness comes from the anchor choice (natural emerald/redd
+    families) rather than a blend. Every emitted value is a clean,
+    in-gamut Tailwind color.
+  - CSS diff strictly confined to `--success`/`--danger` of the 4
+    red-green blocks; tritan and achromatopsia **byte-identical**
+    (verified).
+- **Phase 4 — verification**:
+  - **Contrast**: `role/success-on-bg-base` loses its 4 red-green
+    entries (1.60/2.33 → 5.25–5.46, now compliant); the anti-zombie
+    mechanism forced their removal. Still waived: light
+    (3.61), anti-glare-light (3.13), tritan (3.61), and achromatopsia
+    (2.42), all out of scope. `role/danger-on-bg-base`: every CVD theme
+    compliant, only anti-glare-light stays waived (3.94).
+  - **Sass/TypeScript consistency**: `wcag-contrast-ratio` (Sass) ratios
+    compared against culori — exact match to 4+ decimals (violet-600
     5.4562, orange-700 4.9582, emerald-700 5.2507, redd-600 4.6240).
-  - **Distinguabilité — ΔE avant (partie 1) → après (partie 2)** sous
-    simulation Machado :
+  - **Distinguishability — ΔE before (part 1) → after (part 2)** under
+    Machado simulation:
 
-    | Thème | success/danger | link/success | accent/success |
+    | Theme | success/danger | link/success | accent/success |
     | --- | --- | --- | --- |
-    | deutéranopie | 53.2 → 62.7 | 49.0 → **18.2** | 50.5 → 74.9 |
-    | deutéranomalie | 43.2 → 38.6 | 40.3 → 30.7 | 41.8 → 44.3 |
-    | protanopie | 56.4 → 59.4 | 47.1 → **19.0** | 47.6 → 73.5 |
-    | protanomalie | 45.7 → 41.3 | 42.1 → 32.3 | 38.2 → 41.0 |
+    | deuteranopia | 53.2 → 62.7 | 49.0 → **18.2** | 50.5 → 74.9 |
+    | deuteranomaly | 43.2 → 38.6 | 40.3 → 30.7 | 41.8 → 44.3 |
+    | protanopia | 56.4 → 59.4 | 47.1 → **19.0** | 47.6 → 73.5 |
+    | protanomaly | 45.7 → 41.3 | 42.1 → 32.3 | 38.2 → 41.0 |
 
-    Toutes les paires restent au-dessus de leur seuil (20 critiques,
-    12 lien). La seule qui se resserre nettement est `link/success` en
-    -opie (≈ 18-19) : violet est plus proche du lien sky-900 que ne
-    l'était sky-300 en partie 1 — coût assumé, couvert par le seuil 12
-    (liens soulignés, WCAG 1.4.1). `CONTRAST-REPORT.md` régénéré.
-- **Bilan** : le défaut d'origine (`--success` à 1.60:1) est résolu par
-  conception ; les rôles statut sont désormais une classe traitée par
-  ancres sémantiques, garantie de contraste ≥ 4.5:1 par construction.
-  609 tests, lint, `tsc`, `build` verts.
+    Every pair stays above its threshold (20 critical,
+    12 link). The only one tightening noticeably is `link/success` under
+    -opia (≈ 18-19): violet sits closer to the sky-900 link than
+    sky-300 did in part 1 — an accepted cost, covered by the 12
+    threshold (underlined links, WCAG 1.4.1). `CONTRAST-REPORT.md`
+    regenerated.
+- **Outcome**: the original defect (`--success` at 1.60:1) is resolved
+  by design; status roles are now a class handled by semantic anchors,
+  with a ≥ 4.5:1 contrast guarantee by construction.
+  609 tests, lint, `tsc`, `build` green.
 
-**Point restant pour Simon** : validation visuelle des 4 thèmes
-rouge-verts (virage violet de `--success` en -opie surtout) avant merge.
-`--success`/`--danger` n'étant consommés par aucun composant du portfolio
-aujourd'hui, l'effet visuel se voit surtout via le panneau d'accessibilité
-et les futurs usages ; le vrai bénéfice est pour les consommateurs du
-paquet qui, eux, câbleront ces rôles.
+**Point remaining**: visual validation of the 4 red-green themes
+(mainly `--success`'s violet shift under -opia) before merge.
+`--success`/`--danger` being consumed by no portfolio component today,
+the visual effect mainly shows through the accessibility panel and
+future uses; the real benefit is for package consumers, who will wire
+up these roles.
 
-### Docs (partie 3 du plan daltonien rédigée)
+### Docs (part 3 of the color-blind plan written)
 
-- [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) reçoit une
-  **partie 3 « robustesse »** (6 phases, branche
-  `refactor/theme-cvd-degradation`, à exécuter), issue de trois constats
-  des parties 1-2 : (1) **alerter plutôt que bloquer** — remplacer le
-  `@error` de `resolve-anchor-weight` par un meilleur effort + `@warn`,
-  prioriser la distinguabilité au-dessus d'un plancher de lisibilité
-  (défaut 3:1, arbitrage Simon) ; (2) **échelle de dégradation par classe**
-  — -omalie strictement in-palette, -opie autorisée à une couleur in-gamut
-  hors palette en recours (jamais hors gamut) ; (3) **garde anti-gamut
-  mécanique** (test scannant le CSS compilé) + **correction du gamut
-  tritan** — mesuré ce jour : le blend `severity` `amber → orange` de la
-  partie 1 produit **11 déclarations hors gamut** dans `tritanomaly`
-  (`--accent` `hsl(38, 100.8%, 69%)` etc.), à ramener in-gamut par
-  réduction de chroma OKLCH. Précision de conception inscrite au plan : le
-  moteur Sass ne pilote sa dégradation que par le **contraste**
-  (calculable) ; la **distinguabilité** reste vérifiée par la suite
-  TypeScript, la collision se corrigeant via `special-colors`.
+- [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) gets a
+  **part 3 "robustness"** (6 phases, branch
+  `refactor/theme-cvd-degradation`, to execute), stemming from three
+  findings from parts 1-2: (1) **warn rather than block** — replace
+  `resolve-anchor-weight`'s `@error` with a best effort + `@warn`,
+  prioritizing distinguishability above a legibility floor
+  (default 3:1, a decision to make); (2) **per-class degradation
+  ladder** — -omaly strictly in-palette, -opia allowed one in-gamut
+  off-palette color as a fallback (never outside the gamut); (3)
+  **mechanical anti-gamut guard** (a test scanning the compiled CSS) +
+  **fixing the tritan gamut issue** — measured today: part 1's
+  `severity` `amber → orange` blend produces **11 out-of-gamut
+  declarations** in `tritanomaly`
+  (`--accent` `hsl(38, 100.8%, 69%)` etc.), to bring back in-gamut via
+  OKLCH chroma reduction. A design detail written into the plan: the
+  Sass engine only drives its degradation by **contrast**
+  (computable); **distinguishability** stays verified by the
+  TypeScript suite, the collision being fixed via `special-colors`.
 
 ## 2026-07-04
 
-### Docs (chantier E2 (refonte daltonienne), phase 5 — finalisation)
+### Docs (E2 (color-blind redesign) chantier, phase 5 — wrap-up)
 
-- Phase 5 (dernière) de
+- Phase 5 (last) of
   [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md).
-  `pnpm build`/`lint`/`test` (609 tests, 17 suites) verts ; diff CSS
-  cumulé toujours confiné aux 6 blocs `[data-theme]` daltoniens.
-- **Correction d'étiquetage** : les entrées de phases 1 à 4 de ce
-  chantier référencent « chantier E3 » — une erreur de ma part, pas du
-  plan. [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) n'a
-  que E1/E2/E3(monorepo)/E4-E7 ; la refonte daltonienne fait partie
-  d'**E2** (« Revue des moteurs anti-glare / daltoniens »), la même
-  ombrelle que [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md).
-  Corrigé partout (docs et commentaires source, y compris dans les
-  entrées de phases 1 à 4 ci-dessous) en « chantier E2 (refonte
-  daltonienne) » pour lever l'ambiguïté avec l'autre plan, également
-  E2 — par un nouveau commit qui modifie le texte, sans toucher aux
-  commits déjà faits (aucune réécriture d'historique Git).
-- Docs mises à jour : README § 4.3 (moteurs daltoniens et
-  anti-éblouissement tous deux réécrits, description de
-  `remap-for-cvd()` à 4 cas), § 5 point 10 (le point daltonien n'est
-  plus implicite — testé mécaniquement), « Carte des documents »
-  (PLAN-refonte-daltonienne.md marqué exécuté), guide E2 (résultat
-  détaillé de la refonte,
-  résumé des chiffres clés).
-- **Rapport final pour arbitrage de Simon** :
-  - 5 commits sur `refactor/theme-cvd-remap` (code aux phases 1-3 ; la
-    4 et cette phase 5 sont documentation pure), diff CSS confiné aux 6
-    thèmes daltoniens.
-  - Waivers retirés : `role/danger-on-bg-base` (6 → 1 thème restant,
-    seul `anti-glare-light` — sans rapport avec le remap CVD) ;
-    `distinguish/success-vs-danger` (retiré entièrement).
-  - Waiver dégradé, point d'arbitrage explicite : `role/success-on-bg-base`
-    régresse en contraste WCAG dans 4 thèmes rouge-vert (jusqu'à
-    1.60:1, contre 3.13-4.03:1 avant) — la calibration du remap
-    `emerald → sky` a priorisé la distinguabilité CVD
-    (`distinguish/link-vs-success`, qui aurait autrement chuté jusqu'à
-    ΔE 4.6) au détriment du contraste déjà non conforme de ce rôle.
-    Aucun impact utilisateur réel aujourd'hui (`--success` inutilisé) ;
-    décisions possibles pour Simon : accepter le compromis tel quel,
-    introduire un rôle `success-strong` distinct pour un futur usage en
-    texte, ou recalibrer une troisième fois avec un poids intermédiaire.
-  - Bug Sass documenté et corrigé (clés de map non quotées `orange`/
-    `violet` interprétées comme couleurs) — vigilance à garder pour
-    toute future famille nommée d'après une couleur CSS reconnue.
-  - Validation visuelle automatisée faite (captures Chromium headless
-    des 6 thèmes + panneau d'accessibilité) ; **validation visuelle
-    humaine de Simon requise avant tout merge**, en particulier sur le
-    virage orange du header en tritanopie/tritanomalie et le virage
-    violet des liens dans les mêmes thèmes.
+  `pnpm build`/`lint`/`test` (609 tests, 17 suites) green; cumulative
+  CSS diff still confined to the 6 color-blind `[data-theme]` blocks.
+- **Labeling fix**: the phase 1 to 4 entries of this chantier reference
+  "chantier E3" — a mistake on my part, not in the plan.
+  [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) only has
+  E1/E2/E3(monorepo)/E4-E7; the color-blind redesign is part of
+  **E2** ("Anti-glare / color-blind engine review"), the same umbrella
+  as [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md).
+  Fixed everywhere (docs and source comments, including in the phase 1
+  to 4 entries below) to "E2 (color-blind redesign) chantier" to lift
+  the ambiguity with the other plan, also E2 — via a new commit that
+  edits the text, without touching the commits already made (no Git
+  history rewrite).
+- Docs updated: README § 4.3 (both the color-blind and anti-glare
+  engines rewritten, `remap-for-cvd()`'s 4-case description), § 5 point
+  10 (the color-blind point is no longer implicit — mechanically
+  tested), the "document map" (PLAN-refonte-daltonienne.md marked
+  executed), guide E2 (the redesign's detailed outcome,
+  a summary of the key figures).
+- **Final report for review**:
+  - 5 commits on `refactor/theme-cvd-remap` (code in phases 1-3; phase 4
+    and this phase 5 are pure documentation), CSS diff confined to the 6
+    color-blind themes.
+  - Waivers removed: `role/danger-on-bg-base` (6 → 1 remaining theme,
+    only `anti-glare-light` — unrelated to the CVD remap);
+    `distinguish/success-vs-danger` (removed entirely).
+  - A downgraded waiver, an explicit point to decide:
+    `role/success-on-bg-base` regresses in WCAG contrast across 4
+    red-green themes (as low as
+    1.60:1, vs. 3.13-4.03:1 before) — the `emerald → sky` remap's
+    calibration prioritized CVD distinguishability
+    (`distinguish/link-vs-success`, which would otherwise have dropped
+    to ΔE 4.6) at the expense of this role's already-non-compliant
+    contrast. No real user impact today (`--success` unused);
+    possible decisions: accept the trade-off as-is,
+    introduce a distinct `success-strong` role for future text use,
+    or recalibrate a third time with an intermediate weight.
+  - A Sass bug documented and fixed (unquoted map keys `orange`/
+    `violet` interpreted as colors) — a caution to keep in mind for
+    any future family named after a recognized CSS color.
+  - Automated visual validation done (headless Chromium screenshots of
+    the 6 themes + the accessibility panel); **human visual validation
+    required before any merge**, particularly on the header's shift to
+    orange in tritanopia/tritanomaly and the links' shift to violet in
+    the same themes.
 
-### Docs (chantier E2 (refonte daltonienne), phase 4 — vérifications et arbitrages)
+### Docs (E2 (color-blind redesign) chantier, phase 4 — verification and decisions)
 
-- Phase 4 de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md).
-  Les deux premiers points du plan (suite de contrastes redevenue verte,
-  waivers obsolètes retirés) ont dû être traités **dès la phase 3** pour
-  garder `pnpm test` vert à chaque commit (discipline du chantier) ; ce
-  qui reste propre à la phase 4 :
-- **Tableau ΔE avant/après** (avant = inventaire de la phase 1, avant
-  toute bascule ; après = mesuré une fois les 6 thèmes branchés sur
-  `remap-for-cvd`, phase 3 complète) :
+- Phase 4 of [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md).
+  The plan's first two points (the contrast suite back to green,
+  obsolete waivers removed) had to be handled **as early as phase 3** to
+  keep `pnpm test` green at every commit (chantier discipline); what's
+  left specific to phase 4:
+- **Before/after ΔE table** (before = the phase 1 inventory, before any
+  switch; after = measured once the 6 themes are wired onto
+  `remap-for-cvd`, phase 3 complete):
 
-  | Paire | Thème | Avant | Après |
+  | Pair | Theme | Before | After |
   | --- | --- | --- | --- |
   | success/danger | deuteranomaly | 40.01 | 43.17 |
   | success/danger | deuteranopia | 74.28 | 53.18 |
@@ -868,7 +883,7 @@ paquet qui, eux, câbleront ces rôles.
   | accent/success | protanopia | 30.49 | 47.59 |
   | accent/success | tritanomaly | 41.77 | 49.67 |
   | accent/success | tritanopia | 39.88 | 59.15 |
-  | accent/success | achromatopsia | 16.75 ⚠ | 16.75 ⚠ (inchangé) |
+  | accent/success | achromatopsia | 16.75 ⚠ | 16.75 ⚠ (unchanged) |
   | link/success | deuteranomaly | 38.38 | 40.28 |
   | link/success | deuteranopia | 22.48 | 49.02 |
   | link/success | protanomaly | 40.44 | 42.08 |
@@ -876,213 +891,219 @@ paquet qui, eux, câbleront ces rôles.
   | link/success | tritanomaly | 45.24 | 38.86 |
   | link/success | tritanopia | 35.90 | 36.86 |
   | link/success | achromatopsia | 38.95 | 38.95 |
-  | link/fg-base | (7 thèmes CVD) | 15.9–29.3 | inchangé (paire non affectée par le remap) |
+  | link/fg-base | (7 CVD themes) | 15.9–29.3 | unchanged (pair unaffected by the remap) |
 
-  Seul le cas `success/danger` en tritanopie change de statut
-  (échec → conforme, waiver retiré). `accent/success` en achromatopsie
-  reste le seul waiver de distinguabilité restant — mécanisme
-  achromatopsie explicitement hors périmètre de ce chantier.
-- **Rapport regénéré** : [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) déjà
-  à jour depuis le commit de phase 3 (aucune couleur modifiée depuis) —
-  revérifié, `report.test.ts` toujours vert.
-- **Validation visuelle** : capture d'écran automatisée (Chromium
-  headless) des 6 thèmes daltoniens sur la page d'accueil, plus le
-  panneau d'accessibilité ouvert (deutéranomalie) pour vérifier les
-  boutons/titres/focus. Rendu sain partout, y compris tritanopie où le
-  header passe visiblement à l'orange (`amber → orange`) — changement
-  attendu, pas une régression. **Validation visuelle humaine de Simon
-  requise avant merge**, comme l'exige le plan, en particulier sur : le
-  virage orange du header en tritanopie/tritanomalie, le virage violet
-  des liens dans les mêmes thèmes, et le teal/sky clair de `--success`
-  dans les 4 thèmes rouge-vert (`role/success-on-bg-base`, non consommé
-  aujourd'hui mais visible si un futur composant l'utilise).
-- **Point d'arbitrage explicite pour Simon** (déjà signalé en phase 3,
-  rappelé ici) : `role/success-on-bg-base` régresse en contraste WCAG
-  dans les 4 thèmes rouge-vert (jusqu'à 1.60:1) parce que la calibration
-  a priorisé la distinguabilité CVD (`distinguish/link-vs-success`) —
-  sans impact utilisateur réel aujourd'hui (`--success` inutilisé), mais
-  un arbitrage futur (nouveau rôle `success-strong` ? accepter le
-  compromis ?) reste à trancher si ce rôle est un jour consommé.
-- Vérifié : `pnpm build`/`lint`/`test` (609 tests, 17 suites) verts,
-  diff CSS cumulé toujours confiné aux 6 thèmes daltoniens.
+  Only the `success/danger` case in tritanopia changes status
+  (failure → compliant, waiver removed). `accent/success` in
+  achromatopsia remains the only remaining distinguishability waiver —
+  the achromatopsia mechanism explicitly out of this chantier's scope.
+- **Report regenerated**: [CONTRAST-REPORT.md](./CONTRAST-REPORT.md)
+  already up to date since the phase 3 commit (no color changed since) —
+  re-checked, `report.test.ts` still green.
+- **Visual validation**: automated screenshots (headless Chromium) of
+  the 6 color-blind themes on the home page, plus the accessibility
+  panel open (deuteranomaly) to check buttons/titles/focus. Rendering
+  sound everywhere, including tritanopia where the header visibly
+  shifts to orange (`amber → orange`) — an expected change, not a
+  regression. **Human visual validation required before merge**, as the
+  plan requires, particularly on: the header's shift to orange in
+  tritanopia/tritanomaly, the links' shift to violet in the same
+  themes, and `--success`'s light teal/sky
+  across the 4 red-green themes (`role/success-on-bg-base`, unconsumed
+  today but visible if a future component uses it).
+- **Explicit decision point** (already flagged in phase 3, repeated
+  here): `role/success-on-bg-base` regresses in WCAG contrast
+  across the 4 red-green themes (as low as 1.60:1) because the
+  calibration prioritized CVD distinguishability
+  (`distinguish/link-vs-success`) — with no real user impact today
+  (`--success` unused), but a future decision (a new `success-strong`
+  role? accept the trade-off?) remains open if this role is ever
+  consumed.
+- Verified: `pnpm build`/`lint`/`test` (609 tests, 17 suites) green,
+  cumulative CSS diff still confined to the 6 color-blind themes.
 
-### Changed (chantier E2 (refonte daltonienne), phase 3 — tables par défaut et bascule des 6 thèmes)
+### Changed (E2 (color-blind redesign) chantier, phase 3 — default tables and switching the 6 themes)
 
-- Phase 3 de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) :
-  `_base-palette.scss` étendue avec deux familles Tailwind (`orange`,
-  `violet`) ; les 6 mixins `transform-light-to-{deuter,prot,trit}{anopia,anomaly}`
-  et les 6 fichiers de thèmes branchés sur `remap-for-cvd`. Tables
-  retenues :
-  - deutéranopie/deutéranomalie/protanopie/protanomalie (confusion
-    rouge-vert) : `emerald → sky (-3)`, `redd → amber (+1)`.
-  - tritanopie/tritanomalie (confusion bleu-jaune) : `amber → orange (0)`,
-    `sky → violet (0)` ; emerald/redd inchangées (déjà sûres pour cet axe).
-  - anomalies : mêmes tables que leur -opie, `"severity": 0.5`.
-  Les `special-colors` codées en dur (`#0075ff`, `#ffcc00`, `#0090ff`,
-  `#ffd700`, `#ff6600`, `#ff3399`) retirées des défauts partout ; les 6
-  fichiers de thèmes simplifiés (plus de config locale, les nouveaux
-  défauts des mixins suffisent).
-- **Bug Sass trouvé et corrigé pendant l'implémentation** : les clés de
-  map non quotées `orange:`/`violet:` dans `_base-palette.scss` sont des
-  **couleurs CSS reconnues** — Sass les interprète silencieusement comme
-  des valeurs `color` plutôt que des chaînes (`@warn` discret : « you
-  probably don't mean to use the color value orange… »), ce qui cassait
-  toute recherche par chaîne (`analyze-tailwind-color`, `get-color`)
-  avec `$map: null is not a map`. Corrigé en quotant explicitement
-  (`"orange":`, `"violet":`) comme le sont déjà `redd` (nommée ainsi
-  pour éviter la collision avec le mot-clé `red`) — cette même classe de
-  bug guettait déjà `redd` si elle avait été nommée `red`.
-- **Calibration mesurée du décalage `emerald → sky`** (le plan qualifie
-  ces tables de point de départ, pas une vérité) : le shift `0` proposé
-  fait chuter `distinguish/link-vs-success` sous le seuil ΔE ≥ 20 en
-  deutéranomalie/protanomalie (jusqu'à ΔE 4.6) — `--link` occupe déjà
-  `sky-900`, et le mélange de sévérité 0.5 de `--success` vers `sky-600`
-  finit perceptuellement trop proche. Essai `emerald → violet` : pire
-  (violet et sky sont perceptuellement voisins, ΔE jusqu'à 4.59). Essai
-  `sky (-4)` (sky-200, très clair) : ΔE ≥ 38 partout mais dégrade
-  fortement le contraste WCAG déjà non conforme de `--success` (jusqu'à
-  1.27:1). Retenu : `sky (-3)` (sky-300), qui satisfait ΔE ≥ 20 avec une
-  marge confortable (≥ 40 sur les thèmes affectés) sans creuser le
-  contraste plus que nécessaire.
-- **Suite de contrastes (E1) et de distinguabilité (E2/refonte daltonienne phase 1)
-  re-exécutées après bascule — succès attendu du plan** :
-  - `role/danger-on-bg-base` : passe de 6 thèmes waivés à **1 seul**
-    (`anti-glare-light`, non lié au remap CVD) — les 6 thèmes daltoniens
-    passent désormais ≥ 4.5:1 (le pire cas historique, `#ffcc00` à
-    1.34:1 en protanopie, est résolu par `redd → amber`).
-  - `distinguish/success-vs-danger` : waiver **retiré entièrement** — le
-    seul échec (tritanopie, ΔE 6.81, dû aux anciennes special-colors
-    `#ff6600`/`#ff3399` jamais vérifiées pour leur distinguabilité) est
-    résolu du simple fait de retirer ces special-colors par défaut
-    (emerald/redd restent inchangées en tritanopie, ΔE 69.66).
-  - `role/success-on-bg-base` **régresse** en deutéranomalie/
-    deutéranopie/protanomalie/protanopie (ratios 2.33/1.60/2.33/1.60,
-    contre 3.61/4.03/3.61/3.13 avant) : la calibration `sky (-3)`
-    priorise la distinguabilité CVD (voir ci-dessus) au détriment du
-    contraste WCAG déjà non conforme de ce rôle. `--success` reste
-    consommé par aucun composant à ce jour (vérifié par grep) — impact
-    utilisateur réel nul, mais point à signaler explicitement à Simon
-    (voir rapport de phase 4/5).
-  - Sortie brute complète (avant/après par thème, contraste et ΔE) dans
-    le rapport de phase joint à cette entrée ; `CONTRAST-REPORT.md`
-    régénéré.
-- **Diff CSS** : strictement confiné aux 6 blocs `[data-theme]`
-  daltoniens (`deuteranomaly`, `deuteranopia`, `protanomaly`,
-  `protanopia`, `tritanomaly`, `tritanopia`) — vérifié sur l'ensemble du
-  CSS compilé, rien d'autre n'a bougé.
-- **Purge des chemins morts, faite en fin de phase 3** (le plan la prévoit
-  « en fin de phase 4 », mais son unique condition — « quand plus rien ne
-  les référence » — était déjà remplie ici, et la phase 3 la redemande
-  elle-même en item 4) : `adapt-color-for-colorblindness`,
-  `adapt-color-for-color-anomaly` et leurs auxiliaires `brightness`/
-  `is-similar-to` supprimées de `_theme-utils.scss`, confirmé sans
-  appelant restant par grep avant suppression. CSS compilé strictement
-  identique avant/après cette purge (suppression de code mort pur).
-- Vérifié : `pnpm build`/`lint`/`test` (609 tests, 17 suites) verts.
+- Phase 3 of [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md):
+  `_base-palette.scss` extended with two Tailwind families (`orange`,
+  `violet`); the 6 `transform-light-to-{deuter,prot,trit}{anopia,anomaly}`
+  mixins and the 6 theme files wired onto `remap-for-cvd`. Tables
+  chosen:
+  - deuteranopia/deuteranomaly/protanopia/protanomaly (red-green
+    confusion): `emerald → sky (-3)`, `redd → amber (+1)`.
+  - tritanopia/tritanomaly (blue-yellow confusion): `amber → orange (0)`,
+    `sky → violet (0)`; emerald/redd unchanged (already safe on this axis).
+  - anomalies: same tables as their -opia, `"severity": 0.5`.
+  The hardcoded `special-colors` (`#0075ff`, `#ffcc00`, `#0090ff`,
+  `#ffd700`, `#ff6600`, `#ff3399`) removed from the defaults everywhere;
+  the 6 theme files simplified (no more local config, the mixins' new
+  defaults are enough).
+- **A Sass bug found and fixed during implementation**: the unquoted map
+  keys `orange:`/`violet:` in `_base-palette.scss` are **recognized CSS
+  colors** — Sass silently interprets them as `color` values rather
+  than strings (a discreet `@warn`: "you
+  probably don't mean to use the color value orange…"), which broke
+  every string lookup (`analyze-tailwind-color`, `get-color`)
+  with `$map: null is not a map`. Fixed by explicitly quoting
+  (`"orange":`, `"violet":`) as `redd` already was (named that way
+  to avoid the collision with the `red` keyword) — this same bug class
+  was already lying in wait for `redd` had it been named `red`.
+- **Measured calibration of the `emerald → sky` shift** (the plan calls
+  these tables a starting point, not a truth): the proposed `0` shift
+  drops `distinguish/link-vs-success` below the ΔE ≥ 20 threshold in
+  deuteranomaly/protanomaly (as low as ΔE 4.6) — `--link` already
+  occupies `sky-900`, and `--success`'s 0.5-severity blend toward
+  `sky-600` ends up perceptually too close. Tried `emerald → violet`:
+  worse (violet and sky are perceptually close, ΔE as low as 4.59).
+  Tried `sky (-4)` (sky-200, very light): ΔE ≥ 38 everywhere but
+  severely degrades `--success`'s already non-compliant WCAG contrast
+  (as low as 1.27:1). Chosen: `sky (-3)` (sky-300), which satisfies
+  ΔE ≥ 20 with a comfortable margin (≥ 40 on the affected themes)
+  without digging into contrast more than necessary.
+- **Contrast suite (E1) and distinguishability suite (E2/color-blind
+  redesign phase 1) re-run after switching — the plan's expected
+  success**:
+  - `role/danger-on-bg-base`: goes from 6 waived themes to **1 only**
+    (`anti-glare-light`, unrelated to the CVD remap) — the 6 color-blind
+    themes now pass ≥ 4.5:1 (the historical worst case, `#ffcc00` at
+    1.34:1 in protanopia, resolved by `redd → amber`).
+  - `distinguish/success-vs-danger`: waiver **removed entirely** — the
+    only failure (tritanopia, ΔE 6.81, due to the old special-colors
+    `#ff6600`/`#ff3399` never checked for their distinguishability) is
+    resolved simply by removing those special-colors from the defaults
+    (emerald/redd stay unchanged in tritanopia, ΔE 69.66).
+  - `role/success-on-bg-base` **regresses** in deuteranomaly/
+    deuteranopia/protanomaly/protanopia (ratios 2.33/1.60/2.33/1.60,
+    vs. 3.61/4.03/3.61/3.13 before): the `sky (-3)` calibration
+    prioritizes CVD distinguishability (see above) at the expense of
+    this role's already non-compliant WCAG contrast. `--success` remains
+    unconsumed by any component to this day (verified via grep) — zero
+    real user impact, but a point to explicitly flag
+    (see the phase 4/5 report).
+  - Full raw output (before/after per theme, contrast and ΔE) in the
+    phase report attached to this entry; `CONTRAST-REPORT.md`
+    regenerated.
+- **CSS diff**: strictly confined to the 6 color-blind `[data-theme]`
+  blocks (`deuteranomaly`, `deuteranopia`, `protanomaly`,
+  `protanopia`, `tritanomaly`, `tritanopia`) — verified across the whole
+  compiled CSS, nothing else moved.
+- **Dead-path purge, done at the end of phase 3** (the plan schedules it
+  "at the end of phase 4," but its only condition — "once nothing
+  references them anymore" — was already met here, and phase 3 itself
+  asks for it again in item 4): `adapt-color-for-colorblindness`,
+  `adapt-color-for-color-anomaly` and their `brightness`/
+  `is-similar-to` helpers removed from `_theme-utils.scss`, confirmed
+  with no remaining caller via grep before removal. Compiled CSS
+  strictly identical before/after this purge (pure dead-code removal).
+- Verified: `pnpm build`/`lint`/`test` (609 tests, 17 suites) green.
 
-### Added (chantier E2 (refonte daltonienne), phase 2 — moteur de remap)
+### Added (E2 (color-blind redesign) chantier, phase 2 — remap engine)
 
-- Phase 2 de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) :
-  `remap-for-cvd($color, $var-name, $config, $cvd-type)` ajoutée à
-  `_theme-utils.scss`, résolution en 4 cas (le plan en distingue 3, le
-  4ᵉ — « famille reconnue mais absente de la table » — a dû être rendu
-  explicite, voir divergence ci-dessous) :
-  1. `special-colors` explicite pour la variable → prioritaire sur tout
-     (mécanisme conservé tel quel).
-  2. Couleur reconnue comme swatch Tailwind **et** sa famille présente
-     dans `family-remap` → substitution vers la famille cible, au poids
-     décalé (décalage d'**index** dans `$tailwind-weights`, borné à
-     [50, 950], `@warn` si le bornage s'applique).
-  3. Couleur reconnue mais famille absente de `family-remap` → laissée
-     **inchangée** (déjà jugée sûre pour ce type de CVD — c'est
-     pourquoi, par exemple, `amber`/`sky` n'auront pas d'entrée dans les
-     tables proto/deutéranopie de la phase 3).
-  4. Couleur hors palette Tailwind (custom, futur consommateur du
-     paquet) : repli par rotation de teinte OKLCH vers une ancre fixe du
-     type de CVD, à luminance/chroma constants — point de calibration
-     non validé perceptuellement.
-  Mélange `severity` (0.5 pour les anomalies) appliqué en sortie via
-  `color.mix(…, $method: oklch)`, quel que soit le cas résolu.
-  Vérifié par un script Sass isolé (non commité) : priorité des
-  special-colors, remap + décalage de poids correct, bornage avec
-  `@warn`, famille non listée laissée intacte, rotation OKLCH avec
-  L/C préservés (vérifié : identiques à la couleur d'origine), mélange
-  de sévérité strictement compris entre original et remap complet.
-- **Divergence documentée : le branchement dans les 6 mixins
-  `auto-{deuter,prot,trit}{anopia,anomaly}-transform` est repoussé à la
-  phase 3**, alors que le plan demande de le faire dès la phase 2. Raison
-  mesurée : l'oracle « CSS byte-identique, le moteur existe mais aucun
-  thème ne l'utilise encore » de la phase 2 est incompatible avec un
-  branchement réel maintenant. Les 6 fichiers de thèmes actuels ne
-  définissent aucune clé `family-remap` ; sous la résolution ci-dessus,
-  une famille reconnue non listée (cas 3) doit être **laissée
-  inchangée** — or c'est déjà le comportement *correct* final, mais il
-  diffère du comportement *actuel* de l'ancien moteur HSL
-  (`adapt-color-for-colorblindness`), qui décale bel et bien la teinte de
-  `--accent` (ambre, teinte ≈45°, tombe dans sa fenêtre verte 30–150°) en
-  proto/deutéranopie. Rien ne permet de brancher le nouveau moteur sans
-  changer le CSS avant que les vraies tables existent (phase 3) — le
-  branchement des mixins et la pose des tables sont donc faits ensemble
-  en phase 3, qui attend de toute façon un diff CSS confiné aux thèmes
-  daltoniens.
-- Le champ « 3. Sinon (couleur hors palette) → repli OKLCH » du plan
-  était rédigé comme un `else` terminal après le test de `family-remap`,
-  ce qui aurait fait passer `--accent`/`--link` (familles reconnues mais
-  non listées) par le repli OKLCH plutôt que de les laisser intacts —
-  incohérent avec les tables suggérées en phase 3 (qui ne listent pas
-  ces familles, précisément parce qu'elles sont déjà sûres). Résolution
-  retenue : un cas 3 explicite (« famille reconnue, non listée →
-  inchangée ») distinct du cas 4 (« famille non reconnue → OKLCH »).
-- Chemins hérités (`adapt-color-for-colorblindness`,
+- Phase 2 of [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md):
+  `remap-for-cvd($color, $var-name, $config, $cvd-type)` added to
+  `_theme-utils.scss`, a 4-case resolution (the plan distinguishes 3,
+  the 4th — "recognized family but absent from the table" — had to be
+  made explicit, see the deviation below):
+  1. An explicit `special-colors` for the variable → takes priority over
+     everything (mechanism kept as-is).
+  2. A color recognized as a Tailwind swatch **and** its family present
+     in `family-remap` → substitution toward the target family, at the
+     shifted weight (an **index** shift within `$tailwind-weights`,
+     clamped to [50, 950], `@warn` if clamping applies).
+  3. A recognized color whose family is absent from `family-remap` →
+     left **unchanged** (already deemed safe for this CVD type — which
+     is why, for example, `amber`/`sky` will have no entry in the
+     proto/deuteranopia tables of phase 3).
+  4. A color outside the Tailwind palette (custom, a future package
+     consumer): fallback via OKLCH hue rotation toward a fixed anchor
+     for the CVD type, at constant luminance/chroma — a calibration
+     point not perceptually validated.
+  A `severity` blend (0.5 for anomalies) applied to the output via
+  `color.mix(…, $method: oklch)`, whichever case is resolved.
+  Verified via an isolated (uncommitted) Sass script: special-colors
+  priority, correct remap + weight shift, clamping with
+  `@warn`, an unlisted family left untouched, OKLCH rotation with
+  L/C preserved (verified: identical to the original color), the
+  severity blend strictly between the original and the full remap.
+- **Documented deviation: wiring into the 6
+  `auto-{deuter,prot,trit}{anopia,anomaly}-transform` mixins is deferred
+  to phase 3**, while the plan asked for it as early as phase 2.
+  Measured reason: phase 2's oracle ("byte-identical CSS, the engine
+  exists but no theme uses it yet") is incompatible with wiring it in
+  for real right now. The 6 current theme files define no
+  `family-remap` key; under the resolution above, a recognized but
+  unlisted family (case 3) must be **left unchanged** — but that's
+  already the *correct* final behavior, yet it differs from the *current*
+  behavior of the old HSL engine
+  (`adapt-color-for-colorblindness`), which does shift `--accent`'s hue
+  (amber, hue ≈45°, falls inside its 30–150° green window) in
+  proto/deuteranopia. Nothing lets the new engine be wired in without
+  changing the CSS before the real tables exist (phase 3) — wiring the
+  mixins and setting the tables are therefore done together
+  in phase 3, which expects a CSS diff confined to the color-blind
+  themes anyway.
+- The plan's "3. Otherwise (color outside the palette) → OKLCH fallback"
+  item was written as a terminal `else` after the `family-remap` check,
+  which would have routed `--accent`/`--link` (recognized but unlisted
+  families) through the OKLCH fallback instead of leaving them
+  untouched — inconsistent with the tables suggested in phase 3 (which
+  don't list these families, precisely because they're already safe).
+  Resolution chosen: an explicit case 3 ("recognized family, unlisted →
+  unchanged") distinct from case 4 ("unrecognized family → OKLCH").
+- Legacy paths (`adapt-color-for-colorblindness`,
   `adapt-color-for-color-anomaly`, `auto-*-transform`, `brightness`,
-  `is-similar-to`) intégralement conservés à ce stade — toujours actifs,
-  suppression prévue en fin de phase 4 seulement si le grep confirme
-  qu'ils ne sont plus référencés.
-- Vérifié : `pnpm build`/`lint`/`test` (609 tests, 17 suites) verts ; CSS
-  compilé strictement identique à la baseline de phase 0.
+  `is-similar-to`) fully kept at this stage — still active,
+  removal planned for the end of phase 4 only once grep confirms
+  they're no longer referenced.
+- Verified: `pnpm build`/`lint`/`test` (609 tests, 17 suites) green; the
+  compiled CSS strictly identical to the phase 0 baseline.
 
-### Added (chantier E2 (refonte daltonienne), phase 1 — tests de distinguabilité)
+### Added (E2 (color-blind redesign) chantier, phase 1 — distinguishability tests)
 
-- Phase 1 de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md)
-  (branche `refactor/theme-cvd-remap`, chantier additif — aucun fichier de
-  `src/styles/` modifié, CSS compilé byte-identique).
-  - `src/accessibility/contrast/cvd-simulation.ts` : simulation de la
-    perception sous déficience de vision des couleurs. Dichromacies
-    (protanopie/deutéranopie/tritanopie) et anomalies (sévérité 0.5) via
-    les matrices de Machado, Oliveira & Fernandes (2009), appliquées en
-    RVB **linéaire** (conversion `culori.convertRgbToLrgb`/
-    `convertLrgbToRgb`) — les lignes de chaque matrice somment à ≈ 1
-    (un gris neutre reste un gris neutre, vérifié en test). Achromatopsie
-    traitée à part (pas une dichromatie) : luma BT.601 sur RVB gamma
-    (mêmes poids que `adapt-color-for-achromatopsia` existant dans
-    `_theme-utils.scss`), pour rester cohérent avec le mécanisme déjà en
-    place plutôt qu'un modèle de monochromacie théorique différent.
-  - **Choix de dépendance** : le paquet npm `color-blind` évoqué par le
-    plan a été écarté après vérification (`license: undefined` sur le
-    registre npm — affiché « Proprietary », donc risqué pour un projet
-    dont l'objectif est l'extraction en paquet open source, § E7).
-    Implémentation directe des matrices publiées, comme le permettait le
-    plan en repli (« recopier les matrices … en citant la source »).
-  - `contrast-pairs.ts` : nouveau type `DistinguishabilityPair` (registre
-    séparé `distinguishabilityPairs`, pas fondu dans `ContrastPair`— les
-    deux notions ne partagent que `id`/`waiver`, pas de `level` ni de
-    seuil WCAG côté distinguabilité) et 5 paires du plan (`success`/
+- Phase 1 of [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md)
+  (branch `refactor/theme-cvd-remap`, an additive chantier — no
+  `src/styles/` file modified, byte-identical compiled CSS).
+  - `src/accessibility/contrast/cvd-simulation.ts`: simulates perception
+    under color vision deficiency. Dichromacies
+    (protanopia/deuteranopia/tritanopia) and anomalies (severity 0.5)
+    via the Machado, Oliveira & Fernandes (2009) matrices, applied in
+    **linear** RGB (`culori.convertRgbToLrgb`/
+    `convertLrgbToRgb` conversion) — each matrix's rows sum to ≈ 1
+    (a neutral gray stays a neutral gray, verified in a test).
+    Achromatopsia handled separately (not a dichromacy): BT.601 luma on
+    gamma RGB (the same weights as the existing
+    `adapt-color-for-achromatopsia` in
+    `_theme-utils.scss`), to stay consistent with the mechanism already
+    in place rather than a different theoretical monochromacy model.
+  - **Dependency choice**: the `color-blind` npm package mentioned by
+    the plan was ruled out after checking (`license: undefined` on the
+    npm registry — shown as "Proprietary," so risky for a project whose
+    goal is extraction into an open-source package, § E7). Direct
+    implementation of the published matrices instead, as the plan
+    allowed as a fallback ("copy the matrices … citing the source").
+  - `contrast-pairs.ts`: a new `DistinguishabilityPair` type (a separate
+    `distinguishabilityPairs` registry, not merged into `ContrastPair` —
+    the two notions only share `id`/`waiver`, no `level` or WCAG
+    threshold on the distinguishability side) and the plan's 5 pairs
+    (`success`/
     `danger`, `accent`/`danger`, `accent`/`success`, `link`/`success`,
-    `link`/`fg-base`), chacune sur les 7 thèmes CVD (6 daltoniens +
-    achromatopsie). Seuil de départ ΔE ≥ 20 (calibration, § plan).
-  - `measure.ts` : `measureDeltaE(pair, theme)` — résout les deux
-    couleurs, simule la déficience, mesure `culori.differenceCiede2000`
-    entre les deux couleurs simulées.
-  - `__tests__/cvd-simulation.test.ts` : gris invariant à sévérité 1
-    (les 3 dichromaties), no-op à sévérité 0, mélange monotone entre 0 et
-    1, collapse rouge/vert bien plus fort que l'écart d'origine en
-    proto/deutéranopie (fait manuel le plus connu du daltonisme
-    rouge-vert — utilisé comme « valeur de référence publiée » faute de
-    triplet RVB exact vérifiable sans accès réseau), achromatopsie =
-    gris strict correspondant au luma attendu.
-  - `__tests__/distinguishability.test.ts` : intégrité du registre +
-    matrice paire × thème avec le même mécanisme anti-zombie que E1.
-  - **Premier run = inventaire** (avant refonte, sortie brute) :
+    `link`/`fg-base`), each across the 7 CVD themes (6 color-blind +
+    achromatopsia). Starting threshold ΔE ≥ 20 (a calibration point, cf.
+    the plan).
+  - `measure.ts`: `measureDeltaE(pair, theme)` — resolves both
+    colors, simulates the deficiency, measures `culori.differenceCiede2000`
+    between the two simulated colors.
+  - `__tests__/cvd-simulation.test.ts`: gray invariant at severity 1
+    (the 3 dichromacies), a no-op at severity 0, a monotonic blend
+    between 0 and
+    1, red/green collapse well stronger than the original gap in
+    proto/deuteranopia (the best-known manual fact about red-green
+    color blindness — used as a "published reference value" for lack of
+    an exact RGB triplet verifiable without network access), achromatopsia
+    = a strict gray matching the expected luma.
+  - `__tests__/distinguishability.test.ts`: registry integrity + a
+    pair × theme matrix, with the same anti-zombie mechanism as E1.
+  - **First run = inventory** (before the redesign, raw output):
 
     ```
     distinguish/success-vs-danger   deuteranomaly   deltaE=40.0116  ok
@@ -1122,137 +1143,136 @@ paquet qui, eux, câbleront ces rôles.
     distinguish/link-vs-fg-base     achromatopsia   deltaE=15.9997  FAIL
     ```
 
-  - 3 échecs sur 35, waivés `preexisting: true` (aucune couleur
-    corrigée) : `success`/`danger` en tritanopie (ΔE 6.81 — les deux
-    portent peu de bleu, la confusion bleu-jaune de la tritanopie laisse
-    peu de quoi les distinguer), `accent`/`success` en achromatopsie
-    (ΔE 16.75 — luma BT.601 proche une fois désaturés), `link`/`fg-base`
-    en achromatopsie (ΔE 16.00 — deux couleurs très sombres, luma
-    proche). Ces trois cas sont des candidats explicites pour les tables
-    de remap de la phase 3 (sauf les deux cas achromatopsie, dont le
-    mécanisme reste hors périmètre de ce chantier).
-  - Vérifié : `pnpm test` (609 tests, 17 suites), `pnpm lint`,
-    `pnpm exec tsc --noEmit` verts ; CSS compilé strictement identique à
-    la baseline de phase 0.
+  - 3 failures out of 35, waived `preexisting: true` (no color
+    fixed): `success`/`danger` in tritanopia (ΔE 6.81 — both
+    carry little blue, tritanopia's blue-yellow confusion leaves
+    little to distinguish them by), `accent`/`success` in achromatopsia
+    (ΔE 16.75 — close BT.601 luma once desaturated), `link`/`fg-base`
+    in achromatopsia (ΔE 16.00 — two very dark colors, close
+    luma). These three cases are explicit candidates for phase 3's
+    remap tables (except the two achromatopsia cases, whose mechanism
+    stays out of this chantier's scope).
+  - Verified: `pnpm test` (609 tests, 17 suites), `pnpm lint`,
+    `pnpm exec tsc --noEmit` green; compiled CSS strictly identical to
+    the phase 0 baseline.
 
-### Fixed (revue indépendante du chantier E2)
+### Fixed (independent review of the E2 chantier)
 
-- Waiver `site/button-active-outline-on-panel-bg` : la valeur `measured`
-  de `anti-glare-light` (1.057) datait de la phase 2 et n'avait pas été
-  rafraîchie après la réécriture OKLCH de la phase 3 — la mesure réelle
-  est 1.307 (recalcul indépendant depuis le CSS compilé, concordant avec
-  la matrice régénérée du [CONTRAST-REPORT.md](./CONTRAST-REPORT.md)).
-  Valeur et texte du waiver corrigés, rapport régénéré. Sans effet sur
-  les tests (les cartes `measured` sont documentaires ; le garde-fou
-  anti-zombie ne se déclenche qu'au passage du seuil).
+- Waiver `site/button-active-outline-on-panel-bg`: the `anti-glare-light`
+  `measured` value (1.057) dated back to phase 2 and hadn't been
+  refreshed after phase 3's OKLCH rewrite — the actual measurement is
+  1.307 (recomputed independently from the compiled CSS, matching the
+  regenerated [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) matrix).
+  Waiver value and text fixed, report regenerated. No effect on the
+  tests (the `measured` fields are documentary; the anti-zombie
+  safeguard only triggers when the threshold is crossed).
 
-### Docs (chantier E2 — revue des moteurs, phase 5 — finalisation)
+### Docs (E2 chantier — engine review, phase 5 — wrap-up)
 
-- Phase 5 (dernière) de [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) :
-  vérification finale et documentation, branche `refactor/theme-engines`
-  (4 commits, non mergée). `pnpm build`/`lint`/`test` verts.
-- **Preuve par diff** : le plan demande un CSS « byte-identique à
-  phase 0 » en finalisation — formule reprise telle quelle des plans E1/
-  fondations, mais **contradictoire avec le contenu même de ce plan**
-  (les phases 2, 3 et 4 documentent et attendent explicitement un diff
-  CSS visuel confiné aux thèmes anti-glare). Interprétation retenue,
-  cohérente avec l'esprit de l'oracle CSS des trois plans : prouver que
-  le diff cumulé `phase0.css` → CSS final est *exactement* la somme des
-  changements documentés phase par phase, rien d'accidentel ailleurs.
-  Vérifié : diff complet (470 lignes) confiné aux blocs
-  `[data-theme="anti-glare-light"]` et `[data-theme="anti-glare-dark"]`
-  uniquement (plages de lignes identiques à celles rapportées en
-  phases 2/3/4) — aucune ligne changée en dehors de ces deux thèmes sur
-  l'ensemble des 5350 lignes du CSS compilé.
-- Docs mises à jour : README § 5 (point 10, couverture anti-glare
-  partielle, marqué résolu), § « Carte des documents » (E2 exécuté,
-  merge en attente de validation visuelle), guide E2 (résumé du
-  résultat, divergences documentées).
-- **Divergences par rapport au plan, documentées phase par phase et
-  résumées ici** :
-  1. Phase 1, item 1 (syntaxe `if()`) : non appliqué tel quel — la
-     « correction » proposée introduit une régression (nouveau
-     `DEPRECATION WARNING`) avec Dart Sass 1.101 ; le code existant est
-     en réalité la syntaxe de désambiguïsation officielle contre le
-     nouveau `if()` CSS natif. Code inchangé, commenté.
-  2. Phase 2 : l'hypothèse du plan (« double atténuation » pour les ~22
-     tokens auparavant listés) ne se vérifie pas — ils ressortent
-     strictement inchangés. Le bug réel était uniquement l'absence de
-     traitement des ~45 tokens oubliés, corrigée sans régression sur les
-     22 premiers.
-  3. Phase 3 : seuil clair recalibré de 92% à 85% (OKLCH) — à 92%,
-     `stone-300` restait quasiment intact, ce que l'ancien moteur HSL
-     n'aurait pas laissé passer. Seuil sombre (22%) inchangé, sa
-     couverture correspond déjà exactement à l'ancien seuil HSL (15%).
-  4. Phase 5 (ce point) : la formule « CSS byte-identique » réinterprétée
-     comme ci-dessus.
-- **Rapport final pour arbitrage de Simon** (voir aussi le message de
-  fin de tâche) : 4 commits sur `refactor/theme-engines`, diff CSS
-  cumulé strictement confiné aux thèmes anti-glare, `CONTRAST-REPORT.md`
-  tenu à jour à chaque phase colorée (aucun waiver devenu zombie),
-  vérification visuelle automatisée faite (captures Chromium headless)
-  mais **validation visuelle humaine de Simon requise avant tout merge** —
-  en particulier sur : le rendu des deux thèmes anti-glare après passe
-  unique + recalibration OKLCH (phases 2-3), et la suppression de
-  l'overlay `backdrop-filter` (phase 4, réversible indépendamment des
-  autres phases si besoin).
+- Phase 5 (last) of [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md):
+  final verification and documentation, branch `refactor/theme-engines`
+  (4 commits, not merged). `pnpm build`/`lint`/`test` green.
+- **Proof by diff**: the plan asks for CSS "byte-identical to
+  phase 0" at wrap-up — a phrase copied as-is from the E1/foundations
+  plans, but **contradicting this very plan's own content**
+  (phases 2, 3, and 4 document and explicitly expect a visual CSS diff
+  confined to the anti-glare themes). Interpretation adopted, consistent
+  with the spirit of all three plans' CSS oracle: prove that the
+  cumulative diff `phase0.css` → final CSS is *exactly* the sum of the
+  changes documented phase by phase, nothing accidental elsewhere.
+  Verified: the full diff (470 lines) confined to the
+  `[data-theme="anti-glare-light"]` and `[data-theme="anti-glare-dark"]`
+  blocks only (line ranges identical to those reported in
+  phases 2/3/4) — no line changed outside these two themes across the
+  full 5350-line compiled CSS.
+- Docs updated: README § 5 (point 10, partial anti-glare coverage,
+  marked resolved), the "document map" § (E2 executed, merge pending
+  visual validation), guide E2 (result summary, documented deviations).
+- **Deviations from the plan, documented phase by phase and summarized
+  here**:
+  1. Phase 1, item 1 (`if()` syntax): not applied as written — the
+     proposed "fix" introduces a regression (a new
+     `DEPRECATION WARNING`) under Dart Sass 1.101; the existing code is
+     actually the official disambiguation syntax against the
+     new native CSS `if()`. Code unchanged, a comment added.
+  2. Phase 2: the plan's hypothesis ("double attenuation" for the ~22
+     previously listed tokens) doesn't hold — they come out
+     strictly unchanged. The real bug was only the ~45 forgotten
+     tokens going untreated, fixed with no regression on the first 22.
+  3. Phase 3: light threshold recalibrated from 92% to 85% (OKLCH) — at
+     92%, `stone-300` stayed nearly untouched, something the old HSL
+     engine wouldn't have let through. Dark threshold (22%) unchanged,
+     its coverage already exactly matches the old HSL threshold (15%).
+  4. Phase 5 (this point): the "byte-identical CSS" phrase reinterpreted
+     as above.
+- **Final report** (see also the end-of-task message): 4 commits on
+  `refactor/theme-engines`, cumulative CSS diff strictly confined to
+  the anti-glare themes, `CONTRAST-REPORT.md` kept up to date at every
+  color-changing phase (no waiver turned zombie), automated visual
+  verification done (headless Chromium screenshots) but **human visual
+  validation required before any merge** — particularly on: the
+  rendering of both anti-glare themes after the single-pass +
+  OKLCH recalibration (phases 2-3), and removing the `backdrop-filter`
+  overlay (phase 4, independently revertible from the other phases if
+  needed).
 
-### Removed (chantier E2 — revue des moteurs, phase 4 — overlay backdrop-filter)
+### Removed (E2 chantier — engine review, phase 4 — backdrop-filter overlay)
 
-- Phase 4 de [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) : mixin
-  `apply-anti-glare-filter` (`_anti-glare-functions.scss`) et son
-  invocation supprimés — l'overlay plein écran `body::before`
-  (`backdrop-filter: contrast(98%) brightness(99%)`/`opacity: 0.3` en
-  light, `contrast(95%) brightness(102%)`/`opacity: 0.2` en dark,
-  `z-index: 9999`) imposait un coût GPU permanent pour un effet mesuré
-  quasi nul.
-- **Diff CSS** : exactement les deux règles `[data-theme="anti-glare-light"]
-  body::before` et `[data-theme="anti-glare-dark"] body::before`
-  disparaissent, rien d'autre (vérifié par diff complet).
-- **Comparaison avant/après pour Simon** : capture d'écran automatisée
-  (Chromium headless, page d'accueil) des deux thèmes anti-glare avec et
-  sans l'overlay. Diff pixel par pixel : ~1.4 % des pixels changent de
-  plus de 10/255 sur un canal, concentrés sur les zones de texte/icônes
-  (bruit d'anti-aliasing entre deux rendus Chromium distincts, pas un
-  changement de contenu) — aucune différence visuelle perceptible
-  attribuable à l'overlay. Confirme le diagnostic du plan (« effet mesuré
-  quasi nul »).
-- **Décision** : suppression conservée par défaut. **C'est Simon qui
-  tranche** — s'il perçoit malgré tout une différence utile à l'usage
-  réel (au-delà de ce que montrent des captures statiques), revenir en
-  arrière sur ce commit uniquement et consigner la décision ici.
-- **Vérif** : `pnpm build`/`lint`/`test` (566 tests, 15 suites) verts ;
-  aucun effet de bord sur `CONTRAST-REPORT.md` (aucune couleur touchée).
+- Phase 4 of [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md): the
+  `apply-anti-glare-filter` mixin (`_anti-glare-functions.scss`) and its
+  invocation removed — the full-screen `body::before` overlay
+  (`backdrop-filter: contrast(98%) brightness(99%)`/`opacity: 0.3` in
+  light, `contrast(95%) brightness(102%)`/`opacity: 0.2` in dark,
+  `z-index: 9999`) imposed a permanent GPU cost for an effect measured
+  as nearly zero.
+- **CSS diff**: exactly the two rules `[data-theme="anti-glare-light"]
+  body::before` and `[data-theme="anti-glare-dark"] body::before`
+  disappear, nothing else (verified via a full diff).
+- **Before/after comparison**: automated screenshots
+  (headless Chromium, home page) of both anti-glare themes with and
+  without the overlay. Pixel-by-pixel diff: ~1.4% of pixels change by
+  more than 10/255 on a channel, concentrated on text/icon areas
+  (anti-aliasing noise between two distinct Chromium renders, not a
+  content change) — no perceptible visual difference attributable to
+  the overlay. Confirms the plan's diagnosis ("effect measured as
+  nearly zero").
+- **Decision**: the removal is kept by default. **The final call belongs
+  to whoever reviews it** — if a useful difference is nonetheless
+  perceived in real use (beyond what static screenshots show), revert
+  this commit only and log the decision here.
+- **Check**: `pnpm build`/`lint`/`test` (566 tests, 15 suites) green;
+  no side effect on `CONTRAST-REPORT.md` (no color touched).
 
-### Changed (chantier E2 — revue des moteurs, phase 3 — anti-éblouissement en OKLCH)
+### Changed (E2 chantier — engine review, phase 3 — anti-glare in OKLCH)
 
-- Phase 3 (décision actée par Simon le 2026-07-03) de
-  [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) : `transform-for-anti-glare`
-  (`_anti-glare-functions.scss`) réécrite pour travailler en espace OKLCH
+- Phase 3 (decision made 2026-07-03) of
+  [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md): `transform-for-anti-glare`
+  (`_anti-glare-functions.scss`) rewritten to work in OKLCH space
   (`color.channel(…, $space: oklch)` / `color.change(…, $space: oklch)` /
-  `color.to-space(…, rgb)`) au lieu de HSL — la lightness OKLCH est
-  perceptuellement uniforme, contrairement à HSL où un jaune et un bleu de
-  même L ne s'assombrissent pas visuellement à l'identique.
-- **Seuils recalibrés par rapport au point de départ du plan** (le plan le
-  signale explicitement comme un point de départ à ajuster, pas une
-  vérité) :
-  - Mode `dark` (`L < 22%`) : conservé tel quel. Mesure : sur le rail
-    décalé du thème dark, seul le cran `gray-400` (le plus sombre du
-    thème dark, OKLCH L ≈ 21.6%) passe sous ce seuil — exactement la même
-    couverture que l'ancien seuil HSL `< 15%` (qui ne couvrait, lui
-    aussi, que ce même cran, à HSL L ≈ 10%). Aucun ajustement nécessaire.
-  - Mode `light` (`L > 92%` dans le plan) : **abaissé à `L > 85%`**. Avec
-    92%, `stone-300` (OKLCH L ≈ 86.9%) restait en dehors du seuil et donc
-    quasiment intact, alors que l'ancien moteur HSL l'atténuait déjà
-    (HSL L ≈ 82.9%, au-dessus de son seuil `75%`). Rendu observé avant
-    correction : `--gray-300` en anti-glare-light passait de `#d6d3d1`
-    (original, quasi inchangé) au lieu d'un ton nettement atténué. Avec
-    85%, `stone-50`/`100`/`200`/`300` sont couverts (comme avant),
-    `stone-400` (OKLCH L ≈ 71.6%) reste hors seuil avec une marge large.
-- **Tableau comparatif** (moteur HSL, phase 2, vs moteur OKLCH, phase 3 —
-  hex arrondis) :
+  `color.to-space(…, rgb)`) instead of HSL — OKLCH lightness is
+  perceptually uniform, unlike HSL where a yellow and a blue with the
+  same L don't visually darken identically.
+- **Thresholds recalibrated from the plan's starting point** (the plan
+  explicitly flags it as a starting point to adjust, not a
+  truth):
+  - `dark` mode (`L < 22%`): kept as-is. Measurement: on the dark
+    theme's shifted rail, only the `gray-400` step (the darkest in the
+    dark theme, OKLCH L ≈ 21.6%) falls below this threshold — exactly
+    the same coverage as the old HSL threshold `< 15%` (which also only
+    covered this same step, at HSL L ≈ 10%). No adjustment needed.
+  - `light` mode (`L > 92%` in the plan): **lowered to `L > 85%`**. At
+    92%, `stone-300` (OKLCH L ≈ 86.9%) stayed outside the threshold and
+    so nearly untouched, whereas the old HSL engine already attenuated
+    it (HSL L ≈ 82.9%, above its `75%` threshold). Rendering observed
+    before the fix: `--gray-300` in anti-glare-light stayed at `#d6d3d1`
+    (original, nearly unchanged) instead of a clearly attenuated tone.
+    At 85%, `stone-50`/`100`/`200`/`300` are covered (as before),
+    `stone-400` (OKLCH L ≈ 71.6%) stays outside the threshold with a
+    wide margin.
+- **Comparison table** (HSL engine, phase 2, vs OKLCH engine, phase 3 —
+  rounded hex):
 
-  | Token | AGL avant | AGL après | AGD avant | AGD après |
+  | Token | AGL before | AGL after | AGD before | AGD after |
   | --- | --- | --- | --- | --- |
   | `--gray-950` | `#0c0a09` | `#0c0a09` | `#e7e5e4` | `#ece4e0` |
   | `--gray-900` | `#1c1917` | `#1c1917` | `#e7e5e4` | `#ece4e0` |
@@ -1274,217 +1294,216 @@ paquet qui, eux, câbleront ces rôles.
   | `--success` | `#0c8f66` | `#28946b` | `#ecfdf5` | `#edfdf5` |
   | `--danger` | `#d32f2f` | `#d43832` | `#fef2f2` | `#fef2f2` |
 
-  Lecture : `gray-300`/`200`/`100`/`50` sont désormais dans le même ordre
-  de grandeur qu'avant (auparavant `gray-300` seul restait quasi
-  intact avec le seuil 92% du plan) ; les grands aplats (`gray-950`
-  à `gray-500`, `link`, `danger`) sont quasi inchangés ; `accent-soft`
-  se déplace un peu plus que les autres primitives (chroma initiale plus
-  marquée). **Aucune de ces valeurs n'est définitive** : Simon reste seul
-  juge du réglage fin, le rendu ci-dessus n'est qu'un point de départ
-  raisonnable.
-- **Diff CSS** : strictement confiné aux blocs `anti-glare-light` et
-  `anti-glare-dark` (vérifié, mêmes plages de lignes qu'en phase 2).
-- **Effet de bord traité** : `CONTRAST-REPORT.md` régénéré. 6 waivers
-  référençant une paire affectée par ce changement de couleurs ont leur
-  ratio mesuré mis à jour dans `contrast-pairs.ts`
+  Reading it: `gray-300`/`200`/`100`/`50` are now in the same order of
+  magnitude as before (previously `gray-300` alone stayed nearly
+  untouched under the plan's 92% threshold); the large flat areas
+  (`gray-950` through `gray-500`, `link`, `danger`) are nearly
+  unchanged; `accent-soft` moves a bit more than the other primitives
+  (a stronger initial chroma). **None of these values are final**: the
+  final call on fine-tuning belongs to whoever reviews it, the
+  rendering above is only a reasonable starting point.
+- **CSS diff**: strictly confined to the `anti-glare-light` and
+  `anti-glare-dark` blocks (verified, the same line ranges as phase 2).
+- **Side effect handled**: `CONTRAST-REPORT.md` regenerated. 6 waivers
+  referencing a pair affected by this color change have their measured
+  ratio updated in `contrast-pairs.ts`
   (`role/fg-on-accent-on-accent`, `role/success-on-bg-base`,
   `role/danger-on-bg-base`, `site/header-text-on-header-bg`,
   `site/header-text-role-on-header-bg`,
-  `site/header-blog-link-text-on-bg` — tous en `anti-glare-light` et/ou
-  `anti-glare-dark`) ; tous restent non conformes après le changement,
-  aucun waiver devenu zombie.
-- **Vérification visuelle** : capture d'écran automatisée (Chromium
-  headless, page d'accueil) des deux thèmes anti-glare recalibrés —
-  rendu sain, cohérent avec la phase 2, aucune régression visible.
-  **Validation visuelle complète par Simon requise avant merge**,
-  en particulier sur le réglage fin des seuils OKLCH ci-dessus.
-- **Vérif** : `pnpm build`/`lint`/`test` (566 tests, 15 suites) verts.
+  `site/header-blog-link-text-on-bg` — all in `anti-glare-light` and/or
+  `anti-glare-dark`); all remain non-compliant after the change,
+  no waiver turned zombie.
+- **Visual check**: automated screenshots (headless
+  Chromium, home page) of both recalibrated anti-glare themes —
+  rendering sound, consistent with phase 2, no visible regression.
+  **Full visual validation required before merge**,
+  particularly on the OKLCH thresholds' fine-tuning above.
+- **Check**: `pnpm build`/`lint`/`test` (566 tests, 15 suites) green.
 
-### Changed (chantier E2 — revue des moteurs, phase 2 — anti-éblouissement en passe unique)
+### Changed (E2 chantier — engine review, phase 2 — single-pass anti-glare)
 
-- Phase 2 de [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) :
+- Phase 2 of [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md):
   `transform-theme-for-anti-glare` (`_anti-glare-functions.scss`)
-  réécrite pour dériver les ~70 tokens de couche 3 en **une seule passe**
-  depuis les rôles anti-éblouis (`@include apply-theme-variables;` juste
-  après `apply-roles()`), au lieu de re-transformer individuellement une
-  liste de ~22 tokens codée en dur. Supprimés : les 3 resynchronisations
-  manuelles de tokens de boutons (redondantes) et les ~22 blocs de
-  re-transformation individuelle.
-- **Bug corrigé** : ~45 tokens de couche 3 partageant un rôle avec les 22
-  auparavant listés (ex. `--color-lang-toggle-bg`, `--color-panel-bg`,
+  rewritten to derive the ~70 layer-3 tokens in a **single pass**
+  from the anti-glared roles (`@include apply-theme-variables;` right
+  after `apply-roles()`), instead of individually re-transforming a
+  hardcoded list of ~22 tokens. Removed: the 3 manual button-token
+  resyncs (redundant) and the ~22 individual re-transformation blocks.
+- **Bug fixed**: ~45 layer-3 tokens sharing a role with the 22
+  previously listed (e.g. `--color-lang-toggle-bg`, `--color-panel-bg`,
   `--color-button-active-outline`, `--color-tooltip-*`, `--color-focus-*`…)
-  n'étaient **jamais** atténués en anti-éblouissement (valeur clair brute).
-  Ils reçoivent maintenant la même atténuation que le reste de leur rôle.
-- **Constat en cours d'analyse, non prédit tel quel par le plan** : contrairement à l'attente du plan
-  (« double atténuation » pour les 22 tokens auparavant listés), la mesure
-  montre que ces 22 restent **strictement inchangés** (diff CSS vide sur
-  ces propriétés) — dans ce pipeline, les réassigner individuellement
-  après capture de leur valeur claire pré-transformation puis leur
-  appliquer `transform-for-anti-glare` une fois équivaut mathématiquement
-  à les dériver du rôle déjà transformé une fois (fonction pure appliquée
-  au même argument d'origine). Le bug réel n'était donc pas la double
-  atténuation mais uniquement l'absence totale de traitement des ~45
-  tokens oubliés — désormais corrigée. Aucune régression sur les 22.
-- **Diff CSS** : strictement confiné aux blocs `[data-theme="anti-glare-light"]`
-  et `[data-theme="anti-glare-dark"]` (vérifié : aucune ligne changée en
-  dehors de ces deux plages). Sortie brute (diff `phase1.css` →
-  `phase2.css`, 228 lignes, ~57 propriétés touchées par thème) conservée
-  dans `/tmp/theme-engines/phase2.diff` pour la revue de Simon.
-- **Effet de bord attendu et traité** : ce changement de couleurs réelles
-  a rendu `docs/theme-system/CONTRAST-REPORT.md` (chantier E1) périmé —
-  régénéré via `pnpm contrast:report`. Un seul waiver enregistré dans
-  `contrast-pairs.ts` référence une paire affectée
-  (`site/button-active-outline-on-panel-bg`, thème `anti-glare-light`,
-  qui n'était lui-même jamais atténué avant ce correctif) : ratio mesuré
-  mis à jour de 1.38 à 1.06 (toujours non conforme, aucun waiver devenu
-  zombie). Les autres waivers concernent des paires de rôles ou des
-  couples de tokens de couche 3 non affectés par ce correctif (vérifié
-  un par un contre le diff CSS).
-- **Vérification visuelle** : capture d'écran automatisée (Chromium
-  headless, page d'accueil) des deux thèmes anti-glare après correctif —
-  header, hero, panneaux collapse et footer s'affichent normalement,
-  aucun élément invisible ou non stylé. **Validation visuelle complète
-  par Simon requise avant merge**, comme l'exige le plan (comparaison
-  avant/après sur les pages principales).
-- **Vérif** : `pnpm build`/`lint`/`test` (566 tests, 15 suites) verts.
+  were **never** attenuated under anti-glare (a raw light value). They
+  now get the same attenuation as the rest of their role.
+- **Finding while analyzing, not predicted as such by the plan**:
+  contrary to the plan's expectation
+  ("double attenuation" for the 22 previously listed tokens), the
+  measurement shows these 22 come out **strictly unchanged** (an empty
+  CSS diff on these properties) — in this pipeline, reassigning them
+  individually after capturing their pre-transform light value then
+  applying `transform-for-anti-glare` to them once is mathematically
+  equivalent
+  deriving them from the role once already transformed (a pure function
+  applied to the same original argument). The real bug therefore wasn't
+  double attenuation but only the ~45 forgotten tokens going completely
+  untreated — now fixed. No regression on the 22.
+- **CSS diff**: strictly confined to the `[data-theme="anti-glare-light"]`
+  and `[data-theme="anti-glare-dark"]` blocks (verified: no line changed
+  outside these two ranges). Raw output (diff `phase1.css` →
+  `phase2.css`, 228 lines, ~57 properties touched per theme) kept
+  in `/tmp/theme-engines/phase2.diff` for review.
+- **Expected and handled side effect**: this real color change made
+  `docs/theme-system/CONTRAST-REPORT.md` (E1 chantier) stale —
+  regenerated via `pnpm contrast:report`. A single waiver recorded in
+  `contrast-pairs.ts` references an affected pair
+  (`site/button-active-outline-on-panel-bg`, `anti-glare-light` theme,
+  which itself was never attenuated before this fix): measured ratio
+  updated from 1.38 to 1.06 (still non-compliant, no waiver turned
+  zombie). The other waivers concern role pairs or layer-3 token pairs
+  unaffected by this fix (checked one by one against the CSS diff).
+- **Visual check**: automated screenshots (headless
+  Chromium, home page) of both anti-glare themes after the fix —
+  header, hero, collapse panels, and footer render normally,
+  no invisible or unstyled element. **Full visual validation
+  required before merge**, as the plan requires (a before/after
+  comparison on the main pages).
+- **Check**: `pnpm build`/`lint`/`test` (566 tests, 15 suites) green.
 
-### Fixed (chantier E2 — revue des moteurs, phase 1 — API et dead-code)
+### Fixed (E2 chantier — engine review, phase 1 — API and dead code)
 
-- Phase 1 de [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) (branche
-  `refactor/theme-engines`), corrections sans changement visuel :
-  - `_anti-glare-functions.scss` : paramètre `$intensity` de
-    `transform-for-anti-glare` supprimé (jamais passé à aucun des ~30
-    sites d'appel, vérifié par grep).
-  - `_theme-utils.scss` : variable morte `$hue_shift` supprimée dans
-    `adapt-color-for-color-anomaly` (calculée, jamais lue). Chevauchement
-    de fenêtre de teinte corrigé dans `adapt-color-for-colorblindness`
-    (la fenêtre rouge `$h >= 330 or $h <= 30` revendiquait `h = 30` en
-    commun avec la fenêtre verte `$h >= 30 and $h <= 150` ; changée en
-    `$h >= 330 or $h < 30`). `enhance-factor` des trois `-opies`
-    (deutéranopie, protanopie, tritanopie) rendu configurable : les
-    `auto-*-opia-transform` lisent désormais une clé `"enhancer"` du
-    config (même patron que les anomalies) au lieu de coder `2.5` en dur
-    dans l'appel à `adapt-color-for-colorblindness` ; les trois mixins
-    `transform-light-to-*opia` déclarent `"enhancer": 2.5` dans leur
-    config par défaut (valeur inchangée). Les fichiers de thèmes
-    `_deuteranopia.scss`/`_protanopia.scss`/`_tritanopia.scss` n'ont pas
-    été modifiés (aucun ne définissait déjà de clé `"enhancer"`, vérifié
-    par lecture des trois fichiers).
-- **Divergence constatée et non appliquée telle quelle (item 1 du plan,
-  l'expression `if()` de `transform-for-anti-glare`)** : le plan décrit
-  `@return if(sass($mode == "light"): #888888; else: #aaaaaa);` comme
-  cassée (« fonctionne par accident du parsing spécial de if() ») et
-  demande de la remplacer par la forme positionnelle
-  `if($mode == "light", #888888, #aaaaaa)`. Mesure faite avant
-  d'appliquer : avec Dart Sass 1.101.0 (version installée), c'est
-  l'inverse — compiler la forme positionnelle déclenche un nouveau
-  `DEPRECATION WARNING [if-function]` (« The Sass if() syntax is
-  deprecated in favor of the modern CSS syntax »), dont le message
-  suggère explicitement de revenir à la forme `sass(...): …; else: …`.
-  Un test isolé (`if($mode == "light", …)` vs `if(sass($mode ==
-  "light"): …; else: …)` pour `$mode` valant `"light"` puis `"dark"`)
-  confirme que les deux formes retournent déjà la bonne couleur — la
-  forme actuelle n'est donc pas buggée, c'est la syntaxe de
-  désambiguïsation officielle entre le `if()` Sass et le nouveau `if()`
-  CSS natif. Cette branche est de toute façon inatteignable en
-  fonctionnement normal (elle ne s'exécute que si `$color` n'est pas une
-  couleur valide, ce qu'aucun site d'appel ne produit). **Décision** :
-  code laissé tel quel (commentaire ajouté renvoyant à cette entrée),
-  aucune régression introduite. Arbitrage de Simon bienvenu si un
-  contexte m'échappe.
-- **Vérif** : CSS compilé strictement byte-identique à la baseline de
-  phase 0 (`diff` vide). `pnpm build`/`lint`/`test` (566 tests, 15
-  suites) verts.
+- Phase 1 of [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) (branch
+  `refactor/theme-engines`), fixes with no visual change:
+  - `_anti-glare-functions.scss`: `transform-for-anti-glare`'s
+    `$intensity` parameter removed (never passed at any of the ~30
+    call sites, verified via grep).
+  - `_theme-utils.scss`: the dead `$hue_shift` variable removed in
+    `adapt-color-for-color-anomaly` (computed, never read). A hue-window
+    overlap fixed in `adapt-color-for-colorblindness`
+    (the red window `$h >= 330 or $h <= 30` claimed `h = 30` in
+    common with the green window `$h >= 30 and $h <= 150`; changed to
+    `$h >= 330 or $h < 30`). The three `-opias`'
+    (deuteranopia, protanopia, tritanopia) `enhance-factor` made
+    configurable: the `auto-*-opia-transform` functions now read an
+    `"enhancer"` config key (same pattern as the anomalies) instead of
+    hardcoding `2.5` in the call to `adapt-color-for-colorblindness`;
+    the three `transform-light-to-*opia` mixins declare
+    `"enhancer": 2.5` in their default config (value unchanged). The
+    `_deuteranopia.scss`/`_protanopia.scss`/`_tritanopia.scss` theme
+    files weren't modified (none already defined an `"enhancer"` key,
+    verified by reading all three files).
+- **A deviation found and NOT applied as written (plan item 1, the
+  `if()` expression in `transform-for-anti-glare`)**: the plan describes
+  `@return if(sass($mode == "light"): #888888; else: #aaaaaa);` as
+  broken ("works by accident of if()'s special parsing") and
+  asks for it to be replaced with the positional form
+  `if($mode == "light", #888888, #aaaaaa)`. Measured before
+  applying it: with Dart Sass 1.101.0 (the installed version), it's
+  the opposite — compiling the positional form triggers a new
+  `DEPRECATION WARNING [if-function]` ("The Sass if() syntax is
+  deprecated in favor of the modern CSS syntax"), whose message
+  explicitly suggests going back to the `sass(...): …; else: …` form.
+  An isolated test (`if($mode == "light", …)` vs `if(sass($mode ==
+  "light"): …; else: …)` for `$mode` set to `"light"` then `"dark"`)
+  confirms both forms already return the right color — the current
+  form isn't buggy, then: it's the official disambiguation syntax
+  between Sass's `if()` and the new native CSS `if()`. This branch is
+  unreachable in normal operation anyway (it only runs if `$color`
+  isn't a valid color, which no call site produces). **Decision**:
+  code left as-is (a comment added pointing back to this entry),
+  no regression introduced. A second opinion welcome if some context is
+  being missed.
+- **Check**: compiled CSS strictly byte-identical to the phase 0
+  baseline (empty `diff`). `pnpm build`/`lint`/`test` (566 tests, 15
+  suites) green.
 
-### Docs (chantier E1 — tests de contrastes, phase 5 — finalisation)
+### Docs (E1 chantier — contrast tests, phase 5 — wrap-up)
 
-- Phase 5 (dernière) de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) :
-  vérification finale et documentation. `pnpm build`/`lint`/`test` verts ;
-  CSS compilé toujours strictement byte-identique à la baseline de phase 0
-  (`diff` vide sur `sass --no-source-map --style=expanded`).
-- README mis à jour : carte des documents (E1 marqué exécuté, ajout de la
-  ligne CONTRAST-REPORT.md), § 6.4 (le second chantier hors périmètre de la
-  migration fondations — les tests de contraste — est maintenant fait).
-  Guide E1→E7 mis à jour (E1 marqué fait avec résumé du résultat).
-- **Rapport final pour arbitrage de Simon** — 7 paires waivées, triées par
-  gravité (ratio mesuré le plus bas d'abord) :
+- Phase 5 (last) of [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md):
+  final verification and documentation. `pnpm build`/`lint`/`test` green;
+  compiled CSS still strictly byte-identical to the phase 0 baseline
+  (empty `diff` on `sass --no-source-map --style=expanded`).
+- README updated: document map (E1 marked executed, the
+  CONTRAST-REPORT.md line added), § 6.4 (the foundations migration's
+  second out-of-scope chantier — contrast tests — is now done).
+  The E1→E7 guide updated (E1 marked done with a result summary).
+- **Final report** — 7 waived pairs, sorted by
+  severity (lowest measured ratio first):
 
-  1. `site/button-active-outline-on-panel-bg` — **1.00:1 en high-contrast**
-     (le contour actif du bouton est littéralement invisible : `--accent`
-     et `--bg-base` résolvent tous deux à `#000000` dans ce thème) ; 1.02
-     à 1.38:1 dans les 9 autres thèmes waivés. **Recommandation** :
-     ajustement de rôle — `--color-button-active-outline` pourrait être
-     recâblé sur `--accent-strong` (déjà défini, amber-500) plutôt que
-     `--accent` ; à valider par Simon, hors périmètre de ce chantier
-     additif.
-  2. `role/fg-on-accent-on-accent` — 1.15:1 en `dark`, 1.18:1 en
-     `anti-glare-dark`. **Recommandation** : révision du modèle de rôles
-     (chantier E2, revue des moteurs) — `--fg-on-accent` s'inverse avec
-     les autres rôles de texte alors que `--accent` reste volontairement
-     fixe entre thèmes clair/sombre.
-  3. `site/header-text-on-header-bg` — même cause et mêmes ratios que
-     `role/fg-on-accent-on-accent` (paire identique). Même recommandation.
-  4. `role/danger-on-bg-base` — 1.34:1 en `protanopia`, 1.45:1 en
-     `deuteranopia`, 3.25–3.46:1 dans 4 autres thèmes. **Recommandation** :
-     [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) — les
-     couleurs de substitution des moteurs daltoniens sont choisies pour la
-     distinguabilité perceptuelle, pas le contraste ; `--danger` n'étant
-     consommé par aucun composant à ce jour, aucune urgence utilisateur.
-  5. `site/header-text-role-on-header-bg` — 1.38:1 en `dark`, 1.42:1 en
-     `anti-glare-dark`. **Recommandation** : chantier E2 (même famille que
-     #2/#3 — `--fg-muted`/`--accent` sur fond accent en thème sombre).
-  6. `site/header-blog-link-text-on-bg` — mêmes ratios que #5 (mêmes deux
-     couleurs, fg/bg échangés). Même recommandation.
-  7. `role/success-on-bg-base` — 2.42:1 en `achromatopsia`, 2.81–4.03:1
-     dans 8 autres thèmes. **Recommandation** : ajustement de rôle
-     (`emerald-600` → un cran plus soutenu) si `--success` venait à être
-     consommé par un composant ; aucune urgence, actuellement inutilisé.
+  1. `site/button-active-outline-on-panel-bg` — **1.00:1 in high-contrast**
+     (the button's active outline is literally invisible: `--accent`
+     and `--bg-base` both resolve to `#000000` in this theme); 1.02
+     to 1.38:1 in the 9 other waived themes. **Recommendation**:
+     a role adjustment — `--color-button-active-outline` could be
+     rewired onto `--accent-strong` (already defined, amber-500) instead
+     of `--accent`; to validate, out of this additive chantier's scope.
+  2. `role/fg-on-accent-on-accent` — 1.15:1 in `dark`, 1.18:1 in
+     `anti-glare-dark`. **Recommendation**: a role-model revision
+     (E2 chantier, engine review) — `--fg-on-accent` inverts along with
+     the other text roles while `--accent` deliberately stays
+     fixed between light/dark themes.
+  3. `site/header-text-on-header-bg` — same cause and same ratios as
+     `role/fg-on-accent-on-accent` (an identical pair). Same recommendation.
+  4. `role/danger-on-bg-base` — 1.34:1 in `protanopia`, 1.45:1 in
+     `deuteranopia`, 3.25–3.46:1 in 4 other themes. **Recommendation**:
+     [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) — the
+     color-blind engines' substitute colors are chosen for perceptual
+     distinguishability, not contrast; `--danger` being consumed by no
+     component to this day, no user urgency.
+  5. `site/header-text-role-on-header-bg` — 1.38:1 in `dark`, 1.42:1 in
+     `anti-glare-dark`. **Recommendation**: E2 chantier (same family as
+     #2/#3 — `--fg-muted`/`--accent` on an accent background in a dark theme).
+  6. `site/header-blog-link-text-on-bg` — same ratios as #5 (same two
+     colors, fg/bg swapped). Same recommendation.
+  7. `role/success-on-bg-base` — 2.42:1 in `achromatopsia`, 2.81–4.03:1
+     in 8 other themes. **Recommendation**: a role adjustment
+     (`emerald-600` → one step darker) if `--success` were to be
+     consumed by a component; no urgency, currently unused.
 
-  Détail complet (raisons factuelles, valeurs hex/HSL vérifiées, ratios par
-  thème) : [contrast-pairs.ts](../../src/accessibility/contrast/contrast-pairs.ts)
-  et [CONTRAST-REPORT.md](./CONTRAST-REPORT.md).
-- Rappel : chantier strictement additif du début à la fin — aucune couleur,
-  rôle ou thème n'a été modifié dans `src/styles/`. Les 7 points ci-dessus
-  sont des **propositions** pour un futur chantier corrective ; leur
-  traitement (et son ordonnancement vs E2/E3) reste à l'arbitrage de Simon.
+  Full details (factual reasons, verified hex/HSL values, per-theme
+  ratios): [contrast-pairs.ts](../../src/accessibility/contrast/contrast-pairs.ts)
+  and [CONTRAST-REPORT.md](./CONTRAST-REPORT.md).
+- Reminder: a strictly additive chantier from start to finish — no color,
+  role, or theme was modified in `src/styles/`. The 7 points above
+  are **proposals** for a future corrective chantier; whether and how to
+  handle them (and their ordering vs. E2/E3) remains to be decided.
 
-### Added (chantier E1 — tests de contrastes, phase 4)
+### Added (E1 chantier — contrast tests, phase 4)
 
-- Phase 4 de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) :
-  `src/accessibility/contrast/report.ts`, générateur de
-  [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) (matrice `pairs × 12
-  thèmes`, cellule = ratio mesuré + symbole ✓/✗/⚠, légende des
-  abréviations de thème, section « Waivers » reprenant les raisons de
-  `contrast-pairs.ts`). Script `pnpm contrast:report` (via `tsx`) ajouté
-  à `package.json`.
-  - Refactor mineur au passage : la logique de résolution/mesure
-    (`resolveColor` + `measureRatio`), jusque-là dupliquée dans
-    `contrast.test.ts`, extraite dans `src/accessibility/contrast/measure.ts`
-    et réutilisée par `contrast.test.ts` et `report.ts` — aucun changement
-    de comportement (498 tests toujours verts après le refactor).
-  - **Date de génération non source de flakiness** : `generateReport()`
-    accepte une date en paramètre ; le test de fraîcheur
-    (`report.test.ts`) extrait la date déjà présente dans le fichier
-    commité, régénère avec cette même date, puis compare le contenu
-    intégral. Ainsi le test échoue uniquement si les *données* (couleurs,
-    ratios, waivers) ont changé sans régénération — jamais à cause du
-    changement de date d'un jour sur l'autre.
-  - Rapport généré et commité. État actuel : 33 cellules `⚠` (les 7 paires
-    waivées en phase 3), 0 cellule `✗` restante.
-  - Vérifié : `pnpm test` (566 tests, 15 suites) vert, `pnpm lint` vert,
-    `pnpm exec tsc --noEmit` vert, CSS compilé strictement identique à la
-    baseline de phase 0.
+- Phase 4 of [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md):
+  `src/accessibility/contrast/report.ts`, the generator for
+  [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) (a `pairs × 12
+  themes` matrix, cell = measured ratio + ✓/✗/⚠ symbol, a theme-
+  abbreviation legend, a "Waivers" section pulling in the reasons from
+  `contrast-pairs.ts`). A `pnpm contrast:report` script (via `tsx`) added
+  to `package.json`.
+  - A minor refactor along the way: the resolve/measure logic
+    (`resolveColor` + `measureRatio`), until now duplicated in
+    `contrast.test.ts`, extracted into `src/accessibility/contrast/measure.ts`
+    and reused by both `contrast.test.ts` and `report.ts` — no behavior
+    change (498 tests still green after the refactor).
+  - **Generation date isn't a source of flakiness**: `generateReport()`
+    accepts a date parameter; the freshness test
+    (`report.test.ts`) extracts the date already present in the
+    committed file, regenerates with that same date, then compares the
+    full content. So the test only fails if the *data* (colors,
+    ratios, waivers) changed without regenerating — never just because
+    the date changed from one day to the next.
+  - Report generated and committed. Current state: 33 `⚠` cells (the 7
+    pairs waived in phase 3), 0 remaining `✗` cell.
+  - Verified: `pnpm test` (566 tests, 15 suites) green, `pnpm lint` green,
+    `pnpm exec tsc --noEmit` green, compiled CSS strictly identical to
+    the phase 0 baseline.
 
-### Added (chantier E1 — tests de contrastes, phase 3)
+### Added (E1 chantier — contrast tests, phase 3)
 
-- Phase 3 de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) :
-  `src/accessibility/contrast/__tests__/contrast.test.ts`, la suite Jest
-  complète (matrice paire × thème, 498 tests), plus le mécanisme
-  anti-zombie (un waiver dont le ratio mesuré redevient conforme fait
-  échouer le test avec un message explicite demandant sa suppression).
-- Premier run (inventaire, échec attendu par le plan) : **33 échecs / 482
-  tests**, regroupés sur **7 paires** distinctes. Sortie brute du script de
-  mesure (`getVar` + `wcag.ts`, avant tout waiver) :
+- Phase 3 of [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md):
+  `src/accessibility/contrast/__tests__/contrast.test.ts`, the full Jest
+  suite (a pair × theme matrix, 498 tests), plus the
+  anti-zombie mechanism (a waiver whose measured ratio becomes
+  compliant again fails the test with an explicit message asking for
+  its removal).
+- First run (inventory, a failure expected by the plan): **33 failures /
+  482 tests**, grouped across **7** distinct pairs. Raw output from the
+  measurement script (`getVar` + `wcag.ts`, before any waiver):
 
   ```
   Total failures: 33
@@ -1524,563 +1543,569 @@ paquet qui, eux, câbleront ces rôles.
   site/button-active-outline-on-panel-bg achromatopsia      ratio=1.2069  threshold=3
   ```
 
-- 7 waivers `preexisting: true` ajoutés dans `contrast-pairs.ts`, chacun
-  avec le ratio mesuré par thème et une raison factuelle (valeurs
-  hexadécimales/HSL vérifiées via `getVar`, aucune couleur corrigée) :
-  - **`role/fg-on-accent-on-accent`** et **`site/header-text-on-header-bg`**
-    (même paire de variables) : `--accent` reste volontairement fixe
-    (`#fcd34d`) entre les thèmes clair et sombre, mais `--fg-on-accent`
-    s'inverse avec le reste des rôles de texte (`#0c0a09` en clair,
-    `#e7e5e4` en sombre) — texte clair sur fond resté clair en
-    `dark`/`anti-glare-dark`.
-  - **`site/header-text-role-on-header-bg`** et
-    **`site/header-blog-link-text-on-bg`** : même paire de couleurs
-    résolues (`--fg-muted` inversé ≈ `#fafaf9` en sombre / `--accent`
-    fixe `#fcd34d`), fg et bg simplement échangés entre les deux paires —
-    d'où les ratios identiques.
-  - **`role/success-on-bg-base`** : `emerald-600` choisi pour sa
-    reconnaissabilité sémantique, pas pour son contraste sur `--bg-base` ;
-    `--success` n'est consommé par aucun composant actuellement (vérifié
-    par grep, aucun `var(--success)` dans `src/`).
-  - **`role/danger-on-bg-base`** : `red-600` passe 4.5:1 sur `--bg-base`
-    dans la plupart des thèmes, mais les couleurs de substitution des
-    moteurs daltoniens (ex. `#ffcc00` en deutéranopie/protanopie, choisies
-    pour la distinguabilité perceptuelle, pas le contraste) tombent bien
-    en dessous ; `--danger` n'est consommé par aucun composant
-    actuellement. Candidat pour
+- 7 `preexisting: true` waivers added in `contrast-pairs.ts`, each
+  with the measured per-theme ratio and a factual reason (hex/HSL
+  values verified via `getVar`, no color fixed):
+  - **`role/fg-on-accent-on-accent`** and **`site/header-text-on-header-bg`**
+    (the same variable pair): `--accent` deliberately stays fixed
+    (`#fcd34d`) between the light and dark themes, but `--fg-on-accent`
+    inverts along with the other text roles (`#0c0a09` in light,
+    `#e7e5e4` in dark) — light text on a background that stayed light
+    in `dark`/`anti-glare-dark`.
+  - **`site/header-text-role-on-header-bg`** and
+    **`site/header-blog-link-text-on-bg`**: the same resolved color
+    pair (inverted `--fg-muted` ≈ `#fafaf9` in dark / fixed `--accent`
+    `#fcd34d`), fg and bg simply swapped between the two pairs — hence
+    the identical ratios.
+  - **`role/success-on-bg-base`**: `emerald-600` chosen for its
+    semantic recognizability, not its contrast on `--bg-base`;
+    `--success` is currently consumed by no component (verified via
+    grep, no `var(--success)` in `src/`).
+  - **`role/danger-on-bg-base`**: `red-600` passes 4.5:1 on `--bg-base`
+    in most themes, but the color-blind engines' substitute colors
+    (e.g. `#ffcc00` in deuteranopia/protanopia, chosen for perceptual
+    distinguishability, not contrast) fall well
+    below it; `--danger` is currently consumed by no component. A
+    candidate for
     [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md).
-  - **`site/button-active-outline-on-panel-bg`** : en `high-contrast`,
-    `--color-button-active-outline` (= `--accent`) et `--color-panel-bg`
-    (= `--bg-base`) résolvent tous deux à `#000000` — ratio exactement
-    1:1, contour totalement invisible sur son fond. Dans les autres
-    thèmes clairs, `--accent` (ambre clair) sur `--bg-base` (quasi blanc)
-    est structurellement sous le seuil non-texte de 3:1 ; les thèmes
-    sombres passent car `--bg-base` y devient sombre. Un rôle plus
-    contrasté (`--accent-strong`) existe déjà mais n'est pas câblé sur ce
-    token.
-- Suite complète re-exécutée après ajout des waivers : **498/498 tests
-  verts** (incluant la garde anti-zombie). Nettoyage du script de mesure
-  temporaire `__scratch_inventory.ts` (non livrable, jamais commité).
-- Vérifié : `pnpm test` (565 tests, 14 suites) vert, `pnpm lint` vert,
-  `pnpm exec tsc --noEmit` vert, CSS compilé strictement identique à la
-  baseline de phase 0 (`diff` vide, hors commentaire `sourceMappingURL`
-  absent dans les deux avec `--no-source-map`).
+  - **`site/button-active-outline-on-panel-bg`**: in `high-contrast`,
+    `--color-button-active-outline` (= `--accent`) and `--color-panel-bg`
+    (= `--bg-base`) both resolve to `#000000` — an exact
+    1:1 ratio, the outline completely invisible on its background. In
+    the other light themes, `--accent` (light amber) on `--bg-base`
+    (near-white) is structurally below the 3:1 non-text threshold; dark
+    themes pass since `--bg-base` becomes dark there. A more
+    contrasted role (`--accent-strong`) already exists but isn't wired
+    to this token.
+- Full suite re-run after adding the waivers: **498/498 tests
+  green** (including the anti-zombie guard). Cleaned up the temporary
+  measurement script `__scratch_inventory.ts` (not a deliverable, never
+  committed).
+- Verified: `pnpm test` (565 tests, 14 suites) green, `pnpm lint` green,
+  `pnpm exec tsc --noEmit` green, compiled CSS strictly identical to the
+  phase 0 baseline (empty `diff`, aside from the `sourceMappingURL`
+  comment absent in both with `--no-source-map`).
 
-### Added (chantier E1 — tests de contrastes, phase 2)
+### Added (E1 chantier — contrast tests, phase 2)
 
-- Phase 2 de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) :
-  `src/accessibility/contrast/contrast-pairs.ts`, le registre des paires
-  fg/bg (source de vérité, extensible, jamais amputé — un échec devient un
-  waiver en phase 3, pas une suppression).
-  - 19 paires **niveau rôles** (partiront dans le paquet, README § 6.1) et
-    21 paires **niveau site** (couche 3, propre au portfolio), reprises
-    telles quelles des tables du plan. `--color-tooltip-text` déclare
-    `composeOver: "--bg-base"` (son fond porte un alpha).
-  - `@types/culori` ajouté (types manquants du paquet `culori`).
-  - Vérifié : `pnpm lint` et `pnpm exec tsc --noEmit` verts.
+- Phase 2 of [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md):
+  `src/accessibility/contrast/contrast-pairs.ts`, the fg/bg pair
+  registry (source of truth, extensible, never amputated — a failure
+  becomes a waiver in phase 3, not a removal).
+  - 19 **role-level** pairs (will move into the package, README § 6.1)
+    and 21 **site-level** pairs (layer 3, portfolio-specific), copied
+    as-is from the plan's tables. `--color-tooltip-text` declares
+    `composeOver: "--bg-base"` (its background carries alpha).
+  - `@types/culori` added (missing types for the `culori` package).
+  - Verified: `pnpm lint` and `pnpm exec tsc --noEmit` green.
 
-### Added (chantier E1 — tests de contrastes, phase 1)
+### Added (E1 chantier — contrast tests, phase 1)
 
-- Phase 1 de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md) : mise en
-  place des utilitaires du système de tests de contrastes WCAG (branche
-  `feat/contrast-tests`, chantier additif — aucun fichier de `src/styles/`
-  modifié, CSS compilé byte-identique).
-  - Dépendances dev ajoutées : `culori` (parsing/conversion de couleurs),
-    `postcss` (parsing structuré du CSS compilé), `tsx` (exécution du futur
-    générateur de rapport, phase 4).
-  - `src/accessibility/contrast/wcag.ts` : `toRgb()` (erreur explicite sur
-    couleur invalide, jamais de repli silencieux), `compositeOver()`
-    (composition alpha standard sRGB), `contrastRatio()` (délègue à
-    `culori.wcagContrast`, à appeler après composition), `thresholdFor()`
-    (seuils WCAG 2.2 : `text` 4.5, `large-text`/`non-text` 3.0).
-  - `src/accessibility/contrast/extract-themes.ts` : compile
-    `src/styles/main.scss` via l'API JS de `sass` (mémoïsé), parse le CSS
-    avec `postcss`, extrait les custom properties de chacun des 12 blocs
-    `[data-theme="X"]` (sélecteur exact, pas les descendants comme
-    `[data-theme="dark"] .header__title-name`) ainsi que de `:root`. Erreur
-    explicite si un thème de `src/config/themes.ts` (source unique) est
-    absent du CSS compilé.
-  - **Bug détecté et corrigé pendant l'écriture des tests** : `:root`
-    contient *deux* règles distinctes dans le CSS compilé — celle du
-    système de thèmes (~94 propriétés) et une autre, sans rapport, de
-    `_scroll-progress.scss` (`--scroll-progress-link-default`). La première
-    version de l'extraction ne gardait que la dernière rencontrée, perdant
-    silencieusement les valeurs de thème. Corrigé en fusionnant toutes les
-    règles `:root` (comme le ferait la cascade CSS), et le test de
-    cohérence adapté en conséquence (vérifie que les propriétés de thème de
-    `:root` concordent avec `[data-theme="light"]`, sans exiger que `:root`
-    ne contienne *que* des tokens de thème).
-  - Tests unitaires : `wcag.test.ts` (valeurs de référence connues :
-    noir/blanc = 21:1, `#767676`/blanc ≈ 4.54:1, composition
-    `rgba(0,0,0,0.5)` sur blanc ≈ `#808080`), `extract-themes.test.ts` (les
-    12 thèmes présents, cohérence `:root`, erreurs explicites sur
-    thème/propriété inconnus).
-  - Vérifié : `pnpm test` vert (83 tests, 13 suites), `pnpm lint` vert, CSS
-    compilé strictement identique à la baseline de phase 0.
+- Phase 1 of [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md):
+  setting up the WCAG contrast testing system's utilities (branch
+  `feat/contrast-tests`, an additive chantier — no `src/styles/` file
+  modified, byte-identical compiled CSS).
+  - Dev dependencies added: `culori` (color parsing/conversion),
+    `postcss` (structured parsing of the compiled CSS), `tsx` (running
+    the future report generator, phase 4).
+  - `src/accessibility/contrast/wcag.ts`: `toRgb()` (an explicit error
+    on an invalid color, never a silent fallback), `compositeOver()`
+    (standard sRGB alpha compositing), `contrastRatio()` (delegates to
+    `culori.wcagContrast`, to call after compositing), `thresholdFor()`
+    (WCAG 2.2 thresholds: `text` 4.5, `large-text`/`non-text` 3.0).
+  - `src/accessibility/contrast/extract-themes.ts`: compiles
+    `src/styles/main.scss` via the `sass` JS API (memoized), parses the
+    CSS with `postcss`, extracts the custom properties from each of the
+    12 `[data-theme="X"]` blocks (exact selector, not descendants like
+    `[data-theme="dark"] .header__title-name`) as well as `:root`. An
+    explicit error if a theme from `src/config/themes.ts` (single
+    source) is missing from the compiled CSS.
+  - **A bug found and fixed while writing the tests**: `:root`
+    contains *two* distinct rules in the compiled CSS — the theme
+    system's (~94 properties) and another, unrelated one from
+    `_scroll-progress.scss` (`--scroll-progress-link-default`). The
+    extraction's first version only kept the last one encountered,
+    silently losing the theme values. Fixed by merging every `:root`
+    rule (as the CSS cascade would), and the consistency test adjusted
+    accordingly (checks that `:root`'s theme properties match
+    `[data-theme="light"]`, without requiring `:root` to contain
+    *only* theme tokens).
+  - Unit tests: `wcag.test.ts` (known reference values:
+    black/white = 21:1, `#767676`/white ≈ 4.54:1, compositing
+    `rgba(0,0,0,0.5)` over white ≈ `#808080`), `extract-themes.test.ts`
+    (the 12 themes present, `:root` consistency, explicit errors on an
+    unknown theme/property).
+  - Verified: `pnpm test` green (83 tests, 13 suites), `pnpm lint` green,
+    compiled CSS strictly identical to the phase 0 baseline.
 
 ## 2026-07-03
 
-### Docs (plan de la refonte daltonienne + carte des documents)
+### Docs (color-blind redesign plan + document map)
 
-- Création de [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) :
-  remap de familles Tailwind à poids constant (résolution en 3 étapes :
-  table de familles → `special-colors` → repli OKLCH), anomalies par
-  mélange perceptuel `color.mix(…, oklch)` avec `severity` configurable,
-  tests de distinguabilité par simulation CVD (matrices Machado, ΔE
-  CIEDE2000, seuil de calibration ≥ 20) livrés **avant** la bascule des
-  thèmes, tables par défaut proposées comme points de calibration
-  (validation Simon + tests), purge des anciens chemins (fenêtres de
-  teinte HSL). Prérequis bloquant : E1 mergé ; E2 recommandé avant.
-- Ajout d'une **carte des documents** en tête du README (rôle et statut de
-  chaque document, principe « un chantier = un plan = une branche = une
-  exécution par IA »).
+- Created [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md):
+  constant-weight Tailwind family remap (3-step resolution:
+  family table → `special-colors` → OKLCH fallback), anomalies via a
+  perceptual `color.mix(…, oklch)` blend with configurable `severity`,
+  CVD-simulation distinguishability tests (Machado matrices, CIEDE2000
+  ΔE, calibration threshold ≥ 20) shipped **before** switching the
+  themes, default tables proposed as calibration points
+  (validated via tests), purging the old paths (HSL hue windows).
+  Blocking prerequisite: E1 merged; E2 recommended first.
+- Added a **document map** at the top of the README (each document's
+  role and status, the "one chantier = one plan = one branch = one
+  AI-driven execution" principle).
 
-### Docs (plan des tests de contrastes)
+### Docs (contrast testing plan)
 
-- Création de [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md)
-  (chantier E1, pour IA exécutante) : implantation dans
-  `src/accessibility/contrast/`, utilitaires WCAG (culori, composition
-  alpha), extraction des 12 blocs `[data-theme]` du CSS compilé (postcss),
-  registre initial de ~40 paires (rôles + couche 3 du site), suite Jest
-  avec mécanisme de waivers anti-zombies (un waiver dont le ratio devient
-  conforme fait échouer le test), rapport matrice généré et commité
-  (`CONTRAST-REPORT.md`) avec test de fraîcheur. Chantier purement
-  additif : aucun fichier de `src/styles/` modifié, les échecs
-  préexistants sont inventoriés en waivers pour arbitrage de Simon.
+- Created [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md)
+  (E1 chantier, for the execution AI): implementation inside
+  `src/accessibility/contrast/`, WCAG utilities (culori, alpha
+  compositing), extraction of the compiled CSS's 12 `[data-theme]`
+  blocks (postcss), an initial registry of ~40 pairs (roles + the
+  site's layer 3), a Jest suite with an anti-zombie waiver mechanism
+  (a waiver whose ratio becomes compliant fails the test), a generated
+  and committed matrix report
+  (`CONTRAST-REPORT.md`) with a freshness test. A purely
+  additive chantier: no `src/styles/` file modified, pre-existing
+  failures inventoried as waivers for review.
 
-### Docs (garde-fous du remap daltonien — mesures)
+### Docs (color-blind remap safeguards — measurements)
 
-- Question de Simon : le remap de familles peut-il casser le ratio 4.5:1 ou
-  entrer en collision avec un fond ? Réponse mesurée : **oui, sans
-  garde-fous**. La luminance Tailwind n'est pas constante entre familles à
-  poids égal (à 600 : 0.167 `redd` → 0.280 `amber` ;
-  `redd-600→amber-600` sur fond clair : 4.62:1 → 3.05:1). Garde-fous
-  intégrés au mécanisme (guide E2) : décalage de poids par entrée de table
-  (`redd→amber(+1)` → 4.81:1) et tables par défaut conscientes des
-  collisions ; la garantie finale reste portée par la vérification E1.
-  Découverte annexe : la `special-color` erreur de la deutéranopie
-  actuelle (`#ffcc00`) vaut **1.45:1** sur fond clair — latent (aucun
-  composant ne consomme `--danger` aujourd'hui), mais piège certain du
-  paquet publié ; confirme le séquencement E1 d'abord.
+- Question: can the family remap break the 4.5:1 ratio or
+  collide with a background? Measured answer: **yes, without
+  safeguards**. Tailwind luminance isn't constant across families at
+  equal weight (at 600: 0.167 `redd` → 0.280 `amber`;
+  `redd-600→amber-600` on a light background: 4.62:1 → 3.05:1).
+  Safeguards folded into the mechanism (guide E2): a per-table-entry
+  weight shift (`redd→amber(+1)` → 4.81:1) and default tables aware of
+  collisions; the final guarantee still comes from the E1 verification.
+  A side discovery: the current deuteranopia `special-color` error
+  (`#ffcc00`) sits at **1.45:1** on a light background — latent (no
+  component consumes `--danger` today), but a certain trap for the
+  published package; confirms sequencing E1 first.
 
-### Docs (évolutions des moteurs actées)
+### Docs (engine evolutions decided)
 
-- Décisions de Simon sur les propositions d'évolution des moteurs :
-  **OKLCH acté** pour l'anti-éblouissement (ajouté au
-  [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) comme phase 3, avec
-  procédure de calibration sur le rail gris ; overlay et finalisation
-  renumérotés en phases 4 et 5) **et** pour le daltonien. Refonte
-  daltonienne actée dans son principe et reformulée sous les contraintes de
-  conception de Simon (guide E2) : le système est **ancré aux palettes
-  Tailwind** (les consommateurs personnalisent en adoptant la géométrie 11
-  poids) et l'adaptation **ne doit pas enlaidir** — d'où le mécanisme
-  retenu : **remap de familles Tailwind à poids constant** (ex.
-  deutéranopie : `emerald → sky`, `redd → amber`), OKLCH en repli hors
-  palette, vérifié par les tests de distinguabilité par simulation CVD
-  (chantier E1). La refonte daltonienne est séquencée après E1 et recevra
-  son propre plan.
+- Decisions on the proposed engine evolutions:
+  **OKLCH decided** for anti-glare (added to
+  [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) as phase 3, with a
+  calibration procedure on the gray rail; the overlay and wrap-up
+  renumbered as phases 4 and 5) **and** for the color-blind engine.
+  Color-blind redesign decided in principle and reworded under the
+  design constraints (guide E2): the system is **anchored to Tailwind
+  palettes** (consumers customize by adopting the 11-weight geometry)
+  and the adaptation **must not make things ugly** — hence the chosen
+  mechanism: **constant-weight Tailwind family remap** (e.g.
+  deuteranopia: `emerald → sky`, `redd → amber`), OKLCH as an
+  off-palette fallback, verified by the CVD-simulation distinguishability
+  tests (E1 chantier). The color-blind redesign is sequenced after E1
+  and will get its own plan.
 
-### Docs (plan de correction des moteurs)
+### Docs (engine fix plan)
 
-- Création de [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) (chantier E2,
-  pour IA exécutante) : phase 1 sans changement visuel (`if()` mal formé,
-  `$intensity` inutilisé, `$hue_shift` morte, `enhance-factor` configurable
-  avec défaut 2.5, borne de fenêtre de teinte) ; phase 2 anti-glare en
-  **passe unique à couverture totale** (corrige la double atténuation de
-  ~25 tokens et l'absence d'atténuation de ~45 autres) ; phase 3
-  suppression de l'overlay `backdrop-filter` (décision visuelle Simon).
-  Les évolutions de mécanisme (OKLCH, ancres de teintes, tests de
-  distinguabilité par simulation CVD) sont consignées dans le guide E2
-  comme propositions en attente d'arbitrage.
+- Created [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) (E2 chantier,
+  for the execution AI): phase 1 with no visual change (malformed
+  `if()`, unused `$intensity`, dead `$hue_shift`, configurable
+  `enhance-factor` with a 2.5 default, a hue-window boundary fix); phase
+  2 anti-glare in a **single, fully-covering pass** (fixes the double
+  attenuation of ~25 tokens and the lack of attenuation of ~45 others);
+  phase 3 removing the `backdrop-filter` overlay (a visual decision).
+  The mechanism evolutions (OKLCH, hue anchors, CVD-simulation
+  distinguishability tests) are logged in guide E2 as
+  proposals awaiting a decision.
 
-### Docs (guide d'extraction + revue des moteurs)
+### Docs (extraction guide + engine review)
 
-- Création de [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) :
-  grandes lignes de la transformation en paquet open source (chantiers
-  E1→E7 : tests de contraste d'abord, revue des moteurs, monorepo pnpm,
-  extraction SCSS puis runtime, modules de préférences, CLI de scaffolding,
-  publication npm publique), avec la conception détaillée du **système de
-  tests de contrastes** (registre de paires, compilation → extraction par
-  bloc `[data-theme]` → ratio WCAG 2.2, gestion de l'alpha par composition,
-  waivers documentés, rapport matrice, APCA consultatif).
-- Merge de `refactor/theme-foundations` dans `main` (`bbc28f0`) après
-  validation visuelle des ombres restaurées par Simon ; branche supprimée.
-- Revue des moteurs (constats, corrections à planifier — chantier E2 du
-  guide) : **anti-glare** : double transformation des tokens de couche 3
-  (rail transformé, rôles dérivés, puis ~25 tokens re-transformés — des
-  tokens partageant le même rôle rendent différemment, ex. `main-bg` vs
-  `panel-bg`), paramètre `$intensity` inutilisé, expression `if()` mal
-  formée mais accidentellement fonctionnelle dans la branche d'erreur,
-  overlay `body::before` en `backdrop-filter` plein écran à évaluer (coût
-  GPU permanent pour un effet quasi imperceptible : contrast 98 % /
-  brightness 99 %) ; **daltoniens** : `enhance-factor` codé en dur à 2.5
-  pour les -opies (non configurable, contrairement aux anomalies),
-  variable `$hue_shift` morte dans `adapt-color-for-color-anomaly`,
-  fenêtres de teinte laissant la palette réelle du site quasi inchangée
-  (les thèmes -opies ≈ light + success/danger — comportement à confirmer
-  comme voulu ou à retravailler).
+- Created [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md):
+  the broad strokes of the transformation into an open-source package
+  (chantiers E1→E7: contrast tests first, engine review, pnpm monorepo,
+  SCSS then runtime extraction, preference modules, scaffolding CLI,
+  public npm publication), with the detailed design of the **contrast
+  testing system** (pair registry, compilation → per-`[data-theme]`-block
+  extraction → WCAG 2.2 ratio, alpha handling via compositing,
+  documented waivers, matrix report, advisory APCA).
+- Merged `refactor/theme-foundations` into `main` (`bbc28f0`) after
+  visual validation of the restored shadows; branch deleted.
+- Engine review (findings, fixes to plan — the guide's E2 chantier):
+  **anti-glare**: double transformation of layer-3 tokens
+  (rail transformed, roles derived, then ~25 tokens re-transformed —
+  tokens sharing the same role render differently, e.g. `main-bg` vs
+  `panel-bg`), an unused `$intensity` parameter, a malformed but
+  accidentally functional `if()` expression in the error branch, a
+  full-screen `body::before` `backdrop-filter` overlay to evaluate (a
+  permanent GPU cost for a nearly imperceptible effect: contrast 98% /
+  brightness 99%); **color-blind**: `enhance-factor` hardcoded at 2.5
+  for the -opias (not configurable, unlike the anomalies), a
+  dead `$hue_shift` variable in `adapt-color-for-color-anomaly`,
+  hue windows leaving the site's actual palette nearly unchanged
+  (the -opia themes ≈ light + success/danger — behavior to confirm as
+  intended or to rework).
 
-### Docs (architecture cible — décisions)
+### Docs (target architecture — decisions)
 
-- Deux décisions actées avec Simon, inscrites au README § 6 :
-  **élargissement** du composant exportable au système de préférences
-  d'accessibilité complet (nouveau § 6.5 : déclencheur + carte livrés
-  fonctionnels, modules opt-in zoom/polices/animations/dyslexie, polices
-  d'accessibilité embarquées — licences à vérifier avant publication,
-  contrats hôte `rem`/`reduce-motion`) et **distribution hybride** (§ 6.3
-  réécrit : moteurs via npm pour les correctifs centralisés, UI scaffoldée
-  dans le projet via une CLI `init`, à la manière shadcn/Radix). Nom de
-  travail : `a11y-prefs`. Périmètre § 6.2 et § 6.4 mis à jour en
-  conséquence.
+- Two decisions made, written into README § 6:
+  **widening** the exportable component's scope to the full
+  accessibility preferences system (new § 6.5: a functional trigger +
+  card shipped, opt-in zoom/fonts/animations/dyslexia modules, bundled
+  accessibility fonts — licenses to verify before publication,
+  `rem`/`reduce-motion` host contracts) and **hybrid distribution**
+  (§ 6.3 rewritten: engines via npm for centralized fixes, UI scaffolded
+  into the project via an `init` CLI, shadcn/Radix-style). Working
+  name: `a11y-prefs`. §6.2 and §6.4 scope updated
+  accordingly.
 
-### Fixed (post-revue)
+### Fixed (post-review)
 
-- Résolution de la déclaration morte `var(--color-gray-dark)` (custom
-  property jamais définie ; de plus, `rgba(var(--x), a)` est invalide en
-  CSS) : les ombres portées des cartes portfolio, des cartes compétences et
-  du formulaire de contact, ainsi qu'une bordure du sélecteur de langue, ne
-  s'affichaient pas. Nouveau token `--color-shadow`
-  (`rgba($border-strong, 0.1)`, calculé en Sass par thème, sur le modèle de
-  `--color-tooltip-bg`) consommé par les 3 `box-shadow` ; la bordure passe
-  sur `var(--border-strong)`. **Changement visuel voulu** : ces ombres et
-  cette bordure (re)deviennent visibles, dans les 12 thèmes.
+- Fixed the dead declaration `var(--color-gray-dark)` (a custom
+  property that never existed; also, `rgba(var(--x), a)` is invalid in
+  CSS): the box shadows of the portfolio cards, the skills cards, and
+  the contact form, as well as a language-selector border, weren't
+  showing up. A new token `--color-shadow`
+  (`rgba($border-strong, 0.1)`, computed in Sass per theme, on the
+  model of `--color-tooltip-bg`) consumed by the 3 `box-shadow`s; the
+  border now uses `var(--border-strong)`. **Intended visual change**:
+  these shadows and this border become visible (again), across the 12
+  themes.
 
-### Docs (phase 8 — finalisation)
+### Docs (phase 8 — wrap-up)
 
-- Phase 8 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
-  vérification globale (`pnpm build`/`lint`/`test` verts ; contrôle visuel
-  des 12 thèmes via un script CDP headless — captures d'écran + zéro erreur
-  console ; `pnpm test:a11y` non exécutable dans cet environnement, Chromium
-  de pa11y-ci absent — non lié à la migration). Mise à jour de
-  [README.md](./README.md) : § 3 (fichiers purgés marqués, `src/config/themes.ts`
-  ajouté), § 4 (chaîne à trois couches, noms à jour), § 5 (constats n° 1, 5,
-  6, 7 marqués résolus, n° 4, 8, 11 résolus partiellement), § 6 (étapes 1 et
-  2 de la trajectoire marquées faites), § 7 (section « Assainissement »
-  marquée faite). Entrée de synthèse ajoutée au
-  [CHANGELOG](../../CHANGELOG.md) global.
-  - **Écarts constatés par rapport au plan initial**, tous identifiés et
-    tranchés en cours d'exécution (voir entrées phases 3, 4, 5, 6
-    ci-dessous pour le détail) : deux régressions de valeur détectées et
-    corrigées pendant la migration Sass (phase 5 : clamping de
-    `color.adjust`, arrondi de `color.channel`) ; une régression de valeur
-    détectée et corrigée pendant l'introduction des rôles (phase 6 :
-    tokens de bouton non réappliqués par le moteur anti-éblouissement) ;
-    un deuxième changement visuel non prévu par le plan, mineur et
-    documenté (phase 4 : la couleur du texte des tags portfolio, jusque-là
-    non résolue à cause de la typo `bg-texte`, s'applique réellement pour
-    la première fois) ; un écart de comptage sans conséquence dans le texte
-    du plan (phase 3 : 14 blocs de thème réels contre 13 annoncés).
-  - **Point laissé en suspens**, signalé explicitement par le plan comme
-    hors périmètre : `src/styles/pages/_contact.scss` ligne ~143 (et deux
-    occurrences supplémentaires trouvées en cours de route,
-    `_skills.scss:108` et `_language-selector.scss:15`) référencent
-    `rgba(var(--color-gray-dark), 0.1)`, une custom property qui n'a jamais
-    existé — déclaration morte antérieure à cette migration, non corrigée
-    (décision à prendre séparément par Simon).
+- Phase 8 of [PLAN-migration-fondations.md](./PLAN-migration-fondations.md):
+  global verification (`pnpm build`/`lint`/`test` green; a visual check
+  of the 12 themes via a headless CDP script — screenshots + zero
+  console error; `pnpm test:a11y` not runnable in this environment,
+  pa11y-ci's Chromium missing — unrelated to the migration). Updated
+  [README.md](./README.md): § 3 (purged files marked, `src/config/themes.ts`
+  added), § 4 (the three-layer chain, names up to date), § 5 (findings
+  #1, 5, 6, 7 marked resolved, #4, 8, 11 partially resolved), § 6
+  (trajectory steps 1 and 2 marked done), § 7 ("Cleanup" section marked
+  done). A summary entry added to the global
+  [CHANGELOG](../../CHANGELOG.md).
+  - **Deviations from the original plan**, all identified and
+    resolved during execution (see the phase 3, 4, 5, 6 entries below
+    for details): two value regressions found and
+    fixed during the Sass migration (phase 5: `color.adjust`
+    clamping, `color.channel` rounding); one value regression
+    found and fixed during the roles introduction (phase 6:
+    button tokens not reapplied by the anti-glare engine);
+    a second, minor, documented visual change not planned for
+    (phase 4: the portfolio tags' text color, until then unresolved
+    because of the `bg-texte` typo, actually applies for the first
+    time); a harmless counting gap in the plan's text
+    (phase 3: 14 actual theme blocks vs. 13 announced).
+  - **A point left open**, explicitly flagged by the plan as
+    out of scope: `src/styles/pages/_contact.scss` line ~143 (and two
+    additional occurrences found along the way,
+    `_skills.scss:108` and `_language-selector.scss:15`) reference
+    `rgba(var(--color-gray-dark), 0.1)`, a custom property that never
+    existed — a dead declaration predating this migration, not fixed
+    (a decision to make separately).
 
 ### Added (phase 7 — single source of truth, runtime)
 
-- Phase 7 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
-  élimination de la triple duplication de la liste des 12 thèmes (README
-  § 5 constat n° 5). Nouveau `src/config/themes.ts` exportant `THEMES`
-  (`as const`) et le type `ThemeOption` dérivé.
-  - `useTheme.ts` : suppression du type `ThemeOption` local et de
-    `VALID_THEMES`, import depuis `@/config/themes` (cast
-    `readonly string[]` pour `.includes()` sur un tableau `as const`).
-  - `layout.tsx` : le script anti-FOUC injecte désormais
-    `${JSON.stringify(THEMES)}` au lieu de la liste codée en dur — vérifié
-    dans le HTML généré par `pnpm build` (les 12 thèmes sont bien présents
-    dans le script inline).
-  - `AccessibilityMenu.tsx` : le cast union inline de 12 littéraux dans
-    `handleColorVisionChange` remplacé par `ThemeOption`.
-  - Ajout d'un commentaire de synchronisation dans `_theme-system.scss`
-    pointant vers `src/config/themes.ts` (les blocs `[data-theme]` SCSS
-    restent à synchroniser manuellement jusqu'à l'extraction en paquet).
-  - Aucun changement de CSS compilé (diff vide) ; `pnpm build`, `pnpm lint`,
-    `pnpm test` verts.
+- Phase 7 of [PLAN-migration-fondations.md](./PLAN-migration-fondations.md):
+  eliminating the triple duplication of the 12-theme list (README
+  § 5 finding #5). New `src/config/themes.ts` exporting `THEMES`
+  (`as const`) and the derived `ThemeOption` type.
+  - `useTheme.ts`: removed the local `ThemeOption` type and
+    `VALID_THEMES`, imports from `@/config/themes` (a
+    `readonly string[]` cast for `.includes()` on an `as const` array).
+  - `layout.tsx`: the anti-FOUC script now injects
+    `${JSON.stringify(THEMES)}` instead of the hardcoded list — verified
+    in the HTML generated by `pnpm build` (the 12 themes are indeed
+    present in the inline script).
+  - `AccessibilityMenu.tsx`: the inline 12-literal union cast in
+    `handleColorVisionChange` replaced with `ThemeOption`.
+  - Added a sync comment in `_theme-system.scss`
+    pointing to `src/config/themes.ts` (the SCSS `[data-theme]` blocks
+    remain to sync manually until the package extraction).
+  - No compiled-CSS change (empty diff); `pnpm build`, `pnpm lint`,
+    `pnpm test` green.
 
 ### Changed (phase 6 — layer 2, role tokens)
 
-- Phase 6 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
-  introduction de la couche 2 (rôles), voir README § 6.1. **Seule phase du
-  plan avec un changement visuel autorisé** (voir plus bas).
-  - Renommage des primitives sémantiques : `$primary-color` → `$accent`,
+- Phase 6 of [PLAN-migration-fondations.md](./PLAN-migration-fondations.md):
+  introducing layer 2 (roles), see README § 6.1. **The plan's only
+  phase with an authorized visual change** (see below).
+  - Renamed the semantic primitives: `$primary-color` → `$accent`,
     `$secondary-color` → `$accent-ink`, `$tertiary-color` → `$accent-soft`,
     `$link-color` → `$link`, `$link-color-hover` → `$link-hover`,
-    `$success-color` → `$success`, `$error-color` → `$danger` (Sass et clés
-    de configuration). Nouvelle primitive `$accent-strong` (amber-500),
-    transformée dans chaque moteur à l'identique de `$accent`.
-  - Nouveau mixin `apply-roles()` dans `_theme-variables.scss` : dérive 15
-    tokens de rôle (`$bg-*`, `$fg-*`, `$border-*`, `$focus-ring`) depuis le
-    rail et les primitives, appelé par chaque moteur (et
-    `light-theme-variables()`) entre la transformation et
+    `$success-color` → `$success`, `$error-color` → `$danger` (Sass and
+    config keys). A new `$accent-strong` primitive (amber-500),
+    transformed in every engine identically to `$accent`.
+  - A new `apply-roles()` mixin in `_theme-variables.scss`: derives 15
+    role tokens (`$bg-*`, `$fg-*`, `$border-*`, `$focus-ring`) from the
+    rail and the primitives, called by every engine (and
+    `light-theme-variables()`) between the transform and
     `apply-theme-variables()`.
-  - Recâblage complet des ~70 tokens de couche 3 pour dériver des rôles
-    plutôt que directement du rail/des primitives (table complète en
-    README § 6.3). Corrigé au passage : `--color-button-hover-bg`,
-    `--color-button-hover-text` et `--color-button-active-text` avaient
-    chacun une incohérence préexistante (l'émission CSS lisait directement
-    `$link-hover`/`$off-white`/`$near-black`, en ignorant la variable Sass
-    censée porter cette valeur) — alignées sur la valeur *effective*, donc
-    aucun changement de valeur émise en thème statique.
-  - `generate-theme-css-vars()` : renommage des 5 propriétés de primitives
-    (`--primary-color` → `--accent`, etc.), ajout de 8 propriétés de
-    primitives/feedback (`--accent-strong`, `--success`, `--danger`, …) et
-    15 propriétés de rôles (`--bg-base` … `--focus-ring`). 12 consommateurs
-    composants mis à jour (`var(--primary-color)` → `var(--accent)` ×7 dont
-    un avec valeur de repli, `var(--link-color)` → `var(--link)` ×3,
-    `var(--link-hover-color)` → `var(--link-hover)` ×2 ; le reste des
-    occurrences comptées par le plan était dans des commentaires, mis à
-    jour par cohérence).
-  - **Régression détectée et corrigée pendant la migration** : le moteur
-    anti-éblouissement (`transform-theme-for-anti-glare`) transforme
-    chaque token de couche 3 individuellement et ne recalculait pas
-    `$color-button-hover-bg`/`-text`/`$color-button-active-text` après
-    coup — en les faisant dériver des rôles (couche 2) au lieu de les lire
-    depuis les primitives directement, ces trois tokens seraient restés
-    sur leur valeur *avant* réduction d'éblouissement dans les thèmes
-    `anti-glare-light`/`anti-glare-dark`. Corrigé en les rederivant des
-    rôles resynchronisés (déjà anti-éblouis) juste après `apply-roles()`
-    dans ce moteur.
-  - **Changement visuel** (seul de toute la migration) :
-    `--color-accent-hover` passe de `darken(amber-300, 15%)` à
-    `amber-500` (`#f59e0b`) — remplacement d'un `darken()` arbitraire par
-    un cran du rail, et son équivalent transformé dans les 11 autres
-    thèmes. Vérifié : diff du CSS compilé strictement additif partout
-    ailleurs (rôles + primitives + `accent-strong`/`success`/`danger`
-    ajoutés dans les 14 blocs), confirmé par tri + `comm -3`. Contrôle
-    visuel à faire en phase 8.
+  - Fully rewired the ~70 layer-3 tokens to derive from the roles
+    rather than directly from the rail/primitives (the full table in
+    README § 6.3). Fixed along the way: `--color-button-hover-bg`,
+    `--color-button-hover-text`, and `--color-button-active-text` each
+    had a pre-existing inconsistency (the CSS emission read directly
+    from `$link-hover`/`$off-white`/`$near-black`, ignoring the Sass
+    variable meant to carry that value) — aligned onto the *effective*
+    value, so no emitted-value change in a static theme.
+  - `generate-theme-css-vars()`: renamed the 5 primitive properties
+    (`--primary-color` → `--accent`, etc.), added 8 primitive/feedback
+    properties (`--accent-strong`, `--success`, `--danger`, …) and
+    15 role properties (`--bg-base` … `--focus-ring`). 12 component
+    consumers updated (`var(--primary-color)` → `var(--accent)` ×7,
+    one with a fallback value, `var(--link-color)` → `var(--link)` ×3,
+    `var(--link-hover-color)` → `var(--link-hover)` ×2; the rest of the
+    occurrences the plan counted were in comments, updated for
+    consistency).
+  - **A regression found and fixed during the migration**: the
+    anti-glare engine (`transform-theme-for-anti-glare`) transforms
+    each layer-3 token individually and wasn't recomputing
+    `$color-button-hover-bg`/`-text`/`$color-button-active-text`
+    afterward — by deriving them from the roles (layer 2) instead of
+    reading them directly from the primitives, these three tokens would
+    have stayed at their value *before* glare reduction in the
+    `anti-glare-light`/`anti-glare-dark` themes. Fixed by re-deriving
+    them from the resynced (already anti-glared) roles right after
+    `apply-roles()` in this engine.
+  - **Visual change** (the only one across the whole migration):
+    `--color-accent-hover` goes from `darken(amber-300, 15%)` to
+    `amber-500` (`#f59e0b`) — replacing an arbitrary `darken()` with
+    a rail step, and its transformed equivalent in the 11 other
+    themes. Verified: the compiled CSS diff strictly additive
+    everywhere else (roles + primitives + `accent-strong`/`success`/`danger`
+    added across the 14 blocks), confirmed via sort + `comm -3`. A visual
+    check to do in phase 8.
 
 ### Changed (phase 5 — Sass modules)
 
-- Phase 5 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
-  migration complète `@import` → `@use`/`@forward` sur l'ensemble de
-  `src/styles/` (système de thèmes **et** les autres partials chargés par
-  `main.scss`, puisque `@use` exige que chaque fichier déclare explicitement
-  ses dépendances — l'ancien flattening global de `@import` masquait ces
-  dépendances). Compilation finale **sans aucun avertissement de
-  dépréciation** (`@import`, `darken`/`lighten`, `red`/`green`/`blue`,
+- Phase 5 of [PLAN-migration-fondations.md](./PLAN-migration-fondations.md):
+  a full `@import` → `@use`/`@forward` migration across all of
+  `src/styles/` (the theme system **and** the other partials loaded by
+  `main.scss`, since `@use` requires every file to explicitly declare
+  its dependencies — the old global `@import` flattening was hiding
+  these dependencies). Final compilation **with zero deprecation
+  warning** (`@import`, `darken`/`lighten`, `red`/`green`/`blue`,
   `hue`/`saturation`/`lightness`, `map-get`/`map-has-key`/`map-merge`,
-  `index`/`nth`/`length`, division `/`, syntaxe `if()`).
-  - Préalable anti-cycle : `get-color()`, `$tailwind-weights`, `$midpoint`
-    déplacés de `_theme-utils.scss` vers `_base-palette.scss`.
-  - `_theme-variables.scss` : toutes les variables mutées par
-    `define-base-colors()`/`apply-theme-variables()` (rail 11 crans,
-    couleurs sémantiques, ~70 tokens de couche 3) désormais déclarées à la
-    racine du module — obligatoire pour que les réaffectations `!global`
-    des moteurs restent valides sous `@use`.
-  - Cycle détecté et corrigé entre `_mixins.scss` et `_placeholders.scss`
-    (extend/include mutuels) : le mixin `word-wrap` (4 déclarations) a été
-    intégré directement dans les deux placeholders qui l'utilisaient plutôt
-    que d'y être inclus, cassant le cycle sans changer le CSS produit.
-  - **Deux régressions détectées et corrigées** pendant la migration (le
-    diff du CSS compilé les a révélées — protocole de vérification
-    fonctionnel) :
-    1. `color.adjust($c, $lightness: -15%)` ne reproduit **pas** le
-       comportement borné de `darken()` : sur une couleur déjà à 0 % de
-       luminosité (ex. `$primary-color` viré au noir pur par un thème),
-       `darken()` plafonne à 0 % alors que `color.adjust()` produit une
-       lightness négative invalide (`hsl(0, 0%, -15%)`). Nouvelle fonction
-       `adjust-lightness-clamped()` dans `_base-palette.scss` qui borne
-       explicitement le résultat entre 0 % et 100 %, utilisée partout où
-       `darken()`/`lighten()` étaient appelés.
-    2. `color.channel($c, "red"/"green"/"blue", $space: rgb)` ne borne pas
-       le résultat à un entier, contrairement aux anciennes fonctions
-       globales `red()`/`green()`/`blue()` — écart constaté sur des couleurs
-       reconstruites via `hsl()` (ex. `rgba(67.6, 64, 60.4, 0.7)` au lieu de
-       `rgba(68, 64, 60, 0.7)`). Tous les appels concernés enveloppés dans
-       `math.round()`.
-  - **Écarts résiduels dans le diff CSS, expliqués et prouvés inoffensifs**
-    (aucune valeur ne change, uniquement confirmé par tri + `comm -3`) :
-    - Les en-têtes de commentaires `/** @format */` et le bloc de
-      documentation de `_theme-utils.scss` n'apparaissent plus qu'**une
-      seule fois** dans le CSS compilé (contre jusqu'à 13× avant) : `@use`
-      ne charge chaque module qu'une fois, alors que `@import` réinjectait
-      tout le fichier à chaque `@import`, y compris ses commentaires de
-      tête. Sans effet sur le runtime (ce sont des commentaires).
-    - Réordonnancement de 3 listes de sélecteurs issues de `@extend`
+  `index`/`nth`/`length`, `/` division, `if()` syntax).
+  - Anti-cycle prerequisite: `get-color()`, `$tailwind-weights`, `$midpoint`
+    moved from `_theme-utils.scss` to `_base-palette.scss`.
+  - `_theme-variables.scss`: every variable mutated by
+    `define-base-colors()`/`apply-theme-variables()` (the 11-step rail,
+    semantic colors, ~70 layer-3 tokens) now declared at the module
+    root — mandatory for the engines' `!global` reassignments to stay
+    valid under `@use`.
+  - A cycle found and fixed between `_mixins.scss` and `_placeholders.scss`
+    (mutual extend/include): the `word-wrap` mixin (4 declarations) was
+    inlined directly into the two placeholders that used it instead
+    of being included there, breaking the cycle without changing the
+    produced CSS.
+  - **Two regressions found and fixed** during the migration (the
+    compiled-CSS diff revealed them — the verification protocol
+    worked):
+    1. `color.adjust($c, $lightness: -15%)` does **not** reproduce
+       `darken()`'s clamped behavior: on a color already at 0%
+       lightness (e.g. `$primary-color` pushed to pure black by a
+       theme), `darken()` caps at 0% while `color.adjust()` produces
+       an invalid negative lightness (`hsl(0, 0%, -15%)`). A new
+       `adjust-lightness-clamped()` function in `_base-palette.scss`
+       explicitly clamps the result between 0% and 100%, used
+       everywhere `darken()`/`lighten()` used to be called.
+    2. `color.channel($c, "red"/"green"/"blue", $space: rgb)` doesn't
+       clamp the result to an integer, unlike the old global functions
+       `red()`/`green()`/`blue()` — a gap found on colors
+       reconstructed via `hsl()` (e.g. `rgba(67.6, 64, 60.4, 0.7)`
+       instead of `rgba(68, 64, 60, 0.7)`). Every affected call
+       wrapped in `math.round()`.
+  - **Residual gaps in the CSS diff, explained and proven harmless**
+    (no value changes, confirmed only via sort + `comm -3`):
+    - The `/** @format */` comment headers and `_theme-utils.scss`'s
+      documentation block now appear only **once** in the compiled
+      CSS (vs. up to 13× before): `@use` only loads each module once,
+      while `@import` used to re-inject the whole file at every
+      `@import`, including its header comments. No runtime effect
+      (these are comments).
+    - Reordering of 3 `@extend`-derived selector lists
       (`.sticky-footer__link:hover, …`, `.sticky-footer__fixed-links, …`,
-      `.skills__title, .skills__subtitle, …`) : même ensemble de
-      sélecteurs, même règle, ordre différent — conséquence du nouveau
-      graphe de chargement des modules. Sans effet (mêmes déclarations,
-      pas de conflit de spécificité entre ces sélecteurs).
+      `.skills__title, .skills__subtitle, …`): the same set of
+      selectors, the same rule, a different order — a consequence of
+      the new module-loading graph. No effect (same declarations,
+      no specificity conflict between these selectors).
 
 ### Fixed
 
-- Phase 4 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
-  typo `bg-texte` corrigée — `$color_portfolio-tag_bg-texte` devient
-  `$color-portfolio-tag-text`, et la custom property émise
-  `--color-portfolio-tag-bg-text` devient `--color-portfolio-tag-text`. Le
-  consommateur (`_portfolioCard.scss`) référençait déjà le nom correct
-  (`var(--color-portfolio-tag-text)`) : la couleur du texte des tags
-  portfolio, jusqu'ici non résolue (variable inexistante → héritage du
-  parent), s'applique désormais réellement. Seul écart visuel non prévu par
-  le plan initial, distinct du changement d'accent-hover de la phase 6 — à
-  valider visuellement (phase 8).
+- Phase 4 of [PLAN-migration-fondations.md](./PLAN-migration-fondations.md):
+  fixed the `bg-texte` typo — `$color_portfolio-tag_bg-texte` becomes
+  `$color-portfolio-tag-text`, and the emitted custom property
+  `--color-portfolio-tag-bg-text` becomes `--color-portfolio-tag-text`. The
+  consumer (`_portfolioCard.scss`) already referenced the correct name
+  (`var(--color-portfolio-tag-text)`): the portfolio tags' text color,
+  until now unresolved (a non-existent variable → inherited from the
+  parent), now actually applies. The only visual change not planned for
+  by the original plan, distinct from phase 6's accent-hover change — to
+  validate visually (phase 8).
 
 ### Changed
 
-- Phase 4 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
-  uniformisation kebab-case de la couche 3 (README § 5.1/§ 6, ~66 variables
-  `$color_...` → `$color-...`, dont `$color_button_hover_bg`). Sans effet sur
-  le CSS compilé (Sass traite `-`/`_` comme interchangeables) — diff vide
-  après normalisation, hormis la correction de typo ci-dessous. Suppression
-  de deux doubles assignations devenues visibles après uniformisation
+- Phase 4 of [PLAN-migration-fondations.md](./PLAN-migration-fondations.md):
+  kebab-case standardization of layer 3 (README § 5.1/§ 6, ~66
+  `$color_...` variables → `$color-...`, including
+  `$color_button_hover_bg`). No effect on the compiled CSS (Sass treats
+  `-`/`_` as interchangeable) — an empty diff after normalization,
+  aside from the typo fix below. Removed two double assignments that
+  became visible after standardizing
   (`$color-main-bg`/`$color_main-bg`, `$color-main-text`/`$color_main-text`
-  — même variable assignée deux fois dans `apply-theme-variables()`) : une
-  seule conservée par variable.
+  — the same variable assigned twice in `apply-theme-variables()`): only
+  one kept per variable.
 
 ### Added
 
-- Phase 3 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
-  couche 1 (rail numérique) complète — voir README § 6.1. Renommage de
-  l'échelle de gris descriptive (`$gray-darkest`…`$gray-lightest`, 8 crans)
-  en coordonnées Tailwind (`$gray-50`…`$gray-950`, 11 crans), avec ajout du
-  cran manquant `gray-100`. `$off-white`/`$near-black` deviennent de simples
-  alias resynchronisés (`$off-white: $gray-50`, `$near-black: $gray-950`)
-  après chaque transformation de thème, au lieu d'être transformés
-  indépendamment de l'échelle de gris.
-  - Moteurs mis à jour pour transformer les 11 crans (au lieu de 8 + 2
-    alias séparés) : `transform-light-to-dark`,
+- Phase 3 of [PLAN-migration-fondations.md](./PLAN-migration-fondations.md):
+  layer 1 (numeric rail) complete — see README § 6.1. Renamed the
+  descriptive gray scale (`$gray-darkest`…`$gray-lightest`, 8 steps)
+  into Tailwind coordinates (`$gray-50`…`$gray-950`, 11 steps), adding
+  the missing `gray-100` step. `$off-white`/`$near-black` become plain
+  resynced aliases (`$off-white: $gray-50`, `$near-black: $gray-950`)
+  after every theme transform, instead of being transformed
+  independently of the gray scale.
+  - Engines updated to transform the 11 steps (instead of 8 + 2
+    separate aliases): `transform-light-to-dark`,
     `transform-light-to-high-contrast`, `transform-light-to-achromatopsia`
     (`_theme-utils.scss`), `transform-theme-for-anti-glare`
-    (`_anti-glare-functions.scss`). Les moteurs daltoniens (-opies/-anomalies)
-    ne transforment pas les gris — inchangés, par conception.
-  - Clés de configuration renommées dans `_dark.scss` et `_achromatopsia.scss`
-    (+ ajout de `"gray-100": 0`, cran non consommé par les variables
-    dérivées). Dans `_deuteranomaly.scss`, `_protanomaly.scss`,
-    `_tritanomaly.scss` : suppression des clés `"gray-*"` qui étaient des
-    entrées mortes (jamais consommées par ces moteurs).
-  - `generate-theme-css-vars()` émet désormais `--gray-50`…`--gray-950` (11
-    lignes, ordre `950`→`50` conservé pour un diff d'ajout pur) au lieu de
-    `--gray-darkest`…`--gray-lightest` (8 lignes) ; `--off-white`/
-    `--near-black` inchangées (émises depuis les alias).
-  - 5 consommateurs composants mis à jour (`_contact.scss`,
-    `_accessibility-menu.scss`) : `var(--gray-medium-light)` → `var(--gray-500)`,
+    (`_anti-glare-functions.scss`). The color-blind engines (-opias/-anomalies)
+    don't transform grays — unchanged, by design.
+  - Config keys renamed in `_dark.scss` and `_achromatopsia.scss`
+    (+ added `"gray-100": 0`, a step not consumed by the derived
+    variables). In `_deuteranomaly.scss`, `_protanomaly.scss`,
+    `_tritanomaly.scss`: removed the `"gray-*"` keys that were
+    dead entries (never consumed by these engines).
+  - `generate-theme-css-vars()` now emits `--gray-50`…`--gray-950` (11
+    lines, `950`→`50` order kept for a pure-addition diff) instead of
+    `--gray-darkest`…`--gray-lightest` (8 lines); `--off-white`/
+    `--near-black` unchanged (emitted from the aliases).
+  - 5 component consumers updated (`_contact.scss`,
+    `_accessibility-menu.scss`): `var(--gray-medium-light)` → `var(--gray-500)`,
     `var(--gray-light)` → `var(--gray-400)`, `var(--gray-dark)` →
-    `var(--gray-700)`, `var(--gray-lighter)` → `var(--gray-300)` (×2, dont un
-    dans une ligne commentée).
-  - Vérification : diff du CSS compilé strictement additif (39 nouvelles
-    lignes `--gray-50`/`--gray-100`/`--gray-950` sur 14 blocs — `:root`, le
-    bloc `prefers-color-scheme`, et les 12 `[data-theme]` ; note : le plan
-    en annonçait 13, l'arithmétique exacte est 1 + 1 + 12 = 14), prouvé par
-    tri + `comm -3` (42 lignes de différence au total, dont 3 par bloc,
-    toutes des ajouts). Contrôles ciblés passés : `high-contrast` conserve
-    `--color-main-bg: #000000` / `--color-main-text: #ffff00` ;
-    `achromatopsia` reste sur la famille `neutral` et non `stone` ; dans
-    chaque bloc `--off-white == --gray-50` et `--near-black == --gray-950`.
+    `var(--gray-700)`, `var(--gray-lighter)` → `var(--gray-300)` (×2, one
+    inside a commented-out line).
+  - Verification: the compiled-CSS diff strictly additive (39 new
+    `--gray-50`/`--gray-100`/`--gray-950` lines across 14 blocks — `:root`,
+    the `prefers-color-scheme` block, and the 12 `[data-theme]`; note: the
+    plan announced 13, the exact arithmetic is 1 + 1 + 12 = 14), proven
+    via sort + `comm -3` (42 lines of difference total, 3 per block,
+    all additions). Targeted checks passed: `high-contrast` keeps
+    `--color-main-bg: #000000` / `--color-main-text: #ffff00`;
+    `achromatopsia` stays on the `neutral` family, not `stone`; in
+    each block `--off-white == --gray-50` and `--near-black == --gray-950`.
 
 ### Changed
 
-- Phase 2 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
-  `setTheme()` (`src/hooks/useTheme.ts`) réduit à ses trois lignes utiles
-  (poser `data-theme`, écrire `localStorage`, `setThemeState`). Suppression
-  des artefacts de débogage : double reflow forcé
-  (`offsetWidth`/`offsetHeight`), classe temporaire `theme-switching` (non
-  consommée par aucun style — vérifié par grep) avec son `setTimeout`, et les
-  `console.log` de diagnostic. Aucun changement de CSS compilé ni de
-  comportement observable.
+- Phase 2 of [PLAN-migration-fondations.md](./PLAN-migration-fondations.md):
+  `setTheme()` (`src/hooks/useTheme.ts`) reduced to its three useful
+  lines (set `data-theme`, write `localStorage`, `setThemeState`).
+  Removed debug artifacts: the double forced reflow
+  (`offsetWidth`/`offsetHeight`), the temporary `theme-switching` class
+  (consumed by no style — verified via grep) with its `setTimeout`, and
+  the diagnostic `console.log`s. No compiled-CSS or observable-behavior
+  change.
 
 ### Removed
 
-- Phase 1 de [PLAN-migration-fondations.md](./PLAN-migration-fondations.md) :
-  purge du code mort identifié en README § 3 et § 5.1, sans aucun changement
-  du CSS compilé (diff byte-identique à la baseline).
-  - Fichiers supprimés : `src/styles/abstracts/_variables.scss`,
-    `src/styles/abstracts/_dark-functions.scss` (non importés).
-  - `_theme-utils.scss` : `transform-for-dark()` (référençait des maps
-    disparues), les anciens mixins `generate-*-theme()` jamais inclus
-    (high-contrast, deuteranopia, protanopia, tritanopia, achromatopsia) et
-    leurs getters devenus orphelins (`get-deuteranopia-color`,
+- Phase 1 of [PLAN-migration-fondations.md](./PLAN-migration-fondations.md):
+  purged the dead code identified in README § 3 and § 5.1, with no
+  change to the compiled CSS (byte-identical diff vs. the baseline).
+  - Files removed: `src/styles/abstracts/_variables.scss`,
+    `src/styles/abstracts/_dark-functions.scss` (not imported).
+  - `_theme-utils.scss`: `transform-for-dark()` (referenced maps that no
+    longer exist), the old `generate-*-theme()` mixins never included
+    (high-contrast, deuteranopia, protanopia, tritanopia, achromatopsia)
+    and their now-orphaned getters (`get-deuteranopia-color`,
     `get-protanopia-color`, `get-tritanopia-color`, `get-deuteranomaly-color`,
     `get-protanomaly-color`, `get-tritanomaly-color`, `get-achromatic-color`),
-    `transform-for-high-contrast()`, `$hc-colors` (doublon de `$hc-palette`),
-    `str-replace()`. Dans `adapt-color-for-colorblindness()` : sélection de
-    matrice LMS calculée mais jamais consommée ; suppression de cette
-    affectation morte et des maps `$protanopia-matrix`/`$deuteranopia-matrix`/
-    `$tritanopia-matrix`, ainsi que `rgb-to-lms()`/`lms-to-rgb()` (non
-    appelées).
-  - `_anti-glare-functions.scss` : `safe-hue-for-keratoconus()` (jamais
-    appelée).
-  - Blocs de code commenté historiques (anciennes versions superseded) dans
-    `_theme-utils.scss`, tous les fichiers `themes/_*.scss`, `main.scss`,
+    `transform-for-high-contrast()`, `$hc-colors` (a duplicate of `$hc-palette`),
+    `str-replace()`. In `adapt-color-for-colorblindness()`: an LMS
+    matrix selection computed but never consumed; removed this
+    dead assignment and the `$protanopia-matrix`/`$deuteranopia-matrix`/
+    `$tritanopia-matrix` maps, as well as `rgb-to-lms()`/`lms-to-rgb()`
+    (uncalled).
+  - `_anti-glare-functions.scss`: `safe-hue-for-keratoconus()` (never
+    called).
+  - Historical commented-out code blocks (old superseded versions) in
+    `_theme-utils.scss`, every `themes/_*.scss` file, `main.scss`,
     `_theme-system.scss`, `_theme-variables.scss`, `layout.tsx`,
-    `useTheme.ts`, `AccessibilityMenu.tsx`. Virgules parasites en fin de
-    commentaire (`,,,,,,,,,,`) dans `_theme-utils.scss` et les thèmes
-    daltoniens complets.
-  - Non touché volontairement : deux lignes commentées dans
-    `getFontTypeLabel()` (`AccessibilityMenu.tsx`, types de police
-    "tiresias"/"ralewaydots" encore actifs dans l'UI) — sujet distinct de la
-    police dyslexique, hors périmètre de cette migration ; signalé pour
-    décision séparée.
+    `useTheme.ts`, `AccessibilityMenu.tsx`. Stray trailing commas
+    (`,,,,,,,,,,`) in `_theme-utils.scss` and the full color-blind
+    themes.
+  - Deliberately untouched: two commented-out lines in
+    `getFontTypeLabel()` (`AccessibilityMenu.tsx`, "tiresias"/
+    "ralewaydots" font types still active in the UI) — a topic distinct
+    from the dyslexia font, out of this migration's scope; flagged for
+    a separate decision.
 
 ## 2026-07-02
 
 ### Docs
 
-- Création du plan d'exécution
-  [PLAN-migration-fondations.md](./PLAN-migration-fondations.md), destiné à
-  une IA exécutante : 8 phases (baseline → purge du code mort → nettoyage
-  runtime → rail numérique 11 crans → kebab-case → migration `@use`/API Sass
-  moderne → couche 2 des rôles → source unique de la liste des thèmes →
-  finalisation), avec protocole de vérification par diff du CSS compilé,
-  tables de renommage complètes et périmètre d'exclusion. Un seul changement
-  visuel autorisé : `--color-accent-hover` passe de `darken(amber-300, 15%)`
-  au cran de rail `amber-500`.
-- Ajout de la section « Architecture cible du composant exportable »
-  (README § 6) suite aux discussions de conception : modèle à trois couches
-  (rail numérique 11 crans / ~23 rôles comme API du paquet / tokens de
-  composants hors paquet), périmètre inclus/exclu du futur paquet, options
-  de distribution (workspace pnpm → npm ; modèle « copie » écarté) et
-  trajectoire en 4 étapes. Décisions actées : nommage numérique du rail
-  (`$gray-50`…`$gray-950`), base du vocabulaire des rôles (hybride
-  Primer + paires `on-*` de Material), kebab-case généralisé. Le canal de
-  distribution est explicitement identifié comme décision *reportable sans
-  risque* (§ 6.4).
-- Correction du constat n° 8 (README § 5) : le mélange underscore/tiret des
-  variables dérivées n'est pas une incohérence mais une convention voulue
-  (underscore = séparateur de niveaux) — invérifiable toutefois, car Sass
-  traite `-` et `_` comme interchangeables dans les identifiants.
-- Création de cette documentation dédiée (`docs/theme-system/`) : principe de
-  fonctionnement complet (chaîne compilation Sass → custom properties →
-  runtime React), cartographie des fichiers, état des lieux (code mort, API
-  Sass dépréciée, duplications) et pistes d'amélioration en vue du packaging.
-  Voir [README.md](./README.md).
+- Created the execution plan
+  [PLAN-migration-fondations.md](./PLAN-migration-fondations.md), meant for
+  an execution AI: 8 phases (baseline → dead-code purge → runtime
+  cleanup → 11-step numeric rail → kebab-case → `@use`/modern Sass API
+  migration → layer-2 roles → single source for the theme list →
+  wrap-up), with a compiled-CSS-diff verification protocol,
+  full rename tables, and an exclusion scope. A single authorized
+  visual change: `--color-accent-hover` goes from `darken(amber-300, 15%)`
+  to the `amber-500` rail step.
+- Added the "Target architecture of the exportable component" section
+  (README § 6) following design discussions: a three-layer model
+  (11-step numeric rail / ~23 roles as the package's API / component
+  tokens outside the package), the future package's included/excluded
+  scope, distribution options (pnpm workspace → npm; a "copy" model
+  ruled out), and a 4-step trajectory. Decisions made: numeric rail
+  naming (`$gray-50`…`$gray-950`), a role-vocabulary baseline (hybrid
+  Primer + Material `on-*` pairs), generalized kebab-case. The
+  distribution channel is explicitly flagged as a decision *deferrable
+  without risk* (§ 6.4).
+- Fixed finding #8 (README § 5): the underscore/hyphen mix in the
+  derived variables isn't an inconsistency but an intended convention
+  (underscore = level separator) — unverifiable, though, since Sass
+  treats `-` and `_` as interchangeable in identifiers.
+- Created this dedicated documentation (`docs/theme-system/`): the full
+  operating principle (Sass compilation chain → custom properties →
+  React runtime), file mapping, state of play (dead code, deprecated
+  Sass API, duplications), and ideas toward packaging.
+  See [README.md](./README.md).
 
 ## 2026-07-01
 
-_Entrées rétro-remplies depuis le changelog global (refonte ESLint/Next 16)._
+_Entries backfilled from the global changelog (ESLint/Next 16 overhaul)._
 
 ### Fixed
 
-- Le script anti-FOUC (`src/app/[lang]/layout.tsx`) ne reconnaissait que 5
-  des 12 thèmes (`light`, `dark`, `high-contrast`, `deuteranopia`,
-  `protanopia`) — un thème sauvegardé `anti-glare-*`, `*-anomaly` ou
-  `achromatopsia` provoquait un flash du mauvais thème au chargement avant
-  correction par React. Liste synchronisée avec `VALID_THEMES` de `useTheme`.
-- `useTheme` : l'initialisation par `useEffect` appelant `setTheme()` a été
-  remplacée par un initialiseur paresseux de `useState` lisant
-  `localStorage`/`matchMedia` ; l'attribut DOM est posé dans un effet sans
-  `setState` (conformité `react-hooks/set-state-in-effect`).
-- `usePrefersDarkMode` : réécrit avec `useSyncExternalStore` (abonnement
-  natif à la media query, plus de `setState` dans le corps d'effet).
-- `AccessibilityMenu` : passage au hook `useIsMounted()` ; suppression d'un
-  effet de synchronisation redondant (mode dyslexie) ; `reduceMotion`
-  initialisé paresseusement et synchronisé vers le DOM par un effet dédié.
+- The anti-FOUC script (`src/app/[lang]/layout.tsx`) only recognized 5
+  of the 12 themes (`light`, `dark`, `high-contrast`, `deuteranopia`,
+  `protanopia`) — a saved `anti-glare-*`, `*-anomaly`, or
+  `achromatopsia` theme would cause a flash of the wrong theme on load
+  before React corrected it. List synced with `useTheme`'s `VALID_THEMES`.
+- `useTheme`: the `useEffect`-based init calling `setTheme()` was
+  replaced with a lazy `useState` initializer reading
+  `localStorage`/`matchMedia`; the DOM attribute is set in an effect
+  with no `setState` (compliant with `react-hooks/set-state-in-effect`).
+- `usePrefersDarkMode`: rewritten with `useSyncExternalStore` (a native
+  media-query subscription, no more `setState` in the effect body).
+- `AccessibilityMenu`: switched to the `useIsMounted()` hook; removed a
+  redundant sync effect (dyslexia mode); `reduceMotion`
+  lazily initialized and synced to the DOM by a dedicated effect.
 
-## Antérieur (résumé)
+## Earlier (summary)
 
-Le système a été construit itérativement fin 2024 – 2025 (historique complet
-dans git). Jalons notables :
+The system was built iteratively across late 2024 – 2025 (full history
+in git). Notable milestones:
 
-- Génération initiale des thèmes à la main (`generate-X-theme()` par thème),
-  puis refonte vers le modèle actuel **light + transformation configurée**
-  (`transform-light-to-X($config)`) — les anciennes versions subsistent en
-  commentaires dans les fichiers de thèmes.
-- Ajout des thèmes daltoniens complets (-opies), puis des formes légères
-  (-anomalies), puis de l'achromatopsie.
-- Ajout des thèmes anti-éblouissement (light/dark) par composition au-dessus
-  des thèmes de base.
-- `feat(accessibility)` `cfc23ee` : première tentative de packaging
-  (`packages/darkmode-plus-a11y`, branche
-  `feature/darkmode-plus-a11y-package`, non mergée, antérieure aux refontes).
+- Initial hand-written theme generation (`generate-X-theme()` per theme),
+  then a redesign toward the current **light + configured transform**
+  model (`transform-light-to-X($config)`) — the old versions survive as
+  comments in the theme files.
+- Added the full color-blind themes (-opias), then the mild forms
+  (-anomalies), then achromatopsia.
+- Added the anti-glare themes (light/dark) by composing on top of the
+  base themes.
+- `feat(accessibility)` `cfc23ee`: first packaging attempt
+  (`packages/darkmode-plus-a11y`, branch
+  `feature/darkmode-plus-a11y-package`, never merged, predating the
+  redesigns).

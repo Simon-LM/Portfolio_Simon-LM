@@ -2,11 +2,11 @@
 
 import { THEMES } from "./themes";
 
-// Génère la chaîne du script anti-FOUC inline (beforeInteractive) : lit
-// localStorage.theme (validé contre la liste), sinon prefers-color-scheme,
-// et pose data-theme AVANT le premier paint. Extrait tel quel du layout du
-// portfolio (E4 phase 3) — la chaîne générée est byte-identique au littéral
-// historique, oracle vérifié au commit.
+// Generates the inline anti-FOUC script string (beforeInteractive): reads
+// localStorage.theme (validated against the list), otherwise
+// prefers-color-scheme, and sets data-theme BEFORE first paint. Extracted
+// as-is from the portfolio's layout (E4 phase 3) — the generated string is
+// byte-identical to the historical literal, oracle-verified at commit.
 export function themeInitScript(themes: readonly string[] = THEMES): string {
 	return `
 				(function() {

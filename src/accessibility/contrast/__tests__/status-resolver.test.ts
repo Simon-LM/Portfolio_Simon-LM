@@ -20,8 +20,8 @@ function compileProbe(body: string): { css: string; warnings: string[] } {
 		`@use "a11y-prefs/scss/theme-utils" as tu;\n` +
 		`a { ${body} }`;
 	const result = compileString(src, {
-		// node_modules résout le paquet du workspace (E3) ; projectRoot reste
-		// nécessaire pour le chemin temporaire du paquet vers l'état portfolio.
+		// node_modules resolves the workspace package (E3); projectRoot is
+		// still needed for the probe's temporary path back to portfolio state.
 		loadPaths: [projectRoot, path.join(projectRoot, "node_modules")],
 		url: pathToFileURL(path.join(projectRoot, "__status_resolver_probe__.scss")),
 		logger: {
@@ -57,7 +57,7 @@ describe("resolve-anchor-weight graceful degradation", () => {
 		// Falls back to the highest-contrast weight instead of @error-ing.
 		expect(resolvedColor(css)).toBe("#2e1065"); // violet-950
 		expect(warnings).toHaveLength(1);
-		expect(warnings[0]).toMatch(/cible 21:1 non atteinte/);
+		expect(warnings[0]).toMatch(/target 21:1 not reached/);
 	});
 
 	// The legibility-floor branch (best ratio < 3:1) is defensive only: every

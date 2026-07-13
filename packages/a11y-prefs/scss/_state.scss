@@ -1,10 +1,10 @@
 // -----------------------------------------------
-// MODULE-LEVEL STATE — single source of mutable theme state (couches 1+2).
+// MODULE-LEVEL STATE — single source of mutable theme state (layers 1+2).
 // -----------------------------------------------
-// Extrait du portfolio en E3 phase 4 (docs/theme-system/PLAN-extraction-
-// monorepo.md) : le paquet possède le rail, les primitives et les rôles ;
-// les ~70 tokens de couche 3 restent déclarés côté consommateur
-// (src/styles/themes/_theme-variables.scss pour le portfolio).
+// Extracted from the portfolio in E3 phase 4 (docs/theme-system/PLAN-
+// extraction-monorepo.md): the package owns the rail, the primitives and
+// the roles; the ~70 layer-3 tokens stay declared on the consumer's side
+// (src/styles/themes/_theme-variables.scss for the portfolio).
 //
 // Under the Sass module system, a `!global` assignment inside a mixin can
 // only re-assign a variable that already exists at the root of the module
@@ -18,13 +18,13 @@
 @use "base-palette" as *;
 
 // -----------------------------------------------
-// CONFIGURATION DU CONSOMMATEUR (E3 phase 5)
+// CONSUMER CONFIGURATION (E3 phase 5)
 // -----------------------------------------------
-// Chaque projet configure sa palette au premier chargement du module :
+// Each project configures its palette on first module load:
 //   @use "a11y-prefs/scss/state" with ($gray-family: …, $primitives: (…));
-// Contrat (README § 6.1) : la famille du rail et celles des primitives
-// doivent respecter la géométrie Tailwind 11 poids de base-palette.
-// Défauts = les valeurs light du portfolio.
+// Contract (README § 6.1): the rail family and the primitive families
+// must follow base-palette's 11-weight Tailwind geometry.
+// Defaults = the portfolio's light values.
 $gray-family: "stone" !default;
 $primitives: (
 	"accent": ("amber", 300),
@@ -33,12 +33,12 @@ $primitives: (
 	"accent-soft": ("amber", 100),
 	"link": ("sky", 900),
 	"link-hover": ("sky", 800),
-	// emerald-700 (décision Simon 2026-07-07) : 5.25:1 sur bg-base en light.
+	// emerald-700 (decision, 2026-07-07): 5.25:1 on bg-base in light.
 	"success": ("emerald", 700),
 	"danger": ("red", 600),
 ) !default;
 
-// Résout une primitive configurée (famille, poids) en couleur.
+// Resolves a configured primitive (family, weight) to a color.
 @function resolved-primitive($name) {
 	$entry: map.get($primitives, $name);
 	@return get-color(list.nth($entry, 1), list.nth($entry, 2));
@@ -62,7 +62,7 @@ $gray-950: get-color($gray-family, 950);
 $off-white: $gray-50;
 $near-black: $gray-950;
 
-// Couleurs sémantiques (layer 1 primitives, transformed directly by engines)
+// Semantic colors (layer 1 primitives, transformed directly by engines)
 $accent: resolved-primitive("accent");
 $accent-strong: resolved-primitive("accent-strong");
 $accent-ink: resolved-primitive("accent-ink");
@@ -87,13 +87,14 @@ $bg-inverse: $gray-950;
 $fg-base: $gray-950;
 $fg-muted: $gray-700;
 $fg-on-emphasis: $gray-50;
-// Encre sur l'accent, choisie par luminance. --accent est figé clair partout
-// SAUF high-contrast (où il devient noir). Accent sombre (HC) → encre claire
-// (gray-950 = le jaune HC) ; accent clair → encre foncée : le gray-950 propre
-// du thème s'il est bien sombre (light, daltoniens, achromatopsie : aucun
-// changement), sinon (thèmes dark, où le rail décale gray-950 vers le clair)
-// une near-black constante. Corrige le clair-sur-clair du header en dark sans
-// rustine, et sans toucher les autres thèmes. Voir docs/theme-system/TODO.md.
+// Ink on top of accent, chosen by luminance. --accent stays light everywhere
+// EXCEPT high-contrast (where it turns black). Dark accent (HC) → light ink
+// (gray-950 = the HC yellow); light accent → dark ink: the theme's own
+// gray-950 if it's genuinely dark (light, color-blind, achromatopsia: no
+// change), otherwise (dark themes, where the rail shifts gray-950 toward
+// light) a constant near-black. Fixes light-on-light in the header in dark
+// mode without a patch, and without touching other themes. See
+// docs/theme-system/TODO.md.
 $fg-on-accent: if(sass(is-dark($accent)): $gray-950; else: if(sass(is-dark($gray-950)): $gray-950; else: get-color($gray-family, 950)));
 $border-subtle: $gray-500;
 $border-base: $gray-600;
@@ -101,7 +102,7 @@ $border-strong: $gray-700;
 $focus-ring: $link;
 
 // -----------------------------------------------
-// DÉFINITION DES COULEURS DE BASE
+// BASE COLOR DEFINITION
 // -----------------------------------------------
 @mixin define-base-colors() {
 	// Full numeric rail — 11 Tailwind weights of the configured gray family
@@ -122,7 +123,7 @@ $focus-ring: $link;
 	$off-white: $gray-50 !global;
 	$near-black: $gray-950 !global;
 
-	// Couleurs sémantiques (configurées via $primitives)
+	// Semantic colors (configured via $primitives)
 	$accent: resolved-primitive("accent") !global;
 	$accent-strong: resolved-primitive("accent-strong") !global;
 	$accent-ink: resolved-primitive("accent-ink") !global;
@@ -149,9 +150,9 @@ $focus-ring: $link;
 	$fg-base: $gray-950 !global;
 	$fg-muted: $gray-700 !global;
 	$fg-on-emphasis: $gray-50 !global;
-	// Encre sur l'accent, choisie par luminance (cf. déclaration racine) :
-	// accent sombre (HC) → encre claire ; accent clair → gray-950 du thème s'il
-	// est sombre, sinon (thèmes dark) near-black constante.
+	// Ink on top of accent, chosen by luminance (see root declaration):
+	// dark accent (HC) → light ink; light accent → the theme's gray-950 if
+	// it's dark, otherwise (dark themes) a constant near-black.
 	$fg-on-accent: if(sass(is-dark($accent)): $gray-950; else: if(sass(is-dark($gray-950)): $gray-950; else: get-color($gray-family, 950))) !global;
 	$border-subtle: $gray-500 !global;
 	$border-base: $gray-600 !global;

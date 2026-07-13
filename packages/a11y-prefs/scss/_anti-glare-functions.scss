@@ -5,57 +5,57 @@
 @use "sass:color";
 @use "state" as *;
 
-// Fonction transformatrice pour réduction d'éblouissement et halos
+// Transform function for glare/halo reduction
 @function transform-for-anti-glare($color, $mode: "light") {
-	// Vérifier que l'entrée est bien une couleur
+	// Check that the input is indeed a color
 	@if meta.type-of($color) != "color" {
-		@warn "transform-for-anti-glare: paramètre $color (#{$color}) n'est pas une couleur valide";
-		// NOTE (plan phase 1, item 1) : ce n'est pas la syntaxe if() cassée
-		// qu'elle semble être. C'est la syntaxe de désambiguïsation officielle
-		// de Dart Sass 1.101 entre son if() natif et le if() CSS natif. Voir
-		// le rapport de phase 1 pour la mesure qui a établi ce point.
+		@warn "transform-for-anti-glare: parameter $color (#{$color}) is not a valid color";
+		// NOTE (plan phase 1, item 1): this is not the broken if() syntax it
+		// looks like. It's Dart Sass 1.101's official disambiguation syntax
+		// between its native if() and the native CSS if(). See the phase 1
+		// report for the measurement that established this.
 		@return if(sass($mode == "light"): #888888; else: #aaaaaa);
 	}
 
-	// Extraire les canaux perceptuels OKLCH : contrairement à la lightness
-	// HSL, la lightness OKLCH est perceptuellement uniforme — un jaune et un
-	// bleu de même L s'assombrissent visuellement à l'identique ici.
+	// Extract perceptual OKLCH channels: unlike HSL lightness, OKLCH
+	// lightness is perceptually uniform — a yellow and a blue with the same
+	// L darken visually the same way here.
 	$l: color.channel($color, "lightness", $space: oklch);
 	$c: color.channel($color, "chroma", $space: oklch);
 
-	// Réduction d'éblouissement paramètres selon le mode
+	// Glare-reduction parameters depend on the mode
 	@if $mode == "light" {
-		// Pour mode clair: réduire la luminosité des éléments très clairs.
-		// Seuil calibré à 85% (pas les 92% du point de départ du plan) pour
-		// couvrir stone-300 (OKLCH L ≈ 86.9%, HSL L ≈ 82.9% — au-dessus du
-		// seuil HSL 75% de l'ancien moteur, donc déjà atténué avant ce
-		// correctif) ; sans cet ajustement stone-300 restait quasi intact
-		// (voir rapport de phase 3 pour la mesure comparative complète).
+		// For light mode: reduce brightness of very light elements.
+		// Threshold calibrated at 85% (not the plan's starting-point 92%) to
+		// cover stone-300 (OKLCH L ≈ 86.9%, HSL L ≈ 82.9% — above the old
+		// engine's 75% HSL threshold, so already dampened before this fix);
+		// without this adjustment stone-300 stayed nearly untouched (see the
+		// phase 3 report for the full comparative measurement).
 		@if $l > 85% {
-			$l: max(85%, $l - 5%); // Réduire l'éblouissement
-			$c: max(0.005, $c); // Éviter le blanc pur
+			$l: max(85%, $l - 5%); // Reduce glare
+			$c: max(0.005, $c); // Avoid pure white
 		}
-		// Réduire légèrement la chroma pour un effet plus doux
+		// Slightly reduce chroma for a softer effect
 		$c: $c * 0.9;
 	} @else if $mode == "dark" {
-		// Pour mode sombre: éclaircir légèrement les noirs
+		// For dark mode: slightly lighten blacks
 		@if $l < 22% {
-			$l: min(30%, $l + 6%); // Éviter les noirs trop profonds
+			$l: min(30%, $l + 6%); // Avoid overly deep blacks
 		}
-		// Préserver un minimum de chroma
+		// Preserve a minimum of chroma
 		$c: max(0.01, $c * 0.95);
 	}
 
-	// Reconstruire en RVB pour une émission CSS stable
+	// Rebuild in RGB for stable CSS emission
 	@return color.to-space(
 		color.change($color, $lightness: $l, $chroma: $c, $space: oklch),
 		rgb
 	);
 }
 
-// Mixin qui transforme toutes les variables d'un thème
+// Mixin that transforms all variables of a theme
 @mixin transform-theme-for-anti-glare($mode: "light") {
-	// Transformation de l'échelle de gris (rail complet)
+	// Transform the gray scale (full rail)
 	$gray-50: transform-for-anti-glare($gray-50, $mode) !global;
 	$gray-100: transform-for-anti-glare($gray-100, $mode) !global;
 	$gray-200: transform-for-anti-glare($gray-200, $mode) !global;
@@ -73,7 +73,7 @@
 	$off-white: $gray-50 !global;
 	$near-black: $gray-950 !global;
 
-	// Transformation des couleurs sémantiques
+	// Transform the semantic colors
 	$accent: transform-for-anti-glare($accent, $mode) !global;
 	$accent-strong: transform-for-anti-glare($accent-strong, $mode) !global;
 	$accent-ink: transform-for-anti-glare($accent-ink, $mode) !global;
@@ -83,14 +83,13 @@
 	$success: transform-for-anti-glare($success, $mode) !global;
 	$danger: transform-for-anti-glare($danger, $mode) !global;
 
-	// Dériver les rôles (couche 2) depuis le rail et les primitives
-	// anti-éblouissement.
+	// Derive the roles (layer 2) from the anti-glare rail and primitives.
 	@include apply-roles();
 
-	// Le moteur s'arrête aux rôles (couche 2) — inversion de dépendance E3
-	// phase 2 : la couche 3 est dérivée par le fichier de thème du
-	// consommateur (@include apply-theme-variables après le transform).
-	// (Le bloc « ajustements par mode » qui suivait assignait
-	// $color-collapse-border, jeton supprimé le 2026-07-07 comme jamais
-	// consommé : c'était devenu une écriture morte, purgée ici.)
+	// The engine stops at the roles (layer 2) — E3 phase 2 dependency
+	// inversion: layer 3 is derived by the consumer's theme file
+	// (@include apply-theme-variables after the transform).
+	// (The "per-mode adjustments" block that used to follow assigned
+	// $color-collapse-border, a token removed on 2026-07-07 as never
+	// consumed: it had become dead code, purged here.)
 }

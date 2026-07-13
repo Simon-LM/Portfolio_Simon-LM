@@ -1,19 +1,19 @@
 /** @format */
 
-// Assemblage des thèmes (template scaffoldé). Vous configurez votre LIGHT
-// une fois (famille de gris + primitives de marque), listez les thèmes
-// voulus, et le PAQUET les génère TOUS — dark, fort contraste (+ variantes),
-// daltoniens, anti-glare — dérivés de votre light. Un seul appel.
+// Theme assembly (scaffolded template). You configure your LIGHT theme
+// once (gray family + brand primitives), list the themes you want, and the
+// PACKAGE generates ALL of them — dark, high contrast (+ variants),
+// color-blind, anti-glare — derived from your light theme. A single call.
 //
-// Votre couche 3 (les variables de l'UI) est injectée par thème via le
-// @content : le paquet n'émet que ses variables de rôle, vous ajoutez les
-// vôtres, dérivées des rôles transformés.
+// Your layer 3 (the UI's variables) is injected per theme via @content:
+// the package only emits its role variables, you add your own, derived
+// from the transformed roles.
 //
-// ⚠️ `a11y-prefs` = nom d'import du paquet ; le CLI le réécrit vers le nom
-// installé (défaut « darkmode-plus-a11y ») lors de `init`.
+// ⚠️ `a11y-prefs` = the package's import name; the CLI rewrites it to the
+// installed name (default "darkmode-plus-a11y") during `init`.
 
 @use "a11y-prefs/scss/state" as * with (
-	// Famille de gris et primitives de marque (palettes Tailwind — prérequis).
+	// Gray family and brand primitives (Tailwind palettes — prerequisite).
 	$gray-family: "stone",
 	$primitives: (
 		"accent": ("amber", 300),
@@ -29,9 +29,9 @@
 @use "a11y-prefs/scss/theme-generator" as *;
 @use "theme.config" as *;
 
-// Tous les thèmes standards, générés depuis votre light. Passez une liste
-// à generate-all-themes(("light", "dark", "high-contrast")) pour n'émettre
-// qu'un sous-ensemble (CSS plus léger).
+// All standard themes, generated from your light theme. Pass a list to
+// generate-all-themes(("light", "dark", "high-contrast")) to emit only a
+// subset (lighter CSS).
 @include generate-all-themes() using ($name) {
-	@include a11y-ui-theme-vars; // votre couche 3, dérivée des rôles du thème
+	@include a11y-ui-theme-vars; // your layer 3, derived from the theme's roles
 }

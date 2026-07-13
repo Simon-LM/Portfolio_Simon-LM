@@ -4,39 +4,39 @@
 @use "a11y-prefs/scss/state" as *;
 
 // -----------------------------------------------
-// LAYER 3 — TOKENS DE COMPOSANTS (propres au portfolio, hors paquet)
+// LAYER 3 — COMPONENT TOKENS (portfolio-specific, outside the package)
 // -----------------------------------------------
-// Depuis E3 phase 4, le rail, les primitives et les rôles (couches 1+2)
-// vivent dans le paquet (a11y-prefs/scss/state) ; ce module ne garde que
-// le câblage fin du site (~70 tokens) et son mixin de dérivation.
-// Même contrainte de module que côté paquet : chaque variable réassignée
-// par `!global` dans apply-theme-variables doit être déclarée ici à la
-// racine, initialisée à sa valeur light.
+// Since E3 phase 4, the rail, primitives, and roles (layers 1+2) live in
+// the package (a11y-prefs/scss/state); this module only keeps the site's
+// fine-grained wiring (~70 tokens) and its derivation mixin.
+// Same module constraint as on the package side: every variable
+// reassigned via `!global` in apply-theme-variables must be declared
+// here at the root, initialized to its light value.
 
-// Couleurs d'arrière-plan et de texte principales
+// Main background and text colors
 $color-main-bg: $bg-base;
 $color-main-text: $fg-base;
 $color-pages-title: $fg-base;
 
-// Variables d'entête
+// Header variables
 $color-header-bg: $accent;
 $color-header-text: $fg-on-accent;
-// Sous-titre : gris atténué FIXE (décision Simon 2026-07-07) — même aspect
-// atténué dans tous les thèmes, posé sur l'accent figé clair. Même logique
-// par luminance que $fg-on-accent : accent sombre → atténué du thème ;
-// accent clair → le gray-700 du thème s'il est sombre, sinon (thèmes dark,
-// rail inversé) le stone-700 constant. (High-contrast re-surcharge de toute
-// façon ses jetons header dans _high-contrast.scss.)
+// Subtitle: FIXED muted gray (decision, 2026-07-07) — the same muted
+// look across every theme, set on top of the fixed light accent. Same
+// luminance-based logic as $fg-on-accent: dark accent → the theme's
+// muted gray; light accent → the theme's gray-700 if it's dark,
+// otherwise (dark themes, inverted rail) a constant stone-700.
+// (High-contrast overrides its header tokens in _high-contrast.scss anyway.)
 $color-header-text-role: if(sass(is-dark($accent)): $fg-muted; else: if(sass(is-dark($gray-700)): $gray-700; else: get-color("stone", 700)));
-// Lien blog (design de Simon, restauré le 2026-07-07) : chip GRISÉ + texte
-// AMBER dans tous les modes, y compris dark. Chip par luminance :
-// bg-emphasis du thème s'il est sombre (light, daltoniens, achromatopsie :
-// inchangés), sinon stone-700 constant (thèmes dark : même grisé qu'en
-// light). High-contrast garde ses surcharges.
+// Blog link (original design, restored 2026-07-07): GRAYED chip + AMBER
+// text in every mode, including dark. Chip by luminance:
+// the theme's bg-emphasis if it's dark (light, color-blind, achromatopsia:
+// unchanged), otherwise a constant stone-700 (dark themes: the same gray
+// tone as light). High-contrast keeps its own overrides.
 $color-header-blog-link-bg: if(sass(is-dark($bg-emphasis)): $bg-emphasis; else: get-color("stone", 700));
 $color-header-blog-link-text: $accent;
 
-// Sélecteur de langue
+// Language selector
 $color-lang-toggle-bg: $bg-base;
 $color-lang-toggle-border: $border-strong;
 $color-lang-toggle-bg-activated: $bg-emphasis;
@@ -45,52 +45,52 @@ $color-lang-toggle-text-disabled: $fg-muted;
 $color-lang-toggle-disabled-hover-bg: $link;
 $color-lang-toggle-disabled-hover-text: $fg-on-emphasis;
 
-// Indicateurs de défilement
+// Scroll indicators
 $color-scroll-progress-line: $link;
 $color-scroll-progress-indicator: $border-base;
 $color-scroll-progress-indicator-active: $link;
 
-// Éléments collapse
+// Collapse elements
 $color-collapse-title: $fg-on-emphasis;
 $color-collapse-bg: $bg-container;
 $color-collapse-bg-title: $bg-emphasis;
-// ($color-collapse-border, $color-hero-bg, $color-hero-text supprimés
-// 2026-07-07 : émis mais consommés par aucun composant — audit
-// émis/consommés, voir CHANGELOG)
+// ($color-collapse-border, $color-hero-bg, $color-hero-text removed
+// 2026-07-07: emitted but consumed by no component — emitted/consumed
+// audit, see CHANGELOG)
 
-// Sections et héros
+// Sections and hero
 $color-section-bg-even: $bg-base;
 $color-section-bg-odd: $bg-subtle;
 $color-section-title: $accent-ink;
 $color-hero-title: $fg-base;
 
-// Section À propos
+// About section
 $color-about-overlay-bg: $bg-inverse;
 $color-about-overlay-text: $fg-on-emphasis;
 $color-about-button-bg: $link;
 $color-about-button-border: $fg-on-emphasis;
 $color-about-button-text: $fg-on-emphasis;
 
-// Section compétences
+// Skills section
 $color-skills-icon-bg: $accent-soft;
 $color-skills-icon-text: $accent-ink;
 $color-skills-presentation-link-hover-bg: $link;
 $color-skills-presentation-link-hover-text: $fg-on-emphasis;
 
-// Cartes et sections ($color-section-even-card-bg supprimé 2026-07-07 :
-// jamais consommé)
+// Cards and sections ($color-section-even-card-bg removed 2026-07-07:
+// never consumed)
 $color-section-card-bg: $bg-container;
 $color-section-odd-card-bg: $bg-container-high;
 
-// Étiquettes de portfolio
+// Portfolio tags
 $color-portfolio-tag-bg: $accent-soft;
 $color-portfolio-tag-text: $accent-ink;
 
-// Formulaires de contact
+// Contact forms
 $color-contact-form-bg: $bg-container;
 $color-contact-modal-bg: $bg-subtle;
 
-// Pieds de page
+// Footers
 $color-bottom-footer-bg: $bg-emphasis;
 $color-bottom-footer-title: $accent-soft;
 $color-bottom-footer-text: $fg-on-emphasis;
@@ -99,7 +99,7 @@ $color-bottom-footer-link-text: $link;
 $color-sticky-footer-bg: $bg-emphasis-strong;
 $color-sticky-footer-text: $fg-on-emphasis;
 
-// Liens et focus
+// Links and focus
 $color-link: $link;
 $color-link-hover: $link-hover;
 $color-link-bg: $bg-base;
@@ -107,7 +107,7 @@ $color-focus-outline: $focus-ring;
 $color-focus-bg: $focus-ring;
 $color-focus-text: $fg-on-emphasis;
 
-// Infobulles
+// Tooltips
 $color-tooltip-text: $fg-on-emphasis;
 $color-tooltip-bg: rgba($bg-inverse, 0.9);
 
@@ -115,7 +115,7 @@ $color-tooltip-bg: rgba($bg-inverse, 0.9);
 // rgba(var(--x), a) is not valid CSS, so the color is computed here)
 $color-shadow: rgba($border-strong, 0.1);
 
-// Variables pour le panneau d'accessibilité
+// Accessibility panel variables
 $color-panel-bg: $bg-base;
 $color-panel-border: $border-base;
 $color-scrollbar-track: $bg-base;
@@ -128,33 +128,33 @@ $color-button-hover-bg: $link-hover;
 $color-button-hover-text: $fg-on-emphasis;
 $color-button-active-text: $fg-base;
 
-// Variables pour le curseur de taille de police
+// Font-size cursor variables
 $color-border: $border-subtle;
 $color-accent: $accent;
 $color-accent-hover: $accent-strong; // sole visual change of this migration
 
 // -----------------------------------------------
-// VARIABLES PARTAGÉES ENTRE THÈMES
+// VARIABLES SHARED ACROSS THEMES
 // -----------------------------------------------
-// Mixin qui applique toutes les variables dérivées à partir des rôles.
-// Appelé par chaque fichier de thème APRÈS son transform (E3 phase 2 :
-// les moteurs du paquet s'arrêtent aux rôles).
+// Mixin that applies every variable derived from the roles.
+// Called by each theme file AFTER its transform (E3 phase 2: the
+// package's engines stop at the roles).
 @mixin apply-theme-variables {
-	// Couleurs d'arrière-plan et de texte principales
+	// Main background and text colors
 	$color-main-bg: $bg-base !global;
 	$color-main-text: $fg-base !global;
 	$color-pages-title: $fg-base !global;
 
-	// Variables d'entête
+	// Header variables
 	$color-header-bg: $accent !global;
 	$color-header-text: $fg-on-accent !global;
-	// Sous-titre : gris atténué fixe par luminance (cf. déclaration racine).
+	// Subtitle: fixed muted gray by luminance (see the root declaration).
 	$color-header-text-role: if(sass(is-dark($accent)): $fg-muted; else: if(sass(is-dark($gray-700)): $gray-700; else: get-color("stone", 700))) !global;
-	// Lien blog : chip grisé + texte amber dans tous les modes (cf. racine).
+	// Blog link: grayed chip + amber text in every mode (see the root).
 	$color-header-blog-link-bg: if(sass(is-dark($bg-emphasis)): $bg-emphasis; else: get-color("stone", 700)) !global;
 	$color-header-blog-link-text: $accent !global;
 
-	// Sélecteur de langue
+	// Language selector
 	$color-lang-toggle-bg: $bg-base !global;
 	$color-lang-toggle-border: $border-strong !global;
 	$color-lang-toggle-bg-activated: $bg-emphasis !global;
@@ -163,48 +163,48 @@ $color-accent-hover: $accent-strong; // sole visual change of this migration
 	$color-lang-toggle-disabled-hover-bg: $link !global;
 	$color-lang-toggle-disabled-hover-text: $fg-on-emphasis !global;
 
-	// Indicateurs de défilement
+	// Scroll indicators
 	$color-scroll-progress-line: $link !global;
 	$color-scroll-progress-indicator: $border-base !global;
 	$color-scroll-progress-indicator-active: $link !global;
 
-	// Éléments collapse
+	// Collapse elements
 	$color-collapse-title: $fg-on-emphasis !global;
 	$color-collapse-bg: $bg-container !global;
 	$color-collapse-bg-title: $bg-emphasis !global;
 
-	// Sections et héros
+	// Sections and hero
 	$color-section-bg-even: $bg-base !global;
 	$color-section-bg-odd: $bg-subtle !global;
 	$color-section-title: $accent-ink !global;
 	$color-hero-title: $fg-base !global;
 
-	// Section À propos
+	// About section
 	$color-about-overlay-bg: $bg-inverse !global;
 	$color-about-overlay-text: $fg-on-emphasis !global;
 	$color-about-button-bg: $link !global;
 	$color-about-button-border: $fg-on-emphasis !global;
 	$color-about-button-text: $fg-on-emphasis !global;
 
-	// Section compétences
+	// Skills section
 	$color-skills-icon-bg: $accent-soft !global;
 	$color-skills-icon-text: $accent-ink !global;
 	$color-skills-presentation-link-hover-bg: $link !global;
 	$color-skills-presentation-link-hover-text: $fg-on-emphasis !global;
 
-	// Cartes et sections
+	// Cards and sections
 	$color-section-card-bg: $bg-container !global;
 	$color-section-odd-card-bg: $bg-container-high !global;
 
-	// Étiquettes de portfolio
+	// Portfolio tags
 	$color-portfolio-tag-bg: $accent-soft !global;
 	$color-portfolio-tag-text: $accent-ink !global;
 
-	// Formulaires de contact
+	// Contact forms
 	$color-contact-form-bg: $bg-container !global;
 	$color-contact-modal-bg: $bg-subtle !global;
 
-	// Pieds de page
+	// Footers
 	$color-bottom-footer-bg: $bg-emphasis !global;
 	$color-bottom-footer-title: $accent-soft !global;
 	$color-bottom-footer-text: $fg-on-emphasis !global;
@@ -213,7 +213,7 @@ $color-accent-hover: $accent-strong; // sole visual change of this migration
 	$color-sticky-footer-bg: $bg-emphasis-strong !global;
 	$color-sticky-footer-text: $fg-on-emphasis !global;
 
-	// Liens et focus
+	// Links and focus
 	$color-link: $link !global;
 	$color-link-hover: $link-hover !global;
 	$color-link-bg: $bg-base !global;
@@ -221,12 +221,12 @@ $color-accent-hover: $accent-strong; // sole visual change of this migration
 	$color-focus-bg: $focus-ring !global;
 	$color-focus-text: $fg-on-emphasis !global;
 
-	// Infobulles
+	// Tooltips
 	$color-tooltip-text: $fg-on-emphasis !global;
 	$color-tooltip-bg: rgba($bg-inverse, 0.9) !global;
 	$color-shadow: rgba($border-strong, 0.1) !global;
 
-	// Variables pour le panneau d'accessibilité
+	// Accessibility panel variables
 	$color-panel-bg: $bg-base !global;
 	$color-panel-border: $border-base !global;
 	$color-scrollbar-track: $bg-base !global;
@@ -236,17 +236,17 @@ $color-accent-hover: $accent-strong; // sole visual change of this migration
 	$color-button-hover-text: $fg-on-emphasis !global;
 	$color-button-active-text: $fg-base !global;
 
-	// Variables pour le curseur de taille de police
+	// Font-size cursor variables
 	$color-border: $border-subtle !global;
 	$color-accent: $accent !global;
 	$color-accent-hover: $accent-strong !global;
 }
 
-// Émet les ~70 variables CSS de couche 3 (--color-*). Séparé de l'émission
-// des rôles (désormais dans le paquet : emit-role-vars) au chantier E6.5.
-// À inclure APRÈS apply-theme-variables, dans le @content de generate-all-themes.
+// Emits the ~70 layer-3 CSS variables (--color-*). Split off from role
+// emission (now in the package: emit-role-vars) in E6.5. To be included
+// AFTER apply-theme-variables, inside generate-all-themes's @content.
 @mixin emit-layer3-vars {
-	// Variables dérivées - déclarées explicitement
+	// Derived variables - explicitly declared
 	--color-main-bg: #{$color-main-bg};
 	--color-main-text: #{$color-main-text};
 	--color-pages-title: #{$color-pages-title};
@@ -319,7 +319,7 @@ $color-accent-hover: $accent-strong; // sole visual change of this migration
 	--color-tooltip-bg: #{$color-tooltip-bg};
 	--color-shadow: #{$color-shadow};
 
-	// Variables pour le panneau d'accessibilité
+	// Accessibility panel variables
 	--color-panel-bg: #{$color-panel-bg};
 	--color-panel-border: #{$color-panel-border};
 	--color-scrollbar-track: #{$color-scrollbar-track};
@@ -329,7 +329,7 @@ $color-accent-hover: $accent-strong; // sole visual change of this migration
 	--color-button-hover-text: #{$color-button-hover-text};
 	--color-button-active-text: #{$color-button-active-text};
 
-	// Variables pour le curseur
+	// Cursor variables
 	--color-border: #{$color-border};
 	--color-accent: #{$color-accent};
 	--color-accent-hover: #{$color-accent-hover};

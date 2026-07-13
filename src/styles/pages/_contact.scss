@@ -308,9 +308,9 @@
 
 			&[data-type="success"] {
 				background: var(--color-main-bg);
-				// Rôle statut thématisé (décision Simon 2026-07-07 : vert
-				// emerald-700) — garanti >= 4.5:1 sur bg-base dans les 12 thèmes
-				// par la paire role/success-on-bg-base de la suite de contrastes.
+				// Themed status role (Simon's decision 2026-07-07: emerald-700
+				// green) — guaranteed >= 4.5:1 on bg-base across all 12 themes
+				// via the role/success-on-bg-base pair in the contrast suite.
 				color: var(--success);
 			}
 
@@ -393,7 +393,7 @@
 	}
 }
 
-// Badge reCAPTCHA v3
+// reCAPTCHA v3 badge
 .grecaptcha-badge {
 	z-index: 999 !important;
 	bottom: 5rem !important;

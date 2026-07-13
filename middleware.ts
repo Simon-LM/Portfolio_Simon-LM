@@ -101,13 +101,13 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-	// Récupérer la langue sauvegardée
+	// Get the saved language
 	const savedLanguage = request.cookies.get("language-storage")?.value;
 	const language = savedLanguage
 		? JSON.parse(savedLanguage).state.language
 		: null;
 
-	// Rediriger vers la langue sauvegardée ou détecter la langue du navigateur
+	// Redirect to the saved language or detect the browser's language
 	if (request.nextUrl.pathname === "/") {
 		const browserLanguage = request.headers
 			.get("accept-language")
@@ -119,7 +119,7 @@ export function middleware(request: NextRequest) {
 		return NextResponse.redirect(new URL(`/${defaultLanguage}`, request.url));
 	}
 
-	// Rediriger la page privacy-policy
+	// Redirect the privacy-policy page
 	if (request.nextUrl.pathname === "/privacy-policy") {
 		const defaultLanguage = language || "fr";
 		return NextResponse.redirect(
@@ -130,7 +130,7 @@ export function middleware(request: NextRequest) {
 	return NextResponse.next();
 }
 
-// Configuration des routes à intercepter
+// Routes to intercept
 export const config = {
 	matcher: ["/", "/privacy-policy"],
 };

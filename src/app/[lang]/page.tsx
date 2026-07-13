@@ -17,10 +17,10 @@ export default async function Home({
 }: {
 	params: Promise<{ lang: string }>;
 }) {
-	// Récupère lang depuis params
+	// Retrieve lang from params
 	const { lang } = await params;
 
-	// Cast en "en" | "fr"
+	// Cast to "en" | "fr"
 	const dictionary = await getDictionary(lang as "en" | "fr");
 
 	return (

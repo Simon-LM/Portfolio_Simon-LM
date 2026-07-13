@@ -1,7 +1,7 @@
 /** @format */
 
-// Modules opt-in du paquet (E5) : polices d'accessibilité + réduction
-// d'animations, émises via @include aux emplacements d'origine.
+// Opt-in modules from the package (E5): accessibility fonts + reduced
+// animations, emitted via @include at their original locations.
 @use "a11y-prefs/scss/modules/a11y-fonts" as *;
 @use "a11y-prefs/scss/modules/motion" as *;
 @use "a11y-prefs/scss/modules/dyslexia" as *;
@@ -92,9 +92,9 @@
 		url("/fonts/Quicksand-VariableFont_wght.ttf") format("truetype-variations");
 }
 
-// Polices d'accessibilité embarquées (OpenDyslexic, Andika, Atkinson)
-// émises par le module du paquet (E5). Sylexiad reste déclarée en propre
-// ci-dessous (non redistribuable).
+// Bundled accessibility fonts (OpenDyslexic, Andika, Atkinson)
+// emitted by the package's module (E5). Sylexiad stays declared on its
+// own below (not redistributable).
 @include a11y-font-faces();
 
 // Sylexiad Sans Medium - Regular
@@ -137,7 +137,7 @@
 	font-display: swap;
 }
 
-// SylexiadSerif - Pour dyslexie
+// SylexiadSerif - for dyslexia
 @font-face {
 	font-family: "SylexiadSerif";
 	src: url("/fonts/SylexiadSerifMedium.woff2") format("woff2"),
@@ -174,20 +174,20 @@
 	font-display: swap;
 }
 
-// (Andika + Atkinson @font-face émis par a11y-font-faces ci-dessus, E5.
-// Tiresias + Raleway Dots retirés — code mort, non embarqués.)
+// (Andika + Atkinson @font-face emitted by a11y-font-faces above, E5.
+// Tiresias + Raleway Dots removed — dead code, not bundled.)
 
-// Ajouter la classe pour le mode contraste élevé
-// Typographie du fort contraste — même structure que les classes du
-// sélecteur de police, via le mixin du paquet (chantier HC, phase 1) :
-// Atkinson partout (police basse vision, Braille Institute) +
-// font-size-adjust 0.56 + espacements corps validés (2026-07-09), titres
-// inchangés (0.02em / 1.5).
+// Class for high-contrast mode
+// High-contrast typography — same structure as the font-selector classes,
+// via the package's mixin (HC workstream, phase 1):
+// Atkinson everywhere (low-vision font, Braille Institute) +
+// font-size-adjust 0.56 + body spacing validated (2026-07-09), headings
+// unchanged (0.02em / 1.5).
 @include a11y-font-class("high-contrast", "Atkinson Hyperlegible");
 
-// Classe pour la police dyslexique — via le mixin du paquet (E5).
-// Pas de font-size-adjust : OpenDyslexic est naturellement grande (décision
-// Simon, 2026-07-10). Titres : letter-spacing historique 0.01em conservé.
+// Class for the dyslexic font — via the package's mixin (E5).
+// No font-size-adjust: OpenDyslexic is naturally large (Simon's decision,
+// 2026-07-10). Headings: historical letter-spacing 0.01em kept.
 @include a11y-font-class(
 	"dyslexic-font",
 	"OpenDyslexic",
@@ -195,7 +195,7 @@
 	$title-letter-spacing: 0.01em
 );
 
-// Surcharges site-spécifiques OpenDyslexic (header, navigation).
+// Site-specific overrides for OpenDyslexic (header, navigation).
 html.dyslexic-font {
 	.header {
 		&__lang-button {
@@ -234,22 +234,22 @@ html.dyslexic-font {
 	}
 }
 
-// Classes Sylexiad (polices du site, hors paquet) — via le mixin du paquet :
-// font-size-adjust 0.56 corrige leur petite hauteur d'x (E5, 2026-07-10).
+// Sylexiad classes (site fonts, outside the package) — via the package's mixin:
+// font-size-adjust 0.56 corrects their small x-height (E5, 2026-07-10).
 @include a11y-font-class("sylexiad-font", "SylexiadSans");
 @include a11y-font-class("sylexiad-serif-font", "SylexiadSerif", $fallback: serif);
 
-// Classes .atkinson-font / .andika-font émises par le module du paquet
-// (E5) ; .tiresias-font / .ralewaydots-font retirées (code mort).
+// .atkinson-font / .andika-font classes emitted by the package's module
+// (E5); .tiresias-font / .ralewaydots-font removed (dead code).
 @include a11y-font-classes;
 
 html.dyslexia-optimized {
-	// Typographie 3 niveaux + correctif de taille (font-size-adjust) et
-	// espacements BDA, émis par le module du paquet (E5). Corps = Sylexiad,
-	// surcharge maison ; titre/sous-titre = Lexend Giga/Deca (défauts).
+	// 3-level typography + size correction (font-size-adjust) and
+	// BDA spacing, emitted by the package's module (E5). Body = Sylexiad,
+	// site override; heading/subheading = Lexend Giga/Deca (defaults).
 	@include dyslexia-typography($body-font: "SylexiadSans");
 
-	// Surcharges site-spécifiques (header, navigation) — restent côté portfolio.
+	// Site-specific overrides (header, navigation) — stay on the portfolio side.
 	.header {
 		&__lang-button {
 			font-family: "Inter", sans-serif !important;
@@ -290,7 +290,7 @@ html.dyslexia-optimized {
 	}
 }
 
-// Classe opt-in de réduction d'animations — module du paquet (E5).
+// Opt-in class for reduced animations — package module (E5).
 @include reduce-motion-class;
 
 // // // // // // // // // // // // // // //

@@ -1,18 +1,18 @@
 /** @format */
 
-// Contrôle par VALEUR du fort contraste (chantier hc-mécanique, phase 2 —
-// décision Simon 2026-07-11). Principe : en mode fort contraste, TOUTE
-// couleur émise doit appartenir à la palette du thème. Attrape tout token
-// de couche 3 non branché sur un rôle de couche 2 (valeur brute), quel que
-// soit son nom — c'est la garantie mécanique du contrat « la couche 3 se
-// définit à partir des rôles ». Lecture seule : ce test ne modifie rien.
+// VALUE-based control for high contrast (hc-mécanique chantier, phase 2 —
+// decision 2026-07-11). Principle: in high-contrast mode, EVERY emitted
+// color must belong to the theme's palette. Catches any layer-3 token not
+// wired to a layer-2 role (a raw value), whatever its name — this is the
+// mechanical guarantee of the "layer 3 is defined from the roles"
+// contract. Read-only: this test modifies nothing.
 
 import { THEMES } from "../../../config/themes";
 import { getThemeVars } from "a11y-prefs/testing/extract-themes";
 
-// Palettes par variante — MIROIR de src/styles/themes/_high-contrast*.scss
-// (si une carte change là-bas, ce test échoue : c'est voulu, il force la
-// mise à jour consciente du miroir).
+// Per-variant palettes — MIRROR of src/styles/themes/_high-contrast*.scss
+// (if a map changes there, this test fails: that's intentional, it forces
+// a conscious update of the mirror).
 const HC_PALETTES: Record<string, readonly string[]> = {
 	"high-contrast": [
 		"#000000", // background
@@ -25,7 +25,7 @@ const HC_PALETTES: Record<string, readonly string[]> = {
 	],
 	"high-contrast-green": [
 		"#000000",
-		"#00ff00", // text (et success)
+		"#00ff00", // text (and success)
 		"#00ffff",
 		"#ffff00", // highlight
 		"#ffffff",
@@ -33,7 +33,7 @@ const HC_PALETTES: Record<string, readonly string[]> = {
 	],
 	"high-contrast-white": [
 		"#000000",
-		"#ffffff", // text (et action de secours : focus)
+		"#ffffff", // text (and fallback action: focus)
 		"#00ffff",
 		"#ffff00", // highlight + action
 		"#00ff00",
@@ -49,17 +49,17 @@ const HC_PALETTES: Record<string, readonly string[]> = {
 	],
 };
 
-// Waivers : tokens légitimement hors palette, chacun avec sa raison.
-// Toute nouvelle entrée doit être argumentée (arbitrage Simon).
+// Waivers: tokens legitimately outside the palette, each with its reason.
+// Any new entry must be justified (a decision to make).
 const WAIVED_PREFIXES: readonly { prefix: string; reason: string }[] = [
 	{
 		prefix: "--constant-",
 		reason:
-			"constantes volontairement indépendantes du thème — leur nom le déclare",
+			"constants deliberately independent of the theme — their name declares it",
 	},
 ];
 
-/** #abc → #aabbcc, minuscules ; null si pas un hex. */
+/** #abc → #aabbcc, lowercase; null if not a hex value. */
 function normalizeHex(value: string): string | null {
 	const m = value
 		.trim()
@@ -75,8 +75,8 @@ function normalizeHex(value: string): string | null {
 	return `#${h}`;
 }
 
-/** rgba(255, 255, 0, 0.9) → #ffff00 (l'alpha est tolérée : la TEINTE doit
- *  rester dans la palette) ; null si pas un rgb/rgba simple. */
+/** rgba(255, 255, 0, 0.9) → #ffff00 (alpha is tolerated: the HUE must
+ *  stay within the palette); null if not a simple rgb/rgba value. */
 function rgbaToHex(value: string): string | null {
 	const m = value
 		.trim()
@@ -92,15 +92,15 @@ function isWaived(name: string): boolean {
 
 const hcThemes = THEMES.filter((t) => t.startsWith("high-contrast"));
 
-describe("conformité à la palette du fort contraste (contrôle par valeur)", () => {
-	it("chaque thème high-contrast* a sa palette miroir dans ce test", () => {
+describe("high-contrast palette conformance (value-based control)", () => {
+	it("each high-contrast* theme has its mirror palette in this test", () => {
 		for (const theme of hcThemes) {
 			expect(HC_PALETTES[theme]).toBeDefined();
 		}
 	});
 
 	it.each(hcThemes)(
-		"%s : toute couleur émise appartient à la palette (ou est waivée)",
+		"%s: every emitted color belongs to the palette (or is waived)",
 		(theme) => {
 			const vars = getThemeVars().get(theme);
 			expect(vars).toBeDefined();
@@ -110,7 +110,7 @@ describe("conformité à la palette du fort contraste (contrôle par valeur)", (
 			for (const [name, value] of vars!) {
 				if (isWaived(name)) continue;
 				const hex = normalizeHex(value) ?? rgbaToHex(value);
-				if (hex === null) continue; // pas une couleur simple (tailles, etc.)
+				if (hex === null) continue; // not a simple color (sizes, etc.)
 				if (!palette.has(hex)) {
 					violations.push(`${name}: ${value}`);
 				}
@@ -120,7 +120,7 @@ describe("conformité à la palette du fort contraste (contrôle par valeur)", (
 		},
 	);
 
-	it("les waivers correspondent à des tokens qui existent encore (anti-zombie)", () => {
+	it("waivers match tokens that still exist (anti-zombie)", () => {
 		const vars = getThemeVars().get("high-contrast");
 		expect(vars).toBeDefined();
 		for (const w of WAIVED_PREFIXES) {
