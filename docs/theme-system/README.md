@@ -273,7 +273,7 @@ Cas particulier : les thèmes anti-glare se **composent** —
   chantier E2/revue des moteurs, 2026-07-04 : dérive désormais les ~70
   tokens de couche 3 en une seule passe depuis les rôles anti-éblouis
   (couverture totale, au lieu d'une liste explicite d'une vingtaine de
-  tokens) ; la transformation perceptuelle (`transform-for-anti-glare`) 
+  tokens) ; la transformation perceptuelle (`transform-for-anti-glare`)
   travaille en OKLCH (lightness/chroma) plutôt qu'en HSL, pour une
   atténuation perceptuellement uniforme quelle que soit la teinte. En mode
   light, plafonne la luminosité des couleurs très claires (pas de blanc
