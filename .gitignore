@@ -2,6 +2,8 @@
 
 # dependencies
 /node_modules
+# node_modules des paquets du workspace (tout niveau)
+node_modules/
 /.pnp
 .pnp.*
 .yarn/*
