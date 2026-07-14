@@ -3,14 +3,18 @@
 
 // Scaffolding CLI (E6) — shadcn model: copies the UI (trigger + card +
 // SCSS + config) INTO the consumer's project, which then owns it. Pure
-// Node, no dependency.
+// Node, no extra dependency.
 //
 //   init                Copies the templates + AGENTS.md into <dir> (default ./a11y).
 //   init --diff         Compares the local copy against the package's reference.
+//   audit               Name-based HC semantic inspector (see testing/run-audit.mts).
 //
-// Options: --dir <path>  --pkg <import-name>  --fonts <path>  --force
+// init options: --dir <path>  --pkg <import-name>  --fonts <path>  --force
+// audit options: --entry <scss> [--load-path <p>]… [--themes a,b]
+//                [--waive "regex=reason"]… [--out report.md] [--strict]
 
 import { readFileSync, writeFileSync, copyFileSync, mkdirSync, existsSync, readdirSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 import { dirname, join, resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -147,13 +151,54 @@ function cmdDiff(args) {
 	}
 }
 
+// The audit engine is TypeScript (testing/run-audit.mts) executed through
+// Node's NATIVE type stripping (>= 22.18, on by default). On older Node,
+// print the two working alternatives instead of a cryptic stack.
+function cmdAudit(argv) {
+	const entry = join(PKG_ROOT, "testing", "run-audit.mts");
+	// The typeless-package detection warning is expected (the package has
+	// no "type" field by design); any Node able to strip types (>= 22.18)
+	// also knows --disable-warning.
+	const child = spawnSync(
+		process.execPath,
+		["--disable-warning=MODULE_TYPELESS_PACKAGE_JSON", entry, ...argv],
+		{
+			stdio: ["inherit", "pipe", "pipe"],
+			encoding: "utf8",
+		},
+	);
+	// Deterministic order: warnings (stderr) first, then the summary.
+	if (child.stderr) process.stderr.write(child.stderr);
+	if (child.stdout) process.stdout.write(child.stdout);
+	if (
+		child.status !== 0 &&
+		/Unknown file extension|ERR_UNKNOWN_FILE_EXTENSION|Unexpected (token|reserved word)|stripping types is only supported|bad option/i.test(
+			child.stderr ?? "",
+		)
+	) {
+		console.error(
+			`\n${C.yellow}audit needs Node >= 22.18 (native TypeScript type stripping).${C.reset}\n` +
+				`Alternatives on older Node:\n` +
+				`  - npx tsx ${relative(process.cwd(), entry)} <same options>\n` +
+				`  - wire the exported runner in your test suite (AGENTS.md § Verifying your wiring)`,
+		);
+	}
+	process.exit(child.status ?? 1);
+}
+
 function main() {
 	const argv = process.argv.slice(2);
 	const args = parseArgs(argv);
 	const cmd = args._[0];
 
+	if (cmd === "audit") {
+		cmdAudit(argv.slice(argv.indexOf("audit") + 1));
+		return;
+	}
 	if (cmd !== "init") {
-		console.log(`Usage: darkmode-plus-a11y init [--diff] [--dir <path>] [--pkg <name>] [--fonts <path>] [--force]`);
+		console.log(`Usage: darkmode-plus-a11y <init|audit> …
+  init [--diff] [--dir <path>] [--pkg <name>] [--fonts <path>] [--force]
+  audit --entry <scss> [--load-path <p>]… [--themes a,b] [--waive "regex=reason"]… [--out report.md] [--strict]`);
 		process.exit(cmd ? 1 : 0);
 	}
 	if (args.diff) cmdDiff(args);

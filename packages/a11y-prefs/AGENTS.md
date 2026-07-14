@@ -413,6 +413,54 @@ it("high-contrast emits only palette colors", () => {
 });
 ```
 
+**Optional — name-based semantic inspector** (complements the
+value-based check above; catches its blind spot: crossed wiring that
+lands **inside** the palette, e.g. `--color-menu-text` accidentally
+wired to `$bg-base` — the value is in the palette, but the text is
+invisible). Token names decide no color; they **monitor**: a name that
+says "text" while the emitted value is the background color raises a
+warning. Never blocking; legitimate contradictions get documented
+waivers (e.g. `--fg-on-emphasis`: ink sitting on a colored block).
+
+Quickest form — the CLI (needs Node ≥ 22.18 for native TypeScript; on
+older Node, run the same file through `npx tsx`, or use the test-suite
+form below):
+
+```bash
+npx darkmode-plus-a11y audit --entry styles/main.scss --load-path node_modules
+# add --waive "^--my-inverted-chip=deliberately inverted block" per exception
+# add --strict to exit 1 on active warnings (CI gate)
+# add --out hc-audit.md for a markdown report
+```
+
+Test-suite form (same engine, plus your waivers and exact slots):
+
+```ts
+import { getThemeVars } from "a11y-prefs/testing/extract-themes";
+import {
+	runHcSemanticAudit,
+	defaultHcWaivers,
+} from "a11y-prefs/testing/hc-semantic-audit";
+import { THEMES } from "./setup";
+
+it("token names do not contradict their emitted colors", () => {
+	const findings = runHcSemanticAudit({
+		themes: THEMES.filter((t) => t.startsWith("high-contrast")),
+		varsFor: (t) => getThemeVars().get(t),
+		waivers: [
+			...defaultHcWaivers,
+			// { pattern: /^--my-inverted-chip/, reason: "deliberately inverted" },
+		],
+	});
+	expect(findings.filter((f) => !f.waived)).toEqual([]);
+});
+```
+
+By default the palette slots are derived from the emitted role
+variables (best effort — `--focus-ring` may be wired to the link
+color); pass `slotsFor` with the exact values of your HC color map for
+precision.
+
 ### Failure modes (what each error means)
 
 | Symptom | Meaning | Fix |
@@ -422,6 +470,7 @@ it("high-contrast emits only palette colors", () => {
 | `getVar: custom property "--x" is not defined` | A pair references a token you never emit | Fix the pair id/name, or emit the token |
 | Ratio below threshold | Real contrast defect in that theme | Rewire the token to a stronger role; only if justified, document a waiver via `withWaivers` |
 | A color survives high-contrast unchanged | Raw value in layer 3 (golden rule violation) | Derive the token from a role |
+| `audit` warns "named X but emits Y" | The token's name contradicts its emitted color — usually wired to the wrong role | Fix the wiring; if the contradiction is deliberate (inverted block), add a justified waiver |
 
 ## Updating
 

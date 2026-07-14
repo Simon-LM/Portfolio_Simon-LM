@@ -13,6 +13,41 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-14 (E7 prep — HC semantic inspector shipped to consumers, A + B)
+
+### Added (decision: both options from REVIEW § 3, same day)
+
+- **Name-based semantic inspector extracted into the package**
+  (`testing/hc-semantic-audit.ts`, portfolio = first consumer — same
+  pattern as E6.6): generic engine (`runHcSemanticAudit`,
+  `formatHcAuditReport`, `segments`/`familyOf`/`pairBase`,
+  `DEFAULT_FAMILIES`, `defaultHcWaivers`, `deriveHcSlots`). The module
+  is deliberately **self-contained** (zero relative imports) so it runs
+  both in TS test runners and under Node's native type stripping.
+  Portfolio side, `src/accessibility/contrast/hc-semantic-audit.ts`
+  keeps only the calibration: explicit HC slot mirror + 3 site waivers
+  appended to the package defaults. Oracle held:
+  `HC-SEMANTIC-AUDIT.md` regenerated **byte-identical** (0 active / 15
+  waived), report label parametrized (`commandLabel`).
+- **`audit` CLI subcommand** (`npx darkmode-plus-a11y audit --entry
+  styles/main.scss --load-path node_modules [--themes a,b] [--waive
+  "regex=reason"]… [--out report.md] [--strict]`): zero-config
+  auto-detection of `high-contrast*` themes, derived slots by default
+  (documented caveat: `--focus-ring` may be wired to the link color —
+  the portfolio passes explicit slots for exactness). Runs the
+  TypeScript entry `testing/run-audit.mts` through **Node ≥ 22.18
+  native type stripping** (verified: extensionless relative imports
+  fail, explicit `.ts` extensions work — hence a self-contained engine
+  and a CLI-only `.mts` entry consumers never type-check); on older Node
+  the CLI prints the two working alternatives (`npx tsx …`, test-suite
+  route). Verified on the portfolio: 7 active warnings without site
+  waivers (expected consumer default), 0 active with the two `--waive`
+  flags, `--strict` exit codes correct.
+- AGENTS.md § Verifying your wiring: name-based inspector documented
+  (CLI and test-suite forms, waivers, slots precision note) plus a
+  failure-modes row. Portfolio `tsconfig`: `allowImportingTsExtensions`
+  and `**/*.mts` included so the CLI entry stays type-checked.
+
 ## 2026-07-14 (E7 prep — consumer guide fixed and promoted to the package root)
 
 ### Fixed (pre-E7 review, bug #1 and #2 of REVIEW-e7-readiness.md § 1)
