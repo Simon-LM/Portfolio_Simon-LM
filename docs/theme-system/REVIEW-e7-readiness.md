@@ -103,39 +103,69 @@ What works today, unchanged:
   (`--color-main-bg: var(--color-main-bg);`) → utilities generated from
   CSS variables, no JS config at all.
 
-Real friction points:
+Real friction points (refined 2026-07-14 after Simon's feedback):
 
-1. **Sass stays required at build time** to generate the themes
-   (palettes, engines, `generate-all-themes` are SCSS). A pure
-   PostCSS/Tailwind project must add a Sass step for one entry file.
-   Acceptable — the theme SCSS compiles **separately** from the
-   Tailwind pipeline (no Sass/Tailwind mixing in one file) — but it is
-   an extra step and a real adoption barrier for Tailwind-only teams.
-2. **The copied UI (`templates/`) is SCSS + BEM.** A Tailwind project
-   won't want those stylesheets. Tailwind variants of the templates
-   would be a sizeable chantier (out of scope for E7; note it as a
-   possible E8).
-3. **Discipline conflict to document**: Tailwind culture encourages raw
-   color utilities (`bg-blue-500`) — exactly what the layer-3 GOLDEN
-   RULE forbids on themed surfaces (raw values escape theming). The
-   AGENTS.md must state: on themed surfaces, only utilities mapped to
-   the package's tokens.
+1. **Sass at build time** — downgraded to a **non-issue** (Simon's
+   call): it compiles separately from the Tailwind pipeline, costs one
+   dev dependency, and holds no fear for people who write CSS. Keep a
+   one-line mention in the docs, nothing more.
+2. **The copied UI (`templates/`) is SCSS + BEM.** Nuance established
+   during review: the BEM classes are **encapsulated in the copied
+   component** — they impose nothing on the rest of the consumer's
+   codebase (their project stays 100% Tailwind; the widget carries its
+   own stylesheet, like any third-party component). The real friction
+   is only when the consumer **edits** the copied UI (the whole point
+   of the shadcn model): they then work in a paradigm that isn't
+   theirs. Verified fact that shapes the solutions:
+   `accessibility-menu.scss` and `accessibility-trigger.scss` use **no
+   Sass feature at all** (no variable, no mixin, no `@use` — plain
+   nested CSS); only `theme-example.scss`, `theme.config.scss` and
+   `accessibility-features.scss` genuinely need Sass.
+3. **Discipline conflict** — resolvable, see the reconciliation path
+   below: with tokens mapped as semantic utilities, the golden rule
+   becomes "semantic utilities only on themed surfaces", the exact
+   discipline the shadcn ecosystem already normalized
+   (`bg-background`, `text-foreground`, `bg-primary`). **No BEM is ever
+   required for color management.**
 
-Recommendations (in order of value/effort):
+Solution paths (explained to Simon 2026-07-14, decisions pending):
 
-- [ ] 💡 **Document the Tailwind path** in the package README +
-      AGENTS.md (v3 `theme.extend.colors` mapping + v4 `@theme inline`
-      mapping, with copy-paste snippets). Cheap, unlocks the main
-      audience.
-- [ ] 💡 **Ship precompiled default themes** (`dist/themes.css`, the 12
-      default themes): a Tailwind-only consumer imports one CSS file and
-      maps variables — zero Sass in their build. They lose custom brand
-      palettes (which require recompiling), which leads to:
-- [ ] 💡 **Theme-build CLI** (`darkmode-plus-a11y build
-      --config theme.config.scss`): the package already depends on
-      `sass` — its JS API can compile the consumer's config into a
-      themes CSS file without the consumer touching Sass tooling.
-      Bigger piece; candidate for a post-E7 chantier.
+- [ ] 💡 **`init --css`** (recommended, cheap, doable now): the CLI
+      compiles the SCSS templates to plain CSS at scaffold time via the
+      `sass` JS API (already a package dependency — the CLI's "pure
+      Node" note becomes "no *extra* dependency"). Menu + trigger
+      compile trivially (already Sass-free); `accessibility-features`
+      compiles its mixin output (font-faces, classes) into static CSS
+      honoring `--fonts`. The consumer owns standard CSS files and
+      needs zero Sass tooling for the UI.
+- [ ] 💡 **`build` subcommand** (`darkmode-plus-a11y build`) — the
+      natural companion: `theme.config.scss` stays a declarative map
+      (editing `("family", weight)` pairs is not "programming Sass"),
+      and the package compiles it into the themes CSS file itself. The
+      package becomes its own compiler; the consumer never installs or
+      configures Sass. Together with `init --css`, this makes the
+      whole system consumable by a 100% Tailwind/PostCSS toolchain.
+- [ ] 💡 **Documented restyle path** (docs only, zero code): the
+      behavior already lives in the engine's hooks
+      (`usePreference`, `useTheme`, appliers) — the copied TSX is
+      structure + classNames that the consumer legitimately owns. Ship
+      in AGENTS.md a mapping table (BEM class → purpose/role) so a
+      Tailwind team (or their AI agent) can mechanically re-skin the
+      component with semantic utilities.
+- [ ] 💡 **Semantic-utilities mapping snippets** in README + AGENTS.md:
+      v3 `theme.extend.colors` + v4 `@theme inline`, with the pitch
+      that one `bg-base` replaces `bg-white dark:bg-gray-900` **and**
+      scales to all 12 themes (dark, 4 HC, CVD, anti-glare) with WCAG
+      guarantees — fewer classes than Tailwind teams write today, not
+      more.
+- [ ] 💡 **Optional enforcement recipe** (documented, not shipped): a
+      CI grep / lint rule against raw color utilities
+      (`bg-[a-z]+-[0-9]+` …) in themed components — the
+      Tailwind-side analog of the HC value-based control.
+- [ ] 💡 **True Tailwind template variants** (`init --style tailwind`):
+      the long-term answer, but doubles the reference-UI and
+      `init --diff` maintenance surface → post-E7 chantier, driven by
+      actual demand.
 
 ## 5. Minor notes (documented limitations, no action required yet)
 
