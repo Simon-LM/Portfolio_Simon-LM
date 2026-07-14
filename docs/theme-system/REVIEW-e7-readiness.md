@@ -103,6 +103,34 @@ What works today, unchanged:
   (`--color-main-bg: var(--color-main-bg);`) → utilities generated from
   CSS variables, no JS config at all.
 
+**Layering clarification (Simon's concern, 2026-07-14: "doesn't the
+Tailwind mapping bypass layers 2/3 and go back to raw layer 1?").** No —
+the mapping consumes the **emitted layer-3 tokens** (or layer-2 role
+variables), never the raw palettes. The full chain stays inside the
+engine, untouched: palettes (L1) → engines → roles (L2) → consumer
+tokens (L3) → `--color-*` custom properties per `[data-theme]` block.
+The Tailwind utility is only a **consumption syntax** for those emitted
+variables — `class="bg-base"` is the markup-side equivalent of
+`background: var(--color-main-bg)` in a BEM stylesheet. Same variable,
+two syntaxes; the theming mechanism works identically.
+
+The residual "anarchic layer 1" risk — a consumer writing `bg-blue-500`
+straight in markup — is real but **symmetric with the SCSS world** (a
+raw hex in a component stylesheet also escapes today's checks), and
+Tailwind actually offers a **stronger mechanical guard than SCSS
+does**:
+
+- **Replace, don't extend** (recommended default in our docs): declare
+  the semantic tokens as the project's **only** color theme (v3:
+  `theme.colors` instead of `theme.extend.colors`; v4:
+  `--color-*: initial;` then the semantic set). Raw palette utilities
+  (`bg-blue-500`) then **do not exist** — nothing is generated, the
+  class visibly does nothing. Anarchic layer-1 usage becomes impossible
+  by construction, not merely discouraged.
+- The remaining escape hatch (arbitrary values, `bg-[#3b82f6]`) is
+  covered by the lint/CI grep recipe below — the markup-side analog of
+  the HC value-based control.
+
 Real friction points (refined 2026-07-14 after Simon's feedback):
 
 1. **Sass at build time** — downgraded to a **non-issue** (Simon's
