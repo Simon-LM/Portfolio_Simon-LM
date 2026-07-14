@@ -88,22 +88,37 @@ Legend: 🐛 confirmed bug · ✅ decision made · 📋 pending task · 💡 pro
 
 ## 4. Tailwind compatibility (question raised 2026-07-14)
 
+**The mission behind the package (Simon, 2026-07-14): make the web
+free for low-vision and blind users.** Assistive tools like ZoomText
+or JAWS cost around €2,000; the technologies they rely on exist and
+only need to be **normalized and spread** so that assistive quality is
+built into websites themselves — free, available to anyone on the
+internet. And if nobody else adopts it, Simon will at minimum apply it
+across his own projects. This mission is the final arbiter of the
+package's technical choices.
+
 **Positioning decided by Simon (2026-07-14): the package is
 SCSS-first.** SCSS is the deliberate technical choice — it is what
-enables the accessibility requirements: compile-time guarantees (loud
-undefined-variable failure) and **extreme zoom robustness**. The target
-is **not** WCAG's 200 % / 400 % (1.4.4 / 1.4.10) — that is only the
-floor ("400 % is nothing"). Simon's stated aim is layouts that stay
-**functional and responsive at ≥ 10× magnification (1000 %+)**,
-natively in the browser — a better experience than a dedicated screen
-magnifier like ZoomText, because native reflow keeps text sharp
+enables the mission's requirements: compile-time guarantees (loud
+undefined-variable failure) and, in the long run, **extreme zoom
+robustness**. The long-term target is **not** WCAG's 200 % / 400 %
+(1.4.4 / 1.4.10) — that is only the floor ("400 % is nothing") — but
+layouts that stay **functional and responsive at ≥ 10× magnification
+(1000 %+)**, natively in the browser: a better experience than a
+dedicated screen magnifier, because native reflow keeps text sharp
 (vectors, not magnified pixels), linearizes content into a single
 reading axis, and eliminates 2D panning. Almost nobody on the planet
 pushes accessibility this far; it is the package's radical
 differentiator, and Tailwind's utility culture cannot realistically
-sustain that discipline. A future evolution (explicitly **not before a
-while**) will encode this as SCSS/CSS coding recommendations; today
-the package only covers colors/themes + the font/motion modules. Tailwind
+sustain that discipline — which is why SCSS will be mandatory for
+those aiming at this level of quality.
+
+**Current scope, stated twice by Simon to prevent inflation: today the
+package handles colors (themes) and text fonts only** (plus the small
+motion/dyslexia opt-in modules). The extreme-zoom coding
+recommendations are a **future** evolution, explicitly not before a
+while — do not present them as a current feature anywhere
+(README, AGENTS.md, npm description). Tailwind
 compatibility is therefore an **on-ramp, not a destination**: Tailwind
 users must be able to adopt the package without pain ("the transition
 is not too painful"), with an honest bridge — but the package does not
