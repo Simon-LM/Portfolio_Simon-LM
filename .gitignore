@@ -49,3 +49,8 @@ next-env.d.ts
 
 # Workspace package build output (built by prepack / CI)
 packages/*/dist/
+
+# Sylexiad fonts: proprietary EULA forbids public redistribution — kept
+# locally (and in private/fonts-backup/) + deployed via vercel --prod,
+# but never committed. See public/fonts/README.md.
+public/fonts/Sylexiad*

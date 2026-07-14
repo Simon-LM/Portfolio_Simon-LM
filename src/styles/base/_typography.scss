@@ -236,8 +236,12 @@ html.dyslexic-font {
 
 // Sylexiad classes (site fonts, outside the package) — via the package's mixin:
 // font-size-adjust 0.56 corrects their small x-height (E5, 2026-07-10).
-@include a11y-font-class("sylexiad-font", "SylexiadSans");
-@include a11y-font-class("sylexiad-serif-font", "SylexiadSerif", $fallback: serif);
+// Andika (OFL, served by the site) sits second in the stack as the
+// dyslexia-friendly safety net if Sylexiad ever goes missing (decision
+// 2026-07-15 — Sylexiad files are no longer distributed via the public
+// repo, see public/fonts/README.md).
+@include a11y-font-class("sylexiad-font", "SylexiadSans", $fallback: ("Andika", sans-serif));
+@include a11y-font-class("sylexiad-serif-font", "SylexiadSerif", $fallback: ("Andika", serif));
 
 // .atkinson-font / .andika-font classes emitted by the package's module
 // (E5); .tiresias-font / .ralewaydots-font removed (dead code).
@@ -246,8 +250,9 @@ html.dyslexic-font {
 html.dyslexia-optimized {
 	// 3-level typography + size correction (font-size-adjust) and
 	// BDA spacing, emitted by the package's module (E5). Body = Sylexiad,
-	// site override; heading/subheading = Lexend Giga/Deca (defaults).
-	@include dyslexia-typography($body-font: "SylexiadSans");
+	// site override, with Andika as the dyslexia-friendly safety net;
+	// heading/subheading = Lexend Giga/Deca (defaults).
+	@include dyslexia-typography($body-font: ("SylexiadSans", "Andika"));
 
 	// Site-specific overrides (header, navigation) — stay on the portfolio side.
 	.header {

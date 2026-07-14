@@ -13,6 +13,34 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-15 (Sylexiad licensing settled — last open review item besides publication)
+
+### Changed (decision Simon, same day — the package was never affected)
+
+- Reminder of the standing E5 decision, unchanged: Sylexiad is
+  **excluded from the package** (proprietary EULA) and only
+  recommended; Andika (OFL) is bundled. This item was about the
+  **portfolio repo only**: 16 Sylexiad files (`.ttf` + `.woff2`) were
+  committed in the public GitHub repo — public redistribution, the
+  exact thing the EULA forbids (serving them as webfonts on the site is
+  the normal, tolerated use; distributing the files is not).
+- Fix, zero site impact: files **untracked + gitignored**
+  (`public/fonts/Sylexiad*`) but kept on disk — production deploys via
+  `vercel --prod` from the local checkout, so the site still serves
+  them; a backup copy lives in `private/fonts-backup/sylexiad/`
+  (anti-loss guard, and they remain re-downloadable from sylexiad.com).
+  History note: past commits still contain the files (no history
+  rewrite — accepted).
+- **`public/fonts/README.md`** added (committed): licensing note +
+  restore instructions for a fresh checkout (Simon's "warning" idea).
+- **Andika promoted to second in every Sylexiad stack** (Simon's
+  safety-net idea): `.sylexiad-font` / `.sylexiad-serif-font` classes
+  (`$fallback: ("Andika", sans-serif|serif)`) and the dyslexia-mode
+  body (`$body-font: ("SylexiadSans", "Andika")`). If Sylexiad is ever
+  missing, the dyslexia experience degrades to a dyslexia-friendly OFL
+  font instead of a generic one. Intended CSS change, verified in the
+  compiled output; 748 tests green.
+
 ## 2026-07-15 (E7 executed except npm publication — Simon's mandate "everything but publish")
 
 ### Changed (rename, committed separately: `44af307`)

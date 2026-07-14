@@ -101,11 +101,15 @@ Legend: 🐛 confirmed bug · ✅ decision made · 📋 pending task · 💡 pro
       `sass`/`postcss`/`culori` as regular dependencies (they power the
       verifier and the zero-config `audit` CLI; batteries included) and
       document the weight in the README.
-- [ ] 📋 **Sylexiad EULA question** (carried from TODO.md, blocking —
-      **Simon's call, still open**): the EULA requires webfonts that
-      are "not publicly downloadable"; the portfolio's woff2 files
-      technically are. To settle before open-sourcing the repo. (The
-      font itself is already excluded from the package.)
+- [x] 📋 **Sylexiad EULA question** — **SETTLED 2026-07-15 (Simon)**:
+      the package was never affected (excluded since E5, Andika
+      bundled). Portfolio repo fix, zero site impact: the 16 committed
+      `.ttf`/`.woff2` files untracked + gitignored (kept on disk —
+      `vercel --prod` deploys from the local checkout; backup in
+      `private/fonts-backup/`), `public/fonts/README.md` licensing note
+      added, and **Andika promoted to second in every Sylexiad stack**
+      as the dyslexia-friendly safety net. History rewrite declined
+      (files remain in past commits — accepted).
 - [x] 📋 **CI gates** — **DONE 2026-07-15**
       (`.github/workflows/ci.yml`): lint → tsc → Jest (contrast gates
       included) → package dist build → HC audit `--strict` →
