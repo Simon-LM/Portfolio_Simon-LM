@@ -51,10 +51,16 @@ Legend: 🐛 confirmed bug · ✅ decision made · 📋 pending task · 💡 pro
   - **Single source**: promote the current `templates/AGENTS.md` to the
     package root and have `init` copy that same file — no duplicate to
     maintain.
-  - **Status**: `AGENTS.md` done 2026-07-14 (rewritten at the package
-    root under the SCSS-first line, incl. the Tailwind bridge section;
-    CLI copies it, `init`/`init --diff` verified end-to-end).
-    `README.md` still to write.
+  - **Status**: both done 2026-07-14. `AGENTS.md` rewritten at the
+    package root under the SCSS-first line (incl. the Tailwind bridge
+    section; CLI copies it, `init`/`init --diff` verified end-to-end).
+    `README.md` written for the npm page: dark-mode-first hook, the
+    mission up front (free assistive quality vs €2,000 tools), the 15
+    themes and the mechanical guarantees, 5-step quick start, the
+    3-layer contract with the role list, the SCSS-first stance with the
+    Tailwind bridge pointer, pinned scope (colors + fonts; extreme zoom
+    explicitly future work), honest notes (TS sources, FR/EN labels,
+    licensing).
 
 ## 3. Pre-publication tasks (E7 backlog)
 

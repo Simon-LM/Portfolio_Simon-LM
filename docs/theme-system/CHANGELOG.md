@@ -13,6 +13,26 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-14 (E7 prep — package README)
+
+### Added
+
+- **`packages/a11y-prefs/README.md`** — the npm-page / human half of
+  the two-document scheme (REVIEW § 2; AGENTS.md is the AI/deterministic
+  half). Editorial line as decided: dark-mode-first hook ("you came for
+  dark mode, your users leave with 15 accessible themes"), the mission
+  up front (assistive quality built into websites, free — vs €2,000
+  tools), features (one light theme → 15 themes, mechanical guarantees,
+  React runtime, OFL font modules, scaffolded menu), a 5-step quick
+  start, the 3-layer contract with the full role list and the semver
+  promise, the SCSS-first stance with the Tailwind bridge pointer,
+  **pinned scope** (colors + text fonts today; extreme-zoom
+  recommendations named as future work, per the 2026-07-14 decision),
+  and honest notes (TS sources / `transpilePackages`, FR/EN UI labels,
+  `MIT AND OFL-1.1`). Snippets use the final published name
+  (`darkmode-plus-a11y`) — unlike the templates, the README is not
+  rewritten by `init`.
+
 ## 2026-07-14 (E7 prep — HC semantic inspector shipped to consumers, A + B)
 
 ### Added (decision: both options from REVIEW § 3, same day)
