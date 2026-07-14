@@ -18,6 +18,10 @@ Update as you go (check off / remove once done).
 
 ## To do BEFORE publication (E7)
 
+- [ ] **Process the pre-E7 review findings** — bugs, backlog, Tailwind
+      path, package README + AGENTS.md: see
+      [REVIEW-e7-readiness.md](./REVIEW-e7-readiness.md) (2026-07-14),
+      handled item by item.
 - [x] **Renamed the `redd` → `red` palette family** (done 2026-07-13). Root
       cause confirmed by test: an UNQUOTED map key `red:` is read as the
       CSS color `red`, so `map.get($colors, "red")` returned null. Fix
