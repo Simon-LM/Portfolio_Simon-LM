@@ -14,28 +14,25 @@ Legend: 🐛 confirmed bug · ✅ decision made · 📋 pending task · 💡 pro
 
 ## 1. Bugs (confirmed, to fix)
 
-- [ ] 🐛 **`templates/AGENTS.md` tells consumers to run portfolio-only
-      commands.** Its "Verifying your wiring" section says to run
-      `pnpm hc:audit` and mentions "the palette conformance test" — but
-      both live in the **portfolio** (`package.json` script +
-      `src/accessibility/contrast/__tests__/`), not in the package and
-      not in the consumer's project. A consumer (human or AI) following
-      the guide hits "command not found". The package ships the
-      primitives (`testing/`: `wcag`, `measure`, `pairs`,
-      `extract-themes`, `cvd-simulation`, `gamut`) but **no documented
-      recipe** to actually assemble a contrast suite — despite the
-      GUIDE's promise ("offer the same guarantee to future package
-      consumers"). Fix (as part of the AGENTS.md rewrite, see § 2):
-      - Write a working, copy-paste recipe: a consumer-side
-        `contrast.test.ts` built on `darkmode-plus-a11y/testing/*`
-        (compile their SCSS entry, extract `[data-theme]` blocks, run
-        the default role pairs + their layer-3 pairs).
-      - Decide whether the HC semantic audit should also ship as a
-        runnable (CLI subcommand or exported runner) instead of being
-        referenced by a script name that only exists in this repo.
-- [ ] 🐛 **Dead reference in `templates/AGENTS.md`**: "the package
-      provides `themeInitScript` — see its docs" — no such docs exist
-      beyond source comments. Replace with an inline usage snippet.
+- [x] 🐛 **`templates/AGENTS.md` tells consumers to run portfolio-only
+      commands.** — **FIXED 2026-07-14** (see CHANGELOG same date): the
+      guide was rewritten around a working recipe on `testing/*` (three
+      consumer-side files: extraction setup, pairs registry, Jest
+      matrix test, plus optional distinguishability and HC
+      palette-conformance sketches) with a failure-modes table; the
+      same phantom reference in `templates/scss/theme.config.scss` was
+      fixed. Original finding: the "Verifying your wiring" section said
+      to run `pnpm hc:audit` and mentioned "the palette conformance
+      test" — both live in the **portfolio**, not in the package and
+      not in the consumer's project; a consumer (human or AI) following
+      the guide hit "command not found", and no recipe existed despite
+      the GUIDE's promise. **Still open from this finding** (moved to
+      § 3): decide whether the HC semantic audit should ship as a
+      runnable (CLI subcommand or exported runner).
+- [x] 🐛 **Dead reference in `templates/AGENTS.md`** ("the package
+      provides `themeInitScript` — see its docs") — **FIXED
+      2026-07-14**: replaced by an inline Next.js snippet + the
+      plain-string usage for other stacks.
 
 ## 2. Decisions made (2026-07-14)
 
@@ -54,9 +51,18 @@ Legend: 🐛 confirmed bug · ✅ decision made · 📋 pending task · 💡 pro
   - **Single source**: promote the current `templates/AGENTS.md` to the
     package root and have `init` copy that same file — no duplicate to
     maintain.
+  - **Status**: `AGENTS.md` done 2026-07-14 (rewritten at the package
+    root under the SCSS-first line, incl. the Tailwind bridge section;
+    CLI copies it, `init`/`init --diff` verified end-to-end).
+    `README.md` still to write.
 
 ## 3. Pre-publication tasks (E7 backlog)
 
+- [ ] 📋 **HC semantic audit as a consumer runnable** (spun off from
+      bug #1): the name-based inspector currently lives portfolio-side
+      (`pnpm hc:audit`); decide whether to ship it as a CLI subcommand
+      or an exported runner so consumers get the name-based control on
+      top of the documented value-based recipe.
 - [ ] 📋 **`package.json` metadata refresh**: `description` still says
       "working name — final name to be chosen" (name was settled
       2026-07-12) and points to a repo-internal doc path; add

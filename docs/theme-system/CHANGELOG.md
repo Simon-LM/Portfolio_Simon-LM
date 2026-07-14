@@ -13,7 +13,45 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
-## 2026-07-12 (E6.6 chantier — contrast verifier into the package)
+## 2026-07-14 (E7 prep — consumer guide fixed and promoted to the package root)
+
+### Fixed (pre-E7 review, bug #1 and #2 of REVIEW-e7-readiness.md § 1)
+
+- **The consumer guide referenced commands that do not exist in a
+  consumer project**: `templates/AGENTS.md` told integrators to run
+  `pnpm hc:audit` and relied on "the palette conformance test" — both
+  live in this portfolio, not in the package. A consumer (human or AI)
+  following the guide hit "command not found", and the GUIDE's promise
+  ("offer the same guarantee to future consumers") had no documented
+  recipe. The guide's verification section is rewritten around a
+  **working recipe on `testing/*`** (three files: extraction setup,
+  pairs registry, Jest matrix test — plus optional distinguishability
+  and high-contrast palette-conformance sketches) with a failure-modes
+  table (undefined variable = nonexistent role, missing theme, missing
+  token, real defect vs documented waiver). Same phantom reference
+  fixed in `templates/scss/theme.config.scss`.
+- **Dead reference removed**: "the package provides `themeInitScript` —
+  see its docs" → replaced by an inline Next.js snippet + the
+  plain-string usage for other stacks.
+
+### Changed
+
+- **`AGENTS.md` promoted from `templates/` to the package root**
+  (single source, follows the `AGENTS.md` convention agents look for):
+  `init` now copies the root file alongside the templates (CLI
+  `scaffoldEntries()`, covered by `init --diff` too), and
+  `package.json#files` ships it. Verified end-to-end in a scratch
+  project: 9 files written, import name rewritten (19 occurrences,
+  zero `a11y-prefs` left), `--diff` clean.
+- **The guide is rewritten under the SCSS-first positioning** (decided
+  2026-07-14, see REVIEW-e7-readiness.md § 4): mission stated (built-in
+  assistive quality, free), current scope pinned (colors + text fonts),
+  two integration paths (scaffolded UI / engine-only), and a
+  **Tailwind bridge section** — semantic-utilities mapping (v4
+  `@theme inline` + v3 `theme.colors`), "replace, don't extend" guard
+  (raw palette utilities cease to exist), optional CI grep, UI-as-CSS
+  compilation path (`npx sass a11y/scss:a11y/css`), no BEM imposed
+  anywhere outside the copied component.
 
 ### Added / Changed (branch `feat/e6-6-contrast-verifier`)
 

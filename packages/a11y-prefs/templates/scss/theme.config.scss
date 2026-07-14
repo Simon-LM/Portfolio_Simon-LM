@@ -8,8 +8,8 @@
 // ⚠️ GOLDEN RULE (see the AGENTS.md guide): every token is defined FROM A
 // LAYER-2 ROLE (`$accent`, `$bg-base`, `$link`…), never a raw value.
 // This is what guarantees high contrast and color-blind themes apply
-// correctly. The tooling checks (`pnpm hc:audit` + the conformance test)
-// verify this wiring.
+// correctly. AGENTS.md § "Verifying your wiring" shows how to check this
+// mechanically in YOUR project (contrast suite on a11y-prefs/testing/*).
 //
 // ⚠️ `a11y-prefs` = the package's import name; the CLI rewrites it to the
 // installed name (default "darkmode-plus-a11y") during `init`.

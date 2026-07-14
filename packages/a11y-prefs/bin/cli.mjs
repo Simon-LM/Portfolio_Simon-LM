@@ -5,7 +5,7 @@
 // SCSS + config) INTO the consumer's project, which then owns it. Pure
 // Node, no dependency.
 //
-//   init                Copies the templates into <dir> (default ./a11y).
+//   init                Copies the templates + AGENTS.md into <dir> (default ./a11y).
 //   init --diff         Compares the local copy against the package's reference.
 //
 // Options: --dir <path>  --pkg <import-name>  --fonts <path>  --force
@@ -18,6 +18,10 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const PKG_ROOT = resolve(HERE, "..");
 const TEMPLATES = join(PKG_ROOT, "templates");
 const FONTS_SRC = join(PKG_ROOT, "fonts", "files");
+
+// Docs copied from the package ROOT alongside the templates (single
+// source: the same AGENTS.md serves the installed package and the copy).
+const ROOT_DOCS = ["AGENTS.md"];
 
 // Import name used INSIDE the templates (the package's working name);
 // rewritten to the name actually installed by the consumer.
@@ -63,15 +67,24 @@ function ensureDir(p) {
 	mkdirSync(p, { recursive: true });
 }
 
+// Files to scaffold: the templates tree + the root docs, as
+// { rel, src } entries (src = absolute path of the reference file).
+function scaffoldEntries() {
+	return [
+		...listFiles(TEMPLATES).map((rel) => ({ rel, src: join(TEMPLATES, rel) })),
+		...ROOT_DOCS.map((rel) => ({ rel, src: join(PKG_ROOT, rel) })),
+	];
+}
+
 function cmdInit(args) {
 	const targetDir = resolve(process.cwd(), args.dir);
-	const files = listFiles(TEMPLATES);
+	const files = scaffoldEntries();
 	let written = 0, skipped = 0;
 
 	console.log(`\n${C.bold}darkmode-plus-a11y — init${C.reset}`);
 	console.log(`${C.dim}UI copied into ${relative(process.cwd(), targetDir) || "."} (import: ${args.pkg})${C.reset}\n`);
 
-	for (const rel of files) {
+	for (const { rel, src } of files) {
 		const dest = join(targetDir, rel);
 		if (existsSync(dest) && !args.force) {
 			console.log(`  ${C.yellow}skip${C.reset}    ${rel} ${C.dim}(exists — use --force to overwrite)${C.reset}`);
@@ -79,7 +92,7 @@ function cmdInit(args) {
 			continue;
 		}
 		ensureDir(dirname(dest));
-		writeFileSync(dest, renderTemplate(join(TEMPLATES, rel), args.pkg));
+		writeFileSync(dest, renderTemplate(src, args.pkg));
 		console.log(`  ${C.green}write${C.reset}   ${rel}`);
 		written++;
 	}
@@ -108,15 +121,15 @@ function cmdInit(args) {
 
 function cmdDiff(args) {
 	const targetDir = resolve(process.cwd(), args.dir);
-	const files = listFiles(TEMPLATES);
+	const files = scaffoldEntries();
 	let nw = 0, mod = 0, same = 0;
 
 	console.log(`\n${C.bold}darkmode-plus-a11y — init --diff${C.reset}`);
 	console.log(`${C.dim}Package reference vs ${relative(process.cwd(), targetDir) || "."}${C.reset}\n`);
 
-	for (const rel of files) {
+	for (const { rel, src } of files) {
 		const dest = join(targetDir, rel);
-		const ref = renderTemplate(join(TEMPLATES, rel), args.pkg);
+		const ref = renderTemplate(src, args.pkg);
 		if (!existsSync(dest)) {
 			console.log(`  ${C.cyan}new${C.reset}      ${rel} ${C.dim}(missing locally)${C.reset}`);
 			nw++;
