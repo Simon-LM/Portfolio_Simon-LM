@@ -66,15 +66,32 @@ Update as you go (check off / remove once done).
 
 ## Long-term roadmap (noted 2026-07-14, explicitly not soon)
 
-- [ ] **Zoom-robust SCSS/CSS recommendations module** — Simon's stated
-      direction for the package: beyond colors/themes, ship a set of
-      coding recommendations (and possibly tooling) for SCSS/CSS that
-      survives heavy browser zoom and font-size increases without
-      breaking layout (rem/em discipline, reflow, WCAG 1.4.4/1.4.10/
-      1.4.12 territory). This is the core of the package's
-      **SCSS-first** positioning (see REVIEW-e7-readiness.md § 4);
-      Tailwind support remains an on-ramp, never the destination. Do
-      not start before the package publication (E7) is done and stable.
+- [ ] **Extreme-zoom SCSS/CSS recommendations module** — Simon's stated
+      direction for the package: beyond colors/themes, ship coding
+      recommendations (and possibly tooling) so layouts stay
+      **functional and responsive at ≥ 10× magnification (1000 %+)** —
+      natively better than a screen magnifier like ZoomText (reflow:
+      sharp vector text, single reading axis, no 2D panning). WCAG
+      1.4.4 (200 %) / 1.4.10 (400 % reflow) are only the floor — "400 %
+      is nothing". Technical territory this implies (first notes,
+      2026-07-14): at 10× a 1920 px screen behaves like a ~192 CSS px
+      viewport, so no fixed dimensions **even in rem** (a 22.5rem panel
+      = 12× the viewport) — content-driven and viewport-capped sizing
+      (`min()`, `clamp()`, `max-width: 100%`); browsers cap zoom around
+      500 %, so reaching 10× **compounds browser zoom with the
+      package's font-size factor** (500 % × 2 = 10×) — the font-size
+      control is a load-bearing part of the strategy, not a gadget;
+      `em`-based media queries (they respond to font-size increases,
+      `px` ones do not); sticky/fixed chrome must collapse or unstick
+      (a 4rem sticky header eats half the screen at 10×); and a
+      mechanical verification harness in the spirit of the contrast
+      suite (render at ~130-190 px effective viewport, assert no
+      horizontal overflow, no overlap, controls reachable). Almost
+      nobody does this; it is the package's radical differentiator and
+      the core of its **SCSS-first** positioning (see
+      REVIEW-e7-readiness.md § 4); Tailwind support remains an on-ramp,
+      never the destination. Do not start before the package
+      publication (E7) is done and stable.
 
 ## To optimize later (noted, not urgent)
 

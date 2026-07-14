@@ -90,12 +90,20 @@ Legend: 🐛 confirmed bug · ✅ decision made · 📋 pending task · 💡 pro
 
 **Positioning decided by Simon (2026-07-14): the package is
 SCSS-first.** SCSS is the deliberate technical choice — it is what
-enables the accessibility requirements (zoom robustness: browser zoom
-and font-size increases must never break layout; rem/em discipline;
-compile-time guarantees like the loud undefined-variable failure). A
-future evolution (explicitly **not before a while**) will add a set of
-SCSS/CSS coding recommendations for zoom-robust styling; today the
-package only covers colors/themes + the font/motion modules. Tailwind
+enables the accessibility requirements: compile-time guarantees (loud
+undefined-variable failure) and **extreme zoom robustness**. The target
+is **not** WCAG's 200 % / 400 % (1.4.4 / 1.4.10) — that is only the
+floor ("400 % is nothing"). Simon's stated aim is layouts that stay
+**functional and responsive at ≥ 10× magnification (1000 %+)**,
+natively in the browser — a better experience than a dedicated screen
+magnifier like ZoomText, because native reflow keeps text sharp
+(vectors, not magnified pixels), linearizes content into a single
+reading axis, and eliminates 2D panning. Almost nobody on the planet
+pushes accessibility this far; it is the package's radical
+differentiator, and Tailwind's utility culture cannot realistically
+sustain that discipline. A future evolution (explicitly **not before a
+while**) will encode this as SCSS/CSS coding recommendations; today
+the package only covers colors/themes + the font/motion modules. Tailwind
 compatibility is therefore an **on-ramp, not a destination**: Tailwind
 users must be able to adopt the package without pain ("the transition
 is not too painful"), with an honest bridge — but the package does not
