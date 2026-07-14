@@ -1,8 +1,8 @@
 /** @format */
 
 import { differenceCiede2000 } from "culori";
-import { simulateCvd, simulateForCvdTheme } from "a11y-prefs/testing/cvd-simulation";
-import { toRgb } from "a11y-prefs/testing/wcag";
+import { simulateCvd, simulateForCvdTheme } from "darkmode-plus-a11y/testing/cvd-simulation";
+import { toRgb } from "darkmode-plus-a11y/testing/wcag";
 
 const deltaE = differenceCiede2000();
 

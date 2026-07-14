@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { applyAccessibilityFont } from "a11y-prefs/react/appliers";
+import { applyAccessibilityFont } from "darkmode-plus-a11y/react/appliers";
 
 type DyslexicFontType =
 	| "none"

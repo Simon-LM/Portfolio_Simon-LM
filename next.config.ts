@@ -127,7 +127,7 @@ import type { NextConfig } from "next/types";
 
 const nextConfig: NextConfig = {
 	reactStrictMode: true,
-	// Resolves @use "a11y-prefs/scss/…" (the pnpm workspace package,
+	// Resolves @use "darkmode-plus-a11y/scss/…" (the pnpm workspace package,
 	// symlinked into node_modules) — Dart Sass doesn't resolve Node
 	// modules by default. E3 chantier, docs/theme-system/PLAN-extraction-monorepo.md.
 	sassOptions: {
@@ -135,7 +135,7 @@ const nextConfig: NextConfig = {
 	},
 	// The workspace package is consumed as TypeScript source (a publishable
 	// dist is an E7 topic) — Next must transpile it. E4 chantier.
-	transpilePackages: ["a11y-prefs"],
+	transpilePackages: ["darkmode-plus-a11y"],
 	// Dev-server only: without this, Next.js rejects the HMR WebSocket handshake
 	// when the dev server is reached via a LAN IP instead of localhost, which
 	// leaves useSyncExternalStore-based "mounted" hooks stuck at false (skeleton

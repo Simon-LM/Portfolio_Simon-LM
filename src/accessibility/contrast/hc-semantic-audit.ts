@@ -3,7 +3,7 @@
 import "./setup";
 
 // PORTFOLIO's HC semantic audit (consumer config). The name-based
-// inspector ENGINE lives in the package (a11y-prefs/testing/
+// inspector ENGINE lives in the package (darkmode-plus-a11y/testing/
 // hc-semantic-audit, extracted pre-E7 — the portfolio is its first
 // consumer, same pattern as the contrast pairs): here we keep only OUR
 // calibration — the explicit slot mirror of our HC themes and our
@@ -14,21 +14,21 @@ import "./setup";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { THEMES } from "../../config/themes";
-import { getThemeVars } from "a11y-prefs/testing/extract-themes";
+import { getThemeVars } from "darkmode-plus-a11y/testing/extract-themes";
 import {
 	runHcSemanticAudit,
 	formatHcAuditReport,
 	defaultHcWaivers,
 	type HcWaiver,
 	type HcAuditFinding,
-} from "a11y-prefs/testing/hc-semantic-audit";
+} from "darkmode-plus-a11y/testing/hc-semantic-audit";
 
 // Re-exports for the test suite (the mechanics now live in the package).
 export {
 	segments,
 	familyOf,
 	pairBase,
-} from "a11y-prefs/testing/hc-semantic-audit";
+} from "darkmode-plus-a11y/testing/hc-semantic-audit";
 export type { HcAuditFinding as Finding };
 
 // Slots per theme — MIRROR of src/styles/themes/_high-contrast*.scss.

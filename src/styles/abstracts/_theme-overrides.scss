@@ -9,9 +9,9 @@
 
 @use "sass:map";
 @use "sass:string";
-@use "a11y-prefs/scss/base-palette" as *;
-@use "a11y-prefs/scss/state" as *;
-@use "a11y-prefs/scss/theme-generator" as *;
+@use "darkmode-plus-a11y/scss/base-palette" as *;
+@use "darkmode-plus-a11y/scss/state" as *;
+@use "darkmode-plus-a11y/scss/theme-generator" as *;
 @use "../themes/theme-variables" as *;
 
 @mixin theme-overrides($name) {

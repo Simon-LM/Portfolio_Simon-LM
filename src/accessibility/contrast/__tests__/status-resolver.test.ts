@@ -16,8 +16,8 @@ const projectRoot = path.resolve(__dirname, "../../../..");
 function compileProbe(body: string): { css: string; warnings: string[] } {
 	const warnings: string[] = [];
 	const src =
-		`@use "a11y-prefs/scss/base-palette" as *;\n` +
-		`@use "a11y-prefs/scss/theme-utils" as tu;\n` +
+		`@use "darkmode-plus-a11y/scss/base-palette" as *;\n` +
+		`@use "darkmode-plus-a11y/scss/theme-utils" as tu;\n` +
 		`a { ${body} }`;
 	const result = compileString(src, {
 		// node_modules resolves the workspace package (E3); projectRoot is

@@ -1,7 +1,7 @@
 /** @format */
 
 // PORTFOLIO's contrast pairs registry (consumer config, E6.6). ROLE pair
-// definitions + types come from the package (`a11y-prefs/testing/pairs`);
+// definitions + types come from the package (`darkmode-plus-a11y/testing/pairs`);
 // here we apply OUR waivers as an overlay and add OUR layer-3 pairs.
 
 import {
@@ -12,7 +12,7 @@ import {
 	defaultRolePairs,
 	defaultDistinguishabilityPairs,
 	withWaivers,
-} from "a11y-prefs/testing/pairs";
+} from "darkmode-plus-a11y/testing/pairs";
 
 export type { ContrastPair, DistinguishabilityPair, ContrastLevel };
 

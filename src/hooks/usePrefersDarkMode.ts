@@ -1,5 +1,5 @@
 /** @format */
 // Package re-export (E4): the implementation lives in
-// packages/a11y-prefs/react/usePrefersDarkMode.ts. An import-path
+// packages/darkmode-plus-a11y/react/usePrefersDarkMode.ts. An import-path
 // compatibility shim — zero churn.
-export { usePrefersDarkMode } from "a11y-prefs/react";
+export { usePrefersDarkMode } from "darkmode-plus-a11y/react";

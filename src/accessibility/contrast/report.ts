@@ -7,8 +7,8 @@ import path from "node:path";
 
 import { THEMES, type ThemeOption } from "../../config/themes";
 import { contrastPairs, type ContrastPair } from "./contrast-pairs";
-import { thresholdFor } from "a11y-prefs/testing/wcag";
-import { measureRatio } from "a11y-prefs/testing/measure";
+import { thresholdFor } from "darkmode-plus-a11y/testing/wcag";
+import { measureRatio } from "darkmode-plus-a11y/testing/measure";
 
 export const REPORT_PATH = path.resolve(
 	__dirname,

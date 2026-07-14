@@ -27,9 +27,9 @@ const FONTS_SRC = join(PKG_ROOT, "fonts", "files");
 // source: the same AGENTS.md serves the installed package and the copy).
 const ROOT_DOCS = ["AGENTS.md"];
 
-// Import name used INSIDE the templates (the package's working name);
-// rewritten to the name actually installed by the consumer.
-const SOURCE_IMPORT = "a11y-prefs";
+// Import name used INSIDE the templates (the published name); only
+// rewritten when the consumer installed under a different name (--pkg).
+const SOURCE_IMPORT = "darkmode-plus-a11y";
 
 const C = {
 	reset: "\x1b[0m", bold: "\x1b[1m", dim: "\x1b[2m",

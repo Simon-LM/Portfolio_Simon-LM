@@ -2,7 +2,7 @@
 
 # Bundled accessibility fonts — licenses
 
-All fonts shipped in `packages/a11y-prefs/fonts/files/` are under the
+All fonts shipped in `packages/darkmode-plus-a11y/fonts/files/` are under the
 **SIL Open Font License 1.1** (OFL), which allows embedding and
 redistribution (including commercial) as long as the font is not sold on
 its own and the license accompanies the files.

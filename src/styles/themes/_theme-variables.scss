@@ -1,13 +1,13 @@
 /** @format */
 
-@use "a11y-prefs/scss/base-palette" as *;
-@use "a11y-prefs/scss/state" as *;
+@use "darkmode-plus-a11y/scss/base-palette" as *;
+@use "darkmode-plus-a11y/scss/state" as *;
 
 // -----------------------------------------------
 // LAYER 3 — COMPONENT TOKENS (portfolio-specific, outside the package)
 // -----------------------------------------------
 // Since E3 phase 4, the rail, primitives, and roles (layers 1+2) live in
-// the package (a11y-prefs/scss/state); this module only keeps the site's
+// the package (darkmode-plus-a11y/scss/state); this module only keeps the site's
 // fine-grained wiring (~70 tokens) and its derivation mixin.
 // Same module constraint as on the package side: every variable
 // reassigned via `!global` in apply-theme-variables must be declared

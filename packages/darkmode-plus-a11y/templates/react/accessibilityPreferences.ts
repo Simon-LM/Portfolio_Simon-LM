@@ -5,14 +5,14 @@
 // freely). Replaces state stores with the package's generic `usePreference`
 // hook: zero state dependency to install.
 //
-// ⚠️ `a11y-prefs` = the package's import name. The CLI rewrites it to the
-// name you installed (default "darkmode-plus-a11y") during `init`.
+// ⚠️ Imports use the published package name; `init --pkg <name>` rewrites
+// them if you installed the package under a different name.
 
-import { usePreference } from "a11y-prefs/react";
+import { usePreference } from "darkmode-plus-a11y/react";
 import {
 	applyFontSizeFactor,
 	applyAccessibilityFont,
-} from "a11y-prefs/react/appliers";
+} from "darkmode-plus-a11y/react/appliers";
 
 // Text size as a percentage (100% = normal). Applies the CSS variable
 // --font-size-factor; your rem/em sizes follow it (host contract).

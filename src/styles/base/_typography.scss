@@ -2,9 +2,9 @@
 
 // Opt-in modules from the package (E5): accessibility fonts + reduced
 // animations, emitted via @include at their original locations.
-@use "a11y-prefs/scss/modules/a11y-fonts" as *;
-@use "a11y-prefs/scss/modules/motion" as *;
-@use "a11y-prefs/scss/modules/dyslexia" as *;
+@use "darkmode-plus-a11y/scss/modules/a11y-fonts" as *;
+@use "darkmode-plus-a11y/scss/modules/motion" as *;
+@use "darkmode-plus-a11y/scss/modules/dyslexia" as *;
 
 // @font-face {
 // 	font-family: "Inter";

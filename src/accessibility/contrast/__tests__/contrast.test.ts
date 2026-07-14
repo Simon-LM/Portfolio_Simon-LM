@@ -1,11 +1,11 @@
 /** @jest-environment node */
 /** @format */
 
-import { getVar } from "a11y-prefs/testing/extract-themes";
-import { thresholdFor } from "a11y-prefs/testing/wcag";
+import { getVar } from "darkmode-plus-a11y/testing/extract-themes";
+import { thresholdFor } from "darkmode-plus-a11y/testing/wcag";
 import { contrastPairs } from "../contrast-pairs";
 import { THEMES } from "../../../config/themes";
-import { measureRatio } from "a11y-prefs/testing/measure";
+import { measureRatio } from "darkmode-plus-a11y/testing/measure";
 
 describe("contrast-pairs registry integrity", () => {
 	it("has no duplicate pair ids", () => {

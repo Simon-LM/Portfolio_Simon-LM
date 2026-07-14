@@ -21,7 +21,7 @@
 // CONSUMER CONFIGURATION (E3 phase 5)
 // -----------------------------------------------
 // Each project configures its palette on first module load:
-//   @use "a11y-prefs/scss/state" with ($gray-family: …, $primitives: (…));
+//   @use "darkmode-plus-a11y/scss/state" with ($gray-family: …, $primitives: (…));
 // Contract (README § 6.1): the rail family and the primitive families
 // must follow base-palette's 11-weight Tailwind geometry.
 // Defaults = the portfolio's light values.

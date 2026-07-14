@@ -85,9 +85,9 @@ importers:
       '@react-types/select':
         specifier: ^3.13.0
         version: 3.13.0(@react-spectrum/provider@3.11.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      a11y-prefs:
+      darkmode-plus-a11y:
         specifier: workspace:*
-        version: link:packages/a11y-prefs
+        version: link:packages/darkmode-plus-a11y
       feed:
         specifier: ^4.2.2
         version: 4.2.2
@@ -204,7 +204,7 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
-  packages/a11y-prefs:
+  packages/darkmode-plus-a11y:
     dependencies:
       culori:
         specifier: ^4.0.2

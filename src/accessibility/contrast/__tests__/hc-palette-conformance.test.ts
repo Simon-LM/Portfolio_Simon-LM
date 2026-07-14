@@ -8,7 +8,7 @@
 // contract. Read-only: this test modifies nothing.
 
 import { THEMES } from "../../../config/themes";
-import { getThemeVars } from "a11y-prefs/testing/extract-themes";
+import { getThemeVars } from "darkmode-plus-a11y/testing/extract-themes";
 
 // Per-variant palettes — MIRROR of src/styles/themes/_high-contrast*.scss
 // (if a map changes there, this test fails: that's intentional, it forces

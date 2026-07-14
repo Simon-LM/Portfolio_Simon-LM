@@ -11,7 +11,7 @@ import Link from "next/link";
 import { usePrefersDarkMode } from "../../hooks/usePrefersDarkMode";
 import { useFontSizeStore } from "@/store/fontSizeStore";
 import { useDyslexicFontStore } from "@/store/dyslexicFontStore";
-import { applyReduceMotion } from "a11y-prefs/react/appliers";
+import { applyReduceMotion } from "darkmode-plus-a11y/react/appliers";
 import { FaUniversalAccess } from "react-icons/fa";
 import { useIsMounted } from "../../hooks/useIsMounted";
 import { ThemeOption } from "@/config/themes";

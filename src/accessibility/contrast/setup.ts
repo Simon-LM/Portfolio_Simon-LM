@@ -5,7 +5,7 @@
 // (jest.setup.js + the report/audit scripts).
 
 import path from "node:path";
-import { configureThemeExtraction } from "a11y-prefs/testing/extract-themes";
+import { configureThemeExtraction } from "darkmode-plus-a11y/testing/extract-themes";
 import { THEMES } from "../../config/themes";
 
 configureThemeExtraction({

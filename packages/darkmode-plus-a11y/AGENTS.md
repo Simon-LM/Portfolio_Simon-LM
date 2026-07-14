@@ -7,10 +7,9 @@ instructions are deterministic: exact imports, exact commands, explicit
 failure modes. Read it **before** wiring anything. `init` copies this
 file into your project so it stays available next to the code you own.
 
-> ⚠️ In every snippet below, `a11y-prefs` is the package's **source
-> import name**; the `init` CLI rewrites it to the name you actually
-> installed (default `darkmode-plus-a11y`). If you copied a snippet by
-> hand, use your installed package name.
+> ⚠️ Snippets use the published package name (`darkmode-plus-a11y`).
+> Installed it under a different name? `init --pkg <name>` rewrites the
+> copied files accordingly; align hand-copied snippets yourself.
 
 ## Why this package exists
 
@@ -140,7 +139,7 @@ Wiring steps:
 
    ```tsx
    // Next.js App Router — app/layout.tsx
-   import { themeInitScript, THEMES } from "a11y-prefs/react";
+   import { themeInitScript, THEMES } from "darkmode-plus-a11y/react";
 
    export default function RootLayout({ children }) {
    	return (
@@ -183,7 +182,7 @@ Wiring steps:
 One SCSS entry generates every theme from your light configuration:
 
 ```scss
-@use "a11y-prefs/scss/state" as * with (
+@use "darkmode-plus-a11y/scss/state" as * with (
 	$gray-family: "stone",
 	$primitives: (
 		"accent": ("amber", 300),
@@ -192,7 +191,7 @@ One SCSS entry generates every theme from your light configuration:
 		// …your brand, as Tailwind ("family", weight) pairs
 	)
 );
-@use "a11y-prefs/scss/theme-generator" as *;
+@use "darkmode-plus-a11y/scss/theme-generator" as *;
 
 @include generate-all-themes() using ($name) {
 	// The package has already emitted the role variables (--bg-base,
@@ -208,7 +207,7 @@ One SCSS entry generates every theme from your light configuration:
 CSS bundle. Runtime side:
 
 ```tsx
-import { useTheme, THEMES, type ThemeOption } from "a11y-prefs/react";
+import { useTheme, THEMES, type ThemeOption } from "darkmode-plus-a11y/react";
 
 const { theme, setTheme } = useTheme(); // + isDark, isHighContrast, …
 ```
@@ -216,7 +215,7 @@ const { theme, setTheme } = useTheme(); // + isDark, isHighContrast, …
 Anti-FOUC: same as Path A step 3. Optional font modules:
 
 ```scss
-@use "a11y-prefs/scss/modules/a11y-fonts" as * with ($a11y-fonts-path: "/fonts");
+@use "darkmode-plus-a11y/scss/modules/a11y-fonts" as * with ($a11y-fonts-path: "/fonts");
 @include a11y-font-faces(); // @font-face for the bundled OFL fonts
 @include a11y-font-classes; // .atkinson-font / .andika-font / …
 ```
@@ -305,7 +304,7 @@ Rules on themed surfaces:
 ## Verifying your wiring
 
 The package ships the verifier as importable primitives
-(`a11y-prefs/testing/*`) — the same engine this repo runs on its 15
+(`darkmode-plus-a11y/testing/*`) — the same engine this repo runs on its 15
 themes in CI. Three files and it runs in your project. Requirements: a
 TypeScript-capable test runner (Jest shown; Vitest works the same) in
 a **node** environment — the suite compiles your SCSS at test time.
@@ -315,7 +314,7 @@ a **node** environment — the suite compiles your SCSS at test time.
 ```ts
 // a11y/contrast/setup.ts
 import path from "node:path";
-import { configureThemeExtraction } from "a11y-prefs/testing/extract-themes";
+import { configureThemeExtraction } from "darkmode-plus-a11y/testing/extract-themes";
 
 export const THEMES = ["light", "dark", "high-contrast"] as const; // your list
 
@@ -336,7 +335,7 @@ import {
 	defaultRolePairs,
 	withWaivers,
 	type ContrastPair,
-} from "a11y-prefs/testing/pairs";
+} from "darkmode-plus-a11y/testing/pairs";
 
 const sitePairs: ContrastPair[] = [
 	{ id: "site/main-text-on-main-bg", fg: "--color-main-text", bg: "--color-main-bg", level: "text" },
@@ -357,8 +356,8 @@ export const contrastPairs = [
 /** @jest-environment node */
 import "./setup";
 import { THEMES } from "./setup";
-import { thresholdFor } from "a11y-prefs/testing/wcag";
-import { measureRatio } from "a11y-prefs/testing/measure";
+import { thresholdFor } from "darkmode-plus-a11y/testing/wcag";
+import { measureRatio } from "darkmode-plus-a11y/testing/measure";
 import { contrastPairs } from "./pairs";
 
 describe("WCAG contrast — pair × theme matrix", () => {
@@ -379,8 +378,8 @@ describe("WCAG contrast — pair × theme matrix", () => {
 simulated perceptions, for CVD themes):
 
 ```ts
-import { defaultDistinguishabilityPairs } from "a11y-prefs/testing/pairs";
-import { measureDeltaE } from "a11y-prefs/testing/measure";
+import { defaultDistinguishabilityPairs } from "darkmode-plus-a11y/testing/pairs";
+import { measureDeltaE } from "darkmode-plus-a11y/testing/measure";
 
 for (const pair of defaultDistinguishabilityPairs) {
 	for (const theme of pair.themes) {
@@ -397,7 +396,7 @@ belong to the theme's palette — a raw value sticks out immediately).
 Sketch, tune the role list to your HC palette:
 
 ```ts
-import { getThemeVars } from "a11y-prefs/testing/extract-themes";
+import { getThemeVars } from "darkmode-plus-a11y/testing/extract-themes";
 
 it("high-contrast emits only palette colors", () => {
 	const vars = getThemeVars().get("high-contrast")!;
@@ -436,11 +435,11 @@ npx darkmode-plus-a11y audit --entry styles/main.scss --load-path node_modules
 Test-suite form (same engine, plus your waivers and exact slots):
 
 ```ts
-import { getThemeVars } from "a11y-prefs/testing/extract-themes";
+import { getThemeVars } from "darkmode-plus-a11y/testing/extract-themes";
 import {
 	runHcSemanticAudit,
 	defaultHcWaivers,
-} from "a11y-prefs/testing/hc-semantic-audit";
+} from "darkmode-plus-a11y/testing/hc-semantic-audit";
 import { THEMES } from "./setup";
 
 it("token names do not contradict their emitted colors", () => {

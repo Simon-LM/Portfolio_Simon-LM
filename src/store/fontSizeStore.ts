@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { applyFontSizeFactor } from "a11y-prefs/react/appliers";
+import { applyFontSizeFactor } from "darkmode-plus-a11y/react/appliers";
 
 interface FontSizeState {
 	fontSize: number; // as a percentage (100% = normal size)

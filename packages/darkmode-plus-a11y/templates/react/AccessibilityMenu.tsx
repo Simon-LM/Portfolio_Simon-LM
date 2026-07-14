@@ -7,8 +7,8 @@
 // `usePreference` hook (no store to install), package fonts only, no
 // framework dependency (no next/link).
 //
-// ⚠️ `a11y-prefs` = the package's import name; the CLI rewrites it to the
-// installed name (default "darkmode-plus-a11y") during `init`.
+// ⚠️ Imports use the published package name; `init --pkg <name>` rewrites
+// them if you installed the package under a different name.
 
 import {
 	useState,
@@ -21,8 +21,8 @@ import {
 import Select, { GroupBase, StylesConfig } from "react-select";
 import type { SelectInstance } from "react-select";
 import { FaUniversalAccess } from "react-icons/fa";
-import { useTheme, usePrefersDarkMode, type ThemeOption } from "a11y-prefs/react";
-import { applyReduceMotion } from "a11y-prefs/react/appliers";
+import { useTheme, usePrefersDarkMode, type ThemeOption } from "darkmode-plus-a11y/react";
+import { applyReduceMotion } from "darkmode-plus-a11y/react/appliers";
 import {
 	useFontSize,
 	useAccessibilityFont,

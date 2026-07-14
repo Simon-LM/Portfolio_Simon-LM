@@ -1,5 +1,5 @@
 {
-	"name": "a11y-prefs",
+	"name": "darkmode-plus-a11y",
 	"version": "0.0.0",
 	"private": true,
 	"description": "Accessible theme engines (working name — final name to be chosen at publication, chantier E7). SCSS face extracted from the portfolio, see docs/theme-system/GUIDE-extraction-paquet.md.",

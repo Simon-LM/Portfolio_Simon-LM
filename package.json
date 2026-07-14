@@ -24,9 +24,9 @@
 		"moduleNameMapper": {
 			"\\.(css|less|scss|sass)$": "identity-obj-proxy",
 			"^@/(.*)$": "<rootDir>/src/$1",
-			"^a11y-prefs/react$": "<rootDir>/packages/a11y-prefs/react/index.ts",
-			"^a11y-prefs/react/(.*)$": "<rootDir>/packages/a11y-prefs/react/$1",
-			"^a11y-prefs/testing/(.*)$": "<rootDir>/packages/a11y-prefs/testing/$1"
+			"^darkmode-plus-a11y/react$": "<rootDir>/packages/darkmode-plus-a11y/react/index.ts",
+			"^darkmode-plus-a11y/react/(.*)$": "<rootDir>/packages/darkmode-plus-a11y/react/$1",
+			"^darkmode-plus-a11y/testing/(.*)$": "<rootDir>/packages/darkmode-plus-a11y/testing/$1"
 		},
 		"transform": {
 			"^.+\\.(js|jsx|ts|tsx)$": [
@@ -40,7 +40,7 @@
 		}
 	},
 	"dependencies": {
-		"a11y-prefs": "workspace:*",
+		"darkmode-plus-a11y": "workspace:*",
 		"@emailjs/browser": "^4.4.1",
 		"@formatjs/intl-localematcher": "^0.5.10",
 		"@hookform/resolvers": "3.10.0",

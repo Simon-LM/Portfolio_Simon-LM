@@ -9,13 +9,13 @@
 // LAYER-2 ROLE (`$accent`, `$bg-base`, `$link`…), never a raw value.
 // This is what guarantees high contrast and color-blind themes apply
 // correctly. AGENTS.md § "Verifying your wiring" shows how to check this
-// mechanically in YOUR project (contrast suite on a11y-prefs/testing/*).
+// mechanically in YOUR project (contrast suite on darkmode-plus-a11y/testing/*).
 //
-// ⚠️ `a11y-prefs` = the package's import name; the CLI rewrites it to the
-// installed name (default "darkmode-plus-a11y") during `init`.
+// ⚠️ Imports use the published package name; `init --pkg <name>` rewrites
+// them if you installed the package under a different name.
 
-@use "a11y-prefs/scss/base-palette" as *;
-@use "a11y-prefs/scss/state" as *;
+@use "darkmode-plus-a11y/scss/base-palette" as *;
+@use "darkmode-plus-a11y/scss/state" as *;
 
 // Emits the CSS variables consumed by the accessibility UI, derived from
 // the current roles. To be included INSIDE each [data-theme] block, AFTER

@@ -1,8 +1,8 @@
 /** @jest-environment node */
 /** @format */
 
-import { getThemeVars, getRootVars } from "a11y-prefs/testing/extract-themes";
-import { outOfGamutReason, gamutWaivers } from "a11y-prefs/testing/gamut";
+import { getThemeVars, getRootVars } from "darkmode-plus-a11y/testing/extract-themes";
+import { outOfGamutReason, gamutWaivers } from "darkmode-plus-a11y/testing/gamut";
 
 type Finding = { theme: string; prop: string; reason: string };
 

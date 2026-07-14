@@ -6,11 +6,11 @@ import { createHash } from "node:crypto";
 import path from "node:path";
 
 // Anti-drift guard (chantier E5): every font file bundled in the package
-// (packages/a11y-prefs/fonts/files/) must be byte-identical to the copy the
+// (packages/darkmode-plus-a11y/fonts/files/) must be byte-identical to the copy the
 // portfolio serves from public/fonts/. The package fonts are a copy, not a
 // move — until the E6 CLI owns installation, the two must not diverge.
 const projectRoot = path.resolve(__dirname, "../../../..");
-const PKG_FONTS = path.join(projectRoot, "packages/a11y-prefs/fonts/files");
+const PKG_FONTS = path.join(projectRoot, "packages/darkmode-plus-a11y/fonts/files");
 const PUBLIC_FONTS = path.join(projectRoot, "public/fonts");
 
 function sha(file: string): string {

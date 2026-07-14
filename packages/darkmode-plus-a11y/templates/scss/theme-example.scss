@@ -9,10 +9,10 @@
 // the package only emits its role variables, you add your own, derived
 // from the transformed roles.
 //
-// ⚠️ `a11y-prefs` = the package's import name; the CLI rewrites it to the
-// installed name (default "darkmode-plus-a11y") during `init`.
+// ⚠️ Imports use the published package name; `init --pkg <name>` rewrites
+// them if you installed the package under a different name.
 
-@use "a11y-prefs/scss/state" as * with (
+@use "darkmode-plus-a11y/scss/state" as * with (
 	// Gray family and brand primitives (Tailwind palettes — prerequisite).
 	$gray-family: "stone",
 	$primitives: (
@@ -26,7 +26,7 @@
 		"danger": ("red", 600),
 	)
 );
-@use "a11y-prefs/scss/theme-generator" as *;
+@use "darkmode-plus-a11y/scss/theme-generator" as *;
 @use "theme.config" as *;
 
 // All standard themes, generated from your light theme. Pass a list to

@@ -1,7 +1,7 @@
 /** @jest-environment node */
 /** @format */
 
-import { getThemeVars, getRootVars, getVar } from "a11y-prefs/testing/extract-themes";
+import { getThemeVars, getRootVars, getVar } from "darkmode-plus-a11y/testing/extract-themes";
 import { THEMES } from "../../../config/themes";
 
 describe("getThemeVars", () => {

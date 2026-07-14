@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import Script from "next/script";
 import { LanguageSync } from "../../components/LanguageSync";
 import { THEMES } from "@/config/themes";
-import { themeInitScript } from "a11y-prefs/react/themeInitScript";
+import { themeInitScript } from "darkmode-plus-a11y/react/themeInitScript";
 
 const metadata = {
 	fr: {

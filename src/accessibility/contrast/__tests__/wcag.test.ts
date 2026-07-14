@@ -1,6 +1,6 @@
 /** @format */
 
-import { toRgb, compositeOver, contrastRatio, thresholdFor } from "a11y-prefs/testing/wcag";
+import { toRgb, compositeOver, contrastRatio, thresholdFor } from "darkmode-plus-a11y/testing/wcag";
 
 describe("toRgb", () => {
 	it("parses hex colors into normalized 0-1 RGB channels", () => {

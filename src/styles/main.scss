@@ -7,7 +7,7 @@
 // before theme-utils, which loads it internally. Values = the
 // portfolio's palette (identical to the package's defaults, which serve
 // as a template for other consumer projects).
-@use "a11y-prefs/scss/state" with (
+@use "darkmode-plus-a11y/scss/state" with (
 	$gray-family: "stone",
 	$primitives: (
 		"accent": ("amber", 300),
@@ -21,8 +21,8 @@
 	)
 );
 
-@use "a11y-prefs/scss/base-palette" as *;
-@use "a11y-prefs/scss/theme-utils" as *;
+@use "darkmode-plus-a11y/scss/base-palette" as *;
+@use "darkmode-plus-a11y/scss/theme-utils" as *;
 @use "abstracts/theme-system" as *;
 
 @use "abstracts/functions" as *;

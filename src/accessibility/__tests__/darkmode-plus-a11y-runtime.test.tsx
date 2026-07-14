@@ -6,7 +6,7 @@ import {
 	applyAccessibilityFont,
 	applyReduceMotion,
 	usePreference,
-} from "a11y-prefs/react";
+} from "darkmode-plus-a11y/react";
 
 // Runtime module tests (chantier E5): the DOM appliers the portfolio stores
 // now delegate to, plus the generic usePreference hook.
