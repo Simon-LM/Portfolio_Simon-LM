@@ -122,6 +122,24 @@ Legend: 🐛 confirmed bug · ✅ decision made · 📋 pending task · 💡 pro
       wires cleanly) → `require()` of testing/react dist entries. To
       re-run against the real npm version at publication.
 
+### Release strategy (decided by Simon, 2026-07-15)
+
+1. **Beta first, as 0.x** (start `0.1.0`, not `1.0.0`): publish, then
+   install the npm version for real on one of Simon's OTHER sites (the
+   portfolio stays on the workspace source — dev bench, decision
+   2026-07-11). Expect small bugs and documentation rough edges;
+   iterate as `0.x` minors (pre-1.0 semver: the API may still move;
+   changelog discipline stays).
+2. **Then a third site**; once both run it cleanly, cut **`1.0.0`** —
+   at which point the GUIDE's strict semver rules (deprecation paths,
+   loud failures on majors) formally lock in.
+3. Known gap, accepted for the beta: no pure-Tailwind site among
+   Simon's to test the bridge. Mitigation available before 1.0.0: a
+   disposable Tailwind project (same method as the pack proof) mapping
+   the emitted variables as semantic utilities and switching
+   `data-theme` — validates the documented path without owning a
+   Tailwind site; community feedback covers the rest.
+
 ## 4. Tailwind compatibility (question raised 2026-07-14)
 
 **The mission behind the package (Simon, 2026-07-14): make the web
