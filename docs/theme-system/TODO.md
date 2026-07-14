@@ -64,6 +64,18 @@ Update as you go (check off / remove once done).
       wired to `var(--success)` (themed green across all 12 themes, the
       role's first consumer). Waiver reduced to achromatopsia alone.
 
+## Long-term roadmap (noted 2026-07-14, explicitly not soon)
+
+- [ ] **Zoom-robust SCSS/CSS recommendations module** — Simon's stated
+      direction for the package: beyond colors/themes, ship a set of
+      coding recommendations (and possibly tooling) for SCSS/CSS that
+      survives heavy browser zoom and font-size increases without
+      breaking layout (rem/em discipline, reflow, WCAG 1.4.4/1.4.10/
+      1.4.12 territory). This is the core of the package's
+      **SCSS-first** positioning (see REVIEW-e7-readiness.md § 4);
+      Tailwind support remains an on-ramp, never the destination. Do
+      not start before the package publication (E7) is done and stable.
+
 ## To optimize later (noted, not urgent)
 
 - [x] **High-contrast typography** — closed out in the HC chantier

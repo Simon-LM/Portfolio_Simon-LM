@@ -88,6 +88,22 @@ Legend: 🐛 confirmed bug · ✅ decision made · 📋 pending task · 💡 pro
 
 ## 4. Tailwind compatibility (question raised 2026-07-14)
 
+**Positioning decided by Simon (2026-07-14): the package is
+SCSS-first.** SCSS is the deliberate technical choice — it is what
+enables the accessibility requirements (zoom robustness: browser zoom
+and font-size increases must never break layout; rem/em discipline;
+compile-time guarantees like the loud undefined-variable failure). A
+future evolution (explicitly **not before a while**) will add a set of
+SCSS/CSS coding recommendations for zoom-robust styling; today the
+package only covers colors/themes + the font/motion modules. Tailwind
+compatibility is therefore an **on-ramp, not a destination**: Tailwind
+users must be able to adopt the package without pain ("the transition
+is not too painful"), with an honest bridge — but the package does not
+invest in making Tailwind a permanent first-class home. Consequence:
+the "true Tailwind template variants" idea below is **demoted** (it
+would signal the opposite of SCSS-first and double the maintenance
+surface); the reference UI stays SCSS.
+
 **Verdict: the runtime core is fully Tailwind-compatible; the build-time
 story and the copied UI are not yet, and neither is documented.**
 
@@ -190,10 +206,12 @@ Solution paths (explained to Simon 2026-07-14, decisions pending):
       CI grep / lint rule against raw color utilities
       (`bg-[a-z]+-[0-9]+` …) in themed components — the
       Tailwind-side analog of the HC value-based control.
-- [ ] 💡 **True Tailwind template variants** (`init --style tailwind`):
-      the long-term answer, but doubles the reference-UI and
-      `init --diff` maintenance surface → post-E7 chantier, driven by
-      actual demand.
+- [ ] 💡 ~~**True Tailwind template variants** (`init --style
+      tailwind`)~~ — **demoted 2026-07-14** (SCSS-first positioning, see
+      the top of this section): it would double the reference-UI and
+      `init --diff` maintenance surface and signal Tailwind as a
+      destination rather than an on-ramp. Only reconsider on massive,
+      demonstrated demand.
 
 ## 5. Minor notes (documented limitations, no action required yet)
 
