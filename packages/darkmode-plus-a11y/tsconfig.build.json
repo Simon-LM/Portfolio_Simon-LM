@@ -1,0 +1,22 @@
+{
+	// Dist build (pre-E7): CommonJS on purpose — Node refuses to type-strip
+	// TS under node_modules, and CJS keeps the extensionless relative
+	// imports of the sources valid at runtime with zero Node-version
+	// requirement. Consumers' bundlers and test runners consume the dist
+	// through the exports map; the portfolio keeps reading the TS sources
+	// (tsconfig paths).
+	"compilerOptions": {
+		"target": "ES2020",
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"lib": ["ES2020", "DOM"],
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"declaration": true,
+		"outDir": "dist",
+		"rootDir": ".",
+		"types": ["node", "react"]
+	},
+	"include": ["react/**/*.ts", "testing/**/*.ts"]
+}

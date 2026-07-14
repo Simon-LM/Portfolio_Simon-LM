@@ -2,9 +2,9 @@
 
 # Pre-E7 readiness review — findings and recommendations
 
-Snapshot review of the package (`packages/a11y-prefs`, publish name
-`darkmode-plus-a11y`) done on 2026-07-14, before writing the E7 execution
-plan. Everything actionable found during the review is recorded here so
+Snapshot review of the package (`packages/darkmode-plus-a11y`; renamed
+from the working name `a11y-prefs` on 2026-07-15) done on 2026-07-14,
+before writing the E7 execution plan. Everything actionable found during the review is recorded here so
 nothing gets lost; items are processed **one at a time** (Simon's
 instruction) and checked off as they land. The future `PLAN-e7-*.md`
 should absorb whatever is still open when it gets written.
@@ -76,34 +76,47 @@ Legend: 🐛 confirmed bug · ✅ decision made · 📋 pending task · 💡 pro
       `--waive`/`--strict`/`--out`; friendly fallback message on older
       Node). Both forms documented in AGENTS.md § Verifying your
       wiring.
-- [ ] 📋 **`package.json` metadata refresh**: `description` still says
-      "working name — final name to be chosen" (name was settled
-      2026-07-12) and points to a repo-internal doc path; add
-      `repository`, `homepage`, `keywords`; `version`/`private` flip at
-      publication.
-- [ ] 📋 **Rename `a11y-prefs` → `darkmode-plus-a11y`**: breaks every
-      `a11y-prefs/...` import in the portfolio (SCSS `@use`, TS imports,
-      Jest `moduleNameMapper`, `transpilePackages`, workspace deps) —
-      sequence it as its own phase with the test suite as the net.
-- [ ] 📋 **Publishable dist decision** (GUIDE § E7, still open): exports
-      currently point at raw `.ts` sources — fine for Next.js
-      (`transpilePackages`), hostile to plain Vite/CRA consumers. Either
-      build a dist (tsup/tsc) or explicitly document the TS-source
-      requirement.
-- [ ] 📋 **Dependency hygiene**: `sass`, `postcss`, `culori` are hard
-      `dependencies`, but `postcss`/`culori` only serve `testing/`, and
-      consumers typically bring their own `sass`. Consider
-      peer/optional placement, or at minimum document the weight.
-- [ ] 📋 **Sylexiad EULA question** (carried from TODO.md, blocking):
-      the EULA requires webfonts that are "not publicly downloadable";
-      the portfolio's woff2 files technically are. To settle before
-      open-sourcing the repo. (The font itself is already excluded from
-      the package.)
-- [ ] 📋 **CI gates**: build + unit tests + contrast tests (blocking) +
-      lint on every PR (GUIDE § E7).
-- [ ] 📋 **Full-cycle proof**: install the published version in a
-      disposable project and run it — never on the portfolio (decision
-      2026-07-11: the portfolio stays on the workspace link).
+- [x] 📋 **`package.json` metadata refresh** — **DONE 2026-07-15**:
+      real description, `keywords`, `repository` (+ `directory`),
+      `homepage`, `bugs`. `version 0.0.0` + `private: true` kept on
+      purpose (anti-accidental-publish lock) — flip at publication.
+- [x] 📋 **Rename `a11y-prefs` → `darkmode-plus-a11y`** — **DONE
+      2026-07-15** (`44af307`, atomic): name + directory + every
+      portfolio import + CLI `SOURCE_IMPORT` + docs' living sections.
+      Full verification green (748 tests, tsc, build, byte-identical
+      audit report).
+- [x] 📋 **Publishable dist decision** — **DONE 2026-07-15, and no
+      longer optional**: the pack-based cycle proof surfaced
+      `ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING` (Node refuses TS
+      under `node_modules`; consumer Jest/Vitest don't transform
+      `node_modules` either) — raw TS sources broke the audit CLI AND
+      the test-suite recipe for real consumers. Decision: **prebuilt
+      CommonJS dist** (tsc, `.d.ts`, built at `prepack`/CI, gitignored;
+      extensionless relative imports stay valid, zero Node-version
+      requirement — the CLI's "Node ≥ 22.18" constraint from the § 3
+      audit item is superseded). Exports for `./react*` and
+      `./testing/*` point at the dist; the portfolio keeps reading TS
+      sources via `tsconfig` `paths` (instant preview preserved).
+- [x] 📋 **Dependency hygiene** — **DECIDED 2026-07-15**: keep
+      `sass`/`postcss`/`culori` as regular dependencies (they power the
+      verifier and the zero-config `audit` CLI; batteries included) and
+      document the weight in the README.
+- [ ] 📋 **Sylexiad EULA question** (carried from TODO.md, blocking —
+      **Simon's call, still open**): the EULA requires webfonts that
+      are "not publicly downloadable"; the portfolio's woff2 files
+      technically are. To settle before open-sourcing the repo. (The
+      font itself is already excluded from the package.)
+- [x] 📋 **CI gates** — **DONE 2026-07-15**
+      (`.github/workflows/ci.yml`): lint → tsc → Jest (contrast gates
+      included) → package dist build → HC audit `--strict` →
+      production build; risky steps validated locally (audit exit 0,
+      env-less build green).
+- [x] 📋 **Full-cycle proof** — **DONE 2026-07-15, pack-based**
+      (publication excluded by Simon): tarball → disposable project →
+      init (9 files + 22 fonts) → sass compile → 15 `[data-theme]`
+      blocks → audit CLI on the dist (0 active — the shipped template
+      wires cleanly) → `require()` of testing/react dist entries. To
+      re-run against the real npm version at publication.
 
 ## 4. Tailwind compatibility (question raised 2026-07-14)
 

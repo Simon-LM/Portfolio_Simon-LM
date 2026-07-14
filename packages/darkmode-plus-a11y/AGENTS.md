@@ -305,9 +305,11 @@ Rules on themed surfaces:
 
 The package ships the verifier as importable primitives
 (`darkmode-plus-a11y/testing/*`) — the same engine this repo runs on its 15
-themes in CI. Three files and it runs in your project. Requirements: a
-TypeScript-capable test runner (Jest shown; Vitest works the same) in
-a **node** environment — the suite compiles your SCSS at test time.
+themes in CI. The subpaths resolve to a **prebuilt CommonJS dist with
+type declarations**: no transform config needed for `node_modules`, any
+Jest or Vitest setup works as-is. Three files and it runs in your
+project — in a **node** environment (the suite compiles your SCSS at
+test time).
 
 **1. Configure the extraction** (once, before any measurement):
 
@@ -421,9 +423,8 @@ says "text" while the emitted value is the background color raises a
 warning. Never blocking; legitimate contradictions get documented
 waivers (e.g. `--fg-on-emphasis`: ink sitting on a colored block).
 
-Quickest form — the CLI (needs Node ≥ 22.18 for native TypeScript; on
-older Node, run the same file through `npx tsx`, or use the test-suite
-form below):
+Quickest form — the CLI (runs the prebuilt dist, no Node version
+requirement):
 
 ```bash
 npx darkmode-plus-a11y audit --entry styles/main.scss --load-path node_modules

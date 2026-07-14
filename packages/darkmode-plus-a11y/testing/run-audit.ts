@@ -1,11 +1,11 @@
 /** @format */
 
 // CLI entry for the HC semantic audit (`darkmode-plus-a11y audit`).
-// Executed by Node's NATIVE type stripping (Node >= 22.18): relative
-// imports therefore carry explicit .ts extensions (required by native
-// TS execution; extensionless specifiers are only resolved by bundlers
-// and test runners). This file is CLI-only — consumers never import it,
-// so the .ts-extension specifiers never reach their type-checker.
+// The CLI runs the COMPILED form (dist/testing/run-audit.js, CommonJS):
+// Node refuses to type-strip files under node_modules
+// (ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING), so shipping raw TS to
+// consumers is not an option for anything executed by plain Node. The
+// CJS dist also frees the audit from any Node-version requirement.
 //
 // Usage:
 //   darkmode-plus-a11y audit --entry styles/main.scss [--load-path node_modules]…
@@ -16,13 +16,13 @@ import * as path from "node:path";
 import {
 	configureThemeExtraction,
 	getThemeVars,
-} from "./extract-themes.ts";
+} from "./extract-themes";
 import {
 	runHcSemanticAudit,
 	formatHcAuditReport,
 	defaultHcWaivers,
 	type HcWaiver,
-} from "./hc-semantic-audit.ts";
+} from "./hc-semantic-audit";
 
 type Args = {
 	entry?: string;

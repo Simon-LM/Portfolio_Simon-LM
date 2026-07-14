@@ -13,6 +13,69 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-15 (E7 executed except npm publication — Simon's mandate "everything but publish")
+
+### Changed (rename, committed separately: `44af307`)
+
+- **`a11y-prefs` → `darkmode-plus-a11y`**, one atomic pass: package
+  `name`, `packages/` directory (git renames preserved), every
+  portfolio import (SCSS `@use`, TS, Jest mapper, `transpilePackages`,
+  workspace dep), CLI `SOURCE_IMPORT` (templates now carry the
+  published name; `--pkg` still rewrites aliased installs), package
+  AGENTS.md snippets, living sections of the design README. Verified:
+  748 tests, tsc, next build, byte-identical audit report, CLI smoke.
+
+### Added
+
+- **`package.json` metadata** for the npm page: real description,
+  `keywords`, `repository` (+ `directory`), `homepage`, `bugs`.
+  `version 0.0.0` + `private: true` deliberately KEPT — the
+  anti-accidental-publish lock until the actual publication.
+- **CI workflow** (`.github/workflows/ci.yml`): lint → tsc → Jest
+  (includes the contrast gates) → package dist build → HC semantic
+  audit in `--strict` mode (with the site waivers) → production build.
+  The two risky steps were validated locally first (audit exit 0;
+  `next build` green **without** `.env.local`).
+- **Prebuilt CommonJS dist** (`dist/`, tsc, `.d.ts` included, built by
+  `prepack`/CI, gitignored): `./react`, `./react/*` and `./testing/*`
+  exports now point at compiled JS. **Forced by a real-world failure**,
+  not a preference: the pack-based full-cycle proof revealed
+  `ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING` — Node refuses to
+  type-strip files under `node_modules`, and consumer Jest/Vitest
+  default configs don't transform `node_modules` either, so raw TS
+  sources broke BOTH the audit CLI and the documented test-suite
+  recipe for every real consumer (invisible from the monorepo, where
+  the package is not under `node_modules`). CJS chosen over ESM
+  because the sources' extensionless relative imports stay valid at
+  runtime with zero Node-version requirement — the audit CLI's
+  "Node ≥ 22.18" constraint disappears. `run-audit.mts` reverted to
+  plain `run-audit.ts` (the type-stripping rationale died);
+  `bin/cli.mjs audit` now spawns `dist/testing/run-audit.js` with a
+  helpful message on raw checkouts. The portfolio keeps reading the
+  **TS sources** via `tsconfig` `paths` (instant preview preserved,
+  per the 2026-07-11 decision); `allowImportingTsExtensions` and the
+  `**/*.mts` include added on 07-14 became unnecessary and were
+  reverted.
+- **Full-cycle proof, pack-based** (publication excluded by Simon):
+  `pnpm pack` → disposable npm project → install tarball (+ react) →
+  `npx darkmode-plus-a11y init` (9 files + 22 fonts) → `sass` compile
+  of the scaffolded `theme-example` → **15 `[data-theme]` blocks** →
+  `audit` CLI on the compiled dist (**0 active warnings — the shipped
+  template wires cleanly**) → `require()` of `testing/pairs`,
+  `testing/wcag` and the `react` entry from the dist, all green. To
+  re-run against the real npm version at publication.
+
+### Decided
+
+- **Dependency hygiene**: `sass`/`postcss`/`culori` stay regular
+  dependencies — they power the verifier and the zero-config `audit`
+  CLI; the guarantees are the product, batteries included. Documented
+  in the package README ("Dependency weight").
+- Consumer docs updated accordingly: README "Good to know" (prebuilt
+  dist, no `transpilePackages`, dependency weight) and AGENTS.md
+  (verification prerequisites simplified — any Jest/Vitest works
+  as-is; audit CLI has no Node requirement).
+
 ## 2026-07-14 (E7 prep — package README)
 
 ### Added

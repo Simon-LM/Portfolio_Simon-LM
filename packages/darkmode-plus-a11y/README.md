@@ -147,10 +147,15 @@ but that is future work, not a shipped feature.
 
 ## Good to know
 
-- **TypeScript sources.** `react/` and `testing/` ship as `.ts`. In
-  Next.js add `transpilePackages: ["darkmode-plus-a11y"]`; most
-  TS-aware bundlers work out of the box. A prebuilt dist is on the
-  roadmap.
+- **Prebuilt dist.** `react/` and `testing/` are consumed as compiled
+  CommonJS with type declarations (`dist/`, built at pack time): no
+  transpile step, no `transpilePackages`, no Node version requirement —
+  any bundler and any test runner just works. The TypeScript sources
+  ship alongside for reading and debugging.
+- **Dependency weight.** `sass`, `postcss`, and `culori` are regular
+  dependencies on purpose: they power the verification suite and the
+  zero-config `audit` CLI — the guarantees are the product, so the
+  batteries come included.
 - **UI languages.** The copied menu ships FR/EN labels; for another
   language, edit your copy — you own it.
 - **Fonts licensing.** Bundled fonts are OFL 1.1 (license texts in

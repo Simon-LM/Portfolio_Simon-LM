@@ -1,0 +1,49 @@
+# CI gates (GUIDE § E7): lint + type-check + unit tests — the Jest suite
+# INCLUDES the contrast gates (WCAG pair × theme matrix, CVD
+# distinguishability, gamut guard, HC palette conformance) — + the
+# production build. Any red gate blocks the merge.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        # Version read from package.json#packageManager
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Type-check
+        run: pnpm exec tsc --noEmit
+
+      - name: Unit tests (includes the contrast gates)
+        run: pnpm test
+
+      - name: Build the package dist (also exercised by the audit below)
+        run: pnpm --filter darkmode-plus-a11y build
+
+      - name: HC semantic audit (strict)
+        run: pnpm exec darkmode-plus-a11y audit --entry src/styles/main.scss --load-path node_modules --themes high-contrast,high-contrast-green,high-contrast-white,high-contrast-paper --waive "^--color-header-text=header text on colored band" --waive "^--color-lang-toggle-text-activated$=active language button on bg-emphasis" --waive "^--color-collapse-bg-title$=inverted emphasis block" --strict
+
+      - name: Production build
+        run: pnpm build

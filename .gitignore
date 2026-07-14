@@ -46,3 +46,6 @@ next-env.d.ts
 
 # Documents privés (CV, certificats non anonymisés)
 /private/
+
+# Workspace package build output (built by prepack / CI)
+packages/*/dist/

@@ -10,7 +10,6 @@
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
-    "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
@@ -26,6 +25,15 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "darkmode-plus-a11y/react": [
+        "./packages/darkmode-plus-a11y/react/index.ts"
+      ],
+      "darkmode-plus-a11y/react/*": [
+        "./packages/darkmode-plus-a11y/react/*"
+      ],
+      "darkmode-plus-a11y/testing/*": [
+        "./packages/darkmode-plus-a11y/testing/*"
       ]
     },
     "types": [
@@ -43,7 +51,6 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "**/*.mts",
     ".next/types/**/*.ts",
     "types",
     ".next/dev/types/**/*.ts"

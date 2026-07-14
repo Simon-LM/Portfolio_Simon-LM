@@ -7,7 +7,7 @@
 //
 //   init                Copies the templates + AGENTS.md into <dir> (default ./a11y).
 //   init --diff         Compares the local copy against the package's reference.
-//   audit               Name-based HC semantic inspector (see testing/run-audit.mts).
+//   audit               Name-based HC semantic inspector (runs dist/testing/run-audit.js).
 //
 // init options: --dir <path>  --pkg <import-name>  --fonts <path>  --force
 // audit options: --entry <scss> [--load-path <p>]… [--themes a,b]
@@ -151,38 +151,27 @@ function cmdDiff(args) {
 	}
 }
 
-// The audit engine is TypeScript (testing/run-audit.mts) executed through
-// Node's NATIVE type stripping (>= 22.18, on by default). On older Node,
-// print the two working alternatives instead of a cryptic stack.
+// The audit runs the COMPILED entry (dist/, CommonJS): Node refuses to
+// type-strip TS under node_modules, and CJS carries no Node-version
+// requirement. The dist ships in the npm tarball (prepack); only a raw
+// git checkout can lack it.
 function cmdAudit(argv) {
-	const entry = join(PKG_ROOT, "testing", "run-audit.mts");
-	// The typeless-package detection warning is expected (the package has
-	// no "type" field by design); any Node able to strip types (>= 22.18)
-	// also knows --disable-warning.
-	const child = spawnSync(
-		process.execPath,
-		["--disable-warning=MODULE_TYPELESS_PACKAGE_JSON", entry, ...argv],
-		{
-			stdio: ["inherit", "pipe", "pipe"],
-			encoding: "utf8",
-		},
-	);
+	const entry = join(PKG_ROOT, "dist", "testing", "run-audit.js");
+	if (!existsSync(entry)) {
+		console.error(
+			`${C.yellow}audit: dist not built (raw checkout?).${C.reset}\n` +
+				`  - build it: pnpm --filter darkmode-plus-a11y build\n` +
+				`  - or run the source directly: npx tsx ${relative(process.cwd(), join(PKG_ROOT, "testing", "run-audit.ts"))} <same options>`,
+		);
+		process.exit(1);
+	}
+	const child = spawnSync(process.execPath, [entry, ...argv], {
+		stdio: ["inherit", "pipe", "pipe"],
+		encoding: "utf8",
+	});
 	// Deterministic order: warnings (stderr) first, then the summary.
 	if (child.stderr) process.stderr.write(child.stderr);
 	if (child.stdout) process.stdout.write(child.stdout);
-	if (
-		child.status !== 0 &&
-		/Unknown file extension|ERR_UNKNOWN_FILE_EXTENSION|Unexpected (token|reserved word)|stripping types is only supported|bad option/i.test(
-			child.stderr ?? "",
-		)
-	) {
-		console.error(
-			`\n${C.yellow}audit needs Node >= 22.18 (native TypeScript type stripping).${C.reset}\n` +
-				`Alternatives on older Node:\n` +
-				`  - npx tsx ${relative(process.cwd(), entry)} <same options>\n` +
-				`  - wire the exported runner in your test suite (AGENTS.md § Verifying your wiring)`,
-		);
-	}
 	process.exit(child.status ?? 1);
 }
 
