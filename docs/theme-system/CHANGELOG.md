@@ -13,6 +13,32 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-15 (🚀 PUBLISHED — darkmode-plus-a11y 0.1.0 on the public npm registry)
+
+### Added
+
+- **First publication**: `darkmode-plus-a11y@0.1.0`, tag `latest`,
+  94 files / 6.7 MB unpacked —
+  <https://www.npmjs.com/package/darkmode-plus-a11y>. Beta phase per
+  the recorded release strategy (0.x: the API may still move; strict
+  semver locks in at 1.0.0). Day-of sequence: name re-verified free
+  (404), `private` lock removed + version flipped (`540db5f`),
+  `pnpm publish --dry-run` reviewed, then `pnpm publish` run by Simon
+  in his interactive terminal (npm's browser 2FA — passkey via Proton
+  Pass — cannot happen in a non-TTY shell; the EOTP failure from the
+  non-interactive attempt is expected behavior).
+- **Full cycle re-proven against the real registry** (not the tarball
+  this time): fresh project → `npm install darkmode-plus-a11y` →
+  `init` (9 files + fonts) → sass compile → **15 `[data-theme]`
+  blocks** → `audit` CLI on the shipped dist (0 active warnings) →
+  `require()` of the react/testing dist entries (15 themes, 19 role
+  pairs). The GUIDE § E7 exit criterion is met.
+- Account/2FA context recorded for future publishes: npm no longer
+  offers TOTP enrollment (security keys/passkeys only since
+  Sept 2025); Simon's 2FA = passkey in Proton Pass (Firefox) + a
+  second device key; publishes therefore require his browser
+  validation — by design, no bypass token.
+
 ## 2026-07-15 (Sylexiad licensing settled — last open review item besides publication)
 
 ### Changed (decision Simon, same day — the package was never affected)

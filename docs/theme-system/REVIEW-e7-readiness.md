@@ -124,6 +124,13 @@ Legend: 🐛 confirmed bug · ✅ decision made · 📋 pending task · 💡 pro
 
 ### Release strategy (decided by Simon, 2026-07-15)
 
+> **🚀 Step 1 DONE — `darkmode-plus-a11y@0.1.0` published on the public
+> npm registry on 2026-07-15**
+> (<https://www.npmjs.com/package/darkmode-plus-a11y>), full cycle
+> re-proven against the real registry (install → init → 15 themes →
+> audit 0 warnings → dist entries). Next: battle-test on Simon's
+> second site, iterate 0.x, then the third site and 1.0.0.
+
 1. **Beta first, as 0.x** (start `0.1.0`, not `1.0.0`): publish, then
    install the npm version for real on one of Simon's OTHER sites (the
    portfolio stays on the workspace source — dev bench, decision
