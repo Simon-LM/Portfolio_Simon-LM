@@ -3,7 +3,7 @@
 # Plan — E6: UI templates + scaffolding CLI
 
 Written 2026-07-12 (after the hc-mécanique merge `dc9bef0`). Executed on
-branch `feat/e6-cli`. Reference: GUIDE-extraction-paquet.md § E6 —
+branch `feat/e6-cli`. Reference: GUIDE-package-extraction.md § E6 —
 **shadcn** model (decision 2026-07-03: devs own and modify their UI, it is
 not in npm; only the engines are).
 

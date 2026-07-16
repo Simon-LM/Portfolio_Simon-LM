@@ -6,7 +6,7 @@
 plans: dedicated branch, one commit per phase, raw check output in each
 report, stop on anything unexpected, entries in
 [CHANGELOG.md](./CHANGELOG.md). Reference design:
-[GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E3 and
+[GUIDE-package-extraction.md](./GUIDE-package-extraction.md) § E3 and
 README § 6 (3-layer architecture, § 6.2 scope, § 6.3 hybrid distribution).
 
 > **Status: ✅ executed 2026-07-07** (branch `feat/e3-monorepo`,

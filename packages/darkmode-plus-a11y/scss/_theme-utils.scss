@@ -235,7 +235,7 @@
 // two constraints — hue = distinguishability, weight = contrast — where the
 // fixed weight shift of the family-remap tables used to make them clash
 // (cf. --success dropping to 1.60:1 in part 1). See
-// PLAN-refonte-daltonienne.md part 2 and GUIDE-extraction-paquet.md § E2.
+// PLAN-colorblind-redesign.md part 2 and GUIDE-package-extraction.md § E2.
 
 // Legibility floor (part 3, decision): below this ratio, a color is nearly
 // invisible on its background and no amount of distinguishability redeems
@@ -781,7 +781,7 @@ $hc-palette: (
 @mixin transform-light-to-deuteranopia($config: ()) {
 	// Use the default configuration if none is provided.
 	// "special-colors" (e.g. #0075ff/#ffcc00) removed from the defaults
-	// (E3, PLAN-refonte-daltonienne.md phase 3): family-remap now covers
+	// (E3, PLAN-colorblind-redesign.md phase 3): family-remap now covers
 	// --success (emerald -> sky) and --danger (red -> amber). The
 	// special-colors mechanism remains available for a project override.
 	$default-config: (

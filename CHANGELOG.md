@@ -31,7 +31,7 @@ version numbers to track.
   why), in
   [docs/theme-system/CHANGELOG.md](docs/theme-system/CHANGELOG.md) and
   the executed plan,
-  [docs/theme-system/PLAN-revue-moteurs.md](docs/theme-system/PLAN-revue-moteurs.md).
+  [docs/theme-system/PLAN-engine-review.md](docs/theme-system/PLAN-engine-review.md).
 
 ### Added
 
@@ -49,7 +49,7 @@ version numbers to track.
   changes) for Simon's future arbitration — full detail, phase by phase,
   in [docs/theme-system/CHANGELOG.md](docs/theme-system/CHANGELOG.md) and
   the executed plan,
-  [docs/theme-system/PLAN-tests-contrastes.md](docs/theme-system/PLAN-tests-contrastes.md).
+  [docs/theme-system/PLAN-contrast-tests.md](docs/theme-system/PLAN-contrast-tests.md).
 
 ## 2026-07-03
 
@@ -73,7 +73,7 @@ version numbers to track.
   computed `darken()` to the `amber-500` rail step. Full detail, phase by
   phase, in [docs/theme-system/CHANGELOG.md](docs/theme-system/CHANGELOG.md)
   and the executed plan,
-  [docs/theme-system/PLAN-migration-fondations.md](docs/theme-system/PLAN-migration-fondations.md).
+  [docs/theme-system/PLAN-foundations-migration.md](docs/theme-system/PLAN-foundations-migration.md).
 
 ## 2026-07-02
 

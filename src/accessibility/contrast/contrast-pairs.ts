@@ -43,7 +43,7 @@ const rolePairWaivers: Readonly<Record<string, Waiver>> = {
 			"via the part-2 semantic status anchor, red-600 = 4.62:1 kept in " +
 			"the -omalies, amber-based in tritan). anti-glare-light's ratio " +
 			"rose (3.46 → 3.94, still non-compliant) after the chantier E2 " +
-			"OKLCH anti-glare rewrite (PLAN-revue-moteurs.md phase 3), " +
+			"OKLCH anti-glare rewrite (PLAN-engine-review.md phase 3), " +
 			"unrelated to the CVD work. --danger remains currently " +
 			"unreferenced by any component.",
 		preexisting: true,

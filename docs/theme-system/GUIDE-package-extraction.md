@@ -7,7 +7,7 @@ portfolio's accessibility preferences system into a reusable package.**
 It gives the broad strokes, the chantier order, and decisions already
 made; each chantier must get its own detailed execution plan (following
 the model of
-[PLAN-migration-fondations.md](./PLAN-migration-fondations.md)) before it
+[PLAN-foundations-migration.md](./PLAN-foundations-migration.md)) before it
 starts.
 
 Required reading beforehand: [README.md](./README.md) § 6 (target
@@ -81,7 +81,7 @@ packages/<name>/                  # name: decision in progress (a11y-prefs plann
 
 ### E1 — Contrast testing system (in-situ, before anything else) — ✅ done 2026-07-04
 
-Execution plan: [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md).
+Execution plan: [PLAN-contrast-tests.md](./PLAN-contrast-tests.md).
 Design: dedicated chapter at the end of this document. Shipped first
 inside the portfolio (`pnpm test`), moved later into the package's
 `testing/`. **Purely additive** chantier: pre-existing failures become
@@ -97,7 +97,7 @@ Compiled CSS stayed strictly byte-identical from start to finish.
 
 ### E2 — Anti-glare / color-blind engine review (in-situ) — ✅ done (merged 2026-07-05)
 
-Execution plan: [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md)
+Execution plan: [PLAN-engine-review.md](./PLAN-engine-review.md)
 (mechanical fixes: single-pass full-coverage anti-glare, configurable
 `enhance-factor`, cruft). Every value change is validated by the contrast
 tests (E1, ideally shipped first) + visual validation. Output: stable
@@ -133,7 +133,7 @@ constraints below, which take priority:
 Evolutions decided, reworded under these constraints:
 
 1. **OKLCH instead of HSL** for the transforms (anti-glare: folded into
-   [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md), phase 3;
+   [PLAN-engine-review.md](./PLAN-engine-review.md), phase 3;
    color-blind: in the redesign below). HSL "lightness" isn't perceptual;
    OKLCH allows adapting hue **at constant luminance**, so without
    degrading WCAG contrast ratios.
@@ -177,7 +177,7 @@ Evolutions decided, reworded under these constraints:
    heuristic as long as verification is systematic.
 
 **Sequencing**: the mechanical fixes and the OKLCH anti-glare work are
-covered by [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md), executable
+covered by [PLAN-engine-review.md](./PLAN-engine-review.md), executable
 right away; the color-blind redesign (points 2 and 3) waits for the E1
 chantier (the distinguishability tests are its safety net) and will get
 its own plan.
@@ -185,7 +185,7 @@ its own plan.
 **Color-blind redesign — executed 2026-07-04, merged 2026-07-05
 (`d12264f`) after visual validation and independent review** (branch
 `refactor/theme-cvd-remap`, plan
-[PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md), 5 phases,
+[PLAN-colorblind-redesign.md](./PLAN-colorblind-redesign.md), 5 phases,
 one commit each): `remap-for-cvd()` implements exactly the mechanism
 described above (weight-shifted family-remap, OKLCH fallback, weight and
 collision safeguards measured rather than guessed); CVD-simulation
@@ -206,7 +206,7 @@ see [CHANGELOG.md](./CHANGELOG.md).
 
 **Semantic anchors for status roles — decided 2026-07-06,
 ✅ implemented and merged 2026-07-06 (`5c8dce9`)** (plan
-[PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) part 2,
+[PLAN-colorblind-redesign.md](./PLAN-colorblind-redesign.md) part 2,
 branch `refactor/theme-status-anchors`, visual validation done;
 `resolve-status-color` resolver in
 `_theme-utils.scss`, -opias → violet-600/orange-700, -omalies →
@@ -253,7 +253,7 @@ identity roles, and the E1 + ΔE suite remains the final guarantee on each
 consumer's actual palette.
 
 **Robustness — ✅ implemented and merged 2026-07-06 (`5c8dce9`)** (plan
-[PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) part 3,
+[PLAN-colorblind-redesign.md](./PLAN-colorblind-redesign.md) part 3,
 branch `refactor/theme-cvd-degradation`, visual validation done): three
 guarantees stemming from parts 1-2.
 

@@ -5,7 +5,7 @@
 Visual validation tools, **outside production**: nothing here is served by
 the site (only `public/` is deployed).
 
-## preview-dyslexie.html
+## preview-dyslexia.html
 
 Interactive comparator for dyslexia mode (E5, phase 4): control (site in
 normal mode) / Sylexiad body (site) / Andika body (package default), with
@@ -20,7 +20,7 @@ Values decided on 2026-07-09 (visual validation):
 ## Regenerate / adapt
 
 ```bash
-python3 docs/theme-system/previews/generate-preview-dyslexie.py
+python3 docs/theme-system/previews/generate-preview-dyslexia.py
 ```
 
 The script reads the fonts from `public/fonts/` and rewrites the HTML here.

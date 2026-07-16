@@ -4,7 +4,7 @@ import base64, pathlib
 # Paths relative to the repo, regardless of the execution directory.
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
 FONTS_DIR = REPO_ROOT / "public" / "fonts"
-OUT = pathlib.Path(__file__).resolve().parent / "preview-dyslexie.html"
+OUT = pathlib.Path(__file__).resolve().parent / "preview-dyslexia.html"
 
 def datauri(name):
     b = (FONTS_DIR / name).read_bytes()

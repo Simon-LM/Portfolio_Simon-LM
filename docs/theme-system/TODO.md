@@ -4,7 +4,7 @@
 
 Single list of pending work and decisions for the theme system. The
 package-extraction **roadmap** (chantiers E3→E7) lives in
-[GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md); this file only
+[GUIDE-package-extraction.md](./GUIDE-package-extraction.md); this file only
 lists **loose ends** and **pending decisions**, so nothing gets forgotten.
 Update as you go (check off / remove once done).
 

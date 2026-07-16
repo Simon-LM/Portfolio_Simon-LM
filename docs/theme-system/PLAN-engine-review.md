@@ -4,12 +4,12 @@
 
 **Execution document meant for an AI.** Same general rules and same
 verification protocol as
-[PLAN-migration-fondations.md](./PLAN-migration-fondations.md) (§ "General
+[PLAN-foundations-migration.md](./PLAN-foundations-migration.md) (§ "General
 rules" and "Verification protocol": dedicated branch, one commit per
 phase, the compiled CSS is the oracle, raw diff output in each report,
 stop on an unexpected diff, [CHANGELOG.md](./CHANGELOG.md) entries at each
 phase). Context: findings from the 2026-07-03 review (CHANGELOG) and the
-E2 chantier of [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md).
+E2 chantier of [GUIDE-package-extraction.md](./GUIDE-package-extraction.md).
 
 Branch: `refactor/theme-engines`. Files involved:
 `src/styles/abstracts/_anti-glare-functions.scss`,

@@ -3,11 +3,11 @@
 # Execution plan — contrast testing system (E1 chantier)
 
 **Execution document meant for an AI.** Same general rules as
-[PLAN-migration-fondations.md](./PLAN-migration-fondations.md): dedicated
+[PLAN-foundations-migration.md](./PLAN-foundations-migration.md): dedicated
 branch, one commit per phase, raw check output in each report, stop and
 report on anything unexpected, a [CHANGELOG.md](./CHANGELOG.md) entry at
 each phase. Reference design:
-[GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md), "contrast
+[GUIDE-package-extraction.md](./GUIDE-package-extraction.md), "contrast
 testing system" chapter.
 
 Branch: `feat/contrast-tests`.

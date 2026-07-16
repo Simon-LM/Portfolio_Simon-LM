@@ -6,7 +6,7 @@
 plans: dedicated branch, one commit per phase, raw check output in each
 report, stop on anything unexpected, entries in
 [CHANGELOG.md](./CHANGELOG.md). Reference design:
-[GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E4 and
+[GUIDE-package-extraction.md](./GUIDE-package-extraction.md) § E4 and
 README § 4.6 (runtime).
 
 > **Status: ✅ executed 2026-07-07** (branch `feat/e4-runtime`,

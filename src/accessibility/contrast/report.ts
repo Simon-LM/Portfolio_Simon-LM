@@ -102,7 +102,7 @@ export function generateReport(generatedOn: string = todayLocal()): string {
 		"",
 		`Generated on: ${generatedOn} — regenerate with \`${REGEN_COMMAND}\`.`,
 		"This file is a generated artifact (chantier E1,",
-		"[PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md)); do not edit by hand.",
+		"[PLAN-contrast-tests.md](./PLAN-contrast-tests.md)); do not edit by hand.",
 		"",
 		"Legend: ✓ compliant, ✗ failing (should not exist once phase 3 waivers are",
 		"applied), ⚠ waived (see reason below). Cell value is the measured ratio.",

@@ -7,7 +7,7 @@ import { pathToFileURL } from "node:url";
 
 // The status resolver lives in Sass (_theme-utils.scss). These tests compile
 // small probes that call resolve-anchor-weight directly, to cover the
-// graceful-degradation paths (PLAN-refonte-daltonienne.md part 3 phase 2)
+// graceful-degradation paths (PLAN-colorblind-redesign.md part 3 phase 2)
 // that never fire in the portfolio's own themes (light bg → weight 950 always
 // meets 4.5:1, so best-effort is latent).
 

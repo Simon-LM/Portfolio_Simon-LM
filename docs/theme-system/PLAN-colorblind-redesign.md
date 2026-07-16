@@ -3,7 +3,7 @@
 # Execution plan — color-blind mechanism redesign
 
 **Execution document meant for an AI.** Same general rules as
-[PLAN-migration-fondations.md](./PLAN-migration-fondations.md): dedicated
+[PLAN-foundations-migration.md](./PLAN-foundations-migration.md): dedicated
 branch, one commit per phase, raw check output in each report, stop on
 anything unexpected, entries in [CHANGELOG.md](./CHANGELOG.md).
 
@@ -23,18 +23,18 @@ Three parts, independently executable:
 > 5 commits), **merged 2026-07-05** after visual validation and
 > independent review. Kept below for reference — detailed results in
 > [CHANGELOG.md](./CHANGELOG.md) and the
-> [guide § E2](./GUIDE-extraction-paquet.md).
+> [guide § E2](./GUIDE-package-extraction.md).
 
-Reference design: [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md)
+Reference design: [GUIDE-package-extraction.md](./GUIDE-package-extraction.md)
 § E2 (mechanism decided 2026-07-03: constant-weight family remap,
 measured safeguards) and the contrast-testing chapter.
 
 ### ⛔ Blocking prerequisites (part 1)
 
-1. **The E1 chantier ([PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md))
+1. **The E1 chantier ([PLAN-contrast-tests.md](./PLAN-contrast-tests.md))
    must be merged**: this redesign changes the colors of 7 themes; the
    contrast suite is its safety net. Do not start without it.
-2. The E2 chantier ([PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md)) is
+2. The E2 chantier ([PLAN-engine-review.md](./PLAN-engine-review.md)) is
    **strongly recommended first** (both touch `_theme-utils.scss`;
    running it first avoids conflicts). If it isn't done: flag it in the
    phase 0 report and get sign-off before continuing.
@@ -203,7 +203,7 @@ table, waivers removed/added, pending decisions).
 > ✅ **Executed 2026-07-06** (branch `refactor/theme-status-anchors`,
 > 5 commits), **merged 2026-07-06** (`5c8dce9`) after visual validation.
 > Reference design:
-> [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E2 and
+> [GUIDE-package-extraction.md](./GUIDE-package-extraction.md) § E2 and
 > README § 6.1. Two adjustments measured during execution, detailed in
 > [CHANGELOG.md](./CHANGELOG.md): (1) the per-pair ΔE threshold field
 > already existed (`minDeltaE`), no new `threshold` field to add;
@@ -441,7 +441,7 @@ diffs, before/after ΔE table, waivers removed/added, pending decisions).
 >    orange are close in hue). The link's `sky → violet` blend, though,
 >    stays in-gamut.
 
-Reference design: [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md)
+Reference design: [GUIDE-package-extraction.md](./GUIDE-package-extraction.md)
 § E2 and README § 4.3 / § 6.1.
 
 ### ⛔ Blocking prerequisites (part 3)

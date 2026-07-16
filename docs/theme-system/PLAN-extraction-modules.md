@@ -5,7 +5,7 @@
 **Execution document meant for an AI.** Same general rules as previous
 plans: dedicated branch, one commit per phase, raw check output, stop on
 anything unexpected, entries in [CHANGELOG.md](./CHANGELOG.md). Reference
-design: [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E5
+design: [GUIDE-package-extraction.md](./GUIDE-package-extraction.md) § E5
 and README § 6.5 (opt-in modules).
 
 > **Status: written 2026-07-07, revised 2026-07-08 (decisions on fonts,

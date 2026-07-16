@@ -62,7 +62,7 @@ export type GamutWaiver = {
 //
 // Currently empty: the only out-of-gamut declarations at introduction (11 in
 // `tritanomaly`, from the part-1 amber→orange severity-0.5 OKLCH blend) were
-// resolved in PLAN-refonte-daltonienne.md part 3 phase 3 — the severity blend
+// resolved in PLAN-colorblind-redesign.md part 3 phase 3 — the severity blend
 // is now gamut-mapped (chroma reduction, `gamut-map-srgb` in _theme-utils.scss),
 // so the guard passes with zero waivers. Any future out-of-gamut value must be
 // fixed at the source or, if genuinely intentional, waived here with a reason.

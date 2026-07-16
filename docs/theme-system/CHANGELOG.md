@@ -13,6 +13,26 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-15 (docs: French filenames anglicized)
+
+### Changed
+
+- Simon's English-only rule covers **filenames** too — the translation
+  pass had converted the contents but kept six French document names
+  (plus the dyslexia preview pair). Renamed with git history preserved,
+  and every cross-reference updated repo-wide (docs, root CHANGELOG,
+  source comments in `src/` and the package):
+  `GUIDE-extraction-paquet` → `GUIDE-package-extraction`,
+  `PLAN-tests-contrastes` → `PLAN-contrast-tests`,
+  `PLAN-revue-moteurs` → `PLAN-engine-review`,
+  `PLAN-refonte-daltonienne` → `PLAN-colorblind-redesign`,
+  `PLAN-migration-fondations` → `PLAN-foundations-migration`,
+  `PLAN-hc-mecanique-controles` → `PLAN-hc-mechanics-controls`,
+  `previews/generate-preview-dyslexie.py` →
+  `generate-preview-dyslexia.py`, `preview-dyslexie.html` →
+  `preview-dyslexia.html`. Historical text inside the documents is
+  untouched; only names and link targets changed.
+
 ## 2026-07-15 (🚀 PUBLISHED — darkmode-plus-a11y 0.1.0 on the public npm registry)
 
 ### Added
@@ -354,7 +374,7 @@ The current mechanism captures at layer 2 (explicit assignments +
 wiring + lightness) — identified gap: an unwired layer-3 token silently
 escapes HC.
 
-Decisions (details: README § 6.6, plan `PLAN-hc-mecanique-controles.md`):
+Decisions (details: README § 6.6, plan `PLAN-hc-mechanics-controls.md`):
 layer-2 wiring alone decides colors; **focus promoted to a layer-2
 role**; two read-only controls in the tooling (by **value**: everything
 ∈ the HC palette; by **name**: the original semantics recycled as an
@@ -485,8 +505,8 @@ Before/after of dyslexia mode's body:
 ### Added (versioned visual preview)
 
 - `docs/theme-system/previews/`: interactive comparator
-  `preview-dyslexie.html` (fonts embedded as data-URIs, opens via
-  `file://`) + generator `generate-preview-dyslexie.py` + README. Outside
+  `preview-dyslexia.html` (fonts embedded as data-URIs, opens via
+  `file://`) + generator `generate-preview-dyslexia.py` + README. Outside
   `public/` → never served in production (Sylexiad, proprietary EULA).
 
 ## 2026-07-08
@@ -885,7 +905,7 @@ clamped version); a call on the legibility floor (3:1).
   1.4.1 already covering links via underlining); values to be decided at
   plan time.
 - Detailed design:
-  [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) § E2;
+  [GUIDE-package-extraction.md](./GUIDE-package-extraction.md) § E2;
   summarized in README § 6.1. No code or CSS change —
   a dedicated execution plan to follow.
 - Statuses updated in the README (document map) and the guide:
@@ -893,7 +913,7 @@ clamped version); a call on the legibility floor (3:1).
   2026-07-05 (`d12264f`) after visual validation and
   independent review.
 - **Execution plan written**:
-  [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md)
+  [PLAN-colorblind-redesign.md](./PLAN-colorblind-redesign.md)
   restructured into two parts — part 1 (family remap, executed and
   merged) kept for reference; **part 2 "semantic anchors for
   status roles"** added (6 phases, branch
@@ -989,7 +1009,7 @@ up these roles.
 
 ### Docs (part 3 of the color-blind plan written)
 
-- [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) gets a
+- [PLAN-colorblind-redesign.md](./PLAN-colorblind-redesign.md) gets a
   **part 3 "robustness"** (6 phases, branch
   `refactor/theme-cvd-degradation`, to execute), stemming from three
   findings from parts 1-2: (1) **warn rather than block** — replace
@@ -1013,15 +1033,15 @@ up these roles.
 ### Docs (E2 (color-blind redesign) chantier, phase 5 — wrap-up)
 
 - Phase 5 (last) of
-  [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md).
+  [PLAN-colorblind-redesign.md](./PLAN-colorblind-redesign.md).
   `pnpm build`/`lint`/`test` (609 tests, 17 suites) green; cumulative
   CSS diff still confined to the 6 color-blind `[data-theme]` blocks.
 - **Labeling fix**: the phase 1 to 4 entries of this chantier reference
   "chantier E3" — a mistake on my part, not in the plan.
-  [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md) only has
+  [GUIDE-package-extraction.md](./GUIDE-package-extraction.md) only has
   E1/E2/E3(monorepo)/E4-E7; the color-blind redesign is part of
   **E2** ("Anti-glare / color-blind engine review"), the same umbrella
-  as [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md).
+  as [PLAN-engine-review.md](./PLAN-engine-review.md).
   Fixed everywhere (docs and source comments, including in the phase 1
   to 4 entries below) to "E2 (color-blind redesign) chantier" to lift
   the ambiguity with the other plan, also E2 — via a new commit that
@@ -1030,7 +1050,7 @@ up these roles.
 - Docs updated: README § 4.3 (both the color-blind and anti-glare
   engines rewritten, `remap-for-cvd()`'s 4-case description), § 5 point
   10 (the color-blind point is no longer implicit — mechanically
-  tested), the "document map" (PLAN-refonte-daltonienne.md marked
+  tested), the "document map" (PLAN-colorblind-redesign.md marked
   executed), guide E2 (the redesign's detailed outcome,
   a summary of the key figures).
 - **Final report for review**:
@@ -1062,7 +1082,7 @@ up these roles.
 
 ### Docs (E2 (color-blind redesign) chantier, phase 4 — verification and decisions)
 
-- Phase 4 of [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md).
+- Phase 4 of [PLAN-colorblind-redesign.md](./PLAN-colorblind-redesign.md).
   The plan's first two points (the contrast suite back to green,
   obsolete waivers removed) had to be handled **as early as phase 3** to
   keep `pnpm test` green at every commit (chantier discipline); what's
@@ -1134,7 +1154,7 @@ up these roles.
 
 ### Changed (E2 (color-blind redesign) chantier, phase 3 — default tables and switching the 6 themes)
 
-- Phase 3 of [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md):
+- Phase 3 of [PLAN-colorblind-redesign.md](./PLAN-colorblind-redesign.md):
   `_base-palette.scss` extended with two Tailwind families (`orange`,
   `violet`); the 6 `transform-light-to-{deuter,prot,trit}{anopia,anomaly}`
   mixins and the 6 theme files wired onto `remap-for-cvd`. Tables
@@ -1209,7 +1229,7 @@ up these roles.
 
 ### Added (E2 (color-blind redesign) chantier, phase 2 — remap engine)
 
-- Phase 2 of [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md):
+- Phase 2 of [PLAN-colorblind-redesign.md](./PLAN-colorblind-redesign.md):
   `remap-for-cvd($color, $var-name, $config, $cvd-type)` added to
   `_theme-utils.scss`, a 4-case resolution (the plan distinguishes 3,
   the 4th — "recognized family but absent from the table" — had to be
@@ -1270,7 +1290,7 @@ up these roles.
 
 ### Added (E2 (color-blind redesign) chantier, phase 1 — distinguishability tests)
 
-- Phase 1 of [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md)
+- Phase 1 of [PLAN-colorblind-redesign.md](./PLAN-colorblind-redesign.md)
   (branch `refactor/theme-cvd-remap`, an additive chantier — no
   `src/styles/` file modified, byte-identical compiled CSS).
   - `src/accessibility/contrast/cvd-simulation.ts`: simulates perception
@@ -1379,7 +1399,7 @@ up these roles.
 
 ### Docs (E2 chantier — engine review, phase 5 — wrap-up)
 
-- Phase 5 (last) of [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md):
+- Phase 5 (last) of [PLAN-engine-review.md](./PLAN-engine-review.md):
   final verification and documentation, branch `refactor/theme-engines`
   (4 commits, not merged). `pnpm build`/`lint`/`test` green.
 - **Proof by diff**: the plan asks for CSS "byte-identical to
@@ -1428,7 +1448,7 @@ up these roles.
 
 ### Removed (E2 chantier — engine review, phase 4 — backdrop-filter overlay)
 
-- Phase 4 of [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md): the
+- Phase 4 of [PLAN-engine-review.md](./PLAN-engine-review.md): the
   `apply-anti-glare-filter` mixin (`_anti-glare-functions.scss`) and its
   invocation removed — the full-screen `body::before` overlay
   (`backdrop-filter: contrast(98%) brightness(99%)`/`opacity: 0.3` in
@@ -1456,7 +1476,7 @@ up these roles.
 ### Changed (E2 chantier — engine review, phase 3 — anti-glare in OKLCH)
 
 - Phase 3 (decision made 2026-07-03) of
-  [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md): `transform-for-anti-glare`
+  [PLAN-engine-review.md](./PLAN-engine-review.md): `transform-for-anti-glare`
   (`_anti-glare-functions.scss`) rewritten to work in OKLCH space
   (`color.channel(…, $space: oklch)` / `color.change(…, $space: oklch)` /
   `color.to-space(…, rgb)`) instead of HSL — OKLCH lightness is
@@ -1532,7 +1552,7 @@ up these roles.
 
 ### Changed (E2 chantier — engine review, phase 2 — single-pass anti-glare)
 
-- Phase 2 of [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md):
+- Phase 2 of [PLAN-engine-review.md](./PLAN-engine-review.md):
   `transform-theme-for-anti-glare` (`_anti-glare-functions.scss`)
   rewritten to derive the ~70 layer-3 tokens in a **single pass**
   from the anti-glared roles (`@include apply-theme-variables;` right
@@ -1580,7 +1600,7 @@ up these roles.
 
 ### Fixed (E2 chantier — engine review, phase 1 — API and dead code)
 
-- Phase 1 of [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) (branch
+- Phase 1 of [PLAN-engine-review.md](./PLAN-engine-review.md) (branch
   `refactor/theme-engines`), fixes with no visual change:
   - `_anti-glare-functions.scss`: `transform-for-anti-glare`'s
     `$intensity` parameter removed (never passed at any of the ~30
@@ -1627,7 +1647,7 @@ up these roles.
 
 ### Docs (E1 chantier — contrast tests, phase 5 — wrap-up)
 
-- Phase 5 (last) of [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md):
+- Phase 5 (last) of [PLAN-contrast-tests.md](./PLAN-contrast-tests.md):
   final verification and documentation. `pnpm build`/`lint`/`test` green;
   compiled CSS still strictly byte-identical to the phase 0 baseline
   (empty `diff` on `sass --no-source-map --style=expanded`).
@@ -1654,7 +1674,7 @@ up these roles.
      `role/fg-on-accent-on-accent` (an identical pair). Same recommendation.
   4. `role/danger-on-bg-base` — 1.34:1 in `protanopia`, 1.45:1 in
      `deuteranopia`, 3.25–3.46:1 in 4 other themes. **Recommendation**:
-     [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md) — the
+     [PLAN-colorblind-redesign.md](./PLAN-colorblind-redesign.md) — the
      color-blind engines' substitute colors are chosen for perceptual
      distinguishability, not contrast; `--danger` being consumed by no
      component to this day, no user urgency.
@@ -1678,7 +1698,7 @@ up these roles.
 
 ### Added (E1 chantier — contrast tests, phase 4)
 
-- Phase 4 of [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md):
+- Phase 4 of [PLAN-contrast-tests.md](./PLAN-contrast-tests.md):
   `src/accessibility/contrast/report.ts`, the generator for
   [CONTRAST-REPORT.md](./CONTRAST-REPORT.md) (a `pairs × 12
   themes` matrix, cell = measured ratio + ✓/✗/⚠ symbol, a theme-
@@ -1705,7 +1725,7 @@ up these roles.
 
 ### Added (E1 chantier — contrast tests, phase 3)
 
-- Phase 3 of [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md):
+- Phase 3 of [PLAN-contrast-tests.md](./PLAN-contrast-tests.md):
   `src/accessibility/contrast/__tests__/contrast.test.ts`, the full Jest
   suite (a pair × theme matrix, 498 tests), plus the
   anti-zombie mechanism (a waiver whose measured ratio becomes
@@ -1777,7 +1797,7 @@ up these roles.
     distinguishability, not contrast) fall well
     below it; `--danger` is currently consumed by no component. A
     candidate for
-    [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md).
+    [PLAN-colorblind-redesign.md](./PLAN-colorblind-redesign.md).
   - **`site/button-active-outline-on-panel-bg`**: in `high-contrast`,
     `--color-button-active-outline` (= `--accent`) and `--color-panel-bg`
     (= `--bg-base`) both resolve to `#000000` — an exact
@@ -1798,7 +1818,7 @@ up these roles.
 
 ### Added (E1 chantier — contrast tests, phase 2)
 
-- Phase 2 of [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md):
+- Phase 2 of [PLAN-contrast-tests.md](./PLAN-contrast-tests.md):
   `src/accessibility/contrast/contrast-pairs.ts`, the fg/bg pair
   registry (source of truth, extensible, never amputated — a failure
   becomes a waiver in phase 3, not a removal).
@@ -1811,7 +1831,7 @@ up these roles.
 
 ### Added (E1 chantier — contrast tests, phase 1)
 
-- Phase 1 of [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md):
+- Phase 1 of [PLAN-contrast-tests.md](./PLAN-contrast-tests.md):
   setting up the WCAG contrast testing system's utilities (branch
   `feat/contrast-tests`, an additive chantier — no `src/styles/` file
   modified, byte-identical compiled CSS).
@@ -1852,7 +1872,7 @@ up these roles.
 
 ### Docs (color-blind redesign plan + document map)
 
-- Created [PLAN-refonte-daltonienne.md](./PLAN-refonte-daltonienne.md):
+- Created [PLAN-colorblind-redesign.md](./PLAN-colorblind-redesign.md):
   constant-weight Tailwind family remap (3-step resolution:
   family table → `special-colors` → OKLCH fallback), anomalies via a
   perceptual `color.mix(…, oklch)` blend with configurable `severity`,
@@ -1867,7 +1887,7 @@ up these roles.
 
 ### Docs (contrast testing plan)
 
-- Created [PLAN-tests-contrastes.md](./PLAN-tests-contrastes.md)
+- Created [PLAN-contrast-tests.md](./PLAN-contrast-tests.md)
   (E1 chantier, for the execution AI): implementation inside
   `src/accessibility/contrast/`, WCAG utilities (culori, alpha
   compositing), extraction of the compiled CSS's 12 `[data-theme]`
@@ -1898,7 +1918,7 @@ up these roles.
 
 - Decisions on the proposed engine evolutions:
   **OKLCH decided** for anti-glare (added to
-  [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) as phase 3, with a
+  [PLAN-engine-review.md](./PLAN-engine-review.md) as phase 3, with a
   calibration procedure on the gray rail; the overlay and wrap-up
   renumbered as phases 4 and 5) **and** for the color-blind engine.
   Color-blind redesign decided in principle and reworded under the
@@ -1913,7 +1933,7 @@ up these roles.
 
 ### Docs (engine fix plan)
 
-- Created [PLAN-revue-moteurs.md](./PLAN-revue-moteurs.md) (E2 chantier,
+- Created [PLAN-engine-review.md](./PLAN-engine-review.md) (E2 chantier,
   for the execution AI): phase 1 with no visual change (malformed
   `if()`, unused `$intensity`, dead `$hue_shift`, configurable
   `enhance-factor` with a 2.5 default, a hue-window boundary fix); phase
@@ -1926,7 +1946,7 @@ up these roles.
 
 ### Docs (extraction guide + engine review)
 
-- Created [GUIDE-extraction-paquet.md](./GUIDE-extraction-paquet.md):
+- Created [GUIDE-package-extraction.md](./GUIDE-package-extraction.md):
   the broad strokes of the transformation into an open-source package
   (chantiers E1→E7: contrast tests first, engine review, pnpm monorepo,
   SCSS then runtime extraction, preference modules, scaffolding CLI,
@@ -1979,7 +1999,7 @@ up these roles.
 
 ### Docs (phase 8 — wrap-up)
 
-- Phase 8 of [PLAN-migration-fondations.md](./PLAN-migration-fondations.md):
+- Phase 8 of [PLAN-foundations-migration.md](./PLAN-foundations-migration.md):
   global verification (`pnpm build`/`lint`/`test` green; a visual check
   of the 12 themes via a headless CDP script — screenshots + zero
   console error; `pnpm test:a11y` not runnable in this environment,
@@ -2012,7 +2032,7 @@ up these roles.
 
 ### Added (phase 7 — single source of truth, runtime)
 
-- Phase 7 of [PLAN-migration-fondations.md](./PLAN-migration-fondations.md):
+- Phase 7 of [PLAN-foundations-migration.md](./PLAN-foundations-migration.md):
   eliminating the triple duplication of the 12-theme list (README
   § 5 finding #5). New `src/config/themes.ts` exporting `THEMES`
   (`as const`) and the derived `ThemeOption` type.
@@ -2033,7 +2053,7 @@ up these roles.
 
 ### Changed (phase 6 — layer 2, role tokens)
 
-- Phase 6 of [PLAN-migration-fondations.md](./PLAN-migration-fondations.md):
+- Phase 6 of [PLAN-foundations-migration.md](./PLAN-foundations-migration.md):
   introducing layer 2 (roles), see README § 6.1. **The plan's only
   phase with an authorized visual change** (see below).
   - Renamed the semantic primitives: `$primary-color` → `$accent`,
@@ -2085,7 +2105,7 @@ up these roles.
 
 ### Changed (phase 5 — Sass modules)
 
-- Phase 5 of [PLAN-migration-fondations.md](./PLAN-migration-fondations.md):
+- Phase 5 of [PLAN-foundations-migration.md](./PLAN-foundations-migration.md):
   a full `@import` → `@use`/`@forward` migration across all of
   `src/styles/` (the theme system **and** the other partials loaded by
   `main.scss`, since `@use` requires every file to explicitly declare
@@ -2140,7 +2160,7 @@ up these roles.
 
 ### Fixed
 
-- Phase 4 of [PLAN-migration-fondations.md](./PLAN-migration-fondations.md):
+- Phase 4 of [PLAN-foundations-migration.md](./PLAN-foundations-migration.md):
   fixed the `bg-texte` typo — `$color_portfolio-tag_bg-texte` becomes
   `$color-portfolio-tag-text`, and the emitted custom property
   `--color-portfolio-tag-bg-text` becomes `--color-portfolio-tag-text`. The
@@ -2153,7 +2173,7 @@ up these roles.
 
 ### Changed
 
-- Phase 4 of [PLAN-migration-fondations.md](./PLAN-migration-fondations.md):
+- Phase 4 of [PLAN-foundations-migration.md](./PLAN-foundations-migration.md):
   kebab-case standardization of layer 3 (README § 5.1/§ 6, ~66
   `$color_...` variables → `$color-...`, including
   `$color_button_hover_bg`). No effect on the compiled CSS (Sass treats
@@ -2166,7 +2186,7 @@ up these roles.
 
 ### Added
 
-- Phase 3 of [PLAN-migration-fondations.md](./PLAN-migration-fondations.md):
+- Phase 3 of [PLAN-foundations-migration.md](./PLAN-foundations-migration.md):
   layer 1 (numeric rail) complete — see README § 6.1. Renamed the
   descriptive gray scale (`$gray-darkest`…`$gray-lightest`, 8 steps)
   into Tailwind coordinates (`$gray-50`…`$gray-950`, 11 steps), adding
@@ -2206,7 +2226,7 @@ up these roles.
 
 ### Changed
 
-- Phase 2 of [PLAN-migration-fondations.md](./PLAN-migration-fondations.md):
+- Phase 2 of [PLAN-foundations-migration.md](./PLAN-foundations-migration.md):
   `setTheme()` (`src/hooks/useTheme.ts`) reduced to its three useful
   lines (set `data-theme`, write `localStorage`, `setThemeState`).
   Removed debug artifacts: the double forced reflow
@@ -2217,7 +2237,7 @@ up these roles.
 
 ### Removed
 
-- Phase 1 of [PLAN-migration-fondations.md](./PLAN-migration-fondations.md):
+- Phase 1 of [PLAN-foundations-migration.md](./PLAN-foundations-migration.md):
   purged the dead code identified in README § 3 and § 5.1, with no
   change to the compiled CSS (byte-identical diff vs. the baseline).
   - Files removed: `src/styles/abstracts/_variables.scss`,
@@ -2253,7 +2273,7 @@ up these roles.
 ### Docs
 
 - Created the execution plan
-  [PLAN-migration-fondations.md](./PLAN-migration-fondations.md), meant for
+  [PLAN-foundations-migration.md](./PLAN-foundations-migration.md), meant for
   an execution AI: 8 phases (baseline → dead-code purge → runtime
   cleanup → 11-step numeric rail → kebab-case → `@use`/modern Sass API
   migration → layer-2 roles → single source for the theme list →
