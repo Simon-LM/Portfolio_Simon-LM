@@ -150,15 +150,32 @@
 				$resolved: $color;
 			}
 		} @else {
-			// 4. Color outside the Tailwind palette (custom, a future
-			// consumer of the package): OKLCH hue rotation toward a safe
-			// anchor for the CVD type, at constant luminance and chroma.
-			// Calibration starting point (anchors not perceptually
-			// validated), see the phase 2 report.
+			// 4. Color outside the Tailwind palette (custom, off-spec: the
+			// package is designed for Tailwind-geometry primitives — see
+			// resolved-primitive() in _state.scss, the only documented
+			// entry point, which always resolves through get-color() and
+			// is therefore already OKLCH-native). A consumer who bypasses
+			// that contract (e.g. hand-assigning $accent to a raw color)
+			// still gets a graceful, OKLCH-consistent result: OKLCH hue
+			// rotation toward a safe anchor for the CVD type, at constant
+			// luminance and chroma. Calibration starting point (anchors
+			// not perceptually validated), see the phase 2 report.
+			// color.to-space(…, oklch) upgrades a legacy (hex/rgb/hsl)
+			// input first — color.change()'s $space: only governs how
+			// channels are INTERPRETED for the operation, it does not
+			// force the RETURN color's serialization space, so a legacy
+			// $color would otherwise still come out as legacy (Sass's own
+			// behavior, not a bug). Then gamut-map-srgb (same CSS Color 4
+			// local-minde helper as the anti-glare engine, 0.2.0
+			// chantier) brings an out-of-gamut result back in range —
+			// still OKLCH, never degraded to legacy rgb().
 			$anchor-hue: cvd-safe-anchor-hue($cvd-type);
-			$resolved: color.to-space(
-				gamut-map-srgb(color.change($color, $hue: $anchor-hue, $space: oklch)),
-				rgb
+			$resolved: gamut-map-srgb(
+				color.change(
+					color.to-space($color, oklch),
+					$hue: $anchor-hue,
+					$space: oklch
+				)
 			);
 		}
 	}

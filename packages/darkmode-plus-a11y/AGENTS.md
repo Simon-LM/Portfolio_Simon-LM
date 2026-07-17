@@ -56,7 +56,13 @@ by `init` (shadcn model) — you own it, it never auto-updates, and
 ## Prerequisites
 
 - Brand colors expressed on **Tailwind palette geometry** —
-  `("family", weight)` pairs, e.g. `("amber", 300)`.
+  `("family", weight)` pairs, e.g. `("amber", 300)`. All **26 Tailwind
+  families** are available, every weight (`50`…`950`):
+  - Chromatic (17): `red`, `orange`, `amber`, `yellow`, `lime`, `green`,
+    `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`,
+    `purple`, `fuchsia`, `pink`, `rose`.
+  - Neutral grays (5): `slate`, `gray`, `zinc`, `neutral`, `stone`.
+  - Tinted neutrals (4): `taupe`, `mauve`, `mist`, `olive`.
 - Path A UI dependencies: `react`, `react-select`, `react-icons`.
 - A Sass compiler for the theme build (`sass` as a devDependency, or
   any bundler with SCSS support). It compiles separately from the rest

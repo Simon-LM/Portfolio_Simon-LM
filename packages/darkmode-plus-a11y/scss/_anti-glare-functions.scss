@@ -4,6 +4,7 @@
 @use "sass:math";
 @use "sass:color";
 @use "state" as *;
+@use "theme-utils" as *;
 
 // Transform function for glare/halo reduction
 @function transform-for-anti-glare($color, $mode: "light") {
@@ -46,10 +47,15 @@
 		$c: max(0.01, $c * 0.95);
 	}
 
-	// Rebuild in RGB for stable CSS emission
-	@return color.to-space(
-		color.change($color, $lightness: $l, $chroma: $c, $space: oklch),
-		rgb
+	// Rebuild in OKLCH, then gamut-map back into sRGB if needed (same
+	// `local-minde` safeguard as the CVD engine's gamut-map-srgb): with
+	// Tailwind v4's wider-gamut palette, a lightness/chroma tweak here can
+	// land outside sRGB — an in-gamut color is returned unchanged, an
+	// out-of-gamut one has its chroma reduced at near-constant hue instead
+	// of being silently clamped by the browser (which would distort hue).
+	// Emission stays OKLCH throughout — never degraded to legacy RGB/HSL.
+	@return gamut-map-srgb(
+		color.change($color, $lightness: $l, $chroma: $c, $space: oklch)
 	);
 }
 

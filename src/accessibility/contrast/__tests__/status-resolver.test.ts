@@ -45,7 +45,7 @@ describe("resolve-anchor-weight graceful degradation", () => {
 		const { css, warnings } = compileProbe(
 			`x: tu.resolve-anchor-weight("violet", get-color("stone", 50));`,
 		);
-		expect(resolvedColor(css)).toBe("#7c3aed"); // violet-600, 5.46:1 on #fafaf9
+		expect(resolvedColor(css)).toBe("oklch(54.1% 0.281 293.009deg)"); // violet-600, 5.46:1 on #fafaf9
 		expect(warnings).toHaveLength(0);
 	});
 
@@ -55,7 +55,7 @@ describe("resolve-anchor-weight graceful degradation", () => {
 			`x: tu.resolve-anchor-weight("violet", get-color("stone", 50), 21);`,
 		);
 		// Falls back to the highest-contrast weight instead of @error-ing.
-		expect(resolvedColor(css)).toBe("#2e1065"); // violet-950
+		expect(resolvedColor(css)).toBe("oklch(28.3% 0.141 291.089deg)"); // violet-950
 		expect(warnings).toHaveLength(1);
 		expect(warnings[0]).toMatch(/target 21:1 not reached/);
 	});
