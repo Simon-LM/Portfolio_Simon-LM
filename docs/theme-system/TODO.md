@@ -101,6 +101,20 @@ Update as you go (check off / remove once done).
       body 0.04em/1.75/0.128em). One micro-decision remains, non-blocking:
       HEADING line-height in HC (1.5 today, consistent with the font
       classes).
+- [ ] **Off-palette anchor V2 — delta-preservation idea** (noted
+      2026-07-17, for later — not v1). V1 of the off-palette anchor
+      (see [PLAN-off-palette-anchor.md](./PLAN-off-palette-anchor.md))
+      substitutes the nearest palette anchor's own derived color for an
+      off-palette custom color in derived themes (dark, CVD remapping) —
+      accepted light-mode discontinuity between the anchor and the
+      derived result (no clean-result promise). V2 idea: instead of
+      substituting the anchor, apply the anchor's transformation
+      *delta* (ΔL/ΔC/ΔH between the anchor and its derived color) to the
+      user's actual off-palette color, so the derived result stays tied
+      to the user's real swatch instead of only to its nearest palette
+      neighbor. Candidate for a future custom-palette system; explicitly
+      out of scope for `feat/off-palette-anchor` — logged here so it
+      isn't lost.
 
 ## Dropped (closed decision — do not re-propose)
 
@@ -134,9 +148,13 @@ Update as you go (check off / remove once done).
       Giga/Deca; **excluded** = Sylexiad (proprietary EULA), **Tiresias**
       (GPLv3 + unused + a signage font), **Raleway Dots** (unused).
       Details: [PLAN-extraction-modules.md](./PLAN-extraction-modules.md).
-- [ ] **Question — Sylexiad served by the site**: the EULA requires
-      webfonts that are "not publicly downloadable"; the portfolio's
-      woff2 files technically are. To be settled (outside the E5 chantier).
+- [x] **Question — Sylexiad served by the site**: settled 2026-07-17.
+      The EULA requires webfonts that are "not publicly downloadable";
+      the portfolio's woff2 files technically were. Fixed: the font
+      files are gitignored (`public/fonts/Sylexiad*`), kept locally as
+      a backup only (`private/fonts-backup/sylexiad/`), and Andika
+      (OFL) added as a code-level fallback in `_typography.scss`. See
+      `public/fonts/README.md` for the restore instructions.
 
 ## Role corrections — details
 

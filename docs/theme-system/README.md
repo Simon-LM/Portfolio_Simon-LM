@@ -39,7 +39,8 @@ never merged: rollup + src, predating several redesigns of the system).
 | [PLAN-e6-5-theme-generator.md](./PLAN-e6-5-theme-generator.md) | Execution plan: E6.5 chantier — extracting the theme generator (generate-all-themes) into the package | ✅ executed 2026-07-12 (branch `feat/e6-5-theme-generator`) — audit gap #1 (§6.2) closed |
 | [PLAN-e6-6-contrast-verifier.md](./PLAN-e6-6-contrast-verifier.md) | Execution plan: E6.6 chantier — extracting the contrast verifier into the package (`testing/`) | ✅ executed 2026-07-12 (branch `feat/e6-6-contrast-verifier`) — audit gap #2 (§6.2) closed |
 | [REVIEW-e7-readiness.md](./REVIEW-e7-readiness.md) | Pre-E7 review: confirmed bugs, publication backlog, Tailwind compatibility analysis, doc-scheme decision (package README + AGENTS.md) | living — processed item by item, feeds the future E7 plan |
-| [PLAN-complete-palette.md](./PLAN-complete-palette.md) | Execution plan: 0.2.0 — complete the Tailwind palette (9 → 26 families) so any brand color has a close anchor; prompted by the first external consumer | 📝 written 2026-07-17, awaiting execution |
+| [PLAN-complete-palette.md](./PLAN-complete-palette.md) | Execution plan: 0.2.0 — complete the Tailwind palette (9 → 26 families) so any brand color has a close anchor; prompted by the first external consumer | ✅ executed and merged 2026-07-17 (`c308313`) — not published yet |
+| [PLAN-off-palette-anchor.md](./PLAN-off-palette-anchor.md) | Execution plan: silent safety net for off-spec (non-Tailwind) colors — anchor to the nearest palette entry for derived themes instead of the current crude fallbacks | ✅ executed 2026-07-17 (branch `feat/off-palette-anchor`) — joins the still-unpublished `0.2.0`, not published yet |
 
 Principle: **one chantier = one plan = one branch = one AI-driven
 execution**, reviewed before merge. The guide gives the order; each plan
