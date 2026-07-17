@@ -105,6 +105,89 @@ changes are coming before this ships).
 - `package.json` version bumped to `0.2.0` (additive → MINOR, per the
   recorded 0.x release strategy — not published).
 
+## 2026-07-17 (darkmode-plus-a11y 0.2.0 — off-palette color anchor, branch `feat/off-palette-anchor`)
+
+A silent safety net for consumers who bypass the documented Tailwind-
+primitive contract (hand-assign a role to a color outside the palette,
+off-spec, no clean-result guarantee). Plan:
+[PLAN-off-palette-anchor.md](./PLAN-off-palette-anchor.md). Joins the
+still-unpublished `0.2.0` — not a separate bump. **Deliberately not
+documented in the public README/AGENTS** (stays a silent internal
+mechanism, per Simon).
+
+### Added
+
+- **`oklch-distance($c1, $c2)`** (`_theme-utils.scss`): perceptual
+  distance on OKLCH's Cartesian projection (`a = C·cos(H)`,
+  `b = C·sin(H)`, the same idea as CIELAB's a\*/b\*). Not CIEDE2000
+  (unavailable in SCSS — the testing layer's `differenceCiede2000()`
+  is TypeScript/culori), cross-checked against it on a small sample,
+  then used as the SCSS-native metric for the calibration below.
+- **`analyze-tailwind-color()` extended**: now always tracks the
+  nearest palette entry during its existing exact-match walk (no
+  second pass) — returns `nearest-family`/`nearest-weight`/`distance`
+  alongside the existing `family`/`weight`/`found`. Purely additive;
+  every existing caller (`convert-to-neutral-gray`, achromatopsia)
+  only reads `found`, unaffected.
+- **`$off-palette-same-color-threshold: 3.75`**: calibrated by
+  exhaustively compiling `oklch-distance` against two real
+  distributions (throwaway probe, not kept in the source tree) — 242
+  "same real color, different Tailwind major version" pairs (every
+  family shared between v3 and v4 × 11 weights, v3 hex read from the
+  real `tailwindcss@3.4.17` package) measured 0.0056–3.6127; 260
+  "genuinely different, adjacent palette weight" pairs (all 26
+  families × 10 weight-steps) measured 1.50–16.97, with the smallest
+  17 exclusively the 50→100 step (an intrinsic near-white compression
+  in Tailwind's own ramp, not a defect here). 3.75 sits just above the
+  full same-color range and below every other genuinely-distinct
+  adjacent-weight pair except two near-white outliers whose worst-case
+  effect is bounded (never a wrong family, never the light-mode value —
+  only which of two visually-adjacent near-white grays gets picked as
+  a derived-theme anchor).
+- **`auto-dark-transform` and `remap-for-cvd` wired to the anchor**:
+  their off-palette branches now resolve `family`/`weight` from
+  `nearest-family`/`nearest-weight` instead of the old generic
+  fallbacks, then proceed through the exact same calibrated,
+  gamut-safe machinery every recognized Tailwind color already uses.
+  Below the threshold: silent. Above it: one `@warn` per token
+  (`"«name»: off-palette color, anchored to «nearest-family»-«nearest-weight»
+  for derived themes (distance «distance») — result not guaranteed,
+  prefer a Tailwind primitive."`). The light-mode value itself stays
+  exactly what the consumer gave (upgraded to OKLCH if needed, per the
+  existing 2026-07-15 fix) — only derived themes read the anchor.
+- **Direct SCSS-level probe tests**
+  (`src/accessibility/contrast/__tests__/off-palette-anchor.test.ts`,
+  10 tests): `oklch-distance` sanity, `analyze-tailwind-color`'s
+  regression guard on exact matches, the v3-hex-paste silent case, and
+  ArgentBank's real brand color as the "genuine custom color" warn
+  case for both engines, plus a dark-mode gamut check on a saturated
+  off-palette color.
+
+### Fixed
+
+- **The dark-mode gamut gap found and parked on 2026-07-17** (`auto-
+  dark-transform`'s old "not found" branch, `adjust-lightness-clamped`
+  with no gamut guard at all — confirmed broken:
+  `oklch(39% 0.164 32.9deg)`, `in-gamut: false`) is closed as a side
+  effect: an anchored result is a real, already-verified-in-gamut
+  palette color by construction.
+
+### Removed
+
+- **`cvd-safe-anchor-hue()`** (`_theme-utils.scss`): the OKLCH hue-
+  rotation fallback it fed was `remap-for-cvd`'s own off-palette
+  branch, now replaced by the anchor. Zero remaining call sites, not
+  part of the documented public API — removed rather than left dead.
+
+### Verified
+
+- Full portfolio suite: 758/758 green (748 existing + 10 new) —
+  byte-identical for the portfolio's own 15 themes, confirmed via
+  `pnpm contrast:report` / `pnpm hc:audit` (no diff) as well as Jest:
+  none of the portfolio's own primitives are off-palette, so these
+  branches never fire from its compiled CSS. The new tests exercise
+  them directly.
+
 ## 2026-07-15 (docs: French filenames anglicized)
 
 ### Changed

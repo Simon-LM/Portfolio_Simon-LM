@@ -224,29 +224,42 @@ takes. The dark-mode gamut gap noted and explicitly parked on
 
 ## Phases
 
-1. **`oklch-distance()` + extended `analyze-tailwind-color()`** —
-   land the distance helper and the extended return shape in
-   `_theme-utils.scss`. No behavior change yet (callers untouched) —
-   this phase is purely additive, byte-identical oracle applies.
-2. **Threshold calibration** — exhaustive v3-vs-v4 same-swatch and
-   adjacent-weight sweep (not the ~5-pair sample above) to lock the
-   `$off-palette-same-color-threshold` constant with full confidence.
-3. **Wire the two call sites** — `auto-dark-transform`'s "not found"
-   branch and `remap-for-cvd`'s "outside the palette" branch switch
-   from their current generic fallbacks to the anchor. `@warn` message
-   added. Oracle: the portfolio's own 15 themes never hit these
-   branches (no off-palette primitive) — still byte-identical here.
-4. **Verification** — a SCSS-level test probing both branches directly
-   with known off-palette colors (mirrors how the 2026-07-15 CVD fix
-   was verified: direct probes, not a portfolio-visible change),
-   including the ArgentBank color as a real-world case; confirm the
-   dark-mode gamut gap is closed (`color.is-in-gamut` on the
-   anchored result); full portfolio suite stays green (748 tests).
-5. **Docs** — deliberately **NOT** in the public README/AGENTS (stays
-   undocumented by design, per Simon). Internal comments in
-   `_theme-utils.scss` explain the mechanism for future maintainers.
-   CHANGELOG entry (repo-side, internal record — not a "how to use
-   this" doc).
+1. **`oklch-distance()` + extended `analyze-tailwind-color()`** — ✅
+   done: both land in `_theme-utils.scss`, purely additive (existing
+   callers of `analyze-tailwind-color` only read `found`) — 748/748
+   tests unchanged before wiring.
+2. **Threshold calibration** — ✅ done, exhaustively (242 same-color +
+   260 adjacent-weight pairs, real `tailwindcss@3.4.17` hex vs this
+   file's v4 OKLCH). Locked `$off-palette-same-color-threshold: 3.75`
+   — see the constant's own comment in `_theme-utils.scss` for the
+   full measured justification, including why a handful of near-white
+   adjacent-weight pairs (50→100, and two 100→200 outliers) can't be
+   cleanly separated from version-drift noise by any threshold, and
+   why that's inconsequential (never a wrong family, never the
+   light-mode value).
+3. **Wire the two call sites** — ✅ done: `auto-dark-transform`'s "not
+   found" branch and `remap-for-cvd`'s "outside the palette" branch
+   both resolve `family`/`weight` from the anchor and run through the
+   same calibrated, gamut-safe machinery every recognized color
+   already uses. `@warn` added, one per token, only above the
+   threshold. Byte-identical for the portfolio's own 15 themes,
+   confirmed via `pnpm contrast:report` / `pnpm hc:audit` (no diff) —
+   they never hit these branches. `cvd-safe-anchor-hue()` (the old
+   OKLCH-hue-rotation fallback it fed) had zero remaining call sites
+   after the wiring and was removed.
+4. **Verification** — ✅ done: 10 new direct SCSS-level probe tests in
+   `src/accessibility/contrast/__tests__/off-palette-anchor.test.ts`
+   (`oklch-distance` sanity, the exact-match regression guard, the
+   v3-hex-paste silent case and ArgentBank's real brand color as the
+   warn case for both engines, and a dark-mode gamut check). ArgentBank
+   `#6866e9`'s true nearest entry, found by the exhaustive walk, is
+   **indigo-500** at distance 4.12 — closer than the plan's own
+   preliminary 3-candidate estimate (blue-600, 8.91), which only
+   spot-checked weight 600 across 3 families rather than the full
+   26×11 grid. Full suite: 758/758 (748 existing + 10 new) green.
+5. **Docs** — ✅ done: deliberately **NOT** in the public README/AGENTS
+   (stays undocumented by design, per Simon). Internal comments in
+   `_theme-utils.scss` explain the mechanism; CHANGELOG entry written.
 6. **Version** — joins the still-unpublished `0.2.0` (see below).
 
 ## Version
