@@ -104,7 +104,12 @@ Prefer your own UI? Skip `init` and use the engine directly
 ## The API: 3 layers, one rule
 
 1. **Palettes** — Tailwind color geometry (your brand as
-   `("family", weight)` pairs).
+   `("family", weight)` pairs), all **26 Tailwind families** (every
+   weight, 50…950): the 17 chromatic hues (`red`, `orange`, `amber`,
+   `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`,
+   `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`), the 5
+   neutral grays (`slate`, `gray`, `zinc`, `neutral`, `stone`), and the
+   4 tinted neutrals (`taupe`, `mauve`, `mist`, `olive`).
 2. **Roles** — the package API the engines transform per theme:
    backgrounds (`$bg-base`, `$bg-subtle`, `$bg-container`,
    `$bg-container-high`, `$bg-emphasis`, `$bg-emphasis-strong`,

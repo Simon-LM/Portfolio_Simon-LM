@@ -13,6 +13,98 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-17 (darkmode-plus-a11y 0.2.0 — the full Tailwind palette, branch `feat/complete-palette`)
+
+Prompted by the first real external consumer (ArgentBank): the package
+shipped only 9 of Tailwind's 26 color families, so their bluish indigo
+brand color (`#6866e9`) had no close anchor (`violet` was the nearest,
+visibly too pink). Plan: [PLAN-complete-palette.md](./PLAN-complete-palette.md).
+**Not published yet** — publication is explicitly on hold (Simon: more
+changes are coming before this ships).
+
+### Added
+
+- **17 new Tailwind families** (`_base-palette.scss`, `10388b3`): 11
+  chromatic (`yellow`, `lime`, `green`, `teal`, `cyan`, `blue`,
+  `indigo`, `purple`, `fuchsia`, `pink`, `rose`), 2 grays (`gray`,
+  `zinc`), 4 tinted neutrals new to Tailwind v4 (`taupe`, `mauve`,
+  `mist`, `olive` — hex values cross-checked byte-identical between
+  Simon's pasted OKLCH figures and `tailwindcss@4.3.3`'s own
+  `theme.css`). The palette moves from Tailwind v3 hex values to v4's
+  native OKLCH, extracted verbatim from the installed package (not
+  retyped) — 26 families × 11 weights.
+- Every `$colors` key is now **quoted** (`10388b3`), the 6 originally
+  unquoted keys included: the `redd → red` incident (2026-07-13)
+  generalized and closed for good — an unquoted key matching a CSS
+  named color silently breaks every string lookup.
+- **Package README / AGENTS.md**: the "Palettes" / "Prerequisites"
+  sections now enumerate all 26 available families (previously
+  undocumented — a consumer had no way to know which families
+  existed).
+
+### Fixed
+
+- **Anti-glare engine gamut bug** (`_anti-glare-functions.scss`,
+  `10388b3`): `transform-for-anti-glare` ended on a bare
+  `color.to-space(…, rgb)` — a coordinate conversion, not a gamut map.
+  Latent since day one (v3 hex colors never triggered it), surfaced by
+  v4's wider gamut: an out-of-sRGB result serialized with broken HSL
+  channels (saturation > 100%) instead of being brought back in-gamut.
+  Fixed by routing through `gamut-map-srgb` (the CVD engine's existing
+  CSS Color 4 `local-minde` helper) — output stays OKLCH throughout,
+  only out-of-gamut colors get chroma-reduced.
+- **CVD engine's off-palette custom-color branch** (`_theme-utils.scss`,
+  `remap-for-cvd`, `10388b3` + `1ac7f8e`): same anti-pattern on output
+  (gamut-mapped, then still downgraded to legacy `rgb()`), plus a
+  second gap on input — `color.change()`'s `$space:` only governs
+  channel interpretation, not the return color's serialization, so a
+  legacy hex custom color kept its legacy space through the pipeline
+  (Sass's own behavior, confirmed in isolation, not a bug in itself).
+  Fixed: `color.to-space($color, oklch)` upgrades the input first, so
+  both an OKLCH and a legacy hex custom color now come out
+  OKLCH-consistent. Deliberately scoped to this one already-isolated,
+  currently-dead-code branch (the portfolio's own themes never carry an
+  off-palette color) — not extended to the anti-glare engine (no
+  equivalent branch, and explicitly out of scope per Simon: the
+  package is designed around Tailwind-palette primitives, not general
+  custom-color support, which isn't offered yet).
+- **`_theme-variables.scss`**: two `rgba($role, alpha)` calls
+  (tooltip-bg, shadow) — `rgba()` only accepts legacy RGB/HSL/HWB,
+  not OKLCH. Replaced with `color.change($role, $alpha:)`.
+
+### Verified
+
+- 748/748 tests, `tsc` clean, `sass` compile clean throughout.
+- `CONTRAST-REPORT.md` and `HC-SEMANTIC-AUDIT.md` regenerated (HC audit
+  unchanged: 0 active / 15 waived).
+- 15 themes recompiled and **visually validated by Simon** on the live
+  site — the byte-identical oracle no longer applies by design (OKLCH
+  v4 colors differ slightly from v3 hex); the full contrast /
+  distinguishability / gamut suite is the safety net instead.
+- **CVD measurement, methodology corrected mid-flight**
+  (`4a53855`): the first attempt (each new family vs the 6 existing
+  roles, 2 weights, 7 CVD types) produced 345 findings that were
+  mostly noise — comparing families against roles they'd never coexist
+  with, and testing a uniform weight even for hues that are naturally
+  lower-contrast at that weight regardless of CVD. Reframed: the
+  package's real safety net for a consumer's actual role choice is
+  their own contrast/distinguishability suite (documented in
+  AGENTS.md); this phase is a data sanity check on the palette itself,
+  not pre-validation of every hypothetical combination the engine
+  can't solve in advance anyway. Final test: the 11 new chromatic
+  families at weight 600 under the 7 CVD types (6 dichromacy +
+  achromatopsia) — zero anomalies, plausible and stable contrast
+  ranges throughout (blue 4.25–6.65:1, indigo 5.38–7.10:1, directly
+  answering the ArgentBank case). No remap/anchor entries added: the
+  existing fallback (unmapped family left unchanged for red-green;
+  OKLCH hue-nudge for off-palette colors) already covers new families,
+  same as the original 9.
+
+### Docs
+
+- `package.json` version bumped to `0.2.0` (additive → MINOR, per the
+  recorded 0.x release strategy — not published).
+
 ## 2026-07-15 (docs: French filenames anglicized)
 
 ### Changed

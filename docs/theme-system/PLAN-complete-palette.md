@@ -140,8 +140,11 @@ and legible.
      engine can't pre-solve every future consumer's role combination
      anyway (only a consumer's own suite, testing the pairs they
      actually chose, can).
-4. **Docs + version** — in progress: README/AGENTS role list (26
-   families), palette section, CHANGELOG entry, bump to `0.2.0`.
+4. **Docs + version** — ✅ done: README "Palettes" bullet and AGENTS.md
+   "Prerequisites" now enumerate all 26 families (previously
+   undocumented at any count); CHANGELOG entry written; `package.json`
+   bumped to `0.2.0`. 748/748 tests, lint, and markdownlint all clean
+   after the change.
 5. **Publish + prove** — **ON HOLD, explicitly not now** (Simon,
    2026-07-17): more changes are coming that haven't been specified
    yet. Do not publish without an explicit go-ahead.
