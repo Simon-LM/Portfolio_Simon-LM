@@ -148,9 +148,13 @@ Update as you go (check off / remove once done).
       Giga/Deca; **excluded** = Sylexiad (proprietary EULA), **Tiresias**
       (GPLv3 + unused + a signage font), **Raleway Dots** (unused).
       Details: [PLAN-extraction-modules.md](./PLAN-extraction-modules.md).
-- [ ] **Question — Sylexiad served by the site**: the EULA requires
-      webfonts that are "not publicly downloadable"; the portfolio's
-      woff2 files technically are. To be settled (outside the E5 chantier).
+- [x] **Question — Sylexiad served by the site**: settled 2026-07-17.
+      The EULA requires webfonts that are "not publicly downloadable";
+      the portfolio's woff2 files technically were. Fixed: the font
+      files are gitignored (`public/fonts/Sylexiad*`), kept locally as
+      a backup only (`private/fonts-backup/sylexiad/`), and Andika
+      (OFL) added as a code-level fallback in `_typography.scss`. See
+      `public/fonts/README.md` for the restore instructions.
 
 ## Role corrections — details
 
