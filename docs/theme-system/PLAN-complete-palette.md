@@ -101,21 +101,50 @@ and legible.
 
 ## Phases
 
-1. **Data** — add the 17 families (all quoted) to `$colors`; optionally
-   retro-quote the 6 existing keys. Hex values from the Tailwind docs;
-   Simon supplies taupe/mauve/mist/olive.
-2. **Oracle** — recompile the portfolio's 15 themes, confirm
-   byte-identical CSS (normalized diff); run the full Jest suite (748
-   tests) — nothing should move, since no role points at a new family.
-3. **CVD measurement** — run the per-family simulation (above), record
-   the decision table, add explicit remap/anchor entries only where a
-   failure is measured.
-4. **Docs + version** — README/AGENTS role list: note that any of the 26
-   Tailwind families is usable as `("family", weight)`; add the new
-   families to the palette section; CHANGELOG entry; bump to `0.2.0`.
-5. **Publish + prove** — `pnpm publish` (Simon's passkey), re-prove the
-   cycle from the registry, then ArgentBank wires its indigo/blue
-   secondary.
+1. **Data** — ✅ done (`10388b3`): 26 families in OKLCH, extracted
+   verbatim from `tailwindcss@4.3.3`, every key quoted (including the 6
+   retro-quoted originals).
+2. **Oracle** — ✅ done: recompiled, full Jest suite green, visually
+   validated by Simon. The byte-identical rule was superseded by the
+   OKLCH v4 migration decision (see § "ABSOLUTE RULE #1" note above) —
+   two real gamut-mapping bugs were found and fixed along the way
+   (anti-glare, CVD off-palette branch), unrelated to the palette data
+   itself.
+3. **CVD measurement** — ✅ done, **methodology corrected mid-flight**
+   (2026-07-17): the original plan ("simulate each family, compare
+   against existing roles, build a remap decision table") produced 345
+   findings that were mostly noise — comparing families against roles
+   they would never coexist with in a real UI (e.g. the `gray`/`zinc`
+   rail candidates against `link`), and testing weight 600 uniformly
+   even for hues (yellow/lime/green) that are naturally low-contrast at
+   that weight regardless of CVD. Reframed with Simon: the package's
+   **real** safety net for a consumer's actual role choice is their own
+   contrast/distinguishability suite (AGENTS.md § Verifying your
+   wiring) — this phase is a **data sanity check**, not a
+   pre-validation of every hypothetical combination. Final test: the 11
+   new chromatic families at weight 600, simulated under the 7 CVD
+   types (6 dichromacy + achromatopsia), checked for broken/anomalous
+   output (NaN, non-finite ratio) — **zero anomalies**; contrast-ratio
+   ranges vs `bg-base` stayed plausible and stable for every family
+   (e.g. blue 4.25–6.65:1, indigo 5.38–7.10:1 — solid across the board,
+   directly answering the ArgentBank case). `yellow`'s low end
+   (2.60:1) is a normal-vision weight-600 characteristic of that hue,
+   not a CVD-specific defect — noted for the docs, no engine change
+   needed. No remap/anchor entries added: the existing fallback
+   (unmapped family → left unchanged for red-green; OKLCH hue-nudge for
+   off-palette colors) is sufficient, same as for the original 9
+   families.
+   - **Pairwise family-vs-family test explicitly NOT built**: would
+     mostly re-confirm that visually-similar families (e.g.
+     teal/cyan) are visually similar — not new information, and the
+     engine can't pre-solve every future consumer's role combination
+     anyway (only a consumer's own suite, testing the pairs they
+     actually chose, can).
+4. **Docs + version** — in progress: README/AGENTS role list (26
+   families), palette section, CHANGELOG entry, bump to `0.2.0`.
+5. **Publish + prove** — **ON HOLD, explicitly not now** (Simon,
+   2026-07-17): more changes are coming that haven't been specified
+   yet. Do not publish without an explicit go-ahead.
 
 ## Test impact
 
