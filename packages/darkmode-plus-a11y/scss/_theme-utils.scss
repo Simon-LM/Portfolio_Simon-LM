@@ -154,11 +154,14 @@
 			// consumer of the package): OKLCH hue rotation toward a safe
 			// anchor for the CVD type, at constant luminance and chroma.
 			// Calibration starting point (anchors not perceptually
-			// validated), see the phase 2 report.
+			// validated), see the phase 2 report. Stays in OKLCH — never
+			// degraded to legacy rgb() — same discipline as the anti-glare
+			// engine (0.2.0 chantier): gamut-map-srgb already returns an
+			// in-gamut, still-OKLCH color; to-space(…, rgb) here would only
+			// downgrade the serialization for no reason.
 			$anchor-hue: cvd-safe-anchor-hue($cvd-type);
-			$resolved: color.to-space(
-				gamut-map-srgb(color.change($color, $hue: $anchor-hue, $space: oklch)),
-				rgb
+			$resolved: gamut-map-srgb(
+				color.change($color, $hue: $anchor-hue, $space: oklch)
 			);
 		}
 	}

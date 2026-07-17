@@ -1,5 +1,6 @@
 /** @format */
 
+@use "sass:color";
 @use "darkmode-plus-a11y/scss/base-palette" as *;
 @use "darkmode-plus-a11y/scss/state" as *;
 
@@ -109,11 +110,11 @@ $color-focus-text: $fg-on-emphasis;
 
 // Tooltips
 $color-tooltip-text: $fg-on-emphasis;
-$color-tooltip-bg: rgba($bg-inverse, 0.9);
+$color-tooltip-bg: color.change($bg-inverse, $alpha: 0.9);
 
 // Elevation shadow for cards and forms (theme-aware, pre-mixed alpha —
 // rgba(var(--x), a) is not valid CSS, so the color is computed here)
-$color-shadow: rgba($border-strong, 0.1);
+$color-shadow: color.change($border-strong, $alpha: 0.1);
 
 // Accessibility panel variables
 $color-panel-bg: $bg-base;
@@ -223,8 +224,8 @@ $color-accent-hover: $accent-strong; // sole visual change of this migration
 
 	// Tooltips
 	$color-tooltip-text: $fg-on-emphasis !global;
-	$color-tooltip-bg: rgba($bg-inverse, 0.9) !global;
-	$color-shadow: rgba($border-strong, 0.1) !global;
+	$color-tooltip-bg: color.change($bg-inverse, $alpha: 0.9) !global;
+	$color-shadow: color.change($border-strong, $alpha: 0.1) !global;
 
 	// Accessibility panel variables
 	$color-panel-bg: $bg-base !global;
