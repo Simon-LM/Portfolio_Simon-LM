@@ -101,6 +101,20 @@ Update as you go (check off / remove once done).
       body 0.04em/1.75/0.128em). One micro-decision remains, non-blocking:
       HEADING line-height in HC (1.5 today, consistent with the font
       classes).
+- [ ] **Off-palette anchor V2 — delta-preservation idea** (noted
+      2026-07-17, for later — not v1). V1 of the off-palette anchor
+      (see [PLAN-off-palette-anchor.md](./PLAN-off-palette-anchor.md))
+      substitutes the nearest palette anchor's own derived color for an
+      off-palette custom color in derived themes (dark, CVD remapping) —
+      accepted light-mode discontinuity between the anchor and the
+      derived result (no clean-result promise). V2 idea: instead of
+      substituting the anchor, apply the anchor's transformation
+      *delta* (ΔL/ΔC/ΔH between the anchor and its derived color) to the
+      user's actual off-palette color, so the derived result stays tied
+      to the user's real swatch instead of only to its nearest palette
+      neighbor. Candidate for a future custom-palette system; explicitly
+      out of scope for `feat/off-palette-anchor` — logged here so it
+      isn't lost.
 
 ## Dropped (closed decision — do not re-propose)
 

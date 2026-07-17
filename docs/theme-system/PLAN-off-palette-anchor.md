@@ -56,28 +56,27 @@ undefined/broken, and a `@warn` at compile time tells them so.
 ## Decisions (Simon, 2026-07-17)
 
 - **Light-mode discontinuity between the anchor and derived themes**:
-  **accepted for v1** (off-spec, no clean-result promise). **Log for
-  V2**: instead of substituting the anchor's own dark/CVD color,
-  compute the **delta** the anchor undergoes (ΔL, ΔC, ΔH between the
-  anchor and its transformed version) and apply that same delta to the
-  user's actual color — preserves their hue while inheriting the
-  calibrated curve. Candidate for a future custom-palette system, not
-  for this net. **Do not build this now.**
+  **accepted for v1** (off-spec, no clean-result promise). The V2 idea
+  (apply the anchor's transformation *delta* to the user's color
+  instead of substituting the anchor) is **not built here** — logged
+  durably in [TODO.md](./TODO.md) instead of this plan, since a plan is
+  provisional (closed once executed) and TODO.md is the "don't forget"
+  list.
 - **Thresholds**: Simon delegated to measured recommendations (below).
 - **Single entry point**: extend `analyze-tailwind-color()` — every
   engine (dark, CVD) consumes its result, no separate logic per engine.
 
 ## Technical design
 
-### The distance metric is Sass-native, NOT the testing layer's CIEDE2000
+### The distance metric is SCSS-native, NOT the testing layer's CIEDE2000
 
-The projection must happen **at Sass compile time** (inside the
+The projection must happen **at SCSS compile time** (inside the
 engine, e.g. `auto-dark-transform`, `remap-for-cvd`) — the
 `differenceCiede2000()` used by `testing/measure.ts` is TypeScript
 (culori), unavailable to the SCSS engine. Full CIEDE2000 needs
 `atan2` plus several weighting/rotation terms — verified that Dart
 Sass 1.101.0 (this project's version) **does** expose
-`math.cos`/`math.sin`/`math.atan2`, but a full CIEDE2000 port in Sass
+`math.cos`/`math.sin`/`math.atan2`, but a full CIEDE2000 port in SCSS
 is significant, unproven-in-this-codebase machinery for a feature that
 explicitly makes no cleanliness promise.
 
@@ -87,7 +86,7 @@ a\*/b\*, computed directly on OKLCH channels instead of true Lab).
 Naturally handles near-zero-chroma colors (a, b → 0 as C → 0,
 regardless of H — no special-casing for `hue: none`, e.g.
 `oklch(98.5% 0 none)`). Much simpler than CIEDE2000 (no weighting
-functions, no rotation term), fully computable in Sass:
+functions, no rotation term), fully computable in SCSS:
 
 ```scss
 @function oklch-distance($c1, $c2) {
@@ -110,10 +109,10 @@ functions, no rotation term), fully computable in Sass:
 }
 ```
 
-(Probed directly against this codebase's palette via a throwaway Sass
+(Probed directly against this codebase's palette via a throwaway SCSS
 file — not yet added to the source tree.)
 
-### Measured thresholds (Sass-native metric, real palette values)
+### Measured thresholds (SCSS-native metric, real palette values)
 
 | Comparison | `oklch-distance` |
 | --- | --- |
@@ -237,7 +236,7 @@ takes. The dark-mode gamut gap noted and explicitly parked on
    from their current generic fallbacks to the anchor. `@warn` message
    added. Oracle: the portfolio's own 15 themes never hit these
    branches (no off-palette primitive) — still byte-identical here.
-4. **Verification** — a Sass-level test probing both branches directly
+4. **Verification** — a SCSS-level test probing both branches directly
    with known off-palette colors (mirrors how the 2026-07-15 CVD fix
    was verified: direct probes, not a portfolio-visible change),
    including the ArgentBank color as a real-world case; confirm the
@@ -247,22 +246,18 @@ takes. The dark-mode gamut gap noted and explicitly parked on
    undocumented by design, per Simon). Internal comments in
    `_theme-utils.scss` explain the mechanism for future maintainers.
    CHANGELOG entry (repo-side, internal record — not a "how to use
-   this" doc). Log the V2 delta-preserving idea in TODO.md so it isn't
-   lost.
-6. **Version** — open question, see below.
+   this" doc).
+6. **Version** — joins the still-unpublished `0.2.0` (see below).
 
-## Open question: version bump
+## Version
 
-`0.2.0` is merged to `main` but **not published** — nothing is
-publicly committed yet. Two options: (a) fold this into the still-
-unpublished `0.2.0` (it's an internal fallback improvement, arguably
-close to a bug fix — no new public role/function signature), or
-(b) bump further once both chantiers are ready to ship together.
-Simon's call when this chantier is ready to merge.
+Decided (Simon, 2026-07-17): this chantier joins the still-unpublished
+`0.2.0` — no separate bump. `0.2.0` is merged to `main` but not yet
+published; this mechanism ships as part of that same release.
 
 ## Test impact
 
-- New: direct Sass probes for `oklch-distance` and the extended
+- New: direct SCSS probes for `oklch-distance` and the extended
   `analyze-tailwind-color` (unit-level, in the spirit of
   `status-resolver.test.ts`'s `compileString` probes).
 - New: a dark-mode gamut check for an off-palette custom color
