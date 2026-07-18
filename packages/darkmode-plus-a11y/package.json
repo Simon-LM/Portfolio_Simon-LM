@@ -42,7 +42,7 @@
 		}
 	},
 	"bin": {
-		"darkmode-plus-a11y": "./bin/cli.mjs"
+		"darkmode-plus-a11y": "bin/cli.mjs"
 	},
 	"files": [
 		"LICENSE",

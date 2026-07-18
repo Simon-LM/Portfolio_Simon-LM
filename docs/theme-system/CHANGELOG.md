@@ -13,14 +13,22 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-18 (darkmode-plus-a11y 0.2.0 — published to npm)
+
+`darkmode-plus-a11y@0.2.0` published to the npm registry (tag `latest`),
+bundling the two chantiers below (full Tailwind palette + off-palette
+color anchor) plus the shipped-package comment cleanup. Pre-publication
+review: full diff re-read, 758/758 tests, tsc/eslint clean, tarball
+dry-run validated (94 files, fresh `dist/` via `prepack`).
+
 ## 2026-07-17 (darkmode-plus-a11y 0.2.0 — the full Tailwind palette, branch `feat/complete-palette`)
 
 Prompted by the first integration attempt outside this repo: the package
 shipped only 9 of Tailwind's 26 color families, so a bluish indigo
 brand color (`#6866e9`) had no close anchor (`violet` was the nearest,
 visibly too pink). Plan: [PLAN-complete-palette.md](./PLAN-complete-palette.md).
-**Not published yet** — publication is explicitly on hold (Simon: more
-changes are coming before this ships).
+Published to npm on 2026-07-18, together with the off-palette color
+anchor below.
 
 ### Added
 
@@ -103,7 +111,7 @@ changes are coming before this ships).
 ### Docs
 
 - `package.json` version bumped to `0.2.0` (additive → MINOR, per the
-  recorded 0.x release strategy — not published).
+  recorded 0.x release strategy).
 
 ## 2026-07-17 (darkmode-plus-a11y 0.2.0 — off-palette color anchor, branch `feat/off-palette-anchor`)
 
