@@ -1,12 +1,11 @@
 /** @format */
 
 // Default theme list of the package (the 15 accessible themes) — single
-// source of truth for the runtime. NOTE: the SCSS [data-theme] blocks
-// (consumer-side, src/styles/abstracts/_theme-system.scss in the
-// portfolio) must stay in sync manually until theme-list generation is
-// extracted too (see GUIDE-package-extraction.md).
-// high-contrast*: "high-contrast" = yellow on black (historical value,
-// kept for existing localStorage entries) + 3 variants (HC chantier).
+// source of truth for the runtime. NOTE: your own SCSS [data-theme]
+// blocks must stay in sync with this list manually — nothing generates
+// them from here.
+// high-contrast*: "high-contrast" = yellow on black (kept for backward
+// compatibility with existing localStorage entries) + 3 variants.
 export const THEMES = [
 	"light",
 	"dark",

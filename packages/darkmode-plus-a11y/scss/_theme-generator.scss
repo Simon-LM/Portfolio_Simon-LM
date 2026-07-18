@@ -1,14 +1,14 @@
 /** @format */
 
-// Theme generator (E6.5) — closes audit gap #1 (§6.2): standard theme
-// definitions + role-variable emission now live INSIDE the package. The
-// consumer configures their light theme (via `@use state with (…)`), lists
-// the themes they want, and `generate-all-themes()` emits all of them. Their
-// layer 3 is injected per theme via @content.
+// Theme generator: standard theme definitions and role-variable emission
+// live INSIDE the package. The consumer configures their light theme
+// (via `@use state with (…)`), lists the themes they want, and
+// `generate-all-themes()` emits all of them. Their layer 3 is injected
+// per theme via @content.
 //
-// Standard configs (dark, high-contrast maps, achromatopsia) are migrated
-// here from the portfolio's theme files, generalized (the dark accent swap
-// derives from the consumer's primitives, no more hardcoded amber).
+// Standard configs (dark, high-contrast maps, achromatopsia) are fully
+// generic: the dark accent swap derives from the consumer's own
+// primitives, never a hardcoded color.
 
 @use "sass:map";
 @use "base-palette" as *;
@@ -92,7 +92,7 @@ $hc-paper: (
 }
 
 // "Dark base" sub-recipe: dark rail + accent swap (generic — derives from
-// the consumer's primitives, byte-identical to the portfolio's amber swap).
+// the consumer's own primitives, whatever they are).
 @mixin apply-dark-base() {
 	@include define-base-colors();
 	@include apply-roles();
@@ -166,9 +166,8 @@ $hc-paper: (
 	}
 }
 
-// Emits layer 1+2 CSS variables (rail, primitives, roles, constants) — the
-// ex-"package" portion of generate-theme-css-vars (portfolio). Layer 3
-// (~70 --color-* tokens) stays with the consumer.
+// Emits layer 1+2 CSS variables (rail, primitives, roles, constants).
+// Your own layer-3 component tokens stay declared on your own side.
 @mixin emit-role-vars() {
 	// Foundational variables
 	--off-white: #{$off-white};

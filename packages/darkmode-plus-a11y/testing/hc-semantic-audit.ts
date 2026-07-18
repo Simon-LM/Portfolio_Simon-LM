@@ -1,12 +1,12 @@
 /** @format */
 
-// Name-based SEMANTIC inspector for high contrast (extracted from the
-// portfolio, pre-E7). Names decide NO color (the layer-2 wiring decides
-// that); they MONITOR: if a token's name suggests a family (text,
-// background, link, focus) and the emitted value contradicts it, a
-// warning is emitted. Never blocking, never a modification — it catches
-// crossed wiring that lands inside the palette, the blind spot of the
-// value-based control (see AGENTS.md § Verifying your wiring).
+// Name-based SEMANTIC inspector for high contrast. Names decide NO color
+// (the layer-2 wiring decides that); they MONITOR: if a token's name
+// suggests a family (text, background, link, focus) and the emitted value
+// contradicts it, a warning is emitted. Never blocking, never a
+// modification — it catches crossed wiring that lands inside the palette,
+// the blind spot of the value-based control (see AGENTS.md § Verifying
+// your wiring).
 //
 // This module is deliberately SELF-CONTAINED (no relative imports): it is
 // consumed both by TypeScript test runners (extensionless subpath import)

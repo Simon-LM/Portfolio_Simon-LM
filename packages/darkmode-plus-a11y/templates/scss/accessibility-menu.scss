@@ -62,8 +62,6 @@
 
 	&__close-footer-button {
 		padding: 0.5rem 1rem;
-		// (background/color via var(--color-button-bg/-text) removed
-		// 2026-07-07: never emitted -> inert declarations, rendering unchanged)
 		border: 1px solid var(--color-button-border);
 		border-radius: 0.25rem;
 		font-size: 0.9rem;
@@ -95,8 +93,7 @@
 		font-weight: 600;
 		margin: 0;
 		padding-bottom: 0.25rem;
-		// var(--color-divider) was never emitted: the fallback always
-		// applied — simplified 2026-07-07, rendering unchanged.
+		// Falls back to --gray-400 directly: --color-divider isn't emitted.
 		border-bottom: 0.0625rem solid var(--gray-400);
 	}
 
@@ -175,8 +172,8 @@
 
 	&__help-description {
 		font-size: 0.75rem;
-		// var(--color-text-secondary) was never emitted: fallback simplified
-		// 2026-07-07, rendering unchanged.
+		// Falls back to --gray-700 directly: --color-text-secondary isn't
+		// emitted.
 		color: var(--gray-700);
 		margin: 0 0 0.5rem 0;
 		font-style: italic;
@@ -193,8 +190,8 @@
 		padding: 0.5rem;
 		border-radius: 0.25rem;
 		border: 0.0625rem solid var(--color-button-border, var(--color-main-text)); // 1px
-		// var(--color-input-bg) was never emitted: fallback simplified
-		// 2026-07-07, rendering unchanged.
+		// Falls back to --off-white directly: --color-input-bg isn't
+		// emitted.
 		background-color: var(--off-white);
 		color: var(--color-main-text);
 		font-size: 0.875rem; // 14px
@@ -216,7 +213,7 @@
 		margin-top: 0.5rem;
 	}
 
-	// Contrôle de taille de police
+	// Font-size control
 	&__slider-header {
 		display: flex;
 		justify-content: space-between;
@@ -321,7 +318,6 @@
 	}
 
 	&__slider-label {
-		// (color: var(--color-text) retiré 2026-07-07 : jamais émise, inerte)
 		font-size: 0.8rem;
 		flex-shrink: 0;
 		min-width: 1rem;
@@ -474,16 +470,11 @@
 		}
 	}
 
-	// High-contrast variant buttons (HC chantier, decision 2026-07-10):
-	// 4 large direct buttons — no selector, more robust for NVDA and high
-	// zoom. Each button = a mini preview: full label rendered in its
-	// variant's actual colors. Same pattern as __high-contrast-button:
-	// hover/focus = inversion of ITS pair, active = inversion + ring.
-	// High-contrast variant buttons (HC chantier, decision 2026-07-10):
-	// 4 large direct buttons — no selector, more robust for NVDA and high
-	// zoom. Each button = a mini preview: full label rendered in its
-	// variant's actual colors. Same pattern as __high-contrast-button:
-	// hover/focus = inversion of ITS pair.
+	// High-contrast variant buttons: 4 large direct buttons — no selector,
+	// more robust for NVDA and high zoom. Each button = a mini preview:
+	// full label rendered in its variant's actual colors. Same pattern as
+	// __high-contrast-button: hover/focus = inversion of ITS pair, active =
+	// inversion + ring.
 	&__hc-variant-button {
 		flex-basis: 100%;
 		font-family: "Atkinson Hyperlegible", sans-serif;
@@ -504,10 +495,10 @@
 			border: 0.1875rem solid #ffff00; // 3px
 
 			// Active: the button keeps its preview colors — the ✓ checkmark
-			// in the label marks the selection (decision, 2026-07-11). This
-			// block neutralizes the menu's generic .active (accent
-			// background). Declared BEFORE :hover: at equal specificity,
-			// hover (below) must win even on the active button.
+			// in the label marks the selection. This block neutralizes the
+			// menu's generic .active (accent background). Declared BEFORE
+			// :hover: at equal specificity, hover (below) must win even on
+			// the active button.
 			&.active {
 				background-color: #000000;
 				color: #ffff00;
@@ -527,10 +518,10 @@
 			border: 0.1875rem solid #00ff00; // 3px
 
 			// Active: the button keeps its preview colors — the ✓ checkmark
-			// in the label marks the selection (decision, 2026-07-11). This
-			// block neutralizes the menu's generic .active (accent
-			// background). Declared BEFORE :hover: at equal specificity,
-			// hover (below) must win even on the active button.
+			// in the label marks the selection. This block neutralizes the
+			// menu's generic .active (accent background). Declared BEFORE
+			// :hover: at equal specificity, hover (below) must win even on
+			// the active button.
 			&.active {
 				background-color: #000000;
 				color: #00ff00;
@@ -550,10 +541,10 @@
 			border: 0.1875rem solid #ffffff; // 3px
 
 			// Active: the button keeps its preview colors — the ✓ checkmark
-			// in the label marks the selection (decision, 2026-07-11). This
-			// block neutralizes the menu's generic .active (accent
-			// background). Declared BEFORE :hover: at equal specificity,
-			// hover (below) must win even on the active button.
+			// in the label marks the selection. This block neutralizes the
+			// menu's generic .active (accent background). Declared BEFORE
+			// :hover: at equal specificity, hover (below) must win even on
+			// the active button.
 			&.active {
 				background-color: #000000;
 				color: #ffffff;
@@ -573,10 +564,10 @@
 			border: 0.1875rem solid #000000; // 3px
 
 			// Active: the button keeps its preview colors — the ✓ checkmark
-			// in the label marks the selection (decision, 2026-07-11). This
-			// block neutralizes the menu's generic .active (accent
-			// background). Declared BEFORE :hover: at equal specificity,
-			// hover (below) must win even on the active button.
+			// in the label marks the selection. This block neutralizes the
+			// menu's generic .active (accent background). Declared BEFORE
+			// :hover: at equal specificity, hover (below) must win even on
+			// the active button.
 			&.active {
 				background-color: #ffffff;
 				color: #000000;
@@ -979,8 +970,8 @@ select.accessibility-menu__select:not(.react-select__control) {
 
 // ===================== HIGH CONTRAST MODE =====================
 
-// Styles for selects in high contrast — ALL variants (HC chantier,
-// 2026-07-10): ^= selector and theme colors instead of hardcoded yellow.
+// Styles for selects in high contrast — ALL variants: ^= selector and
+// theme colors instead of hardcoded yellow.
 // Equivalence verified in yellow: --near-black = #ffff00 (text), --off-white
 // = #000000 (background), --link-hover = #ffffff (action) → rendering
 // strictly identical to yellow, variants correct.

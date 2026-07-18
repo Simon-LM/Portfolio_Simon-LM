@@ -89,7 +89,7 @@ export const ALL_CVD_THEMES: readonly CvdTheme[] = [
 	"achromatopsia",
 ];
 
-// ΔE distinguishability thresholds (calibrated in the color-blind chantier).
+// ΔE distinguishability thresholds, empirically calibrated.
 export const DEFAULT_MIN_DELTA_E = 20;
 export const LINK_PAIR_MIN_DELTA_E = 12;
 

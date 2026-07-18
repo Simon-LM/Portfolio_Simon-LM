@@ -1,17 +1,16 @@
 /** @format */
 
-// Opt-in module — bundled accessibility fonts (E5).
+// Opt-in module — bundled accessibility fonts.
 // The consumer @use's this module then @include's the mixins wherever
 // they want to emit the @font-face rules and classes. The asset path is
-// configurable ($a11y-fonts-path) — default "/fonts", the portfolio's
-// value, for identical rendering.
+// configurable ($a11y-fonts-path, default "/fonts").
 //
 // Bundled fonts (OFL, see packages/darkmode-plus-a11y/fonts/LICENSES/):
 // OpenDyslexic, Andika, Atkinson Hyperlegible Next. Lexend Giga/Deca are
 // also bundled in fonts/ but stay declared on the consumer's side (they're
-// often brand fonts — the portfolio has them in its brand block). Sylexiad
-// is NOT bundled (proprietary EULA): the consumer wires it in via their
-// own classes.
+// often brand fonts, meant to be opted into deliberately). Sylexiad is
+// NOT bundled (proprietary EULA): the consumer wires it in via their own
+// classes.
 
 $a11y-fonts-path: "/fonts" !default;
 
@@ -100,14 +99,13 @@ $a11y-fonts-path: "/fonts" !default;
 
 // Font selector class: the chosen font applies EVERYWHERE (headings
 // included) — that's what the user picking it expects; fine-grained
-// hierarchy is the dyslexia mode's job (dyslexia module). Design decided
-// on 2026-07-10.
+// hierarchy is the dyslexia mode's job (dyslexia module).
 //
 // Body: `font-size-adjust` normalizes x-height (a font with a small
 // x-height, Atkinson/Sylexiad…, stops looking smaller — pass null for a
 // naturally large font like OpenDyslexic) + spacing aligned with dyslexia
 // mode's (same values, visually validated).
-// Headings: their own spacing, unchanged from history.
+// Headings: their own spacing, independent of the body alignment above.
 @mixin a11y-font-class(
 	$class,
 	$font,
@@ -170,8 +168,8 @@ $a11y-fonts-path: "/fonts" !default;
 }
 
 // Classes for the bundled fonts. The consumer adds their own with
-// a11y-font-class (e.g. portfolio: Sylexiad, OpenDyslexic + site-specific
-// overrides on top).
+// a11y-font-class (e.g. a brand font, or extra site-specific overrides
+// on top).
 @mixin a11y-font-classes {
 	@include a11y-font-class("atkinson-font", "Atkinson Hyperlegible");
 	@include a11y-font-class("andika-font", "Andika");

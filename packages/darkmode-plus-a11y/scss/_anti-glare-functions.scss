@@ -11,10 +11,9 @@
 	// Check that the input is indeed a color
 	@if meta.type-of($color) != "color" {
 		@warn "transform-for-anti-glare: parameter $color (#{$color}) is not a valid color";
-		// NOTE (plan phase 1, item 1): this is not the broken if() syntax it
-		// looks like. It's Dart Sass 1.101's official disambiguation syntax
-		// between its native if() and the native CSS if(). See the phase 1
-		// report for the measurement that established this.
+		// This is not the broken if() syntax it looks like. It's Dart Sass
+		// 1.101's official disambiguation syntax between its native if() and
+		// the native CSS if().
 		@return if(sass($mode == "light"): #888888; else: #aaaaaa);
 	}
 
@@ -27,11 +26,9 @@
 	// Glare-reduction parameters depend on the mode
 	@if $mode == "light" {
 		// For light mode: reduce brightness of very light elements.
-		// Threshold calibrated at 85% (not the plan's starting-point 92%) to
-		// cover stone-300 (OKLCH L ≈ 86.9%, HSL L ≈ 82.9% — above the old
-		// engine's 75% HSL threshold, so already dampened before this fix);
-		// without this adjustment stone-300 stayed nearly untouched (see the
-		// phase 3 report for the full comparative measurement).
+		// Threshold calibrated at 85% to cover colors around OKLCH
+		// L ≈ 87% (HSL L ≈ 83%) — a naive 75% HSL threshold leaves colors
+		// in that range nearly untouched.
 		@if $l > 85% {
 			$l: max(85%, $l - 5%); // Reduce glare
 			$c: max(0.005, $c); // Avoid pure white
@@ -92,10 +89,6 @@
 	// Derive the roles (layer 2) from the anti-glare rail and primitives.
 	@include apply-roles();
 
-	// The engine stops at the roles (layer 2) — E3 phase 2 dependency
-	// inversion: layer 3 is derived by the consumer's theme file
-	// (@include apply-theme-variables after the transform).
-	// (The "per-mode adjustments" block that used to follow assigned
-	// $color-collapse-border, a token removed on 2026-07-07 as never
-	// consumed: it had become dead code, purged here.)
+	// The engine stops at the roles (layer 2) — layer 3 (your own component
+	// tokens) is derived by your own theme file after this transform.
 }

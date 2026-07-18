@@ -1,10 +1,9 @@
 // -----------------------------------------------
 // MODULE-LEVEL STATE — single source of mutable theme state (layers 1+2).
 // -----------------------------------------------
-// Extracted from the portfolio in E3 phase 4 (docs/theme-system/PLAN-
-// extraction-monorepo.md): the package owns the rail, the primitives and
-// the roles; the ~70 layer-3 tokens stay declared on the consumer's side
-// (src/styles/themes/_theme-variables.scss for the portfolio).
+// The package owns the rail, the primitives and the roles (layers 1-2);
+// your own component tokens (layer 3) stay declared on your own side, in
+// your own theme file.
 //
 // Under the Sass module system, a `!global` assignment inside a mixin can
 // only re-assign a variable that already exists at the root of the module
@@ -18,13 +17,14 @@
 @use "base-palette" as *;
 
 // -----------------------------------------------
-// CONSUMER CONFIGURATION (E3 phase 5)
+// CONSUMER CONFIGURATION
 // -----------------------------------------------
 // Each project configures its palette on first module load:
 //   @use "darkmode-plus-a11y/scss/state" with ($gray-family: …, $primitives: (…));
-// Contract (README § 6.1): the rail family and the primitive families
-// must follow base-palette's 11-weight Tailwind geometry.
-// Defaults = the portfolio's light values.
+// Contract: the rail family and the primitive families must follow
+// base-palette's 11-weight Tailwind geometry.
+// The defaults below are a sensible starter palette — override via
+// $primitives.
 $gray-family: "stone" !default;
 $primitives: (
 	"accent": ("amber", 300),
@@ -33,7 +33,7 @@ $primitives: (
 	"accent-soft": ("amber", 100),
 	"link": ("sky", 900),
 	"link-hover": ("sky", 800),
-	// emerald-700 (decision, 2026-07-07): 5.25:1 on bg-base in light.
+	// emerald-700: 5.25:1 on bg-base in light.
 	"success": ("emerald", 700),
 	"danger": ("red", 600),
 ) !default;
@@ -57,8 +57,9 @@ $gray-800: get-color($gray-family, 800);
 $gray-900: get-color($gray-family, 900);
 $gray-950: get-color($gray-family, 950);
 
-// Semantic aliases for the rail endpoints (kept for the ~35 component
-// call sites; re-synced after every theme transformation)
+// Semantic aliases for the rail endpoints (kept for components that
+// reference the rail's light/dark extremes directly; re-synced after
+// every theme transformation)
 $off-white: $gray-50;
 $near-black: $gray-950;
 
@@ -92,9 +93,8 @@ $fg-on-emphasis: $gray-50;
 // (gray-950 = the HC yellow); light accent → dark ink: the theme's own
 // gray-950 if it's genuinely dark (light, color-blind, achromatopsia: no
 // change), otherwise (dark themes, where the rail shifts gray-950 toward
-// light) a constant near-black. Fixes light-on-light in the header in dark
-// mode without a patch, and without touching other themes. See
-// docs/theme-system/TODO.md.
+// light) a constant near-black. Without this fallback, text on top of the
+// accent color would go light-on-light in any dark theme.
 $fg-on-accent: if(sass(is-dark($accent)): $gray-950; else: if(sass(is-dark($gray-950)): $gray-950; else: get-color($gray-family, 950)));
 $border-subtle: $gray-500;
 $border-base: $gray-600;
@@ -118,8 +118,9 @@ $focus-ring: $link;
 	$gray-900: get-color($gray-family, 900) !global;
 	$gray-950: get-color($gray-family, 950) !global;
 
-	// Semantic aliases for the rail endpoints (kept for the ~35 component
-	// call sites; re-synced after every theme transformation)
+	// Semantic aliases for the rail endpoints (kept for components that
+	// reference the rail's light/dark extremes directly; re-synced after
+	// every theme transformation)
 	$off-white: $gray-50 !global;
 	$near-black: $gray-950 !global;
 
@@ -137,8 +138,8 @@ $focus-ring: $link;
 // -----------------------------------------------
 // LAYER 2 — ROLE TOKENS
 // -----------------------------------------------
-// Called by each engine after transformation; the consumer's theme files
-// then derive their layer-3 tokens (apply-theme-variables, portfolio-side).
+// Called by each engine after transformation; the consumer's own theme
+// file then derives its layer-3 tokens from these roles.
 @mixin apply-roles() {
 	$bg-base: $gray-50 !global;
 	$bg-subtle: $gray-200 !global;

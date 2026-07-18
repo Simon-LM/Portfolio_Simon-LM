@@ -61,10 +61,11 @@
 // Perceptual distance between two colors, computed on OKLCH's Cartesian
 // projection: a = C·cos(H), b = C·sin(H) (the same idea as CIELAB's a*/b*,
 // applied directly to OKLCH channels rather than true Lab). Not CIEDE2000
-// (unavailable in SCSS — see PLAN-off-palette-anchor.md for why a full port
-// wasn't worth it), cross-checked against it on a small sample and then
-// exhaustively measured against the real 26-family palette to calibrate
-// $off-palette-same-color-threshold below. L is unitless (channel comes
+// (unavailable in SCSS — a full port needs `atan2` plus several
+// weighting/rotation terms, significant machinery for a feature that makes
+// no cleanliness promise), cross-checked against it on a small sample and
+// then exhaustively measured against the real 26-family palette to
+// calibrate $off-palette-same-color-threshold below. L is unitless (channel comes
 // back as a %, stripped via math.div(…, 1%)); a/b are scaled ×100 to stay
 // on a comparable order of magnitude to L. Handles near-zero-chroma colors
 // gracefully (a, b → 0 as C → 0, regardless of hue — including `hue: none`,
@@ -94,8 +95,8 @@
 
 // Function that analyzes a color and dynamically finds its Tailwind family and weight.
 // Also always tracks the nearest palette entry during the same walk (no
-// second pass): "off-palette anchor" silent safety net (PLAN-off-palette-
-// anchor.md) for auto-dark-transform/remap-for-cvd's off-spec branches.
+// second pass): the "off-palette anchor" silent safety net consumed by
+// auto-dark-transform/remap-for-cvd's off-spec branches below.
 @function analyze-tailwind-color($color) {
 	$nearest-family: null;
 	$nearest-weight: null;
@@ -146,9 +147,9 @@
 // nearest entry becomes an ANCHOR instead (derived themes only — the
 // light-mode value itself is never touched) and a @warn fires once.
 //
-// Calibrated 2026-07-17 by exhaustively compiling this file's own
-// oklch-distance against two real distributions (throwaway probe, not kept
-// in the source tree — see PLAN-off-palette-anchor.md):
+// Calibrated by exhaustively compiling this file's own oklch-distance
+// against two real distributions (a throwaway probe, not kept in the
+// source tree):
 // - 242 "same real color, different Tailwind major version" pairs (every
 //   family shared between v3 and v4 — 22 of the 26, the 4 new tinted
 //   neutrals have no v3 equivalent — × 11 weights, v3's hex read from the
@@ -170,11 +171,10 @@
 // worst-case effect is bounded: an off-palette color landing between two
 // visually-adjacent near-white grays may get silently anchored to the
 // "wrong" one of the two — never a wrong FAMILY, never a visible defect,
-// and never the light-mode value (only derived-theme anchor quality).
-// ArgentBank's real off-palette blue (#6866e9, ArgentBank integration,
-// 2026-07-17) anchors to indigo-500 at distance 4.12 — comfortably above
-// this threshold, correctly triggering the warn-and-anchor path for a
-// genuine custom brand color.
+// and never the light-mode value (only derived-theme anchor quality). A
+// genuine custom brand color with no close relative anywhere in the
+// palette lands well above this threshold, correctly triggering the
+// warn-and-anchor path instead of silence.
 $off-palette-same-color-threshold: 3.75;
 
 // Brings a color back into the sRGB gamut if it falls outside it, using the
@@ -185,7 +185,7 @@ $off-palette-same-color-threshold: 3.75;
 // are genuinely out of gamut, with no spurious diff on valid colors.
 // Motivation: an OKLCH mix between two distant hues can fall outside the
 // gamut; the browser then silently clamps it, distorting the color
-// (mechanical safeguard: gamut.test.ts). Part 3.
+// (mechanical safeguard: gamut.test.ts).
 @function gamut-map-srgb($color) {
 	@if color.is-in-gamut($color, $space: rgb) {
 		@return $color;
@@ -194,25 +194,21 @@ $off-palette-same-color-threshold: 3.75;
 }
 
 // -----------------------------------------------
-// COLOR-BLIND (CVD) REMAP ENGINE — E2 (color-blind redesign)
+// COLOR-BLIND (CVD) REMAP ENGINE
 // -----------------------------------------------
-// STATUS NOTE (plan phase 2): this function is built and tested in
-// isolation during this phase, but is NOT YET called by
-// auto-{deuter,prot,trit}{anopia,anomaly}-transform below — that wiring is
-// deferred to phase 3, with the real remap tables. Reason: phase 2's
-// "byte-identical CSS" oracle is incompatible with wiring it in right away.
-// With the current configs of the 6 theme files (no "family-remap" key),
-// the *correct* behavior for a recognized family that's absent from the
-// table is to leave the color unchanged (e.g. amber/sky are not remapped
-// for deuteranopia/protanopia — they're already on the safe axis); but this
-// behavior already differs from the old HSL hue shift
-// (`adapt-color-for-colorblindness`) for `--accent`/`--link`, which IS
-// currently applied to those colors. Nothing lets this engine be wired in
-// without changing the CSS before the real tables exist — see the phase 2
-// report for the measurement that established this.
+// Resolution order for a color under a given CVD type:
+// 1. An explicit special-color override in $config, if configured for this
+//    role — takes priority over everything.
+// 2. A recognized (or anchored, see below) family present in $config's
+//    "family-remap" table: substituted for the configured target family, at
+//    a shifted weight.
+// 3. A recognized (or anchored) family absent from that table: already
+//    deemed safe for this CVD type (e.g. a family on the safe axis for
+//    red-green confusion needs no red-green remap), left unchanged.
+// 4. A color outside the Tailwind palette: see the off-palette anchor
+//    branch below.
 @function remap-for-cvd($color, $var-name, $config, $cvd-type) {
-	// 1. Explicit special color: takes priority over everything (mechanism
-	// kept as-is from the old engine).
+	// 1. Explicit special color: takes priority over everything.
 	$special-colors: map.get($config, "special-colors");
 	$resolved: null;
 	@if $special-colors and map.has-key($special-colors, $var-name) {
@@ -228,14 +224,14 @@ $off-palette-same-color-threshold: 3.75;
 			// Tailwind-geometry primitives — see resolved-primitive() in
 			// _state.scss, the only documented entry point) color: anchor
 			// to the nearest palette entry found by analyze-tailwind-
-			// color's exhaustive walk — see PLAN-off-palette-anchor.md and
-			// $off-palette-same-color-threshold above. Below the
-			// threshold, silent (a v3-hex paste, trivial rounding); above
-			// it, a genuine custom color, warned once. Either way, this
-			// anchors the CVD family classification below to the same
-			// calibrated tables every recognized Tailwind color already
-			// uses. The light-mode value itself is untouched — only this
-			// derived (CVD) theme reads the anchor.
+			// color's exhaustive walk, against $off-palette-same-color-
+			// threshold above. Below the threshold, silent (a v3-hex
+			// paste, trivial rounding); above it, a genuine custom color,
+			// warned once. Either way, this anchors the CVD family
+			// classification below to the same calibrated tables every
+			// recognized Tailwind color already uses. The light-mode
+			// value itself is untouched — only this derived (CVD) theme
+			// reads the anchor.
 			$family: map.get($analysis, "nearest-family");
 			$weight: map.get($analysis, "nearest-weight");
 			$distance: map.get($analysis, "distance");
@@ -247,8 +243,8 @@ $off-palette-same-color-threshold: 3.75;
 			// channels are INTERPRETED for the operation, it does not
 			// force the RETURN color's serialization space, so a legacy
 			// $color would otherwise still come out as legacy (Sass's own
-			// behavior, not a bug, established 2026-07-15). Only needed
-			// here (branch 3 below can return $color unchanged): a
+			// behavior, not a bug). Only needed here (branch 3 below can
+			// return $color unchanged): a
 			// recognized exact match is already an OKLCH-native $colors
 			// entry by construction.
 			$color: color.to-space($color, oklch);
@@ -288,7 +284,7 @@ $off-palette-same-color-threshold: 3.75;
 	}
 	@if $severity < 1 {
 		// The OKLCH mix can fall outside the sRGB gamut (distant hues) —
-		// brought back in-gamut without distorting hue (part 3).
+		// brought back in-gamut without distorting hue.
 		@return gamut-map-srgb(
 			color.mix($resolved, $color, $weight: $severity * 100%, $method: oklch)
 		);
@@ -303,8 +299,8 @@ $off-palette-same-color-threshold: 3.75;
 // (https://www.w3.org/TR/WCAG21/#dfn-relative-luminance and
 // #dfn-contrast-ratio), reimplemented in Sass so the engine can pick a
 // weight that *guarantees* the ratio at compile time. Constants aligned
-// with culori (threshold 0.04045, gamma 2.4), the TypeScript suite's
-// library, so Sass and TS ratios coincide (cross-check in phase 4).
+// with culori (threshold 0.04045, gamma 2.4), the TypeScript testing
+// suite's library, so Sass and TS ratios coincide.
 @function wcag-linearize($c) {
 	@if $c <= 0.04045 {
 		@return math.div($c, 12.92);
@@ -328,22 +324,21 @@ $off-palette-same-color-threshold: 3.75;
 }
 
 // -----------------------------------------------
-// STATUS ROLE (CVD) RESOLVER — E2 (color-blind redesign, part 2)
+// STATUS ROLE (CVD) RESOLVER
 // -----------------------------------------------
 // Status roles (--success, --danger) have universal semantics (green = OK,
 // red = problem): the package applies a hue ANCHOR to them per CVD type
 // (red-green deficiency: success -> blue, danger -> orange, the canonical
 // safe pair) then automatically resolves the WEIGHT to guarantee the WCAG
 // text ratio (>= 4.5:1) against the theme's background. This decouples the
-// two constraints — hue = distinguishability, weight = contrast — where the
-// fixed weight shift of the family-remap tables used to make them clash
-// (cf. --success dropping to 1.60:1 in part 1). See
-// PLAN-colorblind-redesign.md part 2 and GUIDE-package-extraction.md § E2.
+// two constraints — hue = distinguishability, weight = contrast — where a
+// fixed weight shift (as in the family-remap tables above) can otherwise
+// crush contrast down to near-unreadable levels.
 
-// Legibility floor (part 3, decision): below this ratio, a color is nearly
-// invisible on its background and no amount of distinguishability redeems
-// the illegibility. Used only for the best-effort warning message below —
-// does not affect the returned color.
+// Legibility floor: below this ratio, a color is nearly invisible on its
+// background and no amount of distinguishability redeems the illegibility.
+// Used only for the best-effort warning message below — does not affect
+// the returned color.
 $status-legibility-floor: 3 !default;
 
 // Picks, within the target family, the first step (Tailwind weight) that
@@ -352,13 +347,12 @@ $status-legibility-floor: 3 !default;
 // threshold is kept. Dark background: reverse direction. Always returns a
 // pure Tailwind color (in-gamut, in the palette): no blending.
 //
-// Graceful degradation (part 3): if no step reaches the target, the build
-// is NOT blocked (unlike the old `@error`) — the highest-contrast step
-// ("best effort") is returned and a `@warn` is issued. Below the legibility
-// floor, the warning is distinct ("nearly invisible"). For the portfolio's
-// palette (light background, near-black 950 step), the target is always
-// reached: this fallback path is latent, a safety net for consumer
-// palettes.
+// Graceful degradation: if no step reaches the target, the build is NOT
+// blocked — the highest-contrast step ("best effort") is returned and a
+// `@warn` is issued. Below the legibility floor, the warning is distinct
+// ("nearly invisible"). For a light background with a near-black 950 step
+// available, the target is normally reached; this fallback path exists as
+// a safety net for palettes where it isn't.
 //
 // Deliberately NO "color computed outside the palette" path: measured, it
 // would be nearly useless. Contrast is dominated by lightness, and the
@@ -368,13 +362,13 @@ $status-legibility-floor: 3 !default;
 // The real reason to step outside the palette is *distinguishability* (hue
 // collision), which isn't computable in Sass: its escape hatch remains
 // `special-colors` (in-gamut; outside the palette tolerated for -opia, not
-// for -omaly — cf. § 6.1). See the part 3 report.
+// for -omaly).
 //
-// NOTE (measured deviation, part 2): the plan called for a severity blend
-// for anomalies (anchor mixed 50% with the original). This OKLCH mix
-// between distant hues fell outside the sRGB gamut — replaced with a pure
-// Tailwind color; the -omaly nuance comes from the anchor choice
-// (emerald/red) instead.
+// The severity blend used for anomalies elsewhere in this file (mixing the
+// anchor 50% with the original) isn't used here: that OKLCH mix between
+// distant hues can fall outside the sRGB gamut. A pure Tailwind color is
+// returned instead; the -omaly nuance comes from the anchor choice
+// (emerald/red) rather than a blend.
 @function resolve-anchor-weight($target-family, $bg, $target-ratio: 4.5) {
 	$bg-lum: wcag-relative-luminance($bg);
 	$n: list.length($tailwind-weights);
@@ -407,9 +401,9 @@ $status-legibility-floor: 3 !default;
 }
 
 // Resolves a status role. Priority, consistent with remap-for-cvd:
-// special-colors (project override) > semantic anchor > part 1 behavior
-// (remap-for-cvd, for non-status roles or themes without a configured
-// anchor, e.g. tritan).
+// special-colors (project override) > semantic anchor > the plain
+// remap-for-cvd fallback (for non-status roles, or themes without a
+// configured anchor, e.g. tritan).
 @function resolve-status-color($color, $var-name, $config, $bg, $cvd-type) {
 	$special-colors: map.get($config, "special-colors");
 	$status-anchors: map.get($config, "status-anchors");
@@ -421,7 +415,7 @@ $status-legibility-floor: 3 !default;
 		@return resolve-anchor-weight(map.get($status-anchors, $var-name), $bg);
 	}
 
-	// No anchor configured for this role: part 1 behavior unchanged.
+	// No anchor configured for this role: plain remap-for-cvd behavior.
 	@return remap-for-cvd($color, $var-name, $config, $cvd-type);
 }
 
@@ -444,18 +438,16 @@ $status-legibility-floor: 3 !default;
 
 	@if not map.get($analysis, "found") {
 		// Off-palette (custom, off-spec) color: anchor to the nearest
-		// palette entry found by analyze-tailwind-color's exhaustive walk
-		// — see PLAN-off-palette-anchor.md and
-		// $off-palette-same-color-threshold above. Below the threshold,
-		// silent (a v3-hex paste, trivial rounding); above it, a genuine
-		// custom color, warned once. Either way, get-dark-color below
-		// reuses the same calibrated, gamut-safe path every recognized
-		// Tailwind color already takes — replacing the old generic
-		// ±30-40% HSL lightness shift, which had NO gamut guard at all
-		// (confirmed broken: a saturated custom OKLCH color could produce
-		// an out-of-gamut dark-mode result, 2026-07-17). The light-mode
-		// value itself is untouched — only this derived (dark) theme
-		// reads the anchor.
+		// palette entry found by analyze-tailwind-color's exhaustive walk,
+		// against $off-palette-same-color-threshold above. Below the
+		// threshold, silent (a v3-hex paste, trivial rounding); above it, a
+		// genuine custom color, warned once. Either way, get-dark-color
+		// below reuses the same calibrated, gamut-safe path every
+		// recognized Tailwind color already takes — a raw lightness shift
+		// on an arbitrary color has no such guarantee (a saturated custom
+		// OKLCH color could easily land outside the sRGB gamut). The
+		// light-mode value itself is untouched — only this derived (dark)
+		// theme reads the anchor.
 		$family: map.get($analysis, "nearest-family");
 		$weight: map.get($analysis, "nearest-weight");
 		$distance: map.get($analysis, "distance");
@@ -646,9 +638,8 @@ $status-legibility-floor: 3 !default;
 	// Derive the roles (layer 2) from the transformed rail and primitives
 	@include apply-roles();
 
-	// The engine stops at the roles (layer 2) — E3 phase 2 dependency
-	// inversion: layer 3 is derived by the consumer's theme file
-	// (@include apply-theme-variables after the transform).
+	// The engine stops at the roles (layer 2) — layer 3 (your own component
+	// tokens) is derived by your own theme file after this transform.
 }
 
 // Reduced palette of very vivid colors for high contrast
@@ -668,9 +659,9 @@ $hc-palette: (
 	"error": #ff0000,
 	// Error (pure red)
 	"focus": #ffffff,
-	// Focus: outline and fill (hc-mécanique, 2026-07-11 —
-	// promoted to a map role to restore the guarantee of the original
-	// design, which used to capture "focus" via variable names)
+	// Focus: outline and fill, promoted to a map role — a map role, unlike
+	// a plain variable name, is looked up explicitly rather than inferred,
+	// so the "focus" semantic can't silently drift out of sync
 	"focus-text": #000000 // Text on the focus fill
 );
 
@@ -699,9 +690,9 @@ $hc-palette: (
 	// Merge the custom configuration
 	$config: map.merge($default-config, $config);
 	// !global is mandatory: get-high-contrast-color() reads the module
-	// variable — without it, the passed-in map was silently ignored
-	// (invisible as long as the only consumer passed the default map;
-	// fixed in the HC variants chantier, 2026-07-10).
+	// variable — without it, the passed-in map is silently ignored (a bug
+	// that stays invisible as long as every consumer happens to pass the
+	// default map).
 	$hc-palette: map.get($config, "colors") !global;
 	$overrides: map.get($config, "overrides");
 
@@ -762,22 +753,21 @@ $hc-palette: (
 	// Derive the roles (layer 2) from the transformed rail and primitives
 	@include apply-roles();
 
-	// The engine stops at the roles (layer 2) — E3 phase 2 dependency
-	// inversion: layer 3 is derived by the consumer's theme file
-	// (@include apply-theme-variables after the transform).
+	// The engine stops at the roles (layer 2) — layer 3 (your own component
+	// tokens) is derived by your own theme file after this transform.
 }
 
 // Mixin that automatically transforms all light theme variables into the deuteranomaly theme
 @mixin transform-light-to-deuteranomaly($config: ()) {
 	// Use the default configuration if none is provided
 	$default-config: (
-		// Status roles resolved via semantic anchors (part 2, phase 3).
-		// MILD deficiency (-omaly): red-green discrimination is reduced, not
-		// absent — natural hues are kept (success green, danger red) and the
+		// Status roles resolved via semantic anchors. MILD deficiency
+		// (-omaly): red-green discrimination is reduced, not absent —
+		// natural hues are kept (success green, danger red) and the
 		// resolver only corrects the WEIGHT to reach >= 4.5:1 (emerald-600
-		// -> emerald-700; red-600 already holds). Softer and more "expected"
-		// than the full -opia remap, and measured distinguishable under
-		// simulation (see the phase 3 report). accent/link aren't remapped
+		// -> emerald-700; red-600 already holds). Softer and more
+		// "expected" than the full -opia remap, and measured
+		// distinguishable under simulation. accent/link aren't remapped
 		// (already safe).
 		"status-anchors": (
 			"success": "emerald",
@@ -883,22 +873,20 @@ $hc-palette: (
 	// Derive the roles (layer 2) from the transformed rail and primitives
 	@include apply-roles();
 
-	// The engine stops at the roles (layer 2) — E3 phase 2 dependency
-	// inversion: layer 3 is derived by the consumer's theme file
-	// (@include apply-theme-variables after the transform).
+	// The engine stops at the roles (layer 2) — layer 3 (your own component
+	// tokens) is derived by your own theme file after this transform.
 }
 
 // Mixin that automatically transforms all light theme variables into the deuteranopia theme
 @mixin transform-light-to-deuteranopia($config: ()) {
 	// Use the default configuration if none is provided.
-	// "special-colors" (e.g. #0075ff/#ffcc00) removed from the defaults
-	// (E3, PLAN-colorblind-redesign.md phase 3): family-remap now covers
-	// --success (emerald -> sky) and --danger (red -> amber). The
-	// special-colors mechanism remains available for a project override.
+	// "special-colors" isn't used by default: the status-anchors mechanism
+	// below covers --success/--danger, and it remains available for a
+	// project override.
 	$default-config: (
 		"special-colors": (),
-		// Status roles resolved via semantic anchors (part 2, phase 3):
-		// success -> blue family, danger -> orange family, weight
+		// Status roles resolved via semantic anchors: success -> blue
+		// family, danger -> orange family, weight
 		// auto-resolved for >= 4.5:1. Replaces the old family-remap
 		// emerald->sky(-3)/red->amber(+1) whose fixed shift crushed
 		// --success's contrast (1.60:1). `sky` ("natural" blue) is already
@@ -1030,22 +1018,21 @@ $hc-palette: (
 	// Derive the roles (layer 2) from the transformed rail and primitives
 	@include apply-roles();
 
-	// The engine stops at the roles (layer 2) — E3 phase 2 dependency
-	// inversion: layer 3 is derived by the consumer's theme file
-	// (@include apply-theme-variables after the transform).
+	// The engine stops at the roles (layer 2) — layer 3 (your own component
+	// tokens) is derived by your own theme file after this transform.
 }
 
 // Mixin that automatically transforms all light theme variables into the protanomaly theme
 @mixin transform-light-to-protanomaly($config: ()) {
 	// Use the default configuration if none is provided
 	$default-config: (
-		// Status roles resolved via semantic anchors (part 2, phase 3).
-		// MILD deficiency (-omaly): red-green discrimination is reduced, not
-		// absent — natural hues are kept (success green, danger red) and the
+		// Status roles resolved via semantic anchors. MILD deficiency
+		// (-omaly): red-green discrimination is reduced, not absent —
+		// natural hues are kept (success green, danger red) and the
 		// resolver only corrects the WEIGHT to reach >= 4.5:1 (emerald-600
-		// -> emerald-700; red-600 already holds). Softer and more "expected"
-		// than the full -opia remap, and measured distinguishable under
-		// simulation (see the phase 3 report). accent/link aren't remapped
+		// -> emerald-700; red-600 already holds). Softer and more
+		// "expected" than the full -opia remap, and measured
+		// distinguishable under simulation. accent/link aren't remapped
 		// (already safe).
 		"status-anchors": (
 			"success": "emerald",
@@ -1147,21 +1134,19 @@ $hc-palette: (
 	// Derive the roles (layer 2) from the transformed rail and primitives
 	@include apply-roles();
 
-	// The engine stops at the roles (layer 2) — E3 phase 2 dependency
-	// inversion: layer 3 is derived by the consumer's theme file
-	// (@include apply-theme-variables after the transform).
+	// The engine stops at the roles (layer 2) — layer 3 (your own component
+	// tokens) is derived by your own theme file after this transform.
 }
 
 // Mixin that automatically transforms all light theme variables into the protanopia theme
 @mixin transform-light-to-protanopia($config: ()) {
 	// Use the default configuration if none is provided.
-	// "special-colors" removed from the defaults (E2 (color-blind
-	// redesign), phase 3): see transform-light-to-deuteranopia above for
-	// the justification.
+	// "special-colors" isn't used by default: see
+	// transform-light-to-deuteranopia above for the justification.
 	$default-config: (
 		"special-colors": (),
-		// Status roles resolved via semantic anchors (part 2, phase 3):
-		// success -> blue family, danger -> orange family, weight
+		// Status roles resolved via semantic anchors: success -> blue
+		// family, danger -> orange family, weight
 		// auto-resolved for >= 4.5:1. Replaces the old family-remap
 		// emerald->sky(-3)/red->amber(+1) whose fixed shift crushed
 		// --success's contrast (1.60:1). `sky` ("natural" blue) is already
@@ -1268,9 +1253,8 @@ $hc-palette: (
 	// Derive the roles (layer 2) from the transformed rail and primitives
 	@include apply-roles();
 
-	// The engine stops at the roles (layer 2) — E3 phase 2 dependency
-	// inversion: layer 3 is derived by the consumer's theme file
-	// (@include apply-theme-variables after the transform).
+	// The engine stops at the roles (layer 2) — layer 3 (your own component
+	// tokens) is derived by your own theme file after this transform.
 }
 
 // Mixin that automatically transforms all light theme variables into the tritanomaly theme
@@ -1377,19 +1361,17 @@ $hc-palette: (
 	// Derive the roles (layer 2) from the transformed rail and primitives
 	@include apply-roles();
 
-	// The engine stops at the roles (layer 2) — E3 phase 2 dependency
-	// inversion: layer 3 is derived by the consumer's theme file
-	// (@include apply-theme-variables after the transform).
+	// The engine stops at the roles (layer 2) — layer 3 (your own component
+	// tokens) is derived by your own theme file after this transform.
 }
 
 // Mixin that automatically transforms all light theme variables into the tritanopia theme
 @mixin transform-light-to-tritanopia($config: ()) {
 	// Use the default configuration if none is provided.
-	// "special-colors" removed from the defaults (E2 (color-blind
-	// redesign), phase 3): emerald/red have no family-remap entry here
-	// (already safe for the blue-yellow confusion, cf. plan) —
-	// --success/--danger therefore stay unchanged; only amber/sky (the axis
-	// actually confused) are remapped.
+	// "special-colors" isn't used by default: emerald/red have no
+	// family-remap entry here (already safe for the blue-yellow confusion)
+	// — --success/--danger therefore stay unchanged; only amber/sky (the
+	// axis actually confused) are remapped.
 	$default-config: (
 		"special-colors": (),
 		"family-remap": (
@@ -1492,9 +1474,8 @@ $hc-palette: (
 	// Derive the roles (layer 2) from the transformed rail and primitives
 	@include apply-roles();
 
-	// The engine stops at the roles (layer 2) — E3 phase 2 dependency
-	// inversion: layer 3 is derived by the consumer's theme file
-	// (@include apply-theme-variables after the transform).
+	// The engine stops at the roles (layer 2) — layer 3 (your own component
+	// tokens) is derived by your own theme file after this transform.
 }
 
 @function get-adjusted-gray-level($color, $adjustment: 0) {
@@ -1658,12 +1639,9 @@ $hc-palette: (
 		$accent-soft: get-adjusted-gray($accent-soft, $adjustment) !global;
 	}
 
-	// Link variables also go through get-adjusted-gray. (The direct
-	// layer-3 writes — $color-link, $color-focus-* — that used to
-	// duplicate these transforms had been dead writes since the
-	// foundations: apply-theme-variables re-derived them from the
-	// primitives right afterward. Purged in E3 phase 4, the package now
-	// only touches layers 1 and 2.)
+	// Link variables also go through get-adjusted-gray. This engine only
+	// touches layers 1 and 2 — your own layer-3 tokens are your own theme
+	// file's responsibility to re-derive from these primitives.
 	@if not map.has-key($special-colors, "link") {
 		$adjustment: map.get($adjustments, "link") or 0;
 		$link: get-adjusted-gray($link, $adjustment) !global;
@@ -1680,7 +1658,6 @@ $hc-palette: (
 	// Derive the roles (layer 2) from the transformed rail and primitives
 	@include apply-roles();
 
-	// The engine stops at the roles (layer 2) — E3 phase 2 dependency
-	// inversion: layer 3 is derived by the consumer's theme file
-	// (@include apply-theme-variables after the transform).
+	// The engine stops at the roles (layer 2) — layer 3 (your own component
+	// tokens) is derived by your own theme file after this transform.
 }
