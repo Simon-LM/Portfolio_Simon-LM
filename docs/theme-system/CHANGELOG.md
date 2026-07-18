@@ -13,6 +13,52 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-18 (darkmode-plus-a11y — per-theme engine overrides in the generator, branch `feat/generator-config-passthrough`)
+
+Prompted by an external review of 0.2.0: the CVD `family-remap` tables
+(and every other per-theme engine config) were reachable only by calling
+the transforms directly — `generate-all-themes()`, the recommended path,
+hardcoded the defaults with no way through. Additive → lands in the next
+MINOR (0.3.0) when published.
+
+### Added
+
+- **`generate-all-themes($themes, $configs: ())`** and
+  **`apply-theme($name, $config: null)`** (`_theme-generator.scss`):
+  optional per-theme partial configs, deep-merged over each theme's
+  defaults (one extra `family-remap` entry extends the default table
+  instead of replacing it). `anti-glare-dark`'s config reaches its dark
+  base; `light`/`anti-glare-light` take none (`@warn` if given one).
+  Typo guard: a `$configs` key matching no requested theme warns instead
+  of dying silently.
+- **6 probe tests** (`generator-config.test.ts`): control values, CVD
+  remap override + default-entry survival, dark adjustments override,
+  HC partial colors slot merge, both warning guards.
+
+### Changed
+
+- The 9 transform mixins' internal config merge is now
+  `map.deep-merge` (was shallow `map.merge`): a partial nested map
+  passed to a transform directly no longer silently wipes the untouched
+  entries of `family-remap`/`adjustments`/`colors`. Byte-identical for
+  empty or complete configs — the full suite is the oracle.
+
+### Fixed
+
+- AGENTS.md's Path B example claimed the role variables were "already
+  emitted" by the generator — false (the portfolio and the scaffolded
+  template each emit their own): the example now includes
+  `emit-role-vars()`, without which the shipped contrast suite has no
+  role custom properties to read.
+
+### Docs
+
+- AGENTS.md: new "Per-theme engine overrides (`$configs`)" section,
+  including the semantics of a family ABSENT from a CVD remap table
+  (left unchanged; distinguishability is a property of your palette's
+  role pairs — run the suite, then add an entry only if a pair fails).
+- README: pointer to that section from the Path B paragraph.
+
 ## 2026-07-18 (darkmode-plus-a11y 0.2.0 — published to npm)
 
 `darkmode-plus-a11y@0.2.0` published to the npm registry (tag `latest`),

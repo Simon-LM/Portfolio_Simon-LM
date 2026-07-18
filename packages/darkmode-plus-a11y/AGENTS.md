@@ -200,9 +200,12 @@ One SCSS entry generates every theme from your light configuration:
 @use "darkmode-plus-a11y/scss/theme-generator" as *;
 
 @include generate-all-themes() using ($name) {
-	// The package has already emitted the role variables (--bg-base,
-	// --accent, …) for this theme. Add YOUR layer 3 here, derived from
-	// the TRANSFORMED roles — the golden rule applies:
+	// Emit the package's role variables (--bg-base, --accent, …) for
+	// this theme — the contrast suite reads them, and your runtime CSS
+	// can use them via var().
+	@include emit-role-vars();
+	// Then add YOUR layer 3, derived from the TRANSFORMED roles — the
+	// golden rule applies:
 	--color-main-bg: #{$bg-base};
 	--color-main-text: #{$fg-base};
 	--color-card-bg: #{$bg-container};
@@ -210,7 +213,35 @@ One SCSS entry generates every theme from your light configuration:
 ```
 
 `generate-all-themes($themes: (...))` accepts a subset for a lighter
-CSS bundle. Runtime side:
+CSS bundle.
+
+### Per-theme engine overrides (`$configs`)
+
+Each generated theme runs its engine with a default config. Pass
+`$configs` (theme name → **partial** config) to adjust one without
+redefining the rest — the partial map is **deep-merged** over that
+theme's defaults, so e.g. one extra `family-remap` entry extends the
+default table instead of replacing it:
+
+```scss
+@include generate-all-themes(
+	$configs: (
+		// Your accent family collides under tritanopia? Add ONE remap
+		// entry; the default amber/sky entries are kept.
+		"tritanopia": ("family-remap": ("indigo": ("sky", 0))),
+		// Push dark-mode links one weight further:
+		"dark": ("adjustments": ("link": 1)),
+	)
+) using ($name) { /* … */ }
+```
+
+**How to know whether you need one:** a family ABSENT from a CVD
+theme's `family-remap` table is left unchanged — the default tables
+only cover the default primitives' families. Whether YOUR families
+stay distinguishable under a given deficiency is a property of your
+palette's role pairs, not of a family in isolation: run the
+distinguishability suite (§ Verifying your wiring) and add a remap
+entry only if a pair fails there. Runtime side:
 
 ```tsx
 import { useTheme, THEMES, type ThemeOption } from "darkmode-plus-a11y/react";
