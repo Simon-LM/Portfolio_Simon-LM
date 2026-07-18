@@ -48,11 +48,11 @@ function resolvedValue(css: string, prop: string): string {
 // 3.75 threshold.
 const V3_RED_600 = "#dc2626";
 
-// ArgentBank's real off-palette brand color (2026-07-17 integration). Its
-// true nearest palette entry, found by analyze-tailwind-color's exhaustive
+// A genuinely custom brand blue with no close Tailwind relative. Its true
+// nearest palette entry, found by analyze-tailwind-color's exhaustive
 // walk, is indigo-500 at distance 4.12 — comfortably over 3.75, so this is
 // the "genuine custom color" case that should warn.
-const ARGENTBANK_BLUE = "#6866e9";
+const CUSTOM_BRAND_BLUE = "#6866e9";
 
 describe("oklch-distance", () => {
 	it("is zero for a color against itself", () => {
@@ -91,9 +91,9 @@ describe("analyze-tailwind-color (extended: off-palette nearest-entry tracking)"
 		expect(parseFloat(resolvedValue(css, "d"))).toBeLessThan(tu_threshold());
 	});
 
-	it("finds the true nearest entry for ArgentBank's brand color across the full 26x11 grid", () => {
+	it("finds the true nearest entry for a genuine custom brand color across the full 26x11 grid", () => {
 		const { css } = compileProbe(
-			`$a: tu.analyze-tailwind-color(${ARGENTBANK_BLUE});` +
+			`$a: tu.analyze-tailwind-color(${CUSTOM_BRAND_BLUE});` +
 				`x: "#{map.get($a, 'found')}|#{map.get($a, 'nearest-family')}|#{map.get($a, 'nearest-weight')}";` +
 				`d: #{map.get($a, 'distance')};`,
 		);
@@ -125,9 +125,9 @@ describe("auto-dark-transform (off-palette anchor)", () => {
 		expect(warnings).toHaveLength(0);
 	});
 
-	it("anchors ArgentBank's brand color with exactly one warning", () => {
+	it("anchors a genuine custom brand color with exactly one warning", () => {
 		const { css, warnings } = compileProbe(
-			`x: tu.auto-dark-transform(${ARGENTBANK_BLUE}, "brand", ${config});`,
+			`x: tu.auto-dark-transform(${CUSTOM_BRAND_BLUE}, "brand", ${config});`,
 		);
 		const { css: expectedCss } = compileProbe(
 			`x: tu.auto-dark-transform(get-color("indigo", 500), "indigo-500", ${config});`,
@@ -165,13 +165,14 @@ describe("remap-for-cvd (off-palette anchor)", () => {
 		expect(warnings).toHaveLength(0);
 	});
 
-	it("anchors ArgentBank's brand color through a configured family-remap, with exactly one warning", () => {
-		// indigo is ArgentBank's nearest family (see analyze-tailwind-color
-		// test above); shift it by -2 weights (500 -> 300) to exercise the
-		// same weight-shift branch a recognized color would take.
+	it("anchors a genuine custom brand color through a configured family-remap, with exactly one warning", () => {
+		// indigo is the custom color's nearest family (see the
+		// analyze-tailwind-color test above); shift it by -2 weights
+		// (500 -> 300) to exercise the same weight-shift branch a
+		// recognized color would take.
 		const config = `("family-remap": ("indigo": ("sky", -2)), "severity": 1)`;
 		const { css, warnings } = compileProbe(
-			`x: tu.remap-for-cvd(${ARGENTBANK_BLUE}, "brand", ${config}, "deuteranopia");`,
+			`x: tu.remap-for-cvd(${CUSTOM_BRAND_BLUE}, "brand", ${config}, "deuteranopia");`,
 		);
 		const { css: expectedCss } = compileProbe(`x: get-color("sky", 300);`);
 		expect(resolvedValue(css, "x")).toBe(resolvedValue(expectedCss, "x"));
