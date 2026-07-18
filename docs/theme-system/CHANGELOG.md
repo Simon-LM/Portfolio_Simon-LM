@@ -13,6 +13,33 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-19 (trigger icon restored — Simon's pictogram, as SVG, branch `feat/trigger-icon-svg`)
+
+### Fixed
+
+- **The scaffolded trigger's default icon is Simon's own accessibility
+  pictogram again** (half-dark/half-light eye + adjustment gauge —
+  designed for this package). The E6 template generalization had
+  silently swapped it for react-icons' generic `FaUniversalAccess`
+  (shipped through 0.1.0→0.3.0); decision recalled: icon/visual choices
+  are Simon's, never substituted silently. Now an **inline SVG** in
+  `templates/react/AccessibilityControl.tsx` (from Simon's new
+  vectorization of the icon): crisp at any zoom, zero image assets to
+  scaffold, recolored by the existing CSS filters exactly like the
+  raster was. `icon` prop unchanged as the override. The menu's
+  compliance-statement link keeps `FaUniversalAccess` (faithful to the
+  portfolio, which uses it there too).
+
+### Changed
+
+- Portfolio: the header button now serves the SVG
+  (`public/icons/…/Icon_Accessibility_Contrasts-Visuals.svg`, replacing
+  the AVIF/WebP/PNG `<picture>`) — same drawing, same filters, vector
+  sharpness at high zoom.
+
+Not published yet — further improvements are queued before the next npm
+release (Simon, step by step).
+
 ## 2026-07-18 (darkmode-plus-a11y 0.3.0 — per-theme engine overrides in the generator, branch `feat/generator-config-passthrough`)
 
 Prompted by an external review of 0.2.0: the CVD `family-remap` tables

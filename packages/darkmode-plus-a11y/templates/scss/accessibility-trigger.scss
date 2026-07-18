@@ -4,8 +4,9 @@
 // template — you own them, edit freely). Copied from the portfolio's
 // architecture. ⚠️ The trigger is meant to be placed IN THE FLOW (e.g.
 // your header), not as a floating position:fixed.
-// The template's default icon is a react-icons SVG: the inversion filters
-// below work, but you may prefer to drive its color via `color`/`fill`.
+// The template's default icon is an inline SVG (flat black drawing with
+// white counter-shapes): the inversion/hue filters below recolor it
+// exactly like a raster image would be.
 
 .accessibility-control {
 	position: relative;
