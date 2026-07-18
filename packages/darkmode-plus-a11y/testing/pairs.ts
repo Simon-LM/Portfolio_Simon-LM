@@ -1,9 +1,9 @@
 /** @format */
 
-// Types and default ROLE pairs for the contrast verifier (E6.6). The
-// package ships pair definitions for its ~19 roles — the API every
-// consumer inherits. The consumer applies their own waivers (overlay) on
-// top and adds their layer-3 pairs.
+// Types and default ROLE pairs for the contrast verifier. The package
+// ships pair definitions for its ~19 roles — the API every consumer
+// inherits. The consumer applies their own waivers (overlay) on top and
+// adds their layer-3 pairs.
 
 import type { ContrastLevel } from "./wcag";
 import type { CvdTheme } from "./cvd-simulation";

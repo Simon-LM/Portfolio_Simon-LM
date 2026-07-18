@@ -1,9 +1,9 @@
 /** @format */
 
-// Theme variable extraction (E6.6, extracted from the site). GENERIC: the
-// consumer passes THEIR SCSS entry point, their loadPaths, and their theme
-// list via configureThemeExtraction(). The verifier compiles this SCSS and
-// reads the custom properties of each [data-theme] block.
+// Theme variable extraction. GENERIC: the consumer passes THEIR SCSS
+// entry point, their loadPaths, and their theme list via
+// configureThemeExtraction(). The verifier compiles this SCSS and reads
+// the custom properties of each [data-theme] block.
 
 import { compile } from "sass";
 import postcss from "postcss";
