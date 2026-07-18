@@ -99,7 +99,10 @@ npx darkmode-plus-a11y init   # copies the UI into ./a11y + fonts into ./public/
 
 Prefer your own UI? Skip `init` and use the engine directly
 ([AGENTS.md § Path B](./AGENTS.md#path-b--engine-only)) — one
-`generate-all-themes()` call.
+`generate-all-themes()` call. Every theme's engine config can be
+tuned per theme through its `$configs` parameter (partial maps,
+deep-merged over the defaults — see
+[AGENTS.md § Per-theme engine overrides](./AGENTS.md#per-theme-engine-overrides-configs)).
 
 ## The API: 3 layers, one rule
 

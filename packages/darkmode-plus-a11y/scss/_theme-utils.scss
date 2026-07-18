@@ -536,8 +536,10 @@ $status-legibility-floor: 3 !default;
 		"overrides": (),
 	);
 
-	// Merge with the default configuration
-	$config: map.merge($default-config, $config);
+	// Deep-merge with the default configuration: a partial nested map
+	// (family-remap, adjustments, special-colors…) extends the defaults
+	// instead of silently replacing the whole nested map.
+	$config: map.deep-merge($default-config, $config);
 
 	// Process each theme variable with its configuration
 	$gray-50: auto-dark-transform($gray-50, "gray-50", $config) !global;
@@ -687,8 +689,9 @@ $hc-palette: (
 		"overrides": (),
 	);
 
-	// Merge the custom configuration
-	$config: map.merge($default-config, $config);
+	// Deep-merge the custom configuration: a partial "colors" map extends
+	// the default palette (slot by slot) instead of silently replacing it.
+	$config: map.deep-merge($default-config, $config);
 	// !global is mandatory: get-high-contrast-color() reads the module
 	// variable — without it, the passed-in map is silently ignored (a bug
 	// that stays invisible as long as every consumer happens to pass the
@@ -777,8 +780,10 @@ $hc-palette: (
 		"overrides": (),
 	);
 
-	// Merge with the default configuration
-	$config: map.merge($default-config, $config);
+	// Deep-merge with the default configuration: a partial nested map
+	// (family-remap, adjustments, special-colors…) extends the defaults
+	// instead of silently replacing the whole nested map.
+	$config: map.deep-merge($default-config, $config);
 
 	// Process each theme variable with its configuration
 	// The fundamental colors and gray scale aren't transformed since they
@@ -901,8 +906,10 @@ $hc-palette: (
 		"overrides": (),
 	);
 
-	// Merge with the default configuration
-	$config: map.merge($default-config, $config);
+	// Deep-merge with the default configuration: a partial nested map
+	// (family-remap, adjustments, special-colors…) extends the defaults
+	// instead of silently replacing the whole nested map.
+	$config: map.deep-merge($default-config, $config);
 
 	// Get the lists of special values and overrides
 	$special-colors: map.get($config, "special-colors");
@@ -1042,8 +1049,10 @@ $hc-palette: (
 		"overrides": (),
 	);
 
-	// Merge with the default configuration
-	$config: map.merge($default-config, $config);
+	// Deep-merge with the default configuration: a partial nested map
+	// (family-remap, adjustments, special-colors…) extends the defaults
+	// instead of silently replacing the whole nested map.
+	$config: map.deep-merge($default-config, $config);
 
 	// Don't transform colors that are already overridden
 	$overrides: map.get($config, "overrides");
@@ -1161,8 +1170,10 @@ $hc-palette: (
 		"overrides": (),
 	);
 
-	// Merge with the default configuration
-	$config: map.merge($default-config, $config);
+	// Deep-merge with the default configuration: a partial nested map
+	// (family-remap, adjustments, special-colors…) extends the defaults
+	// instead of silently replacing the whole nested map.
+	$config: map.deep-merge($default-config, $config);
 
 	// Don't transform colors that are already overridden
 	$overrides: map.get($config, "overrides");
@@ -1269,8 +1280,10 @@ $hc-palette: (
 		"overrides": (),
 	);
 
-	// Merge with the default configuration
-	$config: map.merge($default-config, $config);
+	// Deep-merge with the default configuration: a partial nested map
+	// (family-remap, adjustments, special-colors…) extends the defaults
+	// instead of silently replacing the whole nested map.
+	$config: map.deep-merge($default-config, $config);
 
 	// Don't transform colors that are already overridden
 	$overrides: map.get($config, "overrides");
@@ -1382,8 +1395,10 @@ $hc-palette: (
 		"overrides": (),
 	);
 
-	// Merge with the default configuration
-	$config: map.merge($default-config, $config);
+	// Deep-merge with the default configuration: a partial nested map
+	// (family-remap, adjustments, special-colors…) extends the defaults
+	// instead of silently replacing the whole nested map.
+	$config: map.deep-merge($default-config, $config);
 
 	// Don't transform colors that are already overridden
 	$overrides: map.get($config, "overrides");
@@ -1585,8 +1600,10 @@ $hc-palette: (
 		)
 	);
 
-	// Merge with the default configuration
-	$config: map.merge($default-config, $config);
+	// Deep-merge with the default configuration: a partial nested map
+	// (family-remap, adjustments, special-colors…) extends the defaults
+	// instead of silently replacing the whole nested map.
+	$config: map.deep-merge($default-config, $config);
 
 	// Get the configurations
 	$special-colors: map.get($config, "special-colors");

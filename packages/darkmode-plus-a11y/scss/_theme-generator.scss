@@ -8,8 +8,12 @@
 //
 // Standard configs (dark, high-contrast maps, achromatopsia) are fully
 // generic: the dark accent swap derives from the consumer's own
-// primitives, never a hardcoded color.
+// primitives, never a hardcoded color. Every per-theme engine config can
+// be overridden through `generate-all-themes`' `$configs` parameter
+// (theme name → partial config, deep-merged over that theme's defaults) —
+// e.g. adding one CVD family-remap entry without redefining the table.
 
+@use "sass:list";
 @use "sass:map";
 @use "base-palette" as *;
 @use "state" as *;
@@ -92,75 +96,83 @@ $hc-paper: (
 }
 
 // "Dark base" sub-recipe: dark rail + accent swap (generic — derives from
-// the consumer's own primitives, whatever they are).
-@mixin apply-dark-base() {
+// the consumer's own primitives, whatever they are). $config is a partial
+// override deep-merged over $dark-config.
+@mixin apply-dark-base($config: ()) {
 	@include define-base-colors();
 	@include apply-roles();
 	$accent-ink: resolved-primitive("accent-soft") !global;
 	$accent-soft: resolved-primitive("accent-ink") !global;
-	@include transform-light-to-dark($dark-config);
+	@include transform-light-to-dark(map.deep-merge($dark-config, $config));
 }
 
 // Sets up the rail + TRANSFORMED roles for theme $name. Emits NO CSS
 // variable and NO rule: just the roles' state. Layer 3 and rule overrides
 // are the consumer's responsibility (@content).
-@mixin apply-theme($name) {
+//
+// $config is an optional PARTIAL engine config for this theme,
+// deep-merged over the theme's default config (so e.g. one extra
+// "family-remap" entry extends the default table instead of replacing
+// it). "light" and "anti-glare-light" take no config; "anti-glare-dark"'s
+// config goes to its dark base.
+@mixin apply-theme($name, $config: null) {
+	@if $config == null {
+		$config: ();
+	}
 	@if $name == "light" {
+		@if $config != () {
+			@warn "apply-theme: « light » takes no configuration — ignored.";
+		}
 		@include define-base-colors();
 		@include apply-roles();
 	} @else if $name == "dark" {
-		@include apply-dark-base();
+		@include apply-dark-base($config);
 	} @else if $name == "anti-glare-light" {
+		@if $config != () {
+			@warn "apply-theme: « anti-glare-light » takes no configuration — ignored.";
+		}
 		@include define-base-colors();
 		@include apply-roles();
 		@include transform-theme-for-anti-glare("light");
 	} @else if $name == "anti-glare-dark" {
-		@include apply-dark-base();
+		@include apply-dark-base($config);
 		@include transform-theme-for-anti-glare("dark");
-	} @else if $name == "high-contrast" {
+	} @else if $name == "high-contrast" or $name == "high-contrast-green" or $name == "high-contrast-white" or $name == "high-contrast-paper" {
 		@include define-base-colors();
 		@include apply-roles();
-		@include transform-light-to-high-contrast(("colors": $hc-colors));
-	} @else if $name == "high-contrast-green" {
-		@include define-base-colors();
-		@include apply-roles();
-		@include transform-light-to-high-contrast(("colors": map.merge($hc-colors, $hc-green)));
-	} @else if $name == "high-contrast-white" {
-		@include define-base-colors();
-		@include apply-roles();
-		@include transform-light-to-high-contrast(("colors": map.merge($hc-colors, $hc-white)));
-	} @else if $name == "high-contrast-paper" {
-		@include define-base-colors();
-		@include apply-roles();
-		@include transform-light-to-high-contrast(("colors": map.merge($hc-colors, $hc-paper)));
+		@include transform-light-to-high-contrast(
+			map.deep-merge(("colors": hc-color-map($name)), $config)
+		);
 	} @else if $name == "deuteranopia" {
 		@include define-base-colors();
 		@include apply-roles();
-		@include transform-light-to-deuteranopia();
+		@include transform-light-to-deuteranopia($config);
 	} @else if $name == "deuteranomaly" {
 		@include define-base-colors();
 		@include apply-roles();
-		@include transform-light-to-deuteranomaly();
+		@include transform-light-to-deuteranomaly($config);
 	} @else if $name == "protanopia" {
 		@include define-base-colors();
 		@include apply-roles();
-		@include transform-light-to-protanopia();
+		@include transform-light-to-protanopia($config);
 	} @else if $name == "protanomaly" {
 		@include define-base-colors();
 		@include apply-roles();
-		@include transform-light-to-protanomaly();
+		@include transform-light-to-protanomaly($config);
 	} @else if $name == "tritanopia" {
 		@include define-base-colors();
 		@include apply-roles();
-		@include transform-light-to-tritanopia();
+		@include transform-light-to-tritanopia($config);
 	} @else if $name == "tritanomaly" {
 		@include define-base-colors();
 		@include apply-roles();
-		@include transform-light-to-tritanomaly();
+		@include transform-light-to-tritanomaly($config);
 	} @else if $name == "achromatopsia" {
 		@include define-base-colors();
 		@include apply-roles();
-		@include transform-light-to-achromatopsia($achromatopsia-config);
+		@include transform-light-to-achromatopsia(
+			map.deep-merge($achromatopsia-config, $config)
+		);
 	} @else {
 		@error "apply-theme: unknown theme « #{$name} ».";
 	}
@@ -223,10 +235,24 @@ $hc-paper: (
 // the transformed roles, then passes the name to @content (the consumer
 // emits their layer 3 and per-theme overrides there). The package emits
 // ONLY its own variables via emit-role-vars — no layer 3 leaks here.
-@mixin generate-all-themes($themes: $default-themes) {
+//
+// $configs: optional per-theme engine overrides, keyed by theme name —
+// each entry is a PARTIAL config deep-merged over that theme's defaults.
+// Example (extend the tritan remap table for an indigo accent):
+//   @include generate-all-themes(
+//     $configs: ("tritanopia": ("family-remap": ("indigo": ("sky", 0))))
+//   );
+@mixin generate-all-themes($themes: $default-themes, $configs: ()) {
+	// Typo guard: a $configs key that matches no requested theme would
+	// otherwise be silently dead.
+	@each $key, $_ in $configs {
+		@if not list.index($themes, $key) {
+			@warn "generate-all-themes: $configs key « #{$key} » matches no requested theme — ignored.";
+		}
+	}
 	@each $name in $themes {
 		[data-theme="#{$name}"] {
-			@include apply-theme($name);
+			@include apply-theme($name, map.get($configs, $name));
 			@content ($name);
 		}
 	}
