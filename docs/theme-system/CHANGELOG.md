@@ -15,8 +15,8 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ## 2026-07-17 (darkmode-plus-a11y 0.2.0 — the full Tailwind palette, branch `feat/complete-palette`)
 
-Prompted by the first real external consumer (ArgentBank): the package
-shipped only 9 of Tailwind's 26 color families, so their bluish indigo
+Prompted by the first integration attempt outside this repo: the package
+shipped only 9 of Tailwind's 26 color families, so a bluish indigo
 brand color (`#6866e9`) had no close anchor (`violet` was the nearest,
 visibly too pink). Plan: [PLAN-complete-palette.md](./PLAN-complete-palette.md).
 **Not published yet** — publication is explicitly on hold (Simon: more
@@ -95,7 +95,7 @@ changes are coming before this ships).
   families at weight 600 under the 7 CVD types (6 dichromacy +
   achromatopsia) — zero anomalies, plausible and stable contrast
   ranges throughout (blue 4.25–6.65:1, indigo 5.38–7.10:1, directly
-  answering the ArgentBank case). No remap/anchor entries added: the
+  answering the bluish-indigo case). No remap/anchor entries added: the
   existing fallback (unmapped family left unchanged for red-green;
   OKLCH hue-nudge for off-palette colors) already covers new families,
   same as the original 9.
@@ -159,7 +159,7 @@ mechanism, per Simon).
   (`src/accessibility/contrast/__tests__/off-palette-anchor.test.ts`,
   10 tests): `oklch-distance` sanity, `analyze-tailwind-color`'s
   regression guard on exact matches, the v3-hex-paste silent case, and
-  ArgentBank's real brand color as the "genuine custom color" warn
+  a real custom brand color as the "genuine custom color" warn
   case for both engines, plus a dark-mode gamut check on a saturated
   off-palette color.
 

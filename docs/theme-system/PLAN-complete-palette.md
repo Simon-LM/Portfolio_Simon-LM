@@ -3,9 +3,9 @@
 # Execution plan — complete the Tailwind palette (0.2.0)
 
 First post-publication chantier of `darkmode-plus-a11y`, prompted by the
-first real external consumer (ArgentBank): the package ships only **9**
+first integration attempt outside this repo: the package ships only **9**
 of Tailwind's **26** color families, so a brand primitive that has no
-close family (e.g. ArgentBank's bluish indigo `#6866e9`) has no good
+close family (e.g. a bluish indigo like `#6866e9`) has no good
 anchor — `violet` is the nearest and reads too pink. Goal: ship the
 **full 26-family Tailwind palette** so any brand color maps onto the
 Tailwind geometry the whole system is anchored to.
@@ -93,7 +93,7 @@ plan is to **measure** its behavior, not presume it:
    so the choices are auditable — the same discipline as the contrast
    suite.
 
-Special attention to the ArgentBank case: **blue** and **indigo** are
+Special attention to the bluish-indigo case: **blue** and **indigo** are
 the immediate unblock. Blue/indigo sit on the safe axis for red-green
 CVD (kept) and are handled by the fallback under tritan — spot-check
 that blue-700 and indigo-700 stay distinguishable from `--link` (sky)
@@ -127,7 +127,7 @@ and legible.
    output (NaN, non-finite ratio) — **zero anomalies**; contrast-ratio
    ranges vs `bg-base` stayed plausible and stable for every family
    (e.g. blue 4.25–6.65:1, indigo 5.38–7.10:1 — solid across the board,
-   directly answering the ArgentBank case). `yellow`'s low end
+   directly answering the bluish-indigo case). `yellow`'s low end
    (2.60:1) is a normal-vision weight-600 characteristic of that hue,
    not a CVD-specific defect — noted for the docs, no engine change
    needed. No remap/anchor entries added: the existing fallback

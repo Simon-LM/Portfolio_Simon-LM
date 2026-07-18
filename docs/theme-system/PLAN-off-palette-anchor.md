@@ -121,9 +121,9 @@ file — not yet added to the source tree.)
 | v3 hex `#0c4a6e` vs v4 `sky-900` | 0.55 |
 | `blue-600` vs `blue-700` (smallest sampled adjacent-weight gap) | 5.84 |
 | `red-500` vs `red-600` | 6.11 |
-| ArgentBank `#6866e9` vs `blue-600` | 8.91 |
-| ArgentBank `#6866e9` vs `indigo-600` | 10.04 |
-| ArgentBank `#6866e9` vs `violet-600` (today's only real anchor) | 13.63 |
+| Custom brand blue `#6866e9` vs `blue-600` | 8.91 |
+| Custom brand blue `#6866e9` vs `indigo-600` | 10.04 |
+| Custom brand blue `#6866e9` vs `violet-600` (today's only real anchor) | 13.63 |
 
 There is a clean separation between "same color across Tailwind
 versions" (≤ 2.77 in this sample) and "genuinely one weight over"
@@ -138,9 +138,9 @@ hex set and the current v4 palette; every adjacent-weight pair across
 all 26 families) before locking the constant, rather than trusting
 this sample alone.
 
-Confirms the real-world case: ArgentBank's actual brand color anchors
+Confirms the real-world case: the sampled custom brand color anchors
 correctly to `blue-600` (8.91, nearest) rather than `violet-600`
-(13.63, what they'd have gotten before 0.2.0's palette expansion) or
+(13.63, what it would have gotten before 0.2.0's palette expansion) or
 `indigo-600` (10.04) — directly validating both this chantier and the
 value of 0.2.0's family expansion.
 
@@ -250,9 +250,9 @@ takes. The dark-mode gamut gap noted and explicitly parked on
 4. **Verification** — ✅ done: 10 new direct SCSS-level probe tests in
    `src/accessibility/contrast/__tests__/off-palette-anchor.test.ts`
    (`oklch-distance` sanity, the exact-match regression guard, the
-   v3-hex-paste silent case and ArgentBank's real brand color as the
-   warn case for both engines, and a dark-mode gamut check). ArgentBank
-   `#6866e9`'s true nearest entry, found by the exhaustive walk, is
+   v3-hex-paste silent case and a real custom brand color as the
+   warn case for both engines, and a dark-mode gamut check). That
+   color's (`#6866e9`) true nearest entry, found by the exhaustive walk, is
    **indigo-500** at distance 4.12 — closer than the plan's own
    preliminary 3-candidate estimate (blue-600, 8.91), which only
    spot-checked weight 600 across 3 families rather than the full
