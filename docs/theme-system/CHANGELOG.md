@@ -13,13 +13,13 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
-## 2026-07-18 (darkmode-plus-a11y — per-theme engine overrides in the generator, branch `feat/generator-config-passthrough`)
+## 2026-07-18 (darkmode-plus-a11y 0.3.0 — per-theme engine overrides in the generator, branch `feat/generator-config-passthrough`)
 
 Prompted by an external review of 0.2.0: the CVD `family-remap` tables
 (and every other per-theme engine config) were reachable only by calling
 the transforms directly — `generate-all-themes()`, the recommended path,
-hardcoded the defaults with no way through. Additive → lands in the next
-MINOR (0.3.0) when published.
+hardcoded the defaults with no way through. Additive → MINOR (0.3.0).
+**Published to npm the same day** (tag `latest`, merge `4351918`).
 
 ### Added
 
