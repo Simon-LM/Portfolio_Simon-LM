@@ -1,6 +1,6 @@
 /** @format */
 
-// Opt-in module — "optimized" dyslexia mode (E5).
+// Opt-in module — "optimized" dyslexia mode.
 //
 // Unlike menus that apply the SAME dyslexia font everywhere, this module
 // establishes a hierarchy: one font per role (title / subtitle / body).
@@ -10,9 +10,9 @@
 // font with a small x-height (Sylexiad…) stops "shrinking" paragraphs. The
 // 0.56 target slightly exceeds large body fonts (Inter ≈ 0.545): the mode
 // never looks smaller than the host site, whatever it is. Spacing inspired
-// by the British Dyslexia Association / WCAG 1.4.12, visually calibrated
-// (validation, 2026-07-09): letter-spacing 0.04em, word-spacing ×3.2,
-// line-height 1.75 (the recommended range is 1.5 to 2.0).
+// by the British Dyslexia Association / WCAG 1.4.12, visually calibrated:
+// letter-spacing 0.04em, word-spacing ×3.2, line-height 1.75 (the
+// recommended range is 1.5 to 2.0).
 //
 // Everything is configurable. Defaults = bundled OFL fonts (body = Andika).
 // The consumer overrides whatever they want, e.g. body = Sylexiad on their

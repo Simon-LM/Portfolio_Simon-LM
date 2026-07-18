@@ -60,10 +60,10 @@ export type GamutWaiver = {
 // waivers — with the same anti-zombie rule: once a declaration returns
 // in-gamut, its waiver here is obsolete and the guard test forces its removal.
 //
-// Currently empty: the only out-of-gamut declarations at introduction (11 in
-// `tritanomaly`, from the part-1 amber→orange severity-0.5 OKLCH blend) were
-// resolved in PLAN-colorblind-redesign.md part 3 phase 3 — the severity blend
-// is now gamut-mapped (chroma reduction, `gamut-map-srgb` in _theme-utils.scss),
-// so the guard passes with zero waivers. Any future out-of-gamut value must be
-// fixed at the source or, if genuinely intentional, waived here with a reason.
+// Currently empty: the only out-of-gamut declarations found (11 in
+// `tritanomaly`, from the amber→orange severity-0.5 OKLCH blend) were
+// resolved by gamut-mapping the severity blend (chroma reduction,
+// `gamut-map-srgb` in _theme-utils.scss), so the guard passes with zero
+// waivers. Any future out-of-gamut value must be fixed at the source or,
+// if genuinely intentional, waived here with a reason.
 export const gamutWaivers: readonly GamutWaiver[] = [];

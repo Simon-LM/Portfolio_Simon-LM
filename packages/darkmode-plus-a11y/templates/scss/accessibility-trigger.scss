@@ -118,10 +118,10 @@
 	}
 }
 // Styles for the different themes
-// Floating button — all high-contrast variants (HC chantier): background =
-// theme background, hover = action color. The icon can't follow a CSS
-// variable (it's a filter): white by default (dark variants), historical
-// yellow for the yellow variant, dark for the paper variant.
+// Floating button — all high-contrast variants: background = theme
+// background, hover = action color. The icon can't follow a CSS variable
+// (it's a filter): white by default (dark variants), yellow for the
+// yellow variant, dark for the paper variant.
 [data-theme^="high-contrast"] {
 	.accessibility-control__button {
 		background-color: var(--off-white) !important;

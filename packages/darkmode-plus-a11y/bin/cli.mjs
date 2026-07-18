@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /** @format */
 
-// Scaffolding CLI (E6) — shadcn model: copies the UI (trigger + card +
+// Scaffolding CLI — shadcn model: copies the UI (trigger + card +
 // SCSS + config) INTO the consumer's project, which then owns it. Pure
 // Node, no extra dependency.
 //

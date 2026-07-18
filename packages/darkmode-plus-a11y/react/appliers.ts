@@ -1,9 +1,9 @@
 /** @format */
 
-// SSR-safe DOM appliers for accessibility preferences (chantier E5). The
-// consumer's state manager (zustand store, React state, context…) keeps
-// ownership of the value and its persistence; it delegates the DOM side
-// effect to these functions. All are no-ops on the server.
+// SSR-safe DOM appliers for accessibility preferences. The consumer's
+// state manager (zustand store, React state, context…) keeps ownership
+// of the value and its persistence; it delegates the DOM side effect to
+// these functions. All are no-ops on the server.
 
 // Text zoom: exposes the factor as the `--font-size-factor` custom property
 // (percent 100 -> 1). The host stylesheet multiplies its rem/em sizes by it.

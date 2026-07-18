@@ -1,7 +1,6 @@
-// Public entry point of the package (E3 phase 3): consumers can
+// Public entry point of the package: consumers can
 // @use "darkmode-plus-a11y/scss" (this file) or target a specific module
-// ("darkmode-plus-a11y/scss/theme-utils"…). State (rail/roles) joins the package
-// in phase 4.
+// ("darkmode-plus-a11y/scss/theme-utils"…).
 @forward "base-palette";
 @forward "state";
 @forward "theme-utils";

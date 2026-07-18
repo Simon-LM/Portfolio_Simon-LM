@@ -14,9 +14,9 @@ export type UsePreferenceOptions<T> = {
 	apply: (value: T) => void;
 };
 
-// Generic accessibility-preference hook (chantier E5, generalises the
-// pattern of useTheme/fontSize/reduceMotion): lazy read from localStorage,
-// DOM application, persistent setter. The `apply` callback is the only
+// Generic accessibility-preference hook (the same pattern behind
+// useTheme/fontSize/reduceMotion): lazy read from localStorage, DOM
+// application, persistent setter. The `apply` callback is the only
 // project-specific side effect. Returns a [value, setValue] tuple.
 export function usePreference<T>(key: string, options: UsePreferenceOptions<T>) {
 	const { defaultValue, serialize = String, deserialize, apply } = options;

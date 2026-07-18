@@ -1,7 +1,7 @@
 /** @format */
 
-// React runtime entry point of the package (E4): theme list, hooks,
-// and the anti-FOUC script generator (phase 3).
+// React runtime entry point of the package: theme list, hooks, and the
+// anti-FOUC script generator.
 export { THEMES, type ThemeOption } from "./themes";
 export { useTheme } from "./useTheme";
 export { usePrefersDarkMode } from "./usePrefersDarkMode";
