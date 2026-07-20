@@ -20,7 +20,12 @@ import AccessibilityMenu from "./AccessibilityMenu";
 // like a raster icon. Replace it via the `icon` prop.
 function AccessibilityIcon() {
 	return (
-		<svg viewBox="0 0 210 210" width={24} height={24} aria-hidden="true" focusable="false">
+		<svg
+			viewBox="-10 -10 230 230"
+			width={24}
+			height={24}
+			aria-hidden="true"
+			focusable="false">
 			<g fill="#000000" fillRule="evenodd" stroke="none">
 				{/* Rounded frame (outer + inner ring) */}
 				<path d="M 30,5 A 25,25 0 0 0 5,30 L 5,180 A 25,25 0 0 0 30,205 L 180,205 A 25,25 0 0 0 205,180 L 205,30 A 25,25 0 0 0 180,5 Z M 32,17 L 178,17 A 15,15 0 0 1 193,32 L 193,178 A 15,15 0 0 1 178,193 L 32,193 A 15,15 0 0 1 17,178 L 17,32 A 15,15 0 0 1 32,17 Z" />
@@ -103,7 +108,9 @@ export default function AccessibilityControl({
 		language === "fr" ? "Options d'accessibilité" : "Accessibility options";
 
 	return (
-		<div className={`accessibility-control ${position} ${className}`} ref={menuRef}>
+		<div
+			className={`accessibility-control ${position} ${className}`}
+			ref={menuRef}>
 			<button
 				className="accessibility-control__button"
 				onClick={() => setMenuOpen((open) => !open)}
