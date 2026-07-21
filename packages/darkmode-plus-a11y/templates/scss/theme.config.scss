@@ -19,7 +19,7 @@
 
 // Emits the CSS variables consumed by the accessibility UI, derived from
 // the current roles. To be included INSIDE each [data-theme] block, AFTER
-// the engine's transform + apply-roles (see theme-example.scss).
+// the engine's transform + apply-roles (see theme-setup.scss).
 @mixin a11y-ui-theme-vars {
 	// --- Roles / rail used directly by the UI (pass-throughs) ---
 	--accent: #{$accent};
