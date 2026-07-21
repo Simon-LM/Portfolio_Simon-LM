@@ -97,21 +97,6 @@ export default async function LangLayout({
 				}}
 			/>
 
-			<Script
-				id="preload-image"
-				strategy="beforeInteractive"
-				dangerouslySetInnerHTML={{
-					__html: `
-            const link = document.createElement('link');
-            link.rel = "preload";
-            link.as = "image";
-            link.href = "/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.avif";
-            link.type = "image/avif";
-            document.head.appendChild(link);
-          `,
-				}}
-			/>
-
 			{children}
 		</>
 	);

@@ -4,9 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import AccessibilityMenu from "../../components/accessibilityMenu/AccessibilityMenu";
 
-import accessibilityIconWebp from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.webp";
-import accessibilityIconAvif from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.avif";
-import accessibilityIconPng from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.png";
+import accessibilityIconSvg from "../../../public/icons/Icon_Accessibility_Contrasts-Visuals/Icon_Accessibility_Contrasts-Visuals.svg";
 
 interface AccessibilityControlProps {
 	language: "fr" | "en";
@@ -74,11 +72,9 @@ export default function AccessibilityControl({
 				aria-label={accessibilityText}
 				data-tooltip={accessibilityText}
 				ref={buttonRef}>
-				<picture className="accessibility-control__icon">
-					<source srcSet={accessibilityIconAvif.src} type="image/avif" />
-					<source srcSet={accessibilityIconWebp.src} type="image/webp" />
+				<span className="accessibility-control__icon">
 					<Image
-						src={accessibilityIconPng.src}
+						src={accessibilityIconSvg.src}
 						alt=""
 						width={24}
 						height={24}
@@ -86,7 +82,7 @@ export default function AccessibilityControl({
 						priority
 						aria-hidden="true"
 					/>
-				</picture>
+				</span>
 			</button>
 
 			<div
