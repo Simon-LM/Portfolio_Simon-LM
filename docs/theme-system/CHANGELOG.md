@@ -16,7 +16,8 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 ## 2026-07-21 (trigger icon: transparency + `currentColor` recolor — 0.4.1, branch `fix/trigger-icon-currentcolor`)
 
 Two follow-up fixes to the SVG trigger icon that shipped in 0.4.0, both
-surfaced when ArgentBank integrated it on a **white** header.
+surfaced when ArgentBank integrated it on a **white** header. **Published
+to npm as `0.4.1`** (2026-07-21, tag `latest`).
 
 ### Fixed
 
