@@ -16,8 +16,8 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 ## 2026-07-21 (integration-guide docs + `theme-example` → `theme-setup` rename, branch `docs/package-integration-guide`)
 
 Acting on the ArgentBank integration feedback (points #1–8, #12, #13).
-Mostly documentation; one file rename. Not published yet — folds into
-the next release (0.4.0) with the trigger-icon work.
+Mostly documentation; one file rename. **Published in `0.4.0`
+(2026-07-21)**, together with the trigger-icon work below.
 
 ### Changed
 
@@ -85,8 +85,8 @@ the next release (0.4.0) with the trigger-icon work.
   the AVIF/WebP/PNG `<picture>`) — same drawing, same filters, vector
   sharpness at high zoom.
 
-Not published yet — further improvements are queued before the next npm
-release (Simon, step by step).
+**Published in `0.4.0`** (2026-07-21, tag `latest`), together with the
+integration-guide docs above.
 
 ## 2026-07-18 (darkmode-plus-a11y 0.3.0 — per-theme engine overrides in the generator, branch `feat/generator-config-passthrough`)
 
