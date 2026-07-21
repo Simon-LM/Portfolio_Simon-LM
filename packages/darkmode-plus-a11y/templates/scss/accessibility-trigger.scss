@@ -4,9 +4,9 @@
 // template — you own them, edit freely). Copied from the portfolio's
 // architecture. ⚠️ The trigger is meant to be placed IN THE FLOW (e.g.
 // your header), not as a floating position:fixed.
-// The template's default icon is an inline SVG (flat black drawing with
-// white counter-shapes): the inversion/hue filters below recolor it
-// exactly like a raster image would be.
+// The default icon is a single-color inline SVG (`fill: currentColor`):
+// the button drives its color, so the theme/hover styles recolor it with
+// plain `color` / `background` — no filters, works on any theme.
 
 .accessibility-control {
 	position: relative;
@@ -19,34 +19,33 @@
 		border: none;
 		border-radius: 0.25rem;
 		padding: 0;
-		background: var(--off-white);
+		// Icon + surface come from the theme's guaranteed-contrast pair
+		// (--fg-base ink on --bg-base surface). The inline SVG inherits
+		// `color` via fill: currentColor, so this holds in every theme
+		// with no filters.
+		background: var(--bg-base);
+		color: var(--fg-base);
 		aspect-ratio: 1/1;
 		width: 1.75rem;
 		overflow: hidden;
 		cursor: pointer;
 
-		img,
 		svg {
 			width: 100%;
 			height: 100%;
-			object-fit: cover;
 		}
 
-		&:hover {
-			img,
-			svg {
-				filter: invert(100%);
-			}
+		// Hover / focus: swap the pair — dark-icon-on-light ⇄
+		// light-icon-on-dark. Still a guaranteed-contrast pair everywhere.
+		&:hover,
+		&:focus-visible {
+			background: var(--fg-base);
+			color: var(--bg-base);
 		}
 
 		&:focus-visible {
 			outline: 2px solid var(--color-focus-outline);
 			outline-offset: 2px;
-
-			img,
-			svg {
-				filter: invert(100%);
-			}
 		}
 	}
 
@@ -118,117 +117,17 @@
 		border-bottom: 0.4375rem solid var(--color-panel-bg, var(--color-main-bg));
 	}
 }
-// Styles for the different themes
-// Floating button — all high-contrast variants: background = theme
-// background, hover = action color. The icon can't follow a CSS variable
-// (it's a filter): white by default (dark variants), yellow for the
-// yellow variant, dark for the paper variant.
+// High-contrast variants: the rest state is already correct from the base
+// rule (--fg-base is each variant's vivid ink — yellow / green / white, or
+// dark on the paper variant — over --bg-base). They only override the
+// hover to keep their "action color": the button fills with --link-hover
+// and the icon flips to the theme surface.
 [data-theme^="high-contrast"] {
 	.accessibility-control__button {
-		background-color: var(--off-white) !important;
-
-		img,
-		svg {
-			filter: invert(100%);
-		}
-
 		&:hover,
 		&:focus-visible {
-			background-color: var(--link-hover) !important;
-
-			img,
-			svg {
-				filter: none !important;
-			}
-		}
-	}
-}
-
-// Yellow variant: historical yellow icon (rendering unchanged)
-[data-theme="high-contrast"] {
-	.accessibility-control__button {
-		img,
-		svg {
-			filter: #{"invert(80%) sepia(72%) saturate(528%) hue-rotate(359deg) brightness(101%) contrast(106%)"};
-		}
-
-		&:hover,
-		&:focus-visible {
-			img,
-			svg {
-				filter: none !important;
-			}
-		}
-	}
-}
-
-// Green variant: green icon — the yellow filter calibrated above + a
-// 60° hue rotation (yellow 60° -> green 120°)
-[data-theme="high-contrast-green"] {
-	.accessibility-control__button {
-		img,
-		svg {
-			filter: #{"invert(80%) sepia(72%) saturate(528%) hue-rotate(359deg) brightness(101%) contrast(106%) hue-rotate(60deg)"};
-		}
-
-		&:hover,
-		&:focus-visible {
-			img,
-			svg {
-				filter: none !important;
-			}
-		}
-	}
-}
-
-// Paper variant (inverted polarity): dark icon on white background,
-// hover = black action -> white icon
-[data-theme="high-contrast-paper"] {
-	.accessibility-control__button {
-		img,
-		svg {
-			filter: none;
-		}
-
-		&:hover,
-		&:focus-visible {
-			img,
-			svg {
-				filter: invert(100%) !important;
-			}
-		}
-	}
-}
-
-[data-theme="dark"] {
-	.accessibility-control__button {
-		img,
-		svg {
-			filter: invert(100%);
-		}
-
-		&:hover,
-		&:focus-visible {
-			img,
-			svg {
-				filter: none;
-			}
-		}
-	}
-}
-[data-theme="anti-glare-dark"] {
-	.accessibility-control__button {
-		img,
-		svg {
-			filter: invert(100%); // Same filter as the dark theme
-		}
-
-		&:hover,
-		&:focus-visible {
-			img,
-			svg {
-				filter: none;
-			}
+			background: var(--link-hover);
+			color: var(--bg-base);
 		}
 	}
 }

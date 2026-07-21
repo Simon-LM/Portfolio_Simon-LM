@@ -35,7 +35,7 @@
      inkscape:current-layer="svgAccessibility" />
   <style
      id="style2">
-    .icon-path { fill: #000000; fill-rule: evenodd; stroke: none; }
+    .icon-path { fill: currentColor; fill-rule: evenodd; stroke: none; }
   </style>
   <g
      id="icon-container">
