@@ -13,6 +13,39 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-21 (trigger icon: transparency + `currentColor` recolor — 0.4.1, branch `fix/trigger-icon-currentcolor`)
+
+Two follow-up fixes to the SVG trigger icon that shipped in 0.4.0, both
+surfaced when ArgentBank integrated it on a **white** header.
+
+### Fixed
+
+- **The icon's two "light" halves (iris-left, pupil-right) were opaque
+  `#ffffff` fills**, not transparency — stray white spots on any
+  non-white button, and they didn't follow the hover. Now transparent
+  holes (evenodd) cut into the black shapes: black + transparency only,
+  so the icon adapts to any button color.
+- **Hover was broken (white-on-white) in the light / dark / anti-glare
+  themes.** Root cause: the old raster icon had an opaque white
+  background that inverted to a dark tile on hover; the transparent SVG
+  has nothing to invert, so `filter: invert` only flipped the black
+  shapes to white on an unchanged light button. Fixed by dropping the
+  filters entirely (below).
+
+### Changed
+
+- **The trigger icon is now a single-color `currentColor` glyph**, driven
+  by the button's `color` rather than CSS filters. Base rule:
+  `color: var(--fg-base)` on `background: var(--bg-base)` (the theme's
+  guaranteed-contrast pair), **swapped** on hover/focus. Works in every
+  theme with no per-theme blocks — ~230 lines of `filter` chains removed
+  from both the template and the portfolio SCSS. High-contrast variants
+  keep their `--link-hover` action color on hover. Because the icon
+  follows `currentColor`, it adapts to any button/header color, so a
+  consumer on a white header (ArgentBank) gets a working hover for free.
+- Portfolio: `AccessibilityControl` renders the icon **inline** (was
+  `next/image`) — required for `currentColor` to inherit the theme color.
+
 ## 2026-07-21 (integration-guide docs + `theme-example` → `theme-setup` rename, branch `docs/package-integration-guide`)
 
 Acting on the ArgentBank integration feedback (points #1–8, #12, #13).
