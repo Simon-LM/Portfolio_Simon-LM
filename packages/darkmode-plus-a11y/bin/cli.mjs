@@ -118,7 +118,7 @@ function cmdInit(args) {
 	console.log(`\n${C.green}✓${C.reset} ${written} written, ${skipped} skipped.`);
 	console.log(`${C.cyan}Next steps:${C.reset}`);
 	console.log(`  1. UI dependencies: ${C.bold}react-select react-icons${C.reset} + the ${C.bold}${args.pkg}${C.reset} package`);
-	console.log(`  2. Import the SCSS (theme-example, accessibility-menu, -trigger, -features).`);
+	console.log(`  2. Import the SCSS (theme-setup, accessibility-menu, -trigger, -features).`);
 	console.log(`  3. Place <AccessibilityControl/> IN THE FLOW (your header), not as position:fixed.`);
 	console.log(`  4. Read the copied ${C.bold}AGENTS.md${C.reset} guide (layer-3 contract).\n`);
 }

@@ -13,7 +13,53 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
-## 2026-07-18 (darkmode-plus-a11y 0.3.0 — per-theme engine overrides in the generator, branch `feat/generator-config-passthrough`)
+## 2026-07-21 (integration-guide docs + `theme-example` → `theme-setup` rename, branch `docs/package-integration-guide`)
+
+Acting on the ArgentBank integration feedback (points #1–8, #12, #13).
+Mostly documentation; one file rename. Not published yet — folds into
+the next release (0.4.0) with the trigger-icon work.
+
+### Changed
+
+- **Renamed the scaffolded `theme-example.scss` → `theme-setup.scss`**
+  (#13). "example" read as throwaway, but it's permanent production code
+  that drives every theme. Updated the template header (with a warning:
+  `init --diff` tracks by exact path, so don't rename your local copy),
+  `README`, `AGENTS.md`, the `theme.config.scss` cross-reference, and
+  the CLI "next steps" message. Low-risk for existing consumers: they
+  own their copied file (shadcn model), so upgrading the npm package
+  never touches it — only fresh `init` runs get the new name.
+
+### Docs (`AGENTS.md` / `README.md`)
+
+- **New "Migrating an existing codebase" section** (#4, #12 + family
+  guidance): grep recipes to find hardcoded colors (no codemod ships —
+  mapping needs judgment, an agent refactors it); the **map-by-value-
+  not-by-element-type** rule (a "card" that was the page color maps to
+  `$bg-base`, not `$bg-container`); and **family choice framed as an
+  advisory, conditional conversation** — the nearest Tailwind match is a
+  starting point, the guide surfaces the dark-theme consequence, offers
+  alternatives, and lets the client decide (contrast holds regardless,
+  so it's a look choice, never a rule). Applies to any color, but
+  matters most for the background (its family becomes the whole neutral
+  rail and tints every dark theme). Presented as a spectrum — stays gray
+  (`neutral`/`zinc`/`stone`), cooler (`gray`/`slate`), tinted neutrals
+  (`taupe`/`mauve`/`mist`/`olive`), fully chromatic (a bold colored dark,
+  `+2` toward `900`/`950` to keep it usable) — with a sample
+  client-guiding phrasing.
+- Anti-FOUC: **static-HTML / Vite worked examples** (precompute-once and
+  `transformIndexHtml` plugin) (#1).
+- Path A: show the `$primitives` declaration syntax up front (#2);
+  document that re-running `init` **skips** existing files, never
+  clobbers without `--force` (#3).
+- `AccessibilityControl` props fully typed — `position` enum, `icon`
+  as `ReactNode`, `complianceUrl` (#6). Concrete **pre-header band**
+  markup + SCSS example (#7).
+- `configureThemeExtraction`: `entry` is compiled by Sass directly —
+  no bundler aliases, use `loadPaths`; keep it a minimal alias-free
+  assembly file (#5).
+- `--waive` grammar: first `=` separates a JS regex from the free-text
+  reason; quote the whole argument in the shell (#8).
 
 Prompted by an external review of 0.2.0: the CVD `family-remap` tables
 (and every other per-theme engine config) were reachable only by calling

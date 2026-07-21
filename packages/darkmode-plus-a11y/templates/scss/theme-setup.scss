@@ -1,9 +1,15 @@
 /** @format */
 
-// Theme assembly (scaffolded template). You configure your LIGHT theme
+// Theme setup (scaffolded template). You configure your LIGHT theme
 // once (gray family + brand primitives), list the themes you want, and the
 // PACKAGE generates ALL of them — dark, high contrast (+ variants),
 // color-blind, anti-glare — derived from your light theme. A single call.
+//
+// ⚠️ This is PERMANENT production code, not a throwaway sample — it drives
+// every theme on your site and stays imported from your global stylesheet
+// for good. Keep the filename `theme-setup.scss`: `init --diff` tracks
+// upstream changes by exact path, so renaming your local copy silently
+// stops that tracking for this file.
 //
 // Your layer 3 (the UI's variables) is injected per theme via @content:
 // the package only emits its role variables, you add your own, derived

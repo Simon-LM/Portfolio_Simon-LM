@@ -97,6 +97,105 @@ Every role is also emitted as a CSS custom property (`--bg-base`,
 `--accent`…) in each theme block — that is what the verification suite
 and the [Tailwind mapping](#tailwind-projects) consume.
 
+## Migrating an existing codebase
+
+Greenfield is easy: pick roles as you build. Retrofitting a site that
+already has **hundreds of hardcoded colors** is where the real
+decisions are — and the verification suite only checks the *result*,
+not the mapping choices that get you there. This section is that
+missing methodology.
+
+**No codemod ships, on purpose.** Mapping colors to roles needs
+judgment (see below), so a blind find-and-replace would produce wrong
+results. A capable coding agent refactors this reliably file by file —
+lean on that, guided by the steps below, rather than a mechanical tool.
+
+### 1. Find every hardcoded color
+
+List them before you touch anything:
+
+```bash
+# raw hex (and, if you use them, rgb()/hsl() and Tailwind utility colors)
+grep -rnE '#[0-9a-fA-F]{3,8}\b' src/
+grep -rnE '\b(rgb|hsl)a?\(' src/
+```
+
+Group the results by **actual value**, not by file — you're about to
+map values to roles, and two identical values must land on the same
+role.
+
+### 2. Map by VALUE, not by what the element "is"
+
+The role names are a **"how visually distinct should this be" ladder**,
+not a "what kind of element is this" catalog. `$bg-base` (page),
+`$bg-subtle`, `$bg-container`, `$bg-container-high`, `$bg-emphasis`… are
+each a *different* rail weight, by design, so a surface that should
+read as raised looks raised.
+
+The trap: picking a role from what an element **structurally is**
+instead of what its color **was**.
+
+- A "card" that was the **same** color as the page background in your
+  original design must map to **the same role as the page** (usually
+  `$bg-base`) — even though it's structurally a "card." Giving it
+  `$bg-container` because "it's a card" invents a shade difference that
+  wasn't there, and it can surface only in some themes (a card and page
+  that match in light can drift apart — or collide — in dark, once each
+  role's weight shift is applied).
+- **Rule:** before mapping a color, compare it against the colors you've
+  **already mapped**. Same original value → same role. Different value →
+  the role whose lightness step matches how different it actually was.
+
+An agent doing the refactor can't infer this from the code — the code
+only shows the roles as configured, never the pre-migration design
+intent. State it explicitly when you delegate the work.
+
+### 3. Guiding the family choice (a conversation, not a lookup)
+
+Every color you migrate becomes a Tailwind `("family", weight)` pair, so
+the mechanical step is finding each color's nearest family and weight. But
+that nearest match is a **starting point, not the verdict**. When you
+guide a client, your job is to find it, surface what it will do across the
+15 themes, offer alternatives, and let the client choose — not to pick for
+them. Contrast holds whatever they choose, so this is a question of the
+**look** they want, never right vs. wrong. And you don't know their colors
+up front — you read them off the site — so keep every suggestion
+conditional on what you actually find.
+
+This holds for any color, but it matters most for the **background**,
+because the background's family becomes the whole neutral rail
+(`$gray-family`), and the dark themes are built by shifting that rail to
+its dark end, which keeps the family's hue. So the family behind the
+background **tints the entire dark mode**, far beyond that one surface.
+
+The trade-off to lay out for the client, from a plain-gray dark to a
+boldly colored one:
+
+- Stays gray in dark: `neutral` (hueless), `zinc` (barely cool), `stone`
+  (barely warm), then `gray` and `slate` (cooler; `slate` clearly blue).
+- A gentle wash of color that still works in dark: `taupe` (warm brown),
+  `mauve` (purple), `mist` (cyan), `olive` (green).
+- Strongly its own color in dark: any chromatic family (`red`, `blue`,
+  `emerald`…). A bold look some clients want and others find too much; if
+  they want it, a `+2` weight shift toward `900`/`950` keeps the dark end
+  dark enough to carry text.
+
+For example, if the nearest match to a client's background turned out to
+be a chromatic family, guiding them might sound like:
+
+> "Your background's closest Tailwind match is `amber-50`. `amber` is a
+> chromatic family, and the background's family becomes your whole neutral
+> rail — so if we used it, your dark mode would come out strongly amber.
+> Some people want that; if you'd rather a neutral dark, `neutral`,
+> `zinc` or `stone` stay gray, and `taupe` keeps a hint of warmth without
+> the strong color. Want to compare a few in the contrast suite?"
+
+Same shape for any color that isn't an obvious match: name the nearest
+one, say what it costs in the themes that matter, offer options, let the
+client decide. If a family looks right in light but too colored in dark,
+a `+1`/`+2` weight shift or a more neutral family are both on the table —
+then measure with the [suite](#verifying-your-wiring).
+
 ## Path A — scaffolded UI
 
 ```bash
@@ -104,6 +203,12 @@ npx darkmode-plus-a11y init          # copies UI into ./a11y + fonts into ./publ
 npx darkmode-plus-a11y init --diff   # later: compare your copy against the reference
 # Options: --dir <path> --pkg <import-name> --fonts <path> --force
 ```
+
+**Re-running `init` is safe.** A file that already exists at the target
+path is **skipped** (logged `skip (exists …)`), never overwritten —
+same for the font files. It never errors on collisions. To pull a fresh
+reference copy over your edited one, pass `--force` (or inspect first
+with `init --diff`, which changes nothing and just lists what differs).
 
 What you now own (edit freely):
 
@@ -117,8 +222,11 @@ What you now own (edit freely):
   dyslexia + motion (needs Sass: it includes package mixins).
 - `scss/theme.config.scss` — the UI's **layer 3** (the golden rule
   applies here).
-- `scss/theme-example.scss` — the theme assembly: configure your light
-  theme once, the package generates every theme from it.
+- `scss/theme-setup.scss` — where you configure your light theme once;
+  the package generates every theme from it. **Permanent production
+  code, not a throwaway sample** (it drives every theme on your site).
+  Keep the filename: `init --diff` tracks upstream changes by exact
+  path, so renaming your local copy silently drops it from that tracking.
 - `AGENTS.md` — this guide.
 
 Wiring steps:
@@ -126,14 +234,32 @@ Wiring steps:
 1. **SCSS** — import, in this order, from your global stylesheet:
 
    ```scss
-   @use "../a11y/scss/theme-example"; // themes: roles + your layer 3
+   @use "../a11y/scss/theme-setup"; // themes: roles + your layer 3
    @use "../a11y/scss/accessibility-features"; // fonts + dyslexia + motion
    @use "../a11y/scss/accessibility-trigger";
    @use "../a11y/scss/accessibility-menu";
    ```
 
-   Extend `theme-example.scss` with your palette and your own layer-3
-   tokens; the golden rule applies to every line you add.
+   `theme-setup.scss` is where you declare your brand palette — as
+   Tailwind `("family", weight)` pairs, in the `state` configuration at
+   the top of the file (this is the same `@use … with (…)` shown under
+   [Path B](#path-b--engine-only)):
+
+   ```scss
+   @use "darkmode-plus-a11y/scss/state" as * with (
+   	$gray-family: "stone",
+   	$primitives: (
+   		"accent": ("amber", 300),
+   		"link": ("sky", 700),
+   		// …your brand; the file ships a full default set to edit
+   	)
+   );
+   ```
+
+   Then add your own layer-3 tokens; the golden rule applies to every
+   line you add. Migrating an existing site? Read
+   [Migrating an existing codebase](#migrating-an-existing-codebase)
+   before choosing your primitive families.
 
 2. **Fonts** — `init` copied the font files to `public/fonts`
    (configurable: `--fonts`, and `$a11y-fonts-path` in
@@ -164,6 +290,47 @@ Wiring steps:
    `localStorage.theme` (validated against your list), falls back to
    `prefers-color-scheme`, and sets the attribute.
 
+   **Static HTML / Vite / any non-SSR SPA** — there's no server render
+   to call the function per request, so pick one:
+
+   - **Precompute once** (simplest): run the function once at build time
+     and paste the returned string literally into your `index.html`
+     `<head>`. It only changes if your theme *list* changes, so it's
+     safe to hardcode:
+
+     ```js
+     // scripts/print-theme-script.mjs — run once, paste the output
+     import { themeInitScript, THEMES } from "darkmode-plus-a11y/react";
+     console.log(`<script>${themeInitScript(THEMES)}</script>`);
+     ```
+
+     ```html
+     <!-- index.html <head>, before any stylesheet -->
+     <script>
+     	/* paste the printed string here */
+     </script>
+     ```
+
+   - **Inject at build time** (stays in sync automatically): emit it
+     from a Vite plugin so a theme-list change never goes stale:
+
+     ```js
+     // vite.config.js
+     import { themeInitScript, THEMES } from "darkmode-plus-a11y/react";
+     export default {
+     	plugins: [
+     		{
+     			name: "a11y-anti-fouc",
+     			transformIndexHtml: (html) =>
+     				html.replace("</head>", `<script>${themeInitScript(THEMES)}</script></head>`),
+     		},
+     	],
+     };
+     ```
+
+   Either way the script must run **before your first stylesheet** so
+   the attribute is set before first paint.
+
 4. **UI placement** — render the trigger **IN THE DOCUMENT FLOW**,
    typically in your header:
 
@@ -175,11 +342,39 @@ Wiring steps:
 
    - ⚠️ **NEVER a floating `position: fixed` button**: it overlaps
      content at high zoom — an accessibility defect. No obvious spot?
-     Use a **pre-header band** (a strip above the header, icon on the
-     right).
-   - Props: `language` (`"fr" | "en"`), `position?`, `icon?`,
-     `complianceUrl?`. Labels are FR/EN today; for another language,
-     edit the copied component — you own it.
+     Use a **pre-header band** — a full-width strip in normal flow,
+     above the header, with the trigger at the end:
+
+     ```tsx
+     <div className="a11y-band">
+     	<AccessibilityControl language="en" />
+     </div>
+     ```
+
+     ```scss
+     .a11y-band {
+     	display: flex;
+     	justify-content: flex-end;
+     	// rem/em only — no fixed px, so it reflows under zoom
+     	padding: 0.25rem 1rem;
+     	// it's in the flow: it pushes content down, never overlaps it
+     }
+     ```
+
+     Being in the flow (not `fixed`) is the whole point: at high zoom it
+     reflows and pushes the page down instead of covering it.
+   - Props:
+     - `language` — `"fr" | "en"` (required). Labels are FR/EN today;
+       for another language, edit the copied component (you own it).
+     - `position?` — `"top-right" | "top-left" | "bottom-right" |
+       "bottom-left"` (default `"top-right"`): the corner the panel
+       opens toward, **not** the button's page position (you place the
+       button yourself, in the flow).
+     - `icon?` — a `ReactNode` rendered inside the button (default: the
+       package's accessibility pictogram). Pass any element:
+       `icon={<MyIcon />}`.
+     - `complianceUrl?` — `string`; when set, the menu shows a link to
+       your accessibility-statement page.
 
 5. **Verify** — set up the [contrast suite](#verifying-your-wiring).
 
@@ -364,6 +559,20 @@ configureThemeExtraction({
 });
 ```
 
+`entry` is compiled by **Sass directly**, not by your bundler — so it
+must be resolvable without bundler-only magic:
+
+- **`@use`/`@import` paths must resolve via `loadPaths`**, not via a
+  bundler alias (Vite's `@styles/…`, a `tsconfig` path, webpack
+  `resolve.alias`). Sass never sees those. Add the directories they
+  point to as extra `loadPaths` entries instead.
+- **`entry` should be a minimal file that only assembles your theme
+  setup** (`theme-setup.scss` + your layer-3 partials) and emits the
+  `[data-theme]` blocks — not your whole global stylesheet. Pulling in
+  unrelated component styles just slows the compile and risks alias
+  imports Sass can't follow. If your real global stylesheet uses
+  aliases, point `entry` at a small alias-free file built for this.
+
 **2. Declare your pairs** — the package provides the role pairs (its
 API surface); you add one pair per text/background combination your
 components create:
@@ -469,6 +678,19 @@ npx darkmode-plus-a11y audit --entry styles/main.scss --load-path node_modules
 # add --strict to exit 1 on active warnings (CI gate)
 # add --out hc-audit.md for a markdown report
 ```
+
+`--waive` grammar — `"<regex>=<reason>"`:
+
+- The **first `=`** is the separator. Everything before it is a
+  **JavaScript regular expression** matched against custom-property
+  names (`^--foo$` for one exact token, `^--chip-` for a family); the
+  match is not anchored unless you anchor it. Everything after the first
+  `=` is the free-text reason and **may itself contain `=`**.
+- Property names never contain `=`, so the left side won't need a
+  literal one. Repeat `--waive` once per exception.
+- **Always quote the whole argument** in your shell — regexes use `^`,
+  `$`, `|`, `(`, `)`, which the shell would otherwise interpret. Single
+  quotes are safest in CI: `--waive '^--x$=reason'`.
 
 Test-suite form (same engine, plus your waivers and exact slots):
 
