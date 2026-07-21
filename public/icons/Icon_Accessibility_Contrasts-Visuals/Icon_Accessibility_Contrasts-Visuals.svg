@@ -36,7 +36,6 @@
   <style
      id="style2">
     .icon-path { fill: #000000; fill-rule: evenodd; stroke: none; }
-    .white-fill { fill: #ffffff; }
   </style>
   <g
      id="icon-container">
@@ -46,35 +45,30 @@
        d="       M 30,5        A 25,25 0 0 0 5,30        L 5,180        A 25,25 0 0 0 30,205        L 180,205        A 25,25 0 0 0 205,180        L 205,30        A 25,25 0 0 0 180,5        Z        M 32,17        L 178,17        A 15,15 0 0 1 193,32        L 193,178        A 15,15 0 0 1 178,193        L 32,193        A 15,15 0 0 1 17,178        L 17,32        A 15,15 0 0 1 32,17        Z"
        id="path4" />
     <!-- 2. L'ŒIL (CONTOURS ET BULBE) -->
-    <!-- Partie Gauche de l'œil (Noir plein) -->
+    <!-- Partie Gauche de l'œil (Noir plein, avec le demi-iris gauche
+         découpé en trou transparent via evenodd) -->
     <path
        class="icon-path"
-       d="M 105,40 C 75,40 48,58 30,90 C 48,122 75,140 105,140 Z"
+       d="M 105,40 C 75,40 48,58 30,90 C 48,122 75,140 105,140 Z M 105,65 A 25,25 0 0 0 105,115 Z"
        id="path6" />
     <!-- Partie Droite de l'œil (Contour noir, fond blanc) -->
     <path
        class="icon-path"
        d="       M 105,40        C 135,40 162,58 180,90        C 162,122 135,140 105,140        Z       M 105,48       C 131,48 154,64 170,90       C 154,116 131,132 105,132       Z"
        id="path8" />
-    <!-- 3. L'IRIS ET LA PUPILLE CENTRALES (Correction inversée) -->
-    <!-- Grand Iris : Demi-cercle Gauche (Blanc) et Demi-cercle Droit (Noir) -->
-    <path
-       class="white-fill"
-       d="M 105,65 A 25,25 0 0 0 105,115 Z"
-       id="path10" />
+    <!-- 3. IRIS AND PUPIL — split eye. The "light" halves are transparent
+         (the button shows through), never opaque white. Left (dark) side:
+         the iris-left is the transparent hole cut into path6, with a black
+         pupil-left dot inside it. Right (light) side: a black iris-right
+         holding a transparent pupil-right hole. -->
     <path
        class="icon-path"
-       d="M 105,65 A 25,25 0 0 1 105,115 Z"
+       d="M 105,65 A 25,25 0 0 1 105,115 Z M 105,78 A 12,12 0 0 1 105,102 Z"
        id="path12" />
-    <!-- Petite Pupille : Demi-cercle Gauche (Noir) et Demi-cercle Droit (Blanc) -->
     <path
        class="icon-path"
        d="M 105,78 A 12,12 0 0 0 105,102 Z"
        id="path14" />
-    <path
-       class="white-fill"
-       d="M 105,78 A 12,12 0 0 1 105,102 Z"
-       id="path16" />
     <!-- 4. LA JAUGE INFÉRIEURE -->
     <!-- Partie Gauche de la jauge (Plein noir) -->
     <path
