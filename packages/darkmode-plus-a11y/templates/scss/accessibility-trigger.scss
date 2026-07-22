@@ -4,9 +4,10 @@
 // template — you own them, edit freely). Copied from the portfolio's
 // architecture. ⚠️ The trigger is meant to be placed IN THE FLOW (e.g.
 // your header), not as a floating position:fixed.
-// The default icon is a single-color inline SVG (`fill: currentColor`):
-// the button drives its color, so the theme/hover styles recolor it with
-// plain `color` / `background` — no filters, works on any theme.
+// The default icon is a single-color inline SVG. Its `fill=currentColor`
+// tracks the theme at rest, but browsers don't re-resolve it on :hover,
+// so the hover glyph color is set explicitly (the `…svg g { fill }` rule
+// below). No CSS filters — works on any theme.
 
 .accessibility-control {
 	position: relative;
@@ -35,8 +36,8 @@
 			height: 100%;
 		}
 
-		// Hover / focus: swap the pair — dark-icon-on-light ⇄
-		// light-icon-on-dark. Still a guaranteed-contrast pair everywhere.
+		// Hover / focus: swap the pair — surface fills with the ink, ink
+		// flips to the surface. Guaranteed-contrast pair everywhere.
 		&:hover,
 		&:focus-visible {
 			background: var(--fg-base);
@@ -46,6 +47,16 @@
 		&:focus-visible {
 			outline: 2px solid var(--color-focus-outline);
 			outline-offset: 2px;
+		}
+
+		// Recolor the glyph explicitly on hover/focus: the inline SVG's
+		// fill=currentColor tracks the theme at rest but doesn't follow the
+		// button's hover color in-browser, so the glyph would otherwise
+		// stay its rest color (ink-on-ink). --bg-base is the surface,
+		// guaranteed to contrast with the --fg-base hover background.
+		&:hover svg g,
+		&:focus-visible svg g {
+			fill: var(--bg-base);
 		}
 	}
 
@@ -117,17 +128,11 @@
 		border-bottom: 0.4375rem solid var(--color-panel-bg, var(--color-main-bg));
 	}
 }
-// High-contrast variants: the rest state is already correct from the base
-// rule (--fg-base is each variant's vivid ink — yellow / green / white, or
-// dark on the paper variant — over --bg-base). They only override the
-// hover to keep their "action color": the button fills with --link-hover
-// and the icon flips to the theme surface.
-[data-theme^="high-contrast"] {
-	.accessibility-control__button {
-		&:hover,
-		&:focus-visible {
-			background: var(--link-hover);
-			color: var(--bg-base);
-		}
-	}
-}
+// High-contrast variants: deliberately NO trigger override here. An
+// accessibility control wants maximum contrast, and the base rule's pure
+// pair-swap on hover (--fg-base ⇄ --bg-base) already delivers exactly
+// that — e.g. yellow-on-black → black-on-yellow, white-on-black →
+// black-on-white, the paper variant black-on-white → white-on-black. We
+// intentionally do NOT route this button's hover through --link-hover the
+// way the package's other high-contrast controls do: a pure inversion of
+// the theme's own pair is the strongest possible contrast for the trigger.

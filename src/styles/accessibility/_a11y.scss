@@ -22,10 +22,13 @@ textarea,
 		border: none;
 		border-radius: 0.25rem;
 		padding: 0;
-		// Icon + surface come from the theme's guaranteed-contrast pair
-		// (--fg-base ink on --bg-base surface). The inline SVG inherits
-		// `color` via fill: currentColor, so this holds in every theme
-		// with no filters.
+		// The trigger lives IN THE HEADER, in the document flow. At rest
+		// it shows the theme's guaranteed pair — ink (--fg-base) on
+		// surface (--bg-base); the inline SVG follows via fill:
+		// currentColor. Hover / focus are intentionally NOT set here: the
+		// site's global `button:hover` / `:focus-visible` styles take over
+		// (link-hover surface + light ink), so the trigger matches every
+		// other button. The high-contrast themes override below.
 		background: var(--bg-base);
 		color: var(--fg-base);
 		aspect-ratio: 1/1;
@@ -38,17 +41,25 @@ textarea,
 			height: 100%;
 		}
 
-		// Hover / focus: swap the pair — dark-icon-on-light ⇄
-		// light-icon-on-dark. Still a guaranteed-contrast pair everywhere.
-		&:hover,
-		&:focus-visible {
-			background: var(--fg-base);
-			color: var(--bg-base);
-		}
-
+		// Background/focus come from the site's global `button:hover` /
+		// `:focus-visible` (link-hover surface). Only the focus outline is
+		// reinforced here.
 		&:focus-visible {
 			outline: 2px solid var(--color-focus-outline);
 			outline-offset: 2px;
+		}
+
+		// The inline SVG paints via fill=currentColor. In-browser that
+		// tracks the theme at rest but does NOT follow the button's hover
+		// color (the glyph stays its rest color on hover — dark-on-dark /
+		// same-on-same). Recolor it explicitly. --bg-base is the right ink
+		// in every theme: it's the surface, so it's guaranteed to contrast
+		// with the hover background — --link-hover for normal themes (a link
+		// color readable on the surface, hence readable the other way too),
+		// --fg-base for the high-contrast inversion below.
+		&:hover svg g,
+		&:focus-visible svg g {
+			fill: var(--bg-base);
 		}
 	}
 
@@ -120,16 +131,20 @@ textarea,
 		border-bottom: 0.4375rem solid var(--color-panel-bg, var(--color-main-bg));
 	}
 }
-// High-contrast variants: the rest state is already correct from the base
-// rule (--fg-base is each variant's vivid ink — yellow / green / white, or
-// dark on the paper variant — over --bg-base). They only override the
-// hover to keep their "action color": the button fills with --link-hover
-// and the icon flips to the theme surface.
+// High-contrast variants: an accessibility control needs maximum
+// contrast, so here the trigger does NOT defer to the site's global
+// `button:hover`. It keeps the theme's guaranteed pair — vivid ink
+// (--fg-base: yellow / green / white, or dark on the paper variant) on
+// its surface (--bg-base) — and inverts it purely on hover (e.g.
+// yellow-on-black → black-on-yellow), the strongest possible contrast.
 [data-theme^="high-contrast"] {
 	.accessibility-control__button {
+		background: var(--bg-base);
+		color: var(--fg-base);
+
 		&:hover,
 		&:focus-visible {
-			background: var(--link-hover);
+			background: var(--fg-base);
 			color: var(--bg-base);
 		}
 	}
