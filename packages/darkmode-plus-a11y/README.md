@@ -110,6 +110,17 @@ npx darkmode-plus-a11y init   # copies the UI into ./a11y + fonts into ./public/
    <AccessibilityControl language="en" />;
    ```
 
+   The trigger's hover is a neutral inversion of the theme pair by default
+   (`--fg-base` ⇄ `--bg-base`), contrast-safe on every theme (in light:
+   near-black-on-near-white → the inverse on hover). If your site already
+   gives links and buttons a shared hover (a general rule like
+   `button:hover, a:hover`), you can let the trigger share it too — more
+   consistent, and good for accessibility **as long as the contrast holds**
+   (check dark and anti-glare). To do it, delete only the trigger's own
+   hover/focus background & icon-color swap (keep the focus outline) and
+   keep the `…svg g { fill }` line; the site-wide rule then drives the
+   surface. High-contrast keeps its own inversion.
+
 5. Wire your own tokens in `a11y/scss/theme.config.scss` — **every
    token derives from a role** (`$bg-base`, `$accent`, `$link`…), never
    a raw `#hex`. That single rule is what makes all 15 themes correct.

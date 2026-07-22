@@ -13,6 +13,49 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-22 (trigger hover: explicit glyph recolor + pure high-contrast inversion — 0.4.2)
+
+Follow-up to 0.4.1 after testing the trigger on real headers. A
+header-blend attempt (matching the trigger to the header background) was
+tried and dropped: it didn't give enough contrast. The trigger keeps its
+neutral pair at rest (near-black on near-white in light), and the hover
+work below is the real fix.
+
+### Fixed
+
+- **The trigger glyph didn't recolor on hover** (dark-on-dark in the
+  normal themes, ink-on-ink in high contrast). Root cause: the inline
+  SVG's `fill=currentColor` tracks the theme at rest, but browsers don't
+  re-resolve it when only the `:hover` state changes, so the glyph kept
+  its rest color while the background swapped. Now recolored explicitly —
+  `…button:hover svg g { fill: var(--bg-base) }` (the surface, guaranteed
+  to contrast with the hover background in every theme). Applied in both
+  the package template and the portfolio.
+
+### Changed
+
+- **High-contrast trigger hover is now a pure inversion of the theme's
+  own pair** (`--fg-base` ⇄ `--bg-base`) instead of the `--link-hover`
+  action color: yellow-on-black → black-on-yellow, green → black-on-green,
+  white → black-on-white, paper → white-on-black. Package template
+  `accessibility-trigger.scss`: the `[data-theme^="high-contrast"]`
+  override is removed — the base rule's swap already is that inversion.
+- **Portfolio: the trigger defers its normal-theme hover to the site's
+  global `button:hover`** (a `--link-hover` surface) instead of setting
+  its own, so it matches every other button. Rest stays on the neutral
+  pair; high-contrast keeps its own inversion.
+
+### Docs
+
+- **README + AGENTS: optional shared-hover guidance** (replaces the
+  dropped header-blend note). README is human-facing; AGENTS instructs the
+  reading agent to _advise its human_ to consider one site-wide
+  link/button hover the trigger can share — only if that pair keeps enough
+  contrast (it isn't the mechanically-guaranteed `--fg-base`/`--bg-base`
+  pair).
+
+---
+
 ## 2026-07-21 (trigger icon: transparency + `currentColor` recolor — 0.4.1, branch `fix/trigger-icon-currentcolor`)
 
 Two follow-up fixes to the SVG trigger icon that shipped in 0.4.0, both

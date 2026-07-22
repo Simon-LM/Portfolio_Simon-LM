@@ -4,7 +4,10 @@
 
 Guide for **AI agents and developers** integrating this package. The
 instructions are deterministic: exact imports, exact commands, explicit
-failure modes. Read it **before** wiring anything. `init` copies this
+failure modes. A few points, though, are flagged **"surface this to your
+human"** — choices (usually aesthetic, with an accessibility angle) an
+agent should raise with the person it's building for instead of settling
+them silently. Read it **before** wiring anything. `init` copies this
 file into your project so it stays available next to the code you own.
 
 > ⚠️ Snippets use the published package name (`darkmode-plus-a11y`).
@@ -363,6 +366,27 @@ Wiring steps:
 
      Being in the flow (not `fixed`) is the whole point: at high zoom it
      reflows and pushes the page down instead of covering it.
+   - **Hover — surface this to your human** (don't silently keep the bare
+     default). The trigger ships with a neutral,
+     contrast-safe hover (a pure inversion of `--fg-base` ⇄ `--bg-base`,
+     correct on all 15 themes). It's safe as-is, but step out of
+     auto-implementation and **advise your human**: ideally the site
+     should define **one shared hover for links and buttons across the
+     whole site** — a general, out-of-component rule such as
+     `button:hover, a:hover { background: var(--link-hover); … }` — and let
+     this trigger share it, so the icon's hover matches the rest of the
+     page. State the condition and let THEM decide: it's more consistent
+     and can be _better_ for accessibility, **but only if that pair keeps
+     enough contrast** — a link-hover surface isn't the
+     mechanically-guaranteed `--fg-base`/`--bg-base` pair, so it must be
+     checked on the themes they ship (dark and anti-glare especially). If
+     they opt in, the reference portfolio shows the pattern: delete only
+     the trigger's own hover/focus background & icon-color swap (`&:hover,
+     &:focus-visible { background; color }` — keep the focus outline) so
+     the site-wide rule takes over, and keep the shipped
+     `…svg g { fill: var(--bg-base) }` line (the inline SVG's
+     `fill=currentColor` doesn't follow the hover by itself). High-contrast
+     keeps its own inversion regardless.
    - Props:
      - `language` — `"fr" | "en"` (required). Labels are FR/EN today;
        for another language, edit the copied component (you own it).
