@@ -20,8 +20,23 @@
 // DARK THEME UTILITIES
 // -----------------------------------------------
 
-// Function to get the shifted color for the dark theme
-@function get-dark-color($family, $weight, $steps: 6) {
+// Destination index of the dark shift, BEFORE clamping. Split out of
+// get-dark-color so that roles which must stay distinct can be re-seated as
+// a unit (see auto-dark-transform-paired) rather than each clamping onto the
+// same rail end.
+//
+// The base shift moves a color AWAY from its own end of the rail: a light
+// weight darkens (+steps), a dark weight lightens (-steps), and 500 — the
+// neutral pivot — stays put. Those two directions are what makes the theme
+// flip (a foreground declared dark for a light surface has to come back
+// light over a dark one), so they are structural, not a tunable.
+//
+// $adjustment is the public per-role knob, and it reads the SAME on both
+// sides of the pivot: +N moves toward the dark end (950), -N toward the
+// light end (50). It is added to the index rather than to $steps precisely
+// so its sign cannot silently invert with the base shift's direction — with
+// $steps, "+1" meant darker below the pivot and lighter above it.
+@function dark-target-index($weight, $steps, $adjustment: 0) {
 	// Find the current weight's index in the Tailwind weight list
 	$current-index: list.index($tailwind-weights, $weight);
 
@@ -36,26 +51,31 @@
 	@if $weight < $midpoint {
 		// Light colors: increase the index to darken
 		$new-index: $current-index + $steps;
-	} @else {
+	} @else if $weight > $midpoint {
 		// Dark colors: decrease the index to lighten
-		// Don't decrease for 500, the neutral pivot
-		@if $weight > $midpoint {
-			$new-index: $current-index - $steps;
-		}
+		// (500, the neutral pivot, is left where it is)
+		$new-index: $current-index - $steps;
 	}
 
-	// Clamp the index within the list's bounds
-	@if $new-index > list.length($tailwind-weights) {
-		$new-index: list.length($tailwind-weights);
-	} @else if $new-index < 1 {
-		$new-index: 1;
-	}
+	@return $new-index + $adjustment;
+}
 
-	// Get the new weight
-	$new-weight: list.nth($tailwind-weights, $new-index);
+// Clamp an index onto the rail. Saturating is deliberate: it parks a color
+// that overshoots on the end it was travelling toward, which is the readable
+// one for the theme — a foreground that overshoots stops at the lightest
+// weight, a surface at the darkest. Wrapping around instead would send it to
+// the OPPOSITE end (a foreground landing back on a dark weight, over a dark
+// surface) — unreadable, and with nothing to signal it.
+@function clamp-weight-index($index) {
+	@return math.max(1, math.min(list.length($tailwind-weights), $index));
+}
 
-	// Return the matching color
-	@return get-color($family, $new-weight);
+// Function to get the shifted color for the dark theme
+@function get-dark-color($family, $weight, $steps: 6, $adjustment: 0) {
+	$index: clamp-weight-index(
+		dark-target-index($weight, $steps, $adjustment)
+	);
+	@return get-color($family, list.nth($tailwind-weights, $index));
 }
 
 // Perceptual distance between two colors, computed on OKLCH's Cartesian
@@ -419,10 +439,12 @@ $status-legibility-floor: 3 !default;
 	@return remap-for-cvd($color, $var-name, $config, $cvd-type);
 }
 
-// Function that transforms a color into its dark version, factoring in the configuration
-@function auto-dark-transform($color, $var-name, $config) {
-	// Get the configuration parameters
-	$steps: map.get($config, "steps");
+// Palette coordinates a dark transform works from: the color's Tailwind
+// family and weight, plus this role's configured adjustment. Shared by the
+// single-role and paired paths below. $warn is turned off when a role is
+// read as another one's peer, so an off-palette color is still reported
+// exactly once.
+@function dark-source($color, $var-name, $config, $warn: true) {
 	$adjustments: map.get($config, "adjustments");
 
 	// Compute the specific adjustment for this variable
@@ -451,12 +473,83 @@ $status-legibility-floor: 3 !default;
 		$family: map.get($analysis, "nearest-family");
 		$weight: map.get($analysis, "nearest-weight");
 		$distance: map.get($analysis, "distance");
-		@if $distance > $off-palette-same-color-threshold {
+		@if $warn and $distance > $off-palette-same-color-threshold {
 			@warn "#{$var-name}: off-palette color, anchored to #{$family}-#{$weight} for derived themes (distance #{$distance}) — result not guaranteed, prefer a Tailwind primitive.";
 		}
 	}
 
-	@return get-dark-color($family, $weight, $steps + $adjustment);
+	@return ("family": $family, "weight": $weight, "adjustment": $adjustment);
+}
+
+// Function that transforms a color into its dark version, factoring in the configuration
+@function auto-dark-transform($color, $var-name, $config) {
+	$source: dark-source($color, $var-name, $config);
+	@return get-dark-color(
+		map.get($source, "family"),
+		map.get($source, "weight"),
+		map.get($config, "steps"),
+		map.get($source, "adjustment")
+	);
+}
+
+// Dark version of a role that has to stay visually distinct from a peer
+// role. Clamping each one on its own can park both on the same rail end,
+// collapsing two roles into a single color — a failure the contrast suite
+// cannot catch, since each value is perfectly readable and only the
+// DIFFERENCE between them is gone. Here the pair is slid back onto the rail
+// as a block, which preserves the gap the light theme declared.
+//
+// Both members call this with the roles swapped and derive the same shift,
+// so they stay consistent with each other. Only same-family pairs are
+// re-seated: across families the hue already separates them, and moving a
+// weight there would be an unrequested visual change.
+@function auto-dark-transform-paired(
+	$color,
+	$var-name,
+	$peer,
+	$peer-var-name,
+	$config
+) {
+	$steps: map.get($config, "steps");
+	$self: dark-source($color, $var-name, $config);
+	$other: dark-source($peer, $peer-var-name, $config, $warn: false);
+
+	$self-index: dark-target-index(
+		map.get($self, "weight"),
+		$steps,
+		map.get($self, "adjustment")
+	);
+	$other-index: dark-target-index(
+		map.get($other, "weight"),
+		$steps,
+		map.get($other, "adjustment")
+	);
+
+	$shift: 0;
+	@if
+		map.get($self, "family") ==
+		map.get($other, "family") and
+		$self-index !=
+		$other-index and
+		clamp-weight-index($self-index) ==
+		clamp-weight-index($other-index)
+	{
+		// They differ before clamping but collapse after it: slide both by
+		// the smallest amount that brings the overshooting end back on rail.
+		$lowest: math.min($self-index, $other-index);
+		$highest: math.max($self-index, $other-index);
+		@if $lowest < 1 {
+			$shift: 1 - $lowest;
+		} @else {
+			$shift: list.length($tailwind-weights) - $highest;
+		}
+	}
+
+	$index: clamp-weight-index($self-index + $shift);
+	@return get-color(
+		map.get($self, "family"),
+		list.nth($tailwind-weights, $index)
+	);
 }
 
 // -----------------------------------------------
@@ -619,13 +712,28 @@ $status-legibility-floor: 3 !default;
 		) !global;
 	}
 
-	// Links and other functional colors
-	$link: auto-dark-transform($link, "link", $config) !global;
-	$link-hover: auto-dark-transform(
-		$link-hover,
+	// Links: transformed as a PAIR. link and link-hover are typically two
+	// neighboring weights of one family, close enough that the shift can
+	// clamp both onto the same rail end — leaving a hover state
+	// indistinguishable from the link itself.
+	$link-source: $link;
+	$link-hover-source: $link-hover;
+	$link: auto-dark-transform-paired(
+		$link-source,
+		"link",
+		$link-hover-source,
 		"link-hover",
 		$config
 	) !global;
+	$link-hover: auto-dark-transform-paired(
+		$link-hover-source,
+		"link-hover",
+		$link-source,
+		"link",
+		$config
+	) !global;
+
+	// Other functional colors
 	$success: auto-dark-transform(
 		$success,
 		"success",
