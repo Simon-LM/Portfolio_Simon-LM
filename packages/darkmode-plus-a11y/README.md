@@ -110,16 +110,16 @@ npx darkmode-plus-a11y init   # copies the UI into ./a11y + fonts into ./public/
    <AccessibilityControl language="en" />;
    ```
 
-   The trigger's hover is a neutral inversion of the theme pair by default
-   (`--fg-base` ⇄ `--bg-base`), contrast-safe on every theme (in light:
-   near-black-on-near-white → the inverse on hover). If your site already
-   gives links and buttons a shared hover (a general rule like
-   `button:hover, a:hover`), you can let the trigger share it too — more
-   consistent, and good for accessibility **as long as the contrast holds**
-   (check dark and anti-glare). To do it, delete only the trigger's own
-   hover/focus background & icon-color swap (keep the focus outline) and
-   keep the `…svg g { fill }` line; the site-wide rule then drives the
-   surface. High-contrast keeps its own inversion.
+   On hover/focus the trigger just needs the icon and its background to
+   stay a contrast-safe pair — you choose what moves: **invert both** (the
+   default), **move the background** (let your site's `button:hover,
+   a:hover` fill the button with your interaction color; the icon
+   follows), or **move the icon** (keep the background, recolor the icon —
+   its color then needs a weight that passes 4.5:1 on that background, see
+   [Migrating an existing site](#migrating-an-existing-site)). Either way
+   the icon is recolored via the shipped `…svg g { fill }` line (its
+   `fill=currentColor` doesn't follow hover on its own). High-contrast
+   keeps its own inversion; check the hover pair in dark and anti-glare.
 
 5. Wire your own tokens in `a11y/scss/theme.config.scss` — **every
    token derives from a role** (`$bg-base`, `$accent`, `$link`…), never
@@ -190,11 +190,12 @@ people up most — both covered in full, with grep recipes, in
   elements that were the same hex → the same role.
 
 - **A color's nearest family is a starting point, not the verdict —
-  weigh the dark-mode look you want.** Contrast holds whatever you pick,
-  so this is a look choice, not a correctness one. It matters most for
-  your **background**, whose family becomes the whole neutral rail and
-  tints every dark theme (the dark themes come from the rail's dark end,
-  which keeps the family's hue). Along the spectrum: `neutral`/`zinc`/
+  weigh the dark-mode look you want.** For the **background** — whose
+  family becomes the whole neutral rail and tints every dark theme (the
+  dark themes come from the rail's dark end, which keeps the family's
+  hue) — contrast is guaranteed whatever you pick, so that family is a
+  look choice, not a correctness one, and it's the one that matters most.
+  Along the spectrum: `neutral`/`zinc`/
   `stone` stay gray, `gray`/`slate` go cooler (`slate` clearly blue),
   the tinted neutrals `taupe`/`mauve`/`mist`/`olive` add a gentle wash
   that still works in dark, and a chromatic family (`blue`, `emerald`…)
@@ -202,6 +203,15 @@ people up most — both covered in full, with grep recipes, in
   usable). Find the nearest match to a real color on your site, then move
   along that spectrum to the look you want — the nearest match may itself
   be a colored family, which is fine if that's what you're after. Check
+  with the contrast suite.
+
+- **For a color that must meet a ratio, pick the weight that passes — not
+  the nearest hex-match you verify afterward.** Family is a look choice,
+  but within it the _weight_ is the contrast: for a status color, text in
+  a brand color, or the trigger icon when it recolors on hover, the
+  light-theme weight you declare is used as-is. Pick the nearest weight that already **passes 4.5:1**. If
+  the closest passing weight drifts from your brand color, that's a
+  trade-off to decide (shift the shade, or adjust its background). Verify
   with the contrast suite.
 
 ## SCSS-first — and a real bridge for Tailwind projects

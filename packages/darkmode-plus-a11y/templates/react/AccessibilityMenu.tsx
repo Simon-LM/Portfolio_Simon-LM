@@ -3,8 +3,8 @@
 "use client";
 
 // Accessibility card (scaffolded template — you own it, edit freely).
-// Generalized from the reference portfolio: state via the package's
-// `usePreference` hook (no store to install), package fonts only, no
+// State via the package's `usePreference` hook (no store to install),
+// package fonts only, no
 // framework dependency (no next/link).
 //
 // ⚠️ Imports use the published package name; `init --pkg <name>` rewrites
