@@ -160,16 +160,30 @@ the mechanical step is finding each color's nearest family and weight. But
 that nearest match is a **starting point, not the verdict**. When you
 guide a client, your job is to find it, surface what it will do across the
 15 themes, offer alternatives, and let the client choose — not to pick for
-them. Contrast holds whatever they choose, so this is a question of the
-**look** they want, never right vs. wrong. And you don't know their colors
-up front — you read them off the site — so keep every suggestion
-conditional on what you actually find.
+them. And you don't know their colors up front — you read them off the
+site — so keep every suggestion conditional on what you actually find.
 
-This holds for any color, but it matters most for the **background**,
-because the background's family becomes the whole neutral rail
-(`$gray-family`), and the dark themes are built by shifting that rail to
-its dark end, which keeps the family's hue. So the family behind the
-background **tints the entire dark mode**, far beyond that one surface.
+For the **neutral rail** (the background's `$gray-family`), contrast holds
+whatever they choose — the engine derives every text/surface pair from it
+— so that family is a **look** choice, never right vs. wrong. **That is
+not true for a color that will itself carry a contrast requirement** — a
+status color, text set in a brand color, or the trigger icon that recolors
+to a brand color on hover (UI placement). There the
+*weight* IS the contrast: the declared light value is used as-is (only the
+dark themes shift it), so a shade picked only for "closest to the brand
+hex" can land below 4.5:1. For those roles, **fold the ratio into the
+pick**: among the nearest family's weights, choose the nearest one that
+already **meets 4.5:1** — not the nearest outright, checked after. If the
+closest passing weight visibly departs from the brand color, that's a real
+trade-off (accept the shift, or adjust the background it sits on) —
+**surface it to your human**. Use the
+[contrast suite](#verifying-your-wiring) *while* choosing, not only after.
+
+The family choice matters most for the **background**, because the
+background's family becomes the whole neutral rail (`$gray-family`), and
+the dark themes are built by shifting that rail to its dark end, which
+keeps the family's hue. So the family behind the background **tints the
+entire dark mode**, far beyond that one surface.
 
 The trade-off to lay out for the client, from a plain-gray dark to a
 boldly colored one:
@@ -366,27 +380,30 @@ Wiring steps:
 
      Being in the flow (not `fixed`) is the whole point: at high zoom it
      reflows and pushes the page down instead of covering it.
-   - **Hover — surface this to your human** (don't silently keep the bare
-     default). The trigger ships with a neutral,
-     contrast-safe hover (a pure inversion of `--fg-base` ⇄ `--bg-base`,
-     correct on all 15 themes). It's safe as-is, but step out of
-     auto-implementation and **advise your human**: ideally the site
-     should define **one shared hover for links and buttons across the
-     whole site** — a general, out-of-component rule such as
-     `button:hover, a:hover { background: var(--link-hover); … }` — and let
-     this trigger share it, so the icon's hover matches the rest of the
-     page. State the condition and let THEM decide: it's more consistent
-     and can be _better_ for accessibility, **but only if that pair keeps
-     enough contrast** — a link-hover surface isn't the
-     mechanically-guaranteed `--fg-base`/`--bg-base` pair, so it must be
-     checked on the themes they ship (dark and anti-glare especially). If
-     they opt in, the reference portfolio shows the pattern: delete only
-     the trigger's own hover/focus background & icon-color swap (`&:hover,
-     &:focus-visible { background; color }` — keep the focus outline) so
-     the site-wide rule takes over, and keep the shipped
-     `…svg g { fill: var(--bg-base) }` line (the inline SVG's
-     `fill=currentColor` doesn't follow the hover by itself). High-contrast
-     keeps its own inversion regardless.
+   - **Hover / focus — surface this to your human** (don't silently keep
+     the bare default). At its interactive states the trigger has one
+     rule: **the icon and its background stay a contrast-safe pair**. What
+     *moves* to signal the state is a design choice — raise it with your
+     human. Three shapes:
+     - **invert both** (the shipped default): background and icon swap
+       (`--fg-base` ⇄ `--bg-base`) — safe on all 15 themes, no checks.
+     - **move the background**: let a site-wide `button:hover, a:hover`
+       fill the button with the interaction color (e.g. `--link-hover`);
+       the icon follows to stay readable. To do this, delete the trigger's
+       own hover/focus background & color (keep the focus outline) so the
+       global rule takes over.
+     - **move the icon**: keep the background, recolor the icon on hover
+       (e.g. a light header where the surface must not change). The icon
+       color is then a foreground on the button, so its **weight must pass
+       4.5:1** on that background — the
+       same rule as [§ Guiding the family choice](#3-guiding-the-family-choice-a-conversation-not-a-lookup).
+
+     Whichever shape, the icon is recolored **explicitly**: the inline
+     SVG's `fill=currentColor` doesn't follow the hover on its own, so the
+     shipped `…button:hover svg g { fill: … }` line drives it — set it to
+     whatever keeps the pair readable. High-contrast keeps its own
+     inversion. Verify the hover pair on the themes you ship (dark and
+     anti-glare especially).
    - Props:
      - `language` — `"fr" | "en"` (required). Labels are FR/EN today;
        for another language, edit the copied component (you own it).
