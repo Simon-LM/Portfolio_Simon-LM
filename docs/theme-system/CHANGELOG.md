@@ -13,6 +13,58 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-25 (dark shift: absolute adjustment signs + paired link roles — 0.5.0)
+
+Both items come from integrating the package on a site whose `link` and
+`link-hover` were two neighboring weights of one family. The dark shift
+itself is unchanged — it still moves each weight **away from its own end**
+of the rail (light darkens, dark lightens, `500` stays), which is what
+keeps the dark theme a shift rather than a pure negative. What changes is
+the public meaning of `adjustments`, and what happens when two roles
+overshoot the same end.
+
+### Changed
+
+- **BREAKING — `adjustments` signs are now absolute.** `+N` moves a role
+  **toward the dark end** (`950`) and `-N` **toward the light end** (`50`),
+  on both sides of the pivot. Previously the adjustment was added to
+  `steps`, so it inherited the base shift's direction and its meaning
+  silently inverted above the pivot: `+1` darkened a light weight but
+  _lightened_ a dark one. A config could not be read without knowing which
+  side of `500` each role's light value sat on.
+  **Migration:** flip the sign of any adjustment you set on a role whose
+  **light-theme weight is above `500`** (`600`…`950`). Adjustments on
+  weights below `500` are unaffected. Roles you never adjusted need no
+  change.
+- An adjustment on a role sitting exactly on the pivot (`500`) now moves
+  it, instead of being silently discarded — the base shift still leaves
+  `500` in place, but the knob applies on top of it.
+- The package's own dark config was migrated with the same rule
+  (`gray-950: 1` → `-1`), so **every generated theme is byte-identical**
+  to 0.4.2 for a consumer who has not set adjustments of their own.
+
+### Fixed
+
+- **`link` and `link-hover` could collapse into a single color in dark.**
+  Two neighboring weights of one family (e.g. `600`/`700`) both overshoot
+  the light end of the rail; clamped one by one, they landed on the same
+  weight, leaving a hover state indistinguishable from the link. The two
+  roles are now shifted **as a pair** — slid back onto the rail together,
+  preserving the gap the light theme declared — so no adjustment is needed
+  to keep them apart. Pairs whose roles come from different families are
+  left alone: the hue already separates them. This failure was invisible
+  to the contrast suite, since both values were readable and only the
+  difference between them was gone.
+
+### Docs
+
+- AGENTS: new "Dark `adjustments`: what the sign means" section — the
+  absolute sign convention, why the rail ends **saturate rather than
+  wrap** (wrapping would drop a foreground onto a dark weight over a dark
+  surface, unreadable and unsignaled), and the paired-link guarantee.
+
+---
+
 ## 2026-07-22 (trigger hover: explicit glyph recolor + pure high-contrast inversion — 0.4.2)
 
 Follow-up to 0.4.1 after testing the trigger on real headers. A

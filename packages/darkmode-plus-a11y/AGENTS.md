@@ -465,7 +465,8 @@ default table instead of replacing it:
 		// Your accent family collides under tritanopia? Add ONE remap
 		// entry; the default amber/sky entries are kept.
 		"tritanopia": ("family-remap": ("indigo": ("sky", 0))),
-		// Push dark-mode links one weight further:
+		// Nudge the dark-mode link one weight toward the dark end
+		// (-1 would move it toward the light end — see below):
 		"dark": ("adjustments": ("link": 1)),
 	)
 ) using ($name) { /* … */ }
@@ -477,7 +478,49 @@ only cover the default primitives' families. Whether YOUR families
 stay distinguishable under a given deficiency is a property of your
 palette's role pairs, not of a family in isolation: run the
 distinguishability suite (§ Verifying your wiring) and add a remap
-entry only if a pair fails there. Runtime side:
+entry only if a pair fails there.
+
+#### Dark `adjustments`: what the sign means
+
+The dark engine moves every weight **away from its own end** of the
+11-step rail: a light weight darkens, a dark weight lightens, and `500`
+— the pivot — stays put. Those two directions are what makes the theme
+flip (a foreground declared dark for a light surface has to come back
+light over a dark one), so they are structural, not a setting.
+
+`adjustments` is the per-role knob on top of that shift, and its sign is
+**absolute** — it does not follow the shift's direction:
+
+- `+N` → **toward the dark end** (`950`)
+- `-N` → **toward the light end** (`50`)
+
+This reads the same on both sides of the pivot, so a config can be
+understood without knowing which side a role's light value sits on.
+
+Two behaviors to know before reaching for it:
+
+- **The rail ends saturate; they do not wrap.** A role pushed past `50`
+  or `950` stops there. That is deliberate: it parks the color on the end
+  it was traveling toward, which is the readable one for that theme.
+  Wrapping would drop a foreground back onto a dark weight over a dark
+  surface — unreadable, and with nothing to signal it. So if an
+  adjustment appears to do nothing, the role is already parked on that
+  end: move it the other way, or change the light-theme weight it starts
+  from.
+- **`link` and `link-hover` are shifted as a pair.** Two neighboring
+  weights of one family can both overshoot the same end; clamped
+  separately they would collapse into one color, leaving a hover state
+  identical to the link. The pair is slid back onto the rail together
+  instead, so the gap the light theme declared survives. You should not
+  need an adjustment to keep a hover distinct from its link — and roles
+  from different families are left alone, since the hue already
+  separates them.
+
+A collapsed pair is worth understanding because **the contrast suite
+cannot catch it**: both values are perfectly readable, and only the
+difference between them is gone. Distinguishability is what covers it.
+
+Runtime side:
 
 ```tsx
 import { useTheme, THEMES, type ThemeOption } from "darkmode-plus-a11y/react";
