@@ -13,6 +13,12 @@ file into your project so it stays available next to the code you own.
 > ⚠️ Snippets use the published package name (`darkmode-plus-a11y`).
 > Installed it under a different name? `init --pkg <name>` rewrites the
 > copied files accordingly; align hand-copied snippets yourself.
+>
+> ⚠️ **The package is in beta (`0.x`)**: a breaking change can land in a
+> minor release until `1.0.0`. When you bump a minor for a project you
+> maintain, read the README's "Upgrading" section before assuming the
+> build result is unchanged — the 0.5.0 sign change, for one, alters
+> colors without failing the build.
 
 ## Why this package exists
 
@@ -817,8 +823,11 @@ precision.
 
 ## Updating
 
-- **Engine** (npm): strict semver. Adding a role/option = minor;
-  removing/renaming = major, always with a deprecation path (`@warn`)
-  first. A removed role fails your build **loudly** — never silently.
+- **Engine** (npm): strict semver **from `1.0.0`** — adding a
+  role/option = minor; removing/renaming = major, always with a
+  deprecation path (`@warn`) first. **The package is currently in `0.x`,
+  where a breaking change can land in a minor release**; check the
+  README's "Upgrading" section when you bump a minor. Either way, a
+  removed role fails your build **loudly** — never silently.
 - **Copied UI**: never auto-updates. `npx darkmode-plus-a11y init --diff`
   lists what changed in the reference; port what you want by hand.

@@ -8,6 +8,13 @@ palettes, anti-glare — all **generated from your light theme** at
 compile time, with WCAG contrast **enforced mechanically**, not
 promised.
 
+> **Status: beta (`0.x`).** The engine runs in production and every
+> guarantee it ships is mechanically verified — but the API is still
+> settling: **a breaking change can land in a minor release until
+> `1.0.0`**, always with migration steps in [Upgrading](#upgrading).
+> Strict semver locks in at `1.0.0`. Feedback before then is exactly what
+> this stage is for.
+
 ## Why this exists
 
 Assistive software of professional quality costs users hundreds to
@@ -31,19 +38,24 @@ license.
   checks (ΔE CIEDE2000 on simulated perception), and a semantic
   inspector (`npx darkmode-plus-a11y audit`) that catches tokens wired
   to the wrong role — the mistake your eyes can't see in 15 themes.
-- **React runtime.** `useTheme`, `usePrefersDarkMode`, a generic
-  `usePreference`, and an anti-FOUC inline script so the right theme
-  paints first.
+- **A Sass engine, not a React library.** The theme engine is pure
+  Sass and emits plain CSS custom properties, so it works in Vue,
+  Svelte, Astro, static HTML — anything that can load a stylesheet. The
+  React parts below are optional extras, not the product.
+- **React runtime** (optional). `useTheme`, `usePrefersDarkMode`, a
+  generic `usePreference`, and an anti-FOUC inline script so the right
+  theme paints first.
 - **Accessible typography modules** (opt-in). Bundled OFL fonts —
   OpenDyslexic, Andika, Atkinson Hyperlegible Next, Lexend Giga/Deca —
   with `@font-face` emission, font-selector classes with x-height
   compensation (`font-size-adjust`), a configurable dyslexia mode
   (BDA-aligned spacing), and a reduced-motion module.
-- **A ready-made accessibility menu**, copied into your project by
-  `init` (shadcn model): trigger button + card (theme switcher, font
-  selector, text-size control). You own the copy — restyle it, translate
-  it, rewire it. `init --diff` shows upstream changes when you want
-  them.
+- **A ready-made accessibility menu** (optional, React), copied into
+  your project by `init` (shadcn model): trigger button + card (theme
+  switcher, font selector, text-size control). You own the copy —
+  restyle it, translate it, rewire it. `init --diff` shows upstream
+  changes when you want them. On another framework, the SCSS still
+  applies and the markup is yours to write.
 
 ## Quick start
 
@@ -66,7 +78,7 @@ npx darkmode-plus-a11y init   # copies the UI into ./a11y + fonts into ./public/
    		),
    		"link": (
    			"sky",
-   			700,
+   			900,
    		),
    		// …your brand; see theme-setup.scss for the full default set
    	)
@@ -170,9 +182,11 @@ deep-merged over the defaults — see
 3. **Your tokens** — each defined **from a role**, emitted per theme as
    CSS custom properties.
 
-Roles follow strict semver: adding is a minor, removing or renaming is
-a major with a deprecation path — and a removed role fails your Sass
-build loudly, never silently in production.
+**From `1.0.0`**, roles follow strict semver: adding is a minor,
+removing or renaming is a major with a deprecation path. While the
+package is still in `0.x`, a role change can land in a minor release —
+either way, a removed role fails your Sass build loudly, never silently
+in production.
 
 ## Migrating an existing site
 
@@ -261,6 +275,11 @@ to keep a hover state distinct from its link, you can drop it.
 
 ## Good to know
 
+- **Browser support.** Themes are emitted as `oklch()` colors with no
+  sRGB fallback, so the floor is **Chrome 111+, Safari 15.4+, Firefox
+  113+** (Baseline 2023). Everything else the engine relies on — CSS
+  custom properties, `[data-theme]` attribute selectors — is far older.
+  Supporting pre-2023 browsers is not something this package does today.
 - **Prebuilt dist.** `react/` and `testing/` are consumed as compiled
   CommonJS with type declarations (`dist/`, built at pack time): no
   transpile step, no `transpilePackages`, no Node version requirement —
