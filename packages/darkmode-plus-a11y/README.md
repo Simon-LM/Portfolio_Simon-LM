@@ -86,6 +86,20 @@ _Dyslexia mode is a typography axis, not a color one: x-height
 compensation (`font-size-adjust`) keeps the switched typeface optically
 the same size, and the spacing follows BDA guidance._
 
+> **Best adopted at the start of a project.** The engine asks you to
+> express colors as **roles** rather than values — which is a natural way
+> to build, and an intrusive way to retrofit. On a new site you pick a
+> role as you write each rule, and the 15 themes come for free.
+>
+> On an existing site with hardcoded colors, the same result means a
+> **deliberate refactor**: the mapping takes judgement rather than
+> find-and-replace, it touches a lot of files at once, and a wrong role
+> choice stays invisible in your light theme while surfacing in only some
+> of the other fourteen. It is entirely doable — [Migrating an existing
+> site](#migrating-an-existing-site) is that methodology, and the audit
+> catches the mechanical part — but **plan it as a refactor, not as an
+> install**, and read that section before committing to it.
+
 ## Quick start
 
 ```bash
@@ -219,8 +233,16 @@ in production.
 
 ## Migrating an existing site
 
-Retrofitting a site that already has hardcoded colors? Two things trip
-people up most — both covered in full, with grep recipes, in
+**The recommended case is a new project**, where roles are simply how you
+write colors from the first rule onward. Retrofitting works, and this
+section plus the AGENTS guide exist to make it work — but it is the
+harder and riskier path, so go in knowing that: the effort is a refactor
+across your whole stylesheet, the mapping decisions below need judgement
+a tool cannot supply, and the cost of getting one wrong is a defect that
+your light theme will happily hide from you.
+
+Two things trip people up most — both covered in full, with grep recipes,
+in
 [AGENTS.md § Migrating an existing codebase](./AGENTS.md#migrating-an-existing-codebase):
 
 - **Map a color by its VALUE, not by what the element is.** The roles

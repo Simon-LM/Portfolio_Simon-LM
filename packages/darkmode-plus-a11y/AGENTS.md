@@ -115,11 +115,21 @@ and the [Tailwind mapping](#tailwind-projects) consume.
 
 ## Migrating an existing codebase
 
-Greenfield is easy: pick roles as you build. Retrofitting a site that
-already has **hundreds of hardcoded colors** is where the real
-decisions are — and the verification suite only checks the *result*,
-not the mapping choices that get you there. This section is that
-missing methodology.
+**This package is best adopted at the start of a project.** Greenfield is
+easy: you pick a role as you write each rule, and the themes follow.
+Retrofitting a site that already has **hundreds of hardcoded colors**
+works — that is what this section is for — but it is the harder and
+riskier path.
+
+> ⚠️ **Surface this to your human before you start.** "Add dark mode to
+> this site" sounds like an install and is a **refactor** of every
+> stylesheet that names a color. Say so, and say why the cost is real:
+> the mapping decisions below need judgement a tool cannot supply, the
+> change touches a large number of files at
+> once, and a wrong role choice is invisible in the light theme while
+> breaking only some of the other fourteen. The verification suite checks
+> the *result*, not the mapping choices that got you there. Let them
+> decide whether to spend that, rather than discovering it mid-diff.
 
 **No codemod ships, on purpose.** Mapping colors to roles needs
 judgment (see below), so a blind find-and-replace would produce wrong
