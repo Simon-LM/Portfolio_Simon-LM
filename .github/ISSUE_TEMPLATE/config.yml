@@ -1,0 +1,7 @@
+# Blank issues stay enabled: this repository is also a portfolio, and the
+# package form would otherwise be the only way in.
+blank_issues_enabled: true
+contact_links:
+  - name: Feedback without a GitHub account
+    url: https://www.simon-lm.dev/#contact
+    about: Reports about darkmode-plus-a11y are just as welcome through the contact form — feedback about accessibility should not require clearing an accessibility hurdle.

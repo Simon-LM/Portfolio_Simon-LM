@@ -1,0 +1,82 @@
+# Issue form for the npm package, which lives in this repository under
+# packages/darkmode-plus-a11y. This repo is primarily the author's
+# portfolio, so package reports carry a label of their own to stay
+# filterable. The required fields are the two that make a color report
+# reproducible at all: the version, and the palette it was built from.
+name: darkmode-plus-a11y — feedback or bug
+description: Feedback, bug report or question about the npm package (not about the portfolio site)
+labels: ["darkmode-plus-a11y"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time.
+
+        This package is in **beta (`0.x`)** — reports are what shape `1.0.0`,
+        and the role vocabulary in particular is still changeable until then.
+
+        Prefer not to use GitHub? The contact form at
+        [simon-lm.dev](https://www.simon-lm.dev/#contact) reaches the same place.
+
+  - type: dropdown
+    id: topic
+    attributes:
+      label: What is this about?
+      options:
+        - Role vocabulary (a role is missing, or named confusingly)
+        - A generated theme looks wrong on my palette
+        - Migrating an existing site to the roles
+        - A stack other than Next.js (Vite, Astro, SvelteKit, Rails…)
+        - I rely on one of these modes as a user, not as an implementer
+        - Bug, build failure, or the audit/contrast suite
+        - Documentation
+        - Something else
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      description: "`npm ls darkmode-plus-a11y`, or the version in your package.json."
+      placeholder: 0.5.1
+    validations:
+      required: true
+
+  - type: textarea
+    id: report
+    attributes:
+      label: What happened, or what you would change
+      description: For a bug, what you expected and what you got instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: palette
+    attributes:
+      label: Your palette declaration
+      description: |
+        **Only if colors are involved** — this is usually enough to reproduce a
+        theme problem on my side. Copy the `with (…)` block you pass to
+        `darkmode-plus-a11y/scss/state`.
+      render: scss
+      placeholder: |
+        $gray-family: "stone",
+        $primitives: (
+          "accent": ("amber", 300),
+          "link": ("sky", 900),
+        )
+
+  - type: input
+    id: stack
+    attributes:
+      label: Stack and build tool
+      placeholder: Next.js 15, Vite 6, Astro 5, plain Sass CLI…
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I read the README's "Upgrading" section (a minor release can change behavior while the package is in `0.x`).
+        - label: This is about the npm package, not about the portfolio site in this repository.
