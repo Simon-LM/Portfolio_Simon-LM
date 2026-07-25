@@ -8,12 +8,23 @@ palettes, anti-glare — all **generated from your light theme** at
 compile time, with WCAG contrast **enforced mechanically**, not
 promised.
 
-> **Status: beta (`0.x`).** The engine runs in production and every
-> guarantee it ships is mechanically verified — but the API is still
-> settling: **a breaking change can land in a minor release until
-> `1.0.0`**, always with migration steps in [Upgrading](#upgrading).
-> Strict semver locks in at `1.0.0`. Feedback before then is exactly what
-> this stage is for.
+> ## ⚠️ Beta — the entire `0.x` line
+>
+> **Every `0.x` release is a beta release.** The engine runs in
+> production and every guarantee it ships is mechanically verified, but
+> the API is still settling — so **a breaking change can land in a minor
+> release**, and one already has (`0.4` → `0.5` changed the sign of a
+> config option). Migration steps are always in
+> [Upgrading](#upgrading), so read it before you bump a minor.
+>
+> **`1.0.0` is where the beta ends** and strict semver takes over. Until
+> then, pin the version you tested if that matters to you — and send
+> feedback: shaping the API before it locks is exactly what this stage
+> is for.
+
+**See it live:** [www.simon-lm.dev](https://www.simon-lm.dev) — the
+portfolio of this package's author, running the engine in production.
+Click the accessibility button in the header to switch themes.
 
 ## Why this exists
 

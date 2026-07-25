@@ -14,11 +14,12 @@ file into your project so it stays available next to the code you own.
 > Installed it under a different name? `init --pkg <name>` rewrites the
 > copied files accordingly; align hand-copied snippets yourself.
 >
-> ⚠️ **The package is in beta (`0.x`)**: a breaking change can land in a
-> minor release until `1.0.0`. When you bump a minor for a project you
-> maintain, read the README's "Upgrading" section before assuming the
-> build result is unchanged — the 0.5.0 sign change, for one, alters
-> colors without failing the build.
+> ⚠️ **Every `0.x` release is a beta release** — the whole line, not just
+> early ones. A breaking change can land in a **minor** release until
+> `1.0.0`, where strict semver takes over. So when you bump a minor on a
+> project you maintain, read the README's "Upgrading" section instead of
+> assuming the build result is unchanged: the 0.5.0 adjustment-sign
+> change, for one, alters colors **without failing the build**.
 
 ## Why this package exists
 
