@@ -104,9 +104,19 @@ the same size, and the spacing follows BDA guidance._
 
 ```bash
 npm install darkmode-plus-a11y
-npm install -D sass
+npm install -D sass            # yes, even though the package depends on sass — see below
 npx darkmode-plus-a11y init   # copies the UI into ./a11y + fonts into ./public/fonts
 ```
+
+That second line is not redundant. This package does depend on `sass`,
+but that copy belongs to **its** tools — the `audit` CLI and the contrast
+suite, which compile your stylesheet to inspect it. Compiling your own
+stylesheets is **your** build's job, so your project needs its own
+declared compiler (or a bundler with SCSS support). With npm's flat
+`node_modules` the package's copy happens to be reachable and skipping
+the line appears to work; with **pnpm it is not**, and the build fails.
+Depending on it either way would mean depending on another package's
+private choice.
 
 1. Declare your brand palette in `a11y/scss/theme-setup.scss` — as
    Tailwind `("family", weight)` pairs (all 26 families are available):

@@ -83,6 +83,12 @@ by `init` (shadcn model) — you own it, it never auto-updates, and
 - A Sass compiler for the theme build (`sass` as a devDependency, or
   any bundler with SCSS support). It compiles separately from the rest
   of your pipeline and does not constrain it.
+  **Declare it in the consuming project even though this package lists
+  `sass` among its own dependencies** — that copy serves the `audit` CLI
+  and the contrast suite, not the consumer's build. Under npm's flat
+  `node_modules` the transitive copy is reachable, so omitting it seems
+  to work; under pnpm it is not reachable and the build fails. Do not
+  "optimize" this line away.
 
 ## THE GOLDEN RULE (layer 3)
 
