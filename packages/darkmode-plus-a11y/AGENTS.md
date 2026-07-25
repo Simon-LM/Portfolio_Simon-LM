@@ -20,6 +20,12 @@ file into your project so it stays available next to the code you own.
 > project you maintain, read the README's "Upgrading" section instead of
 > assuming the build result is unchanged: the 0.5.0 adjustment-sign
 > change, for one, alters colors **without failing the build**.
+>
+> Beta also means the API can still move for a good reason. If you hit a
+> missing role, a theme that comes out wrong on this palette, or a step
+> here that does not survive the codebase you are working in — **surface
+> it to your human** and point them at the README's "Feedback wanted"
+> section. A report now is worth more than a workaround.
 
 ## Why this package exists
 

@@ -18,9 +18,9 @@ promised.
 > [Upgrading](#upgrading), so read it before you bump a minor.
 >
 > **`1.0.0` is where the beta ends** and strict semver takes over. Until
-> then, pin the version you tested if that matters to you — and send
-> feedback: shaping the API before it locks is exactly what this stage
-> is for.
+> then, pin the version you tested if that matters to you — and please
+> [send feedback](#feedback-wanted-before-100): shaping the API before it
+> locks is exactly what this stage is for.
 
 **See it live:** [www.simon-lm.dev](https://www.simon-lm.dev) — the
 portfolio of this package's author, running the engine in production.
@@ -279,6 +279,44 @@ Today this package covers **colors (the theme system) and text fonts**
 long-term direction is broader — coding recommendations for layouts
 that survive extreme magnification, far beyond WCAG's 400 % reflow —
 but that is future work, not a shipped feature.
+
+## Feedback wanted before 1.0.0
+
+The point of a beta is to change things while changing them is still
+cheap. **Right now a concrete report is worth more than a star** — and
+these are the five things I would most like to be told I got wrong:
+
+- **The role vocabulary.** `$bg-base`, `$bg-container`, `$accent-ink`,
+  `$fg-on-emphasis`… does that set map cleanly onto a design system you
+  already have? What did you have to bend, and what was simply missing?
+  This is the part that **locks at `1.0.0`**, so pushing back on it now
+  is the single most useful thing you can do.
+- **Themes built on a palette unlike mine.** The engine derives every
+  theme from _your_ colors, and it has been exercised on a handful of
+  palettes, not hundreds. If a color-vision or anti-glare theme comes out
+  unreadable or plain ugly on your brand, that is a bug — send the
+  primitives you declared with it.
+- **Retrofitting an existing site.** [Migrating an existing
+  site](#migrating-an-existing-site) is a methodology, not a tool. Where
+  did it fail to survive contact with a real codebase?
+- **Stacks other than Next.js.** The engine is plain Sass and should not
+  care, but Next is where it gets the most mileage. Vite, Astro,
+  SvelteKit, Rails — reports welcome, especially about the anti-FOUC
+  step.
+- **Judgement from people who actually rely on these modes.** If high
+  contrast, a color-vision palette or a dyslexia-friendly typeface is
+  something you _use_ rather than something you implement, your read on
+  the shipped defaults beats any ratio I can compute.
+
+**Where to send it:**
+
+- **[GitHub issues](https://github.com/Simon-LM/Portfolio_Simon-LM/issues)**
+  — preferred, because it is public and searchable: the next person finds
+  the answer instead of the problem.
+- **[The contact form on my site](https://www.simon-lm.dev/#contact)** —
+  if you would rather not open a GitHub account. Feedback about
+  accessibility should not itself require clearing an accessibility
+  hurdle.
 
 ## Upgrading
 
