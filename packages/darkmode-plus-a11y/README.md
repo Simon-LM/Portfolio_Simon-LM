@@ -237,6 +237,28 @@ long-term direction is broader — coding recommendations for layouts
 that survive extreme magnification, far beyond WCAG's 400 % reflow —
 but that is future work, not a shipped feature.
 
+## Upgrading
+
+**0.4.x → 0.5.0 — `adjustments` signs changed (dark themes).** The
+per-role `adjustments` knob now reads the same on both sides of the
+palette's midpoint: **`+N` moves a role toward the dark end (`950`), `-N`
+toward the light end (`50`)**. Previously the adjustment was added to the
+shift's step count, so it inherited that shift's direction and its meaning
+inverted above the midpoint — `+1` darkened a light weight but _lightened_
+a dark one.
+
+What to do: **flip the sign of any adjustment you set on a role whose
+light-theme weight is above `500`** (`600`…`950`). Adjustments on weights
+below `500` are unaffected, and roles you never adjusted need no change.
+Nothing fails loudly here — the build still compiles and the colors simply
+move the other way — so re-check your dark themes after upgrading, or run
+the contrast suite.
+
+Same release, no action needed: `link` and `link-hover` are now shifted
+**as a pair**, so two neighboring weights of one family can no longer
+collapse onto the same dark value. If you had added an adjustment purely
+to keep a hover state distinct from its link, you can drop it.
+
 ## Good to know
 
 - **Prebuilt dist.** `react/` and `testing/` are consumed as compiled
