@@ -26,6 +26,15 @@ promised.
 portfolio of this package's author, running the engine in production.
 Click the accessibility button in the header to switch themes.
 
+![The same page rendered in six of the generated themes: light, dark,
+anti-glare, tritanopia, high-contrast yellow-on-black and high-contrast
+green-on-black. Each screenshot has the accessibility menu open over the
+page.](https://raw.githubusercontent.com/Simon-LM/Portfolio_Simon-LM/main/docs/theme-system/media/themes-grid.png)
+
+_One page, six of the fifteen generated themes — every one derived from
+a single light-theme declaration. The panel is the accessibility menu
+`init` scaffolds into your project._
+
 ## Why this exists
 
 Assistive software of professional quality costs users hundreds to
@@ -67,6 +76,15 @@ license.
   restyle it, translate it, rewire it. `init --diff` shows upstream
   changes when you want them. On another framework, the SCSS still
   applies and the markup is yours to write.
+
+![The same section of a page with standard typography on the left and
+dyslexia mode on the right: the right-hand text uses a wider, taller
+typeface with looser letter and word spacing, and reflows onto more
+lines.](https://raw.githubusercontent.com/Simon-LM/Portfolio_Simon-LM/main/docs/theme-system/media/dyslexia-mode.png)
+
+_Dyslexia mode is a typography axis, not a color one: x-height
+compensation (`font-size-adjust`) keeps the switched typeface optically
+the same size, and the spacing follows BDA guidance._
 
 ## Quick start
 
