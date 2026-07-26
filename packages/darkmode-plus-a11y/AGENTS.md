@@ -509,6 +509,52 @@ palette's role pairs, not of a family in isolation: run the
 distinguishability suite (§ Verifying your wiring) and add a remap
 entry only if a pair fails there.
 
+⚠️ **`family-remap` cannot fix `$success` or `$danger` on the red-green
+themes.** Those roles are resolved by a different, higher-priority
+mechanism, and the remap is never consulted for them:
+
+```text
+special-colors  >  status-anchors  >  family-remap / remap-for-cvd
+```
+
+Add a `family-remap` entry for a status role there and it will be
+silently ignored. The levers that do work are `special-colors` (pin an
+exact color) and `status-anchors` (change the family the role is pulled
+toward). See below for which one to reach for.
+
+#### Status roles on the red-green themes
+
+Under protanopia and deuteranopia the hue wheel collapses to roughly
+**two poles: blue and yellow/orange.** Three roles usually want to be
+told apart — `$link`, `$success`, `$danger` — and there are two poles.
+The engine puts `$danger` on orange and anchors `$success` to violet,
+which reads as blue there. `$link` is normally blue too, so **`$success`
+and `$link` end up in the same pole**, and the only thing left to
+separate them is **lightness**.
+
+That matters because both are usually chosen the same way — the lightest
+weight that still clears 4.5:1 — so they tend to land at the *same*
+lightness and become one color. The engine reports the suspicion:
+
+```text
+success: under protanopia this status color may be indistinguishable
+from --link (they differ by 1.1:1 …)
+```
+
+It is a **warning, never a correction** — the engine does not move your
+colors over it. Sass cannot compute the ΔE that would settle the
+question (CIEDE2000 needs `atan2`), so this is a lightness-and-hue
+heuristic pointing you at the suite, which does simulate perception
+properly. Silence it with `$status-link-separation-warn: 0` if you have
+already checked.
+
+If the suite confirms the collision, **darken the status role** — via
+`special-colors` for that theme, or by anchoring it to a family whose
+usable weights sit further from your link. **Changing the hue alone does
+not help**: every hue lands in one of the two poles. And if your `$link`
+is itself violet or purple, no weight of the violet anchor will be far
+enough — pick a different anchor family for those themes.
+
 #### Dark `adjustments`: what the sign means
 
 The dark engine moves every weight **away from its own end** of the
@@ -833,6 +879,49 @@ variables (best effort — `--focus-ring` may be wired to the link
 color); pass `slotsFor` with the exact values of your HC color map for
 precision.
 
+### Reading a distinguishability failure (do NOT treat it as a defect)
+
+**A contrast failure and a distinguishability failure are not the same
+kind of result, and must not be reported the same way.**
+
+- **Contrast** is context-free. Text that does not reach its ratio is
+  unreadable on its background, full stop. A failure is a real defect.
+- **Distinguishability** is context-dependent. It only matters if the
+  two roles can actually **meet on screen** in a way that forces the
+  user to tell them apart. Two colors that never co-occur cannot mislead
+  anyone — WCAG 1.4.1 is about information carried by color, and where
+  there is no shared context there is no information at stake.
+
+So a failing pair is a **candidate risk to triage**, not a bug to
+announce. Ask one question:
+
+> Can these two roles appear in the same view — adjacent, or in a shared
+> legend or list — such that the user must distinguish them to
+> understand something?
+
+- **No** → not a defect. Record a waiver via `withWaivers`, with the
+  reason written out in full, and move on. A green `$accent` used only
+  on buttons and a green `$success` used only in messages is the
+  textbook case: the suite flags the pair, the interface never shows it.
+- **Yes** → fix it: take the role from a **different family**, and/or
+  **darken it**. On the red-green themes darkening is usually what
+  works, for the reason given in
+  [Status roles on the red-green themes](#status-roles-on-the-red-green-themes).
+
+⚠️ **Agents: do not present a failing distinguishability pair as
+something broken.** Run the triage first. If the roles never meet,
+say so plainly — "flagged, not a problem here, worth revisiting if the
+UI changes" — instead of handing your human an alarm about a site that
+is fine. Reporting a non-issue as a defect costs them real time and
+teaches them to distrust the suite.
+
+One thing to carry into the waiver's wording: it is a judgement about
+**today's** interface. The day a success state appears *on* an accent
+button, the pair becomes real and the waiver quietly becomes wrong — so
+write the reason ("accent buttons and success messages never share a
+view"), not just "false positive", so it can be re-read when the UI
+changes.
+
 ### Failure modes (what each error means)
 
 | Symptom | Meaning | Fix |
@@ -841,6 +930,8 @@ precision.
 | `extract-themes: theme "x" was not found` | Your `themes` list and your generated themes disagree | Align the list passed to `configureThemeExtraction` with `generate-all-themes` |
 | `getVar: custom property "--x" is not defined` | A pair references a token you never emit | Fix the pair id/name, or emit the token |
 | Ratio below threshold | Real contrast defect in that theme | Rewire the token to a stronger role; only if justified, document a waiver via `withWaivers` |
+| ΔE below threshold (distinguishability) | **Not automatically a defect** — depends on whether the two roles ever meet on screen | [Triage it first](#reading-a-distinguishability-failure-do-not-treat-it-as-a-defect); then waive with a written reason, or darken / change family |
+| Sass warns "may be indistinguishable from --link" | Heuristic heads-up on a red-green theme, raised before any measurement | Confirm with the distinguishability suite; see [Status roles on the red-green themes](#status-roles-on-the-red-green-themes) |
 | A color survives high-contrast unchanged | Raw value in layer 3 (golden rule violation) | Derive the token from a role |
 | `audit` warns "named X but emits Y" | The token's name contradicts its emitted color — usually wired to the wrong role | Fix the wiring; if the contradiction is deliberate (inverted block), add a justified waiver |
 

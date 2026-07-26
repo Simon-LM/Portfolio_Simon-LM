@@ -90,6 +90,27 @@
 // on a comparable order of magnitude to L. Handles near-zero-chroma colors
 // gracefully (a, b → 0 as C → 0, regardless of hue — including `hue: none`,
 // e.g. `oklch(98.5% 0 none)`, coerced to 0deg).
+// Shortest angular distance between two hues, in degrees (0…180, unitless).
+// Follows oklch-distance's convention for achromatic colors, whose hue
+// channel can come back as `none`. Used to tell apart "these two roles sit
+// in the same region of the wheel" from "they are on opposite sides", which
+// is what decides whether a red-green deficiency can still separate them.
+@function hue-distance($c1, $c2) {
+	$h1: color.channel($c1, "hue", $space: oklch);
+	$h2: color.channel($c2, "hue", $space: oklch);
+	@if meta.type-of($h1) != "number" {
+		$h1: 0deg;
+	}
+	@if meta.type-of($h2) != "number" {
+		$h2: 0deg;
+	}
+	$d: math.abs(math.div($h1 - $h2, 1deg)) % 360;
+	@if $d > 180 {
+		$d: 360 - $d;
+	}
+	@return $d;
+}
+
 @function oklch-distance($c1, $c2) {
 	$l1: math.div(color.channel($c1, "lightness", $space: oklch), 1%);
 	$c1c: color.channel($c1, "chroma", $space: oklch);
@@ -361,6 +382,19 @@ $off-palette-same-color-threshold: 3.75;
 // the returned color.
 $status-legibility-floor: 3 !default;
 
+// Ratio below which an anchored status color is reported as possibly
+// indistinguishable from $link. Warning only — never changes a color. Set
+// to 0 to silence. See resolve-status-color for the calibration and for
+// why this is a prompt to verify rather than a verdict.
+$status-link-separation-warn: 1.6 !default;
+
+// Hue window (degrees) for that same warning: beyond it, the two roles sit
+// far enough apart on the wheel that a red-green deficiency still separates
+// them, and the lightness test above would be a false alarm. Measured on the
+// same sweep: real collisions stayed within 50°, while the families that
+// survive on hue alone (cyan, teal against a violet anchor) sat past 60°.
+$status-link-hue-window: 60 !default;
+
 // Picks, within the target family, the first step (Tailwind weight) that
 // reaches $target-ratio against $bg. Light background: walk from lightest
 // (50) to darkest (950) — so the most vivid hue that still clears the
@@ -432,7 +466,50 @@ $status-legibility-floor: 3 !default;
 		map.has-key($status-anchors, $var-name) and
 		not ($special-colors and map.has-key($special-colors, $var-name))
 	{
-		@return resolve-anchor-weight(map.get($status-anchors, $var-name), $bg);
+		$resolved: resolve-anchor-weight(
+			map.get($status-anchors, $var-name),
+			$bg
+		);
+
+		// Early warning for the one collision this language cannot measure.
+		// Red-green deficiency collapses hue onto a blue-vs-yellow axis, so a
+		// status role anchored into the blue pole (violet) can land on top of
+		// $link, which usually lives there too. What still separates them is
+		// LIGHTNESS — and a contrast ratio IS a lightness measure, so the
+		// ratio between the two roles proxies a ΔE we cannot compute here
+		// (CIEDE2000 needs atan2; see oklch-distance's note).
+		//
+		// Deliberately a warning and never a change of color, because the
+		// proxy is imperfect in BOTH directions: hue can save a pair the
+		// ratio condemns (cyan and teal stay clearly distinct from violet at
+		// ratio ~1.1), so acting on it would move colors that were fine. The
+		// distinguishability suite, which simulates perception properly, is
+		// the authority; this only tells you to go look.
+		//
+		// Two conditions, because lightness alone over-reports. Same sweep of
+		// every blue-ish family and weight against the violet anchor:
+		//   - ratio: collisions topped out at 1.56 while the package's own
+		//     default link (sky-900) sits at 1.61, so 1.6 caught every
+		//     observed failure without firing on the default palette. The
+		//     margin is thin because the ranges genuinely overlap.
+		//   - hue: collisions all stayed within 50°, while the roles that
+		//     survive on hue alone (cyan, teal) sat past 60°. Without this
+		//     second condition the `danger` anchor (orange, 121° away from a
+		//     blue link and ΔE 65 apart) would be reported on every palette.
+		// Together: 12 real collisions caught, 1 false alarm, and silence on
+		// the default configuration.
+		@if $status-link-separation-warn >
+			0 and
+			$link and
+			wcag-contrast-ratio($resolved, $link) <
+			$status-link-separation-warn and
+			hue-distance($resolved, $link) <
+			$status-link-hue-window
+		{
+			@warn "#{$var-name}: under #{$cvd-type} this status color may be indistinguishable from --link (they differ by #{math.div(math.round(wcag-contrast-ratio($resolved, $link) * 100), 100)}:1, and red-green deficiency removes the hue difference that separates them elsewhere). This is a heads-up, not a verdict: confirm with the distinguishability suite. If it does fail there, darken this role through `special-colors` — a darker weight separates them, changing the hue does not, since every hue collapses onto the same axis here.";
+		}
+
+		@return $resolved;
 	}
 
 	// No anchor configured for this role: plain remap-for-cvd behavior.

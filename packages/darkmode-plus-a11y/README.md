@@ -58,6 +58,12 @@ license.
   checks (ΔE CIEDE2000 on simulated perception), and a semantic
   inspector (`npx darkmode-plus-a11y audit`) that catches tokens wired
   to the wrong role — the mistake your eyes can't see in 15 themes.
+  Note that the two suites answer different kinds of question: a
+  **contrast** failure is always a real defect, while a
+  **distinguishability** failure only matters if the two roles can meet
+  on screen — two colors that never co-occur cannot mislead anyone. Triage
+  those before treating them as bugs; AGENTS.md
+  [explains how](./AGENTS.md#reading-a-distinguishability-failure-do-not-treat-it-as-a-defect).
 - **A Sass engine, not a React library.** The theme engine is pure
   Sass and emits plain CSS custom properties, so it works in Vue,
   Svelte, Astro, static HTML — anything that can load a stylesheet. The
