@@ -38,12 +38,26 @@ Update as you go (check off / remove once done).
       and the hard case where `link` is _itself_ violet. Each needs its own
       calibration and validation pass.
 
-      **Sequencing:** calibrate on real palettes, not plausible ones. The
-      sweep used families chosen by hand; the beta should reveal which
-      link colors people actually pick. Doing this in `0.x` is cheap — a
-      breaking change may land in a minor there (see README "Upgrading") —
-      whereas the same change after `1.0.0` needs a deprecation path for
-      an emitted color. Note it adds and removes no role, so it is not an
+      **When — `0.7.0`, in two steps.** The risk is not building the
+      mechanism, it is making it the _default_: that is what moves colors
+      for people who did not ask. So the two are separated.
+
+      1. **The mechanism, off by default** (`$status-link-auto-separate:
+         false`) — ships in **`0.7.0`**. Costs nothing, changes no output,
+         and makes the idea testable on real palettes instead of the 25
+         hand-picked ones the sweep used. **Trigger: the third site**, the
+         next time a genuinely different palette is available to watch it
+         run against.
+      2. **Flipping the default to `true`** — the **last minor before
+         `1.0.0`**. This is the only irreversible call, and it must land
+         **before** `1.0.0`, not after: a breaking change may land in a
+         minor while in `0.x` (see README "Upgrading"), whereas changing
+         an emitted color afterwards needs a deprecation path.
+
+      **Hard stop:** this does not cross `1.0.0` undecided. Either the
+      default flips, or it is documented as permanently opt-in — but the
+      call is made before the line, not after. Note it adds and removes no
+      role, so it is not an
       API break either way.
 
 ## To do BEFORE publication (E7)
