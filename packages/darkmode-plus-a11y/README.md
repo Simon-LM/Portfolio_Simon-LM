@@ -358,6 +358,15 @@ these are the five things I would most like to be told I got wrong:
 
 ## Upgrading
 
+**0.5.x → 0.6.0 — a new warning, no action required.** Nothing changes in
+your output. On the four red-green themes the engine now reports a status
+color that may be indistinguishable from your `link`, because those two
+roles tend to land in the same place there. It is a heads-up to verify with
+the distinguishability suite, not a defect and not a correction — your
+colors are untouched. If you have already checked, silence it with
+`$status-link-separation-warn: 0`. The reasoning is in
+[AGENTS.md](./AGENTS.md#status-roles-on-the-red-green-themes).
+
 **0.4.x → 0.5.0 — `adjustments` signs changed (dark themes).** The
 per-role `adjustments` knob now reads the same on both sides of the
 palette's midpoint: **`+N` moves a role toward the dark end (`950`), `-N`

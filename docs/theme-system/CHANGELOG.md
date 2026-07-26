@@ -13,6 +13,66 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-26 (red-green CVD: report a status color colliding with link — 0.6.0)
+
+Reported from an integration whose `link` was `indigo-600`: `success` became
+the same color under protanopia and deuteranopia (ΔE 0.7 against a threshold
+of 12). Reproduced with the package's own simulation.
+
+The cause is structural. Red-green deficiency collapses hue onto two poles,
+blue and orange. The engine puts `danger` on orange and anchors `success` to
+violet, which reads as blue — where `link` normally lives. Only lightness can
+still separate them, and both are picked the same way (the lightest weight
+clearing 4.5:1), so they converge there by construction. A sweep of every
+blue-ish family and weight found **12 of 25 plausible link choices
+colliding**; the default palette escapes only because `sky-900` is dark
+enough. The engine's own comment carried the assumption — "sky is already
+taken by `--link`" — true of the default, not of consumers.
+
+### Added
+
+- **A compile-time warning when an anchored status color may be
+  indistinguishable from `link`** on the four red-green themes. It reports;
+  it never changes a color. Sass cannot compute the ΔE that would settle the
+  question (CIEDE2000 needs `atan2`), so this is a heuristic, and acting on a
+  heuristic would move colors that were fine — measured, applying it as a
+  correction fixed 10 of 12 but darkened 5 palettes needlessly and still
+  missed 2.
+  Two conditions, both calibrated on that sweep: lightness ratio under
+  **1.6** (collisions topped out at 1.56 while the default link sits at 1.61,
+  so the package stays silent on its own defaults) and hue within **60°**
+  (collisions stayed within 50°, while cyan and teal survive on hue alone
+  past 60°). Without the hue condition the orange `danger` anchor — 121° away
+  and ΔE 65 apart — would be reported on every palette. Net: 12 real
+  collisions caught, 1 false alarm, silence on the default configuration.
+  Tunable via `$status-link-separation-warn` (set to `0` to silence) and
+  `$status-link-hue-window`.
+- `hue-distance()`, the shortest angular distance between two hues, following
+  `oklch-distance`'s convention for achromatic colors.
+
+### Docs
+
+- **AGENTS: `family-remap` cannot fix `$success` or `$danger` on the
+  red-green themes.** The precedence is `special-colors` > `status-anchors` >
+  `family-remap`, so a remap entry for a status role is silently ignored —
+  meaning the existing advice ("add a remap entry if a pair fails") could not
+  have worked for the exact roles most likely to fail. The precedence table
+  and the levers that do work are now stated.
+- **AGENTS: the two-pole constraint**, and that the remedy is *lightness*
+  (darken the role), not hue — every hue lands in one of the two poles. Plus
+  the hard case: if `link` is itself violet, no weight of the violet anchor
+  is far enough and the anchor family has to change.
+- **AGENTS: a distinguishability failure is not a contrast failure.**
+  Contrast is context-free and always a real defect; distinguishability only
+  matters if the two roles can meet on screen, since colors that never
+  co-occur cannot mislead anyone. Adds the triage question, tells agents not
+  to present a flagged pair as broken before answering it, and asks for the
+  reason to be written into the waiver — a waiver is a judgement about
+  today's interface, and goes quietly wrong when the UI changes.
+- README: the same contrast-vs-distinguishability distinction, in short.
+
+---
+
 ## 2026-07-25 (dark shift: absolute adjustment signs + paired link roles — 0.5.0)
 
 Both items come from integrating the package on a site whose `link` and
