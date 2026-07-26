@@ -486,6 +486,17 @@ $status-link-hue-window: 60 !default;
 		// distinguishability suite, which simulates perception properly, is
 		// the authority; this only tells you to go look.
 		//
+		// Only at full severity. The premise here is that hue COLLAPSES onto
+		// two poles, which is dichromacy (severity 1). Anomalous trichromacy
+		// (severity 0.5) compresses hue without collapsing it, so neighbours
+		// stay apart: measured on the anomaly themes, a cyan link against the
+		// emerald anchor sits at ΔE 29 while the conditions below would still
+		// fire. Reporting there is a false alarm.
+		$severity: 1;
+		@if map.has-key($config, "severity") {
+			$severity: map.get($config, "severity");
+		}
+
 		// Two conditions, because lightness alone over-reports. Same sweep of
 		// every blue-ish family and weight against the violet anchor:
 		//   - ratio: collisions topped out at 1.56 while the package's own
@@ -498,7 +509,9 @@ $status-link-hue-window: 60 !default;
 		//     blue link and ΔE 65 apart) would be reported on every palette.
 		// Together: 12 real collisions caught, 1 false alarm, and silence on
 		// the default configuration.
-		@if $status-link-separation-warn >
+		@if $severity ==
+			1 and
+			$status-link-separation-warn >
 			0 and
 			$link and
 			wcag-contrast-ratio($resolved, $link) <

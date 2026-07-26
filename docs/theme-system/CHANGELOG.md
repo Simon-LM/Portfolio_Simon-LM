@@ -13,6 +13,28 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-26 (fix: the 0.6.0 warning fired on the anomaly themes — 0.6.1)
+
+### Fixed
+
+- **The status/link warning added in 0.6.0 raised false alarms on
+  `protanomaly` and `deuteranomaly`.** It is now limited to full severity.
+  Its premise is that hue *collapses* onto two poles — true of dichromacy,
+  false of anomalous trichromacy, which compresses hue without collapsing
+  it. On the anomaly themes `$success` is anchored to emerald rather than
+  violet, so a cyan or teal link sits as close in lightness as a real
+  collision (1.03:1) while measuring ΔE 29, comfortably distinct. Those
+  palettes were being told to check a problem they did not have.
+- Caught by the post-publication cycle on a real consumer install, not by
+  the test suite: every probe generated only the two `-opia` themes, so no
+  test ever compiled an anomaly theme with a link near the emerald anchor.
+  The suite now covers the anomaly themes explicitly, and asserts silence
+  across **all** generated themes for the default palette — the shape of
+  check a per-theme probe cannot make, since a consumer compiles the whole
+  set at once and a false alarm anywhere in it reaches them.
+
+---
+
 ## 2026-07-26 (red-green CVD: report a status color colliding with link — 0.6.0)
 
 Reported from an integration whose `link` was `indigo-600`: `success` became

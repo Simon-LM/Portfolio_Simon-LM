@@ -168,6 +168,35 @@ describe("status vs link separation warning", () => {
 		);
 	});
 
+	it("does not fire on the anomaly themes, where hue is compressed not collapsed", () => {
+		// The heuristic assumes hue collapses onto two poles — true of
+		// dichromacy, false of anomalous trichromacy. A cyan link against the
+		// anomaly themes' emerald anchor is as close in lightness as the
+		// failing cases (1.03:1) yet measures ΔE 29: reporting it would be a
+		// false alarm. Regression guard for a probe that only generated the
+		// -opia themes and therefore missed this entirely.
+		expect(
+			separationWarnings(
+				compileThemeProbe(`("cyan", 700)`, `"protanomaly","deuteranomaly"`)
+					.warnings,
+			),
+		).toHaveLength(0);
+	});
+
+	it("stays silent across every generated theme for the default palette", () => {
+		// The check that catches what a per-theme probe cannot: a consumer
+		// compiles ALL their themes at once, so a false alarm anywhere in the
+		// set reaches them.
+		expect(
+			separationWarnings(
+				compileThemeProbe(
+					`("sky", 900)`,
+					`"light","dark","protanopia","deuteranopia","protanomaly","deuteranomaly","tritanopia","tritanomaly"`,
+				).warnings,
+			),
+		).toHaveLength(0);
+	});
+
 	it("does not fire on themes without status anchors", () => {
 		// Tritanopia keeps red/green: no anchor, so nothing to report.
 		expect(
