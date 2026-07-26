@@ -16,6 +16,36 @@ Update as you go (check off / remove once done).
       invisible" `@warn`. Doesn't gate anything today (latent path); value
       to confirm or adjust. Added in part 3 (2026-07-06).
 
+- [ ] **Link-aware status anchor** — deferred from 0.6.0 (2026-07-26), to
+      settle **before `1.0.0`**, not after. Today the engine only
+      [_warns_](./CHANGELOG.md) when an anchored status color may collide
+      with `--link` under red-green deficiency; it never moves a color.
+      Picking the anchor _knowing_ where `link` sits would fix the cause
+      instead of reporting it.
+
+      **Why it was not shipped:** the naive form — darken the anchor when
+      the mutual contrast ratio is low — was simulated against the same
+      sweep that calibrated the warning (25 plausible blue-ish link
+      choices, 12 colliding). It fixed **10 of 12**, darkened **5**
+      palettes that were already fine, and still left **2** broken. The
+      ratio alone does not discriminate: the failing cases top out at 1.56
+      while the passing ones start at 1.08, so the two ranges overlap.
+
+      **What a real design needs**, beyond that: a hue gate (the same
+      reason the warning carries `$status-link-hue-window` — cyan and teal
+      stay distinct on hue alone), a fallback to another green family when
+      lightness cannot separate the pair inside the anchor's own family,
+      and the hard case where `link` is _itself_ violet. Each needs its own
+      calibration and validation pass.
+
+      **Sequencing:** calibrate on real palettes, not plausible ones. The
+      sweep used families chosen by hand; the beta should reveal which
+      link colors people actually pick. Doing this in `0.x` is cheap — a
+      breaking change may land in a minor there (see README "Upgrading") —
+      whereas the same change after `1.0.0` needs a deprecation path for
+      an emitted color. Note it adds and removes no role, so it is not an
+      API break either way.
+
 ## To do BEFORE publication (E7)
 
 - [ ] **Process the pre-E7 review findings** — bugs, backlog, Tailwind
