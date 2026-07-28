@@ -5,6 +5,7 @@
 // configureThemeExtraction(). The verifier compiles this SCSS and reads
 // the custom properties of each [data-theme] block.
 
+import { existsSync } from "node:fs";
 import { compile } from "sass";
 import postcss from "postcss";
 
@@ -65,12 +66,33 @@ type Extracted = {
 	rootVars: ThemeVars;
 };
 
+// Both failures below are the consumer's most likely mistakes: a wrong
+// path, or a Sass error in their own stylesheet. Left unhandled, Dart
+// Sass throws and the runtime prints its compiled-Dart stack — dozens of
+// lines in which the one useful sentence is buried. Sass's own message
+// is well formatted (source excerpt, line, column); the point here is to
+// surface it instead of letting a stack trace bury it.
 function compileAndExtract(): Extracted {
 	const cfg = requireConfig();
-	const result = compile(cfg.entry, {
-		style: "expanded",
-		loadPaths: cfg.loadPaths ?? [],
-	});
+	if (!existsSync(cfg.entry)) {
+		throw new Error(
+			`extract-themes: entry SCSS not found: ${cfg.entry}\n` +
+				"Pass the path to the stylesheet that emits your [data-theme] blocks, " +
+				"relative to where you run the command.",
+		);
+	}
+	let result;
+	try {
+		result = compile(cfg.entry, {
+			style: "expanded",
+			loadPaths: cfg.loadPaths ?? [],
+		});
+	} catch (err) {
+		const message = err instanceof Error ? err.message : String(err);
+		throw new Error(
+			`extract-themes: Sass failed to compile ${cfg.entry}\n\n${message}`,
+		);
+	}
 	const root = postcss.parse(result.css);
 
 	const themeVars: ThemeVarsMap = new Map();

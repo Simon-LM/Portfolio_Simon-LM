@@ -115,4 +115,14 @@ function main(): void {
 	if (args.strict && active.length > 0) process.exit(1);
 }
 
-main();
+// A wrong --entry path or a Sass error in the consumer's stylesheet must
+// read like a CLI message, not like a crash: print the reason and exit 1,
+// the same way every other failure in this file does. Without this the
+// runtime prints an unhandled exception with Dart Sass's internal stack
+// and exits 2, which also breaks scripts that branch on the exit code.
+try {
+	main();
+} catch (err) {
+	console.error(`audit: ${err instanceof Error ? err.message : String(err)}`);
+	process.exit(1);
+}

@@ -884,13 +884,16 @@ precision.
 **A contrast failure and a distinguishability failure are not the same
 kind of result, and must not be reported the same way.**
 
-- **Contrast** is context-free. Text that does not reach its ratio is
-  unreadable on its background, full stop. A failure is a real defect.
-- **Distinguishability** is context-dependent. It only matters if the
-  two roles can actually **meet on screen** in a way that forces the
-  user to tell them apart. Two colors that never co-occur cannot mislead
-  anyone — WCAG 1.4.1 is about information carried by color, and where
-  there is no shared context there is no information at stake.
+- **Contrast** is about **superimposition**. Text that does not reach
+  its ratio on the background it is actually painted on is unreadable,
+  full stop — no judgement call there. What does need checking is
+  whether that pairing exists in the interface at all: the suite
+  measures **declared** role pairs, not rendered ones.
+- **Distinguishability** needs one question more. Even where the two
+  roles do appear together, it only matters if the user must tell them
+  apart to understand something. Two colors that never co-occur cannot
+  mislead anyone — WCAG 1.4.1 is about information carried by color, and
+  where there is no shared context there is no information at stake.
 
 So a failing pair is a **candidate risk to triage**, not a bug to
 announce. Ask one question:
@@ -908,11 +911,9 @@ announce. Ask one question:
   works, for the reason given in
   [Status roles on the red-green themes](#status-roles-on-the-red-green-themes).
 
-⚠️ **Agents: do not present a failing distinguishability pair as
-something broken.** Run the triage first. If the roles never meet,
-say so plainly — "flagged, not a problem here, worth revisiting if the
-UI changes" — instead of handing your human an alarm about a site that
-is fine. Reporting a non-issue as a defect costs them real time and
+⚠️ **Agents: do not present a failing pair as something broken.** Run
+the triage first, then report it in the required format below.
+Reporting a non-issue as a defect costs your human real time and
 teaches them to distrust the suite.
 
 One thing to carry into the waiver's wording: it is a judgement about
@@ -922,6 +923,55 @@ write the reason ("accent buttons and success messages never share a
 view"), not just "false positive", so it can be re-read when the UI
 changes.
 
+### Reporting a contrast or CVD result to your human (required format)
+
+This section is a **format you fill in**, not advice to be careful.
+It applies to every failing pair you surface, contrast and
+distinguishability alike.
+
+Never surface a failing pair as a bare measurement. A raw "contrast
+failure" reads as a live defect, and most of the time it is not one.
+Your human then has to go and check the interface themselves — which is
+the work you were supposed to do.
+
+Every report MUST carry four things, in this order:
+
+1. **The measurement**: the pair, the value, the threshold.
+2. **Presence**: does each role actually appear in the view concerned,
+   and where.
+3. **Collision**: is one rendered **on top of** the other — text on
+   that background, an icon on that button. **Presence is not
+   collision.** Two colors placed in different regions of the same page
+   are not superimposed, and the ratio between them describes nothing a
+   user ever sees.
+4. **The conclusion that follows**, stated outright: no impact today,
+   or a defect to fix.
+
+Fill this in every time:
+
+```text
+<role A> on <role B>: <ratio>, threshold <n>.
+Present: <where each role is actually used in this view>.
+Superimposed: <yes/no — what renders on what>.
+=> <no impact today | defect to fix>, because <one line>.
+```
+
+Worked example:
+
+```text
+--success on --bg-base: 3.2:1, threshold 4.5:1.
+Present: --success only on the confirmation toast; --bg-base is the
+page background.
+Superimposed: no — the toast paints its own --bg-surface under its text.
+=> No impact today. The pair is flagged because it is declared, not
+because it is rendered. Revisit if a success message is ever drawn
+directly on the page background.
+```
+
+Never suppress the report. A pair that does not collide today can
+collide after any layout change — that is exactly why the conclusion is
+a sentence you write, not a silence.
+
 ### Failure modes (what each error means)
 
 | Symptom | Meaning | Fix |
@@ -929,8 +979,8 @@ changes.
 | Sass build: `Undefined variable $…` | Layer 3 references a role that doesn't exist (typo, or removed at a major version) | Check the [role list](#the-golden-rule-layer-3); read the package changelog on majors |
 | `extract-themes: theme "x" was not found` | Your `themes` list and your generated themes disagree | Align the list passed to `configureThemeExtraction` with `generate-all-themes` |
 | `getVar: custom property "--x" is not defined` | A pair references a token you never emit | Fix the pair id/name, or emit the token |
-| Ratio below threshold | Real contrast defect in that theme | Rewire the token to a stronger role; only if justified, document a waiver via `withWaivers` |
-| ΔE below threshold (distinguishability) | **Not automatically a defect** — depends on whether the two roles ever meet on screen | [Triage it first](#reading-a-distinguishability-failure-do-not-treat-it-as-a-defect); then waive with a written reason, or darken / change family |
+| Ratio below threshold | A real contrast defect **wherever that pair is actually superimposed** — the suite measures declared pairs, not rendered ones | Check presence and collision, then rewire the token to a stronger role; only if justified, document a waiver via `withWaivers`. Report it in the [required format](#reporting-a-contrast-or-cvd-result-to-your-human-required-format) |
+| ΔE below threshold (distinguishability) | **Not automatically a defect** — depends on whether the two roles ever meet on screen | [Triage it first](#reading-a-distinguishability-failure-do-not-treat-it-as-a-defect); then waive with a written reason, or darken / change family. Same [required format](#reporting-a-contrast-or-cvd-result-to-your-human-required-format) |
 | Sass warns "may be indistinguishable from --link" | Heuristic heads-up on a red-green theme, raised before any measurement | Confirm with the distinguishability suite; see [Status roles on the red-green themes](#status-roles-on-the-red-green-themes) |
 | A color survives high-contrast unchanged | Raw value in layer 3 (golden rule violation) | Derive the token from a role |
 | `audit` warns "named X but emits Y" | The token's name contradicts its emitted color — usually wired to the wrong role | Fix the wiring; if the contradiction is deliberate (inverted block), add a justified waiver |

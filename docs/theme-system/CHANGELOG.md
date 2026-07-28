@@ -13,6 +13,65 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-28 (docs, npm metadata, audit error reporting — 0.6.2)
+
+No engine change — the Sass side is untouched and the compiled CSS is
+byte-identical to 0.6.1. The only code change is in the tooling's error
+reporting.
+
+### Fixed
+
+- **The `audit` CLI dumped a Dart Sass stack trace instead of an error
+  message.** `run-audit` checked that `--entry` was _given_ but never that
+  the file _existed_, and no `try`/`catch` wrapped the `compile()` call in
+  `extract-themes`. A mistyped path — or any Sass error in the consumer's
+  own stylesheet — surfaced as an unhandled exception carrying dozens of
+  lines of compiled-Dart internals, with the one useful sentence buried in
+  the middle, and exited **2** instead of 1, which also broke scripts
+  branching on the exit code.
+  Now: a missing entry names the path and says what the option expects, and
+  a compile failure prints **Sass's own message** — source excerpt, caret,
+  line and column — which was always well formatted and simply drowned by
+  the stack. Both exit 1, like every other failure in that file.
+  The fix sits in `extract-themes`, the library layer, so a consumer's Jest
+  setup gets the same readable failure as the CLI. Two regression tests
+  (`extract-themes-errors.test.ts`).
+  The package tells agents to report clearly to their human; its own
+  tooling has to hold the same line.
+
+### Docs
+
+- **AGENTS: a required reporting format for any failing contrast or CVD
+  pair.** Not advice to be careful — a template the agent fills in every
+  time: the measurement, **presence** (does each role actually appear in
+  the view), **collision** (is one rendered _on top of_ the other), and
+  the conclusion that follows. Presence is not collision: two colors in
+  different regions of the same page are not superimposed, and the ratio
+  between them describes nothing a user sees. Reported from real use —
+  an assistant on a consumer project kept surfacing bare ratios, which
+  read as live defects and made the developer re-establish the context
+  himself every time. Stating it is the assistant's job, not his.
+- Corrected the doctrine it sits next to: contrast was described as
+  "context-free, a failure is always a real defect". True only where the
+  pair is actually painted together — the suites measure **declared**
+  role pairs, not rendered ones. Contrast now stops at "is it
+  superimposed"; distinguishability still adds "and does the user have
+  to tell them apart". Failure-modes table and the README bullet updated
+  to match.
+
+### Changed
+
+- **npm metadata.** Description now states **framework-agnostic** and
+  marks the React runtime **optional**, so the `react` keyword stops
+  reading as a dependency. Eight keywords added: `contrast`,
+  `colorblind`, `color-vision-deficiency`, `css-variables`,
+  `design-system`, `tailwind`, `tailwindcss`, `oklch` — the Tailwind
+  ones because the palette geometry is literally Tailwind's and the
+  search volume is there, the duplicate `colorblind`/`color-blind`
+  because both spellings get searched.
+
+---
+
 ## 2026-07-26 (fix: the 0.6.0 warning fired on the anomaly themes — 0.6.1)
 
 ### Fixed
