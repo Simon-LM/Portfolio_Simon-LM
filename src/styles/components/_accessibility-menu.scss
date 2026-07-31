@@ -172,7 +172,14 @@
 		// 2026-07-07, rendering unchanged.
 		color: var(--gray-700);
 		margin: 0 0 0.5rem 0;
+		// Italic sets these few words apart from the buttons under them.
 		font-style: italic;
+
+		// Except in dyslexia mode, where the user has explicitly asked for
+		// maximum legibility. Size and color still carry the hierarchy.
+		.dyslexia-optimized & {
+			font-style: normal;
+		}
 	}
 
 	&__select-control {
@@ -413,9 +420,13 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 0.5rem;
+		// Tight horizontal room: the label is long, and the panel is
+		// 22.5rem wide. The gap and the side padding are what keep it on one
+		// line at base size — it may still wrap when the text is enlarged,
+		// which is the intended behaviour, not a defect.
+		gap: 0.375rem;
 		// color: var(--accent);
-		padding: 0.5rem;
+		padding: 0.5rem 0.25rem;
 		border-radius: 0.25rem;
 		// transition: all 0.2s ease;
 
@@ -440,7 +451,10 @@
 	}
 
 	&__accessibility-icon {
-		font-size: 1rem;
+		font-size: 1.25rem;
+		// The icon is an SVG inside a flex row. Without this, flex shrinks it
+		// before letting the label wrap, so it renders smaller than declared.
+		flex-shrink: 0;
 	}
 
 	// // // // // // // // // // //

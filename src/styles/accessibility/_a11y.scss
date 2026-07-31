@@ -89,9 +89,15 @@ textarea,
 	padding: 0.75rem;
 	z-index: 1000;
 
+	// `display: none`, NOT `visibility: hidden`. A hidden panel still
+	// generates boxes and takes part in layout, so the browser resolves the
+	// fonts its text needs and downloads them — every visitor paid for the
+	// menu's typography on every page, including those who never opened it.
+	// A `display: none` subtree generates no box, so nothing is fetched
+	// until the panel is shown. The trade-off is the fade, `display` not
+	// being animatable without `allow-discrete`.
+	display: none;
 	opacity: 0;
-	visibility: hidden;
-	transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
 
 	// In high contrast mode
 	.theme-high-contrast & {
@@ -100,8 +106,8 @@ textarea,
 
 	// Open state
 	&.open {
+		display: block;
 		opacity: 1;
-		visibility: visible;
 		transform: translate(-50%, -50%);
 	}
 

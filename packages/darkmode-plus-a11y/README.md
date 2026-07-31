@@ -162,15 +162,27 @@ private choice.
 
    ```tsx
    import { themeInitScript, THEMES } from "darkmode-plus-a11y/react";
+   import { A11Y_INIT_OPTIONS } from "./a11y/react/accessibilityPreferences";
 
    <head>
-   	<script dangerouslySetInnerHTML={{ __html: themeInitScript(THEMES) }} />
+   	<script
+   		dangerouslySetInnerHTML={{
+   			__html: themeInitScript(THEMES, A11Y_INIT_OPTIONS),
+   		}}
+   	/>
    </head>;
    ```
 
-   Not on Next.js? `themeInitScript(THEMES)` is a plain string — inline
-   it in a `<script>` in `<head>` however your stack allows (static
-   `index.html`, Vite plugin…). See
+   The second argument restores the **typography** preferences — text
+   size, chosen font, dyslexia mode — in the same pass as the theme. It is
+   optional, but leave it out and those apply after hydration instead:
+   someone reading at 200 % then gets a frame of text they cannot read, on
+   every page load. `A11Y_INIT_OPTIONS` is scaffolded by `init`, next to
+   the storage keys it refers to.
+
+   Not on Next.js? The call returns a plain string — inline it in a
+   `<script>` in `<head>` however your stack allows (static `index.html`,
+   Vite plugin…). See
    [AGENTS.md § Path A](./AGENTS.md#path-a--scaffolded-ui), step 3, for a
    static-HTML worked example.
 
@@ -313,6 +325,37 @@ plain CSS variables, so you map them once as **semantic utilities**
 v3/v4 snippets and the guard that makes raw palette utilities
 impossible.
 
+## Performance: what the fonts cost
+
+The bundled accessibility fonts are **loaded on demand**. OpenDyslexic,
+Andika and Lexend stay out of the network trace until a visitor actually
+selects them, so the feature costs nothing to everyone else.
+
+There is one exception, and it is worth knowing before you install:
+
+- **Atkinson Hyperlegible** is used by the menu's own chrome (the
+  high-contrast variant buttons), so it loads whenever the menu's markup
+  is rendered — about 78 kB.
+- The menu also sets `font-style: italic` on its help descriptions, which
+  pulls **one italic face of your own body font**. The weight depends on
+  your typeface, and it can be the larger of the two.
+
+Both are free as long as the closed panel is `display: none` — a subtree
+that generates no box triggers no font resolution. The scaffolded SCSS
+does this. If you restyle the panel, **do not swap it for
+`visibility: hidden` or `opacity: 0` alone**: a hidden element still takes
+part in layout, so the browser resolves its fonts and downloads them, and
+every visitor pays for a menu they may never open.
+
+If you want the open/close fade back, `transition-behavior:
+allow-discrete` with `@starting-style` restores it on browsers newer than
+the `oklch()` floor above — the panel simply appears outright on the
+others.
+
+To remove the one-time swap on first open, preload both faces on the
+trigger's `mouseenter` or `focus`. Visitors who never open the menu still
+pay nothing.
+
 ## Scope and direction
 
 Today this package covers **colors (the theme system) and text fonts**
@@ -360,6 +403,41 @@ these are the five things I would most like to be told I got wrong:
   hurdle.
 
 ## Upgrading
+
+**0.6.x → 0.7.0 — three fixes in the copied UI, so `init --diff` is the
+whole upgrade.** The engine is unchanged; everything below lives in
+`templates/`, which means **publishing does not fix your project**. Run
+`npx darkmode-plus-a11y init --diff` to see what moved, and port what you
+want by hand — that is the shadcn model working as intended, but it does
+put the step on you.
+
+- **Dyslexia mode is now persisted.** It was never written to
+  `localStorage`, so it switched itself off on every reload — the one
+  setting a user had to re-enable at each visit. Inside a single-page app
+  only a real reload lost it, which is why it went unnoticed for so long.
+- **The closed panel is `display: none`, not `visibility: hidden`.** A
+  hidden panel still takes part in layout, so the browser resolved and
+  downloaded the menu's fonts for every visitor on every page, including
+  those who never opened it. See [Performance](#performance-what-the-fonts-cost).
+  The trade-off is the open/close fade, which is gone unless you bring it
+  back with `allow-discrete`.
+- **The compliance link's icon no longer shrinks.** It sits in a flex row
+  without `flex-shrink: 0`, so flex compressed it before letting the label
+  wrap, and it rendered smaller than declared.
+
+`themeInitScript` also takes an optional second argument now, so the
+typography preferences are restored **before the first paint** like the
+theme already was. Without it they apply after hydration, and someone
+reading at 200 % gets a frame of unreadable text on every load:
+
+```tsx
+import { A11Y_INIT_OPTIONS } from "./a11y/react/accessibilityPreferences";
+
+themeInitScript(THEMES, A11Y_INIT_OPTIONS);
+```
+
+Called with one argument the output is unchanged, so existing wiring keeps
+working — it just keeps flashing until you pass the options.
 
 **0.5.x → 0.6.0 — a new warning, no action required.** Nothing changes in
 your output. On the four red-green themes the engine now reports a status

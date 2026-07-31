@@ -49,7 +49,13 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 	const { theme, setTheme } = useTheme();
 	const { fontSize } = useFontSizeStore();
 	const { fontType, setFontType } = useDyslexicFontStore();
-	const [isDyslexicMode, setIsDyslexicMode] = useState(false);
+	// Lazily initialised from localStorage, like reduceMotion below. Without
+	// it the mode was lost on every reload — the one setting a user had to
+	// switch back on at each visit.
+	const [isDyslexicMode, setIsDyslexicMode] = useState<boolean>(() => {
+		if (typeof window === "undefined") return false;
+		return localStorage.getItem("a11y-dyslexia") === "true";
+	});
 	// reduceMotion is lazily initialised from localStorage / matchMedia — no setState in any effect
 	const [reduceMotion, setReduceMotion] = useState<boolean>(() => {
 		if (typeof window === "undefined") return false;
@@ -79,6 +85,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 	const toggleDyslexicMode = () => {
 		const newMode = !isDyslexicMode;
 		setIsDyslexicMode(newMode);
+		localStorage.setItem("a11y-dyslexia", String(newMode));
 
 		if (newMode) {
 			// Activate the optimized dyslexia mode and deactivate the others
@@ -341,6 +348,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 		localStorage.removeItem("hc-variant");
 
 		// Deactivate the optimized dyslexia mode
+		localStorage.removeItem("a11y-dyslexia");
 		if (isDyslexicMode) {
 			document.documentElement.classList.remove("dyslexia-optimized");
 			setIsDyslexicMode(false);

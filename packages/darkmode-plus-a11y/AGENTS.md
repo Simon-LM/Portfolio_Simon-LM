@@ -318,12 +318,17 @@ Wiring steps:
    ```tsx
    // Next.js App Router — app/layout.tsx
    import { themeInitScript, THEMES } from "darkmode-plus-a11y/react";
+   import { A11Y_INIT_OPTIONS } from "./a11y/react/accessibilityPreferences";
 
    export default function RootLayout({ children }) {
    	return (
    		<html suppressHydrationWarning>
    			<head>
-   				<script dangerouslySetInnerHTML={{ __html: themeInitScript(THEMES) }} />
+   				<script
+   					dangerouslySetInnerHTML={{
+   						__html: themeInitScript(THEMES, A11Y_INIT_OPTIONS),
+   					}}
+   				/>
    			</head>
    			<body>{children}</body>
    		</html>
@@ -331,10 +336,20 @@ Wiring steps:
    }
    ```
 
-   `themeInitScript(themes)` returns a plain string: on any other
-   stack, inline it in a `<script>` in `<head>`. It reads
+   `themeInitScript(themes, options?)` returns a plain string: on any
+   other stack, inline it in a `<script>` in `<head>`. It reads
    `localStorage.theme` (validated against your list), falls back to
    `prefers-color-scheme`, and sets the attribute.
+
+   ⚠️ **Pass the second argument.** It restores the typography
+   preferences — text size, chosen font, dyslexia mode — in the same
+   pass. They are persisted either way, but without this they are
+   applied *after* hydration: a visitor reading at 200 % gets a frame of
+   text they cannot read, on every page load. That is a real defect for
+   the exact person the setting exists for, and it is invisible to you
+   unless you set a preference and reload. `A11Y_INIT_OPTIONS` is
+   scaffolded next to the storage keys it names, so the script and the
+   menu cannot drift apart.
 
    **Static HTML / Vite / any non-SSR SPA** — there's no server render
    to call the function per request, so pick one:

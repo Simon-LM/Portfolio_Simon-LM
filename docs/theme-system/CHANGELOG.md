@@ -13,6 +13,77 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-28 (scaffolded UI: persistence, font cost, icon — 0.7.0)
+
+Three defects reported from a consumer integration, all in `templates/` —
+so **publishing does not fix existing consumers**: the UI is copied, not
+imported, and they have to run `init --diff` and port by hand. Said
+explicitly in the README's Upgrading section, because nobody checks a
+changelog for code they already own.
+
+The engine is untouched; the portfolio's compiled CSS changes only in the
+three rules below.
+
+### Fixed
+
+- **Dyslexia mode was lost on every reload.** It was never written to
+  `localStorage` — the only setting a user had to switch back on at each
+  visit, and one that exists for people who least need extra friction. The
+  file already held the right pattern twice, in `reduceMotion` and
+  `hcVariant`; it simply had not been applied here. Inside a single-page
+  app, client-side navigation keeps the DOM class alive and only a real
+  reload loses it, which is how this survived unnoticed.
+- **The menu downloaded its fonts on every page, even closed.** The panel
+  was hidden with `visibility: hidden`, which still generates boxes and
+  takes part in layout, so the browser resolved the fonts its text needs
+  and fetched them — Atkinson Hyperlegible (~78 kB) plus one italic face
+  of the host's own body font, on the critical path, for every visitor
+  including those who never opened the menu. Measured by the consumer at
+  1321 ms of critical chain on a page whose LCP is 3.2 s.
+  Fixed with `display: none`, which generates no box at all. The
+  alternative on the table — mounting the menu conditionally in React —
+  was rejected: it required the persistence fix above as a prerequisite
+  (unmounting re-runs the effect with `false` and silently strips the
+  class), touched the JSX, and still lost the same fade. One SCSS
+  declaration does the same work with no ordering constraint.
+  The trade-off is the open/close fade: `display` is not animatable
+  within the browser range this package documents. `allow-discrete` plus
+  `@starting-style` bring it back above that range — a deliberate call,
+  left to the consumer.
+- **The compliance link's icon rendered smaller than declared.** An SVG in
+  a flex row with no `flex-shrink: 0`: flex compressed the icon before
+  letting the long label wrap. Raised to `1.25rem` and pinned; the gap and
+  side padding were tightened to keep the label on one line at base size.
+  It still wraps when text is enlarged, which is the intended behaviour —
+  `white-space: nowrap` would have traded a wrap for horizontal overflow
+  at high zoom.
+
+### Added
+
+- **`themeInitScript(themes, options?)`** — the anti-FOUC script can now
+  restore the typography preferences (dyslexia class, text-size factor,
+  font class) in the same pass as the theme. They were persisted already
+  but applied in a `useEffect`, hence after hydration: a visitor reading
+  at 200 % got a frame of text they could not read, on every page load.
+  Same class of defect as the dyslexia one, wider blast radius, and not in
+  the original report.
+  The keys and class names stay consumer-owned — the package does not
+  hardcode them — so the scaffold exports `A11Y_INIT_OPTIONS` next to the
+  keys it names, and README and AGENTS now pass it in their quick starts.
+  Called with one argument the output is byte-identical, so existing
+  wiring is untouched. 6 tests (`theme-init-script.test.ts`), including
+  one that executes the generated string against a fake DOM.
+
+### Changed
+
+- In dyslexia mode, the menu's three italic help descriptions switch to
+  roman. The italic stays everywhere else: it is three to five words of
+  hierarchy, not a reading load. But once someone has explicitly asked for
+  maximum legibility, the slant costs more than it carries — size and
+  color still separate those lines from the buttons under them.
+
+---
+
 ## 2026-07-28 (docs, npm metadata, audit error reporting — 0.6.2)
 
 No engine change — the Sass side is untouched and the compiled CSS is
