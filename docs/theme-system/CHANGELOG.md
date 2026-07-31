@@ -13,6 +13,67 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-07-31 (typography restored before the first paint)
+
+Portfolio-side only; the package is untouched. 0.7.0 gave
+`themeInitScript` a second argument that restores the typography before
+the first paint, but the portfolio could not use it: its text size and
+font lived in zustand `persist` stores, and `persist` wraps the value in
+a JSON envelope (`{"state":{"fontSize":150},"version":0}`) while the boot
+script reads a plain value. `parseFloat` returned `NaN`, the guard
+rejected it, and nothing was applied.
+
+Three fixes were on the table. Reading the envelope from the boot script
+— either inline in the layout or as a JSON-path option in the package —
+was rejected in both forms: the script is a **generated string** that
+runs before any bundle exists, so it can never take a reader function,
+only a declarative path. That path would have locked the package into the
+subset of formats a dotted lookup can reach (redux-persist, which encodes
+each key inside the JSON, is already outside it), and it would have left
+one value with two readers and one writer. A zustand upgrade could then
+change the envelope and break the restore **without anything failing** —
+the page still renders, just at the wrong size, and only for the people
+who set one.
+
+The rule this settles: whatever the pre-paint script reads, the package
+owns the format of.
+
+### Changed
+
+- The text size and the accessibility font now go through the package's
+  `usePreference` instead of zustand `persist`, under the keys the boot
+  script already reads (`a11y-font-size`, `a11y-font`). Same behaviour
+  for the user; the writer and the pre-paint reader are now the same
+  contract.
+- `layout.tsx` passes `A11Y_INIT_OPTIONS` instead of hand-written options
+  that only covered the dyslexia class.
+- The dyslexia key and class are read from constants in both places
+  instead of repeated string literals.
+
+### Added
+
+- `src/config/accessibilityPreferences.ts` — keys, bounds, font class
+  map, `A11Y_INIT_OPTIONS`. No `"use client"`: `layout.tsx` is a Server
+  Component and imports from it, same split as `@/config/themes`.
+- `src/hooks/useAccessibilityPreferences.ts` — `useFontSize` and
+  `useDyslexicFont`, plus a one-shot migration that reads the old zustand
+  envelope, rewrites the value in plain form and drops the old key.
+  Without it a visitor who had chosen 150% would have silently dropped
+  back to 100% on the deploy. Removable once the old keys can no longer
+  be in anyone's browser.
+- A bounds check on the stored size. `localStorage` is user-writable and
+  an unparseable entry would have put `NaN` straight into
+  `--font-size-factor`.
+
+### Removed
+
+- `src/store/fontSizeStore.ts` and `src/store/dyslexicFontStore.ts`.
+  zustand stays for `langueStore`.
+- The two `useEffect` in `AccessibilityMenu` that re-applied the size and
+  the font on mount. They were the flash: both ran after hydration, so
+  someone reading at 150% got a frame of 100% text on every load. The
+  font one also wrote to `localStorage` on every mount.
+
 ## 2026-07-28 (scaffolded UI: persistence, font cost, icon — 0.7.0)
 
 Three defects reported from a consumer integration, all in `templates/` —

@@ -9,8 +9,15 @@ import { useTheme } from "../../hooks/useTheme";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePrefersDarkMode } from "../../hooks/usePrefersDarkMode";
-import { useFontSizeStore } from "@/store/fontSizeStore";
-import { useDyslexicFontStore } from "@/store/dyslexicFontStore";
+import {
+	useFontSize,
+	useDyslexicFont,
+} from "../../hooks/useAccessibilityPreferences";
+import {
+	A11Y_DYSLEXIA_CLASS,
+	A11Y_DYSLEXIA_KEY,
+	FONT_SIZE_DEFAULT,
+} from "@/config/accessibilityPreferences";
 import { applyReduceMotion } from "darkmode-plus-a11y/react/appliers";
 import { FaUniversalAccess } from "react-icons/fa";
 import { useIsMounted } from "../../hooks/useIsMounted";
@@ -47,14 +54,17 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 	// useIsMounted replaces useState(false) + useEffect(setMounted, []) — no setState in effect
 	const mounted = useIsMounted();
 	const { theme, setTheme } = useTheme();
-	const { fontSize } = useFontSizeStore();
-	const { fontType, setFontType } = useDyslexicFontStore();
+	// Both hooks read localStorage lazily and apply the DOM side effect
+	// themselves, under the same keys the anti-FOUC script reads before the
+	// first paint. No effect below needs to re-apply them.
+	const [fontSize, setFontSize] = useFontSize();
+	const [fontType, setFontType] = useDyslexicFont();
 	// Lazily initialised from localStorage, like reduceMotion below. Without
 	// it the mode was lost on every reload — the one setting a user had to
 	// switch back on at each visit.
 	const [isDyslexicMode, setIsDyslexicMode] = useState<boolean>(() => {
 		if (typeof window === "undefined") return false;
-		return localStorage.getItem("a11y-dyslexia") === "true";
+		return localStorage.getItem(A11Y_DYSLEXIA_KEY) === "true";
 	});
 	// reduceMotion is lazily initialised from localStorage / matchMedia — no setState in any effect
 	const [reduceMotion, setReduceMotion] = useState<boolean>(() => {
@@ -85,11 +95,11 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 	const toggleDyslexicMode = () => {
 		const newMode = !isDyslexicMode;
 		setIsDyslexicMode(newMode);
-		localStorage.setItem("a11y-dyslexia", String(newMode));
+		localStorage.setItem(A11Y_DYSLEXIA_KEY, String(newMode));
 
 		if (newMode) {
 			// Activate the optimized dyslexia mode and deactivate the others
-			document.documentElement.classList.add("dyslexia-optimized");
+			document.documentElement.classList.add(A11Y_DYSLEXIA_CLASS);
 
 			// Reset the font selector
 			if (fontType !== "none") {
@@ -97,7 +107,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 			}
 		} else {
 			// Deactivate the optimized dyslexia mode
-			document.documentElement.classList.remove("dyslexia-optimized");
+			document.documentElement.classList.remove(A11Y_DYSLEXIA_CLASS);
 		}
 	};
 
@@ -105,9 +115,9 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 	useEffect(() => {
 		if (mounted && typeof document !== "undefined") {
 			if (isDyslexicMode) {
-				document.documentElement.classList.add("dyslexia-optimized");
+				document.documentElement.classList.add(A11Y_DYSLEXIA_CLASS);
 			} else {
-				document.documentElement.classList.remove("dyslexia-optimized");
+				document.documentElement.classList.remove(A11Y_DYSLEXIA_CLASS);
 			}
 		}
 	}, [mounted, isDyslexicMode]);
@@ -123,22 +133,10 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 		}
 	}, [theme]);
 
-	useEffect(() => {
-		if (typeof document !== "undefined" && mounted) {
-			// Apply the initial size on load
-			document.documentElement.style.setProperty(
-				"--font-size-factor",
-				`${fontSize / 100}`,
-			);
-		}
-	}, [mounted, fontSize]);
-
-	useEffect(() => {
-		if (mounted && typeof document !== "undefined") {
-			// The store's setFontType function will handle applying the classes
-			setFontType(fontType);
-		}
-	}, [mounted, fontType, setFontType]);
+	// The two effects that used to re-apply the size and the font on mount
+	// are gone: useFontSize/useDyslexicFont apply them themselves, and the
+	// anti-FOUC script has already done it before the first paint. The font
+	// one also wrote to localStorage on every mount.
 
 	useEffect(() => {
 		if (mounted && typeof document !== "undefined") {
@@ -338,7 +336,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 		setTheme(prefersDarkMode ? "dark" : "light");
 
 		// Reset the font size to 100%
-		useFontSizeStore.getState().setFontSize(100);
+		setFontSize(FONT_SIZE_DEFAULT);
 
 		// Reset the font type
 		setFontType("none");
@@ -348,9 +346,9 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 		localStorage.removeItem("hc-variant");
 
 		// Deactivate the optimized dyslexia mode
-		localStorage.removeItem("a11y-dyslexia");
+		localStorage.removeItem(A11Y_DYSLEXIA_KEY);
 		if (isDyslexicMode) {
-			document.documentElement.classList.remove("dyslexia-optimized");
+			document.documentElement.classList.remove(A11Y_DYSLEXIA_CLASS);
 			setIsDyslexicMode(false);
 		}
 	};
@@ -692,7 +690,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 							</span>
 							<button
 								className="accessibility-menu__reset-button"
-								onClick={() => useFontSizeStore.getState().setFontSize(100)}
+								onClick={() => setFontSize(FONT_SIZE_DEFAULT)}
 								aria-label={
 									language === "fr" ? "Réinitialiser à 100%" : "Reset to 100%"
 								}>
@@ -715,9 +713,7 @@ export default function AccessibilityMenu({ language, onClose }: Props) {
 							step="25"
 							value={fontSize}
 							onChange={(e) => {
-								const value = parseInt(e.target.value);
-								// Use the store's setFontSize function
-								useFontSizeStore.getState().setFontSize(value);
+								setFontSize(parseInt(e.target.value));
 							}}
 							aria-label={labels.fontSize.label}
 							aria-valuemin={75}
