@@ -14,6 +14,8 @@
 // A11Y_INIT_OPTIONS from this file. Same reason as @/config/themes. The
 // hooks live in @/hooks/useAccessibilityPreferences.
 
+import type { ColorVisionModesOption } from "darkmode-plus-a11y/react/detectThemes";
+
 export const A11Y_FONT_SIZE_KEY = "a11y-font-size";
 export const A11Y_FONT_KEY = "a11y-font";
 export const A11Y_DYSLEXIA_KEY = "a11y-dyslexia";
@@ -47,6 +49,34 @@ export const DYSLEXIC_FONT_CLASSES: Readonly<Record<string, string>> = {
 	tiresias: "tiresias-font",
 	ralewaydots: "ralewaydots-font",
 };
+
+// Which colour-vision modes the menu offers.
+//   "auto"  — read the loaded CSS: the site offers what it implements
+//   "all"   — every mode the package knows, whatever the CSS says
+//   [...]   — exactly these, in this order
+// "auto" needs nothing maintained: remove a theme from the SCSS and its
+// button goes with it.
+export const COLOR_VISION_MODES: ColorVisionModesOption = "auto";
+
+// Fonts offered by the menu, grouped by what they are FOR. The names
+// mean nothing to most people — "OpenDyslexic" or "Andika" only tell you
+// something if you already know them, so the heading above each group is
+// what actually lets someone choose. "none" is not listed: it is the
+// parent button's off state.
+export type DyslexicFontGroupId = "dyslexic" | "legibility" | "easyReading";
+
+export const DYSLEXIC_FONT_GROUPS: readonly {
+	id: DyslexicFontGroupId;
+	fonts: readonly DyslexicFontType[];
+}[] = [
+	{ id: "dyslexic", fonts: ["opendyslexic", "sylexiad", "sylexiad-serif"] },
+	{ id: "legibility", fonts: ["atkinson"] },
+	{ id: "easyReading", fonts: ["andika"] },
+];
+
+// Last colour-vision mode used, so the parent button can bring it back —
+// same pattern as `hc-variant` for the high-contrast row.
+export const A11Y_COLOR_VISION_KEY = "cv-mode";
 
 // Second argument of themeInitScript: restores the typography before the
 // first paint, like the theme already is.

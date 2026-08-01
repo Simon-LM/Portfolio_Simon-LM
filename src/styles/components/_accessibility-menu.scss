@@ -117,6 +117,35 @@
 		margin-top: 1rem; // below the "High contrast" button
 	}
 
+	// Rows revealed by a parent toggle: same spacing rule as the
+	// high-contrast variants above.
+	&__buttons-row--cv-modes {
+		gap: 0.5rem;
+		margin-top: 1rem;
+	}
+
+	// Font rows sit inside a labelled group, which carries the spacing.
+	&__buttons-row--font-choices {
+		gap: 0.5rem;
+	}
+
+	// Font choices: one group per purpose. The names ("OpenDyslexic",
+	// "Andika") tell you nothing unless you already know them, so the
+	// heading is what actually lets someone choose.
+	&__font-choices {
+		margin-top: 1rem;
+	}
+
+	&__font-group + &__font-group {
+		margin-top: 1rem;
+	}
+
+	&__font-group-label {
+		font-size: 0.875rem;
+		font-weight: 500;
+		margin: 0 0 0.5rem 0;
+	}
+
 	// Standard buttons
 	&__button {
 		padding: 0.5rem 0.75rem;
@@ -152,6 +181,74 @@
 	&__button-full-width {
 		flex-basis: 100%;
 		margin-top: 0.5rem;
+	}
+
+	// Buttons of the two revealed rows.
+	//
+	// The ✓ checkmark is a <span>, and the typography base gives spans
+	// their OWN color, which ignores the .active inversion. inherit = the
+	// checkmark follows the button text. Same fix as the high-contrast
+	// variants above.
+	&__cv-mode-button,
+	&__font-choice-button {
+		span {
+			color: inherit;
+		}
+	}
+
+	// Slot for the ✓. Rendered TWICE in every button — once holding the
+	// mark (or nothing), once empty on the right.
+	//
+	// Left in the text flow, the ✓ pushed the label sideways, so the
+	// selected button never lined up with its neighbours. Reserving the
+	// width only on the left fixes the width but shifts the label off the
+	// button's axis, because `text-align: center` centres the whole run.
+	// Two equal slots cancel out: the label sits on the real centre,
+	// selected or not.
+	//
+	// Width in em: it follows the button's own font-size, so the slot
+	// still matches the checkmark when the text is enlarged.
+	//
+	// The box is sized in BOTH directions on purpose. ✓ (U+2713) is not in
+	// the body font and comes from a fallback whose ascent/descent are
+	// taller than the button's own line-height (1.15, inherited from
+	// normalize). Left to its own metrics it raised the line box — so the
+	// button grew taller the moment it was selected. A fixed height plus
+	// vertical-align takes the glyph out of the line height calculation:
+	// the line only ever sees a 1em box, empty or not.
+	&__check {
+		display: inline-block;
+		width: 1.25em;
+		height: 1em;
+		line-height: 1;
+		vertical-align: middle;
+		text-align: center;
+	}
+
+	// Colour-vision modes: equal-width buttons that still wrap.
+	//
+	// __button ships `flex: 1 0 auto`, i.e. "start from my content width".
+	// That is right for "Light / Dark" and wrong here: seven labels of
+	// different lengths give seven different widths, and the ✓ makes the
+	// selected one wider than its neighbours.
+	//
+	// A shared, content-independent basis fixes both — same start, same
+	// growth, so same final width, and the checkmark no longer counts.
+	// The basis stays in em (not a percentage) so this is still flex and
+	// not a two-column grid: when the panel narrows, two of them no longer
+	// fit and the row falls to one per line on its own.
+	//
+	// In the canonical order this puts each family's pair on one line
+	// (protan, deutan, tritan), leaving achromatopsia alone on the last —
+	// which is correct, it belongs to none of the three.
+	&__cv-mode-button {
+		flex: 1 1 9em;
+	}
+
+	// Fonts: one per line. The labels are long, the groups are short, and
+	// a single column is what makes the three purposes readable.
+	&__font-choice-button {
+		flex-basis: 100%;
 	}
 
 	&__visual-help-group {
