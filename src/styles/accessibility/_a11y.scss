@@ -45,8 +45,8 @@ textarea,
 		// `:focus-visible` (link-hover surface). Only the focus outline is
 		// reinforced here.
 		&:focus-visible {
-			outline: 2px solid var(--color-focus-outline);
-			outline-offset: 2px;
+			outline: 0.125rem solid var(--color-focus-outline); // was 2px
+			outline-offset: 0.125rem;
 		}
 
 		// The inline SVG paints via fill=currentColor. In-browser that
@@ -71,22 +71,59 @@ textarea,
 }
 
 .accessibility-panel {
+	// Space kept outside the panel, on both axes. A fixed rem here is what
+	// breaks extreme zoom: 1rem is 16px out of a ~108px viewport at 1000%,
+	// so two gaps would eat 30% of the screen while everything else
+	// collapses. Driven by vw on both axes so the insets stay square
+	// whatever the window's aspect ratio; the `max()` on `top` handles the
+	// vertical constraint on its own.
+	// Knee at 1400px = 100 x (16 + 5) / 1.5, so nothing changes on desktop.
+	--panel-gap: clamp(1px, calc(1.5vw - 5px), 1rem);
+	--panel-h: min(30rem, calc(100vh - 2 * var(--panel-gap)));
+
+	// Padding and radius are held as variables because the child needs
+	// them: its own radius is the panel's minus the padding, and that
+	// subtraction has to stay true while both collapse.
+	--panel-pad: clamp(1px, calc(1vw - 2px), 0.75rem);
+	--panel-radius: 0.5rem;
+	// The border counts too: `border-radius` describes the OUTER edge, so
+	// the inner edge is already one border-width less round. A child that
+	// only subtracts the padding stays that much too round and bulges
+	// through the curve.
+	--panel-border: 0.125rem;
+
+	// `display` is set in `&.open` — declaring flex here would be dead, the
+	// `display: none` further down this same rule overrides it.
+	flex-direction: column;
+	box-sizing: border-box;
+
 	position: fixed;
-	top: clamp(10%, 22rem, 45%);
+
+	// `top` designates the CENTRE, because of the translate below. The
+	// clamp is the wanted position; the second term is a floor that stops
+	// the top edge going off-screen once the panel grows tall — without it,
+	// a centre above 50vh caps the usable height at twice its own value.
+	top: max(clamp(10%, 22rem, 45%), calc(var(--panel-h) / 2 + var(--panel-gap)));
+
 	left: clamp(50%, calc(100% - 13rem), calc(100% - 4rem));
 	transform: translate(-50%, -50%) translateY(0);
 
 	width: 22.5rem;
-	// max-width: calc(100vw - 4rem);
-	max-width: 75vw;
-	height: 30rem;
-	max-height: calc(100vh - 10rem);
+	// Both axes give the screen back at the same rate: a fixed rem here
+	// would still take 17% of the width at 1000% zoom.
+	max-width: calc(100vw - 2 * var(--panel-gap));
+	// The only height. Any other rule able to shrink the panel would make
+	// the floor on `top` above compute against a value the panel does not
+	// actually have.
+	height: var(--panel-h);
 
 	background: var(--color-panel-bg, var(--color-main-bg));
-	border: 0.125rem solid var(--color-panel-border, var(--color-main-text));
-	border-radius: 0.5rem;
+	border: var(--panel-border) solid
+		var(--color-panel-border, var(--color-main-text));
+	border-radius: var(--panel-radius);
 	box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.2);
-	padding: 0.75rem;
+	//   1400px -> 12px    900px -> 7px    400px -> 2px    192px -> 1px
+	padding: var(--panel-pad);
 	z-index: 1000;
 
 	// `display: none`, NOT `visibility: hidden`. A hidden panel still
@@ -96,17 +133,30 @@ textarea,
 	// A `display: none` subtree generates no box, so nothing is fetched
 	// until the panel is shown. The trade-off is the fade, `display` not
 	// being animatable without `allow-discrete`.
+
 	display: none;
 	opacity: 0;
 
+	// Debug colour, kept for the next round on the zoom geometry: uncomment
+	// together with the menu's `greenyellow` to see the two boxes and what
+	// the paddings actually leave between them.
+	// background-color: pink;
+
 	// In high contrast mode
 	.theme-high-contrast & {
-		border-width: 0.1875rem;
+		// Through the variable, not `border-width`: the child reads it to
+		// work out its own radius, and a thicker border would otherwise
+		// leave it too round in the high-contrast themes only.
+		--panel-border: 0.1875rem;
 	}
 
 	// Open state
 	&.open {
-		display: block;
+		// The panel holds a single child, the menu. As a flex column it can
+		// hand it the exact height left after the border and the padding —
+		// so the menu needs no height of its own, and no viewport unit. It
+		// simply follows, whatever the zoom or the padding does.
+		display: flex;
 		opacity: 1;
 		transform: translate(-50%, -50%);
 	}

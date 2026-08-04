@@ -8,6 +8,13 @@ export { usePrefersDarkMode } from "./usePrefersDarkMode";
 export { themeInitScript } from "./themeInitScript";
 export { usePreference, type UsePreferenceOptions } from "./usePreference";
 export {
+	detectAvailableThemes,
+	resolveColorVisionModes,
+	COLOR_VISION_TYPES,
+	type ColorVisionType,
+	type ColorVisionModesOption,
+} from "./detectThemes";
+export {
 	applyFontSizeFactor,
 	applyAccessibilityFont,
 	applyReduceMotion,

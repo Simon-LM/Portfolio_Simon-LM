@@ -69,7 +69,7 @@ const mockDictionary = {
 		},
 		gdpr: { text: "", privacyLink: "", checkbox: "" },
 	},
-	social: { linkedin: "", twitter: "" },
+	social: { linkedin: "" },
 };
 
 describe("LazyContact", () => {

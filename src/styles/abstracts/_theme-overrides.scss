@@ -31,8 +31,7 @@
 		// Buttons and interactive elements on focus
 		button:focus-visible,
 		.button:focus-visible,
-		a:focus-visible,
-		.react-select__control:focus-visible {
+		a:focus-visible {
 			background-color: $focus !important;
 			color: $focus-text !important;
 			outline: 3px solid $focus !important;

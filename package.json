@@ -40,7 +40,6 @@
 		}
 	},
 	"dependencies": {
-		"darkmode-plus-a11y": "workspace:*",
 		"@emailjs/browser": "^4.4.1",
 		"@formatjs/intl-localematcher": "^0.5.10",
 		"@hookform/resolvers": "3.10.0",
@@ -58,6 +57,7 @@
 		"@react-stately/list": "^3.14.1",
 		"@react-stately/select": "^3.10.1",
 		"@react-types/select": "^3.13.0",
+		"darkmode-plus-a11y": "workspace:*",
 		"feed": "^4.2.2",
 		"framer-motion": "^11.18.2",
 		"negotiator": "^1.0.0",
@@ -70,7 +70,6 @@
 		"react-icons": "^5.7.0",
 		"react-intersection-observer": "^9.16.0",
 		"react-markdown": "^9.1.0",
-		"react-select": "^5.10.2",
 		"zod": "^3.25.76",
 		"zustand": "^5.0.14"
 	},

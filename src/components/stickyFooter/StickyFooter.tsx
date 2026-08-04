@@ -6,7 +6,7 @@ import React from "react";
 import Link from "next/link";
 import { useLanguageStore } from "../../store/langueStore";
 // import {  RiNotification3Line } from "react-icons/ri";
-import { FaLinkedin, FaXTwitter, FaYoutube, FaGithub } from "react-icons/fa6";
+import { FaLinkedin, FaReddit, FaYoutube, FaGithub } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md";
 import { FaUniversalAccess } from "react-icons/fa";
 
@@ -51,16 +51,16 @@ export default function StickyFooter() {
 
 				<div className="sticky-footer__social">
 					<Link
-						href="https://x.com/SimonLM_Dev"
+						href="https://www.reddit.com/user/SimonLM_LostInTab/"
 						className="sticky-footer__link"
 						target="_blank"
 						rel="noopener noreferrer"
-						aria-label="Twitter"
-						data-tooltip="Twitter">
-						<FaXTwitter
+						aria-label="Reddit"
+						data-tooltip="Reddit">
+						<FaReddit
 							className="sticky-footer__icon"
 							role="img"
-							aria-label="Twitter"
+							aria-label="Reddit"
 						/>
 					</Link>
 					<Link

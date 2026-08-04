@@ -24,26 +24,6 @@ describe("StickyFooter", () => {
 		).toBeInTheDocument();
 	});
 
-	// it("contains every social link", () => {
-	// 	render(<StickyFooter />);
-	// 	expect(screen.getByLabelText("Twitter")).toHaveAttribute(
-	// 		"href",
-	// 		"https://x.com/SimonLM_Dev"
-	// 	);
-	// 	expect(screen.getByLabelText("YouTube")).toHaveAttribute(
-	// 		"href",
-	// 		"https://www.youtube.com/@LostInTab"
-	// 	);
-	// 	expect(screen.getByLabelText("GitHub")).toHaveAttribute(
-	// 		"href",
-	// 		"https://github.com/Simon-LM"
-	// 	);
-	// 	expect(screen.getByLabelText("LinkedIn")).toHaveAttribute(
-	// 		"href",
-	// 		"https://www.linkedin.com/"
-	// 	);
-	// });
-
 	it("checks the accessibility attributes", () => {
 		render(<StickyFooter />);
 		const links = screen.getAllByRole("link");

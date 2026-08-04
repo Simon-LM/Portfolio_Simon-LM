@@ -34,7 +34,6 @@ const mockDictionary = {
 	},
 	social: {
 		linkedin: "https://linkedin.com/in/test-user",
-		twitter: "https://twitter.com/test",
 	},
 };
 

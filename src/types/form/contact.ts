@@ -28,7 +28,6 @@ export interface ContactDictionary {
 	form: FormDictionary;
 	social: {
 		linkedin: string;
-		twitter: string;
 	};
 }
 
