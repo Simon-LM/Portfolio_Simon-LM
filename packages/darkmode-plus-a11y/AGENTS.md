@@ -79,7 +79,12 @@ by `init` (shadcn model) — you own it, it never auto-updates, and
     `purple`, `fuchsia`, `pink`, `rose`.
   - Neutral grays (5): `slate`, `gray`, `zinc`, `neutral`, `stone`.
   - Tinted neutrals (4): `taupe`, `mauve`, `mist`, `olive`.
-- Path A UI dependencies: `react`, `react-select`, `react-icons`.
+- Path A UI dependencies: `react`, `react-icons`. **`react-select` is no
+  longer one of them** (0.8.0): the menu's two pickers are button groups,
+  which cost nothing to install, need no keyboard workaround, and do not
+  render their list through a `position: fixed` portal that covers the
+  page at high zoom. If the consumer installed it for this template only,
+  say so — it was 31 KB gzipped for a panel most visitors never open.
 - A Sass compiler for the theme build (`sass` as a devDependency, or
   any bundler with SCSS support). It compiles separately from the rest
   of your pipeline and does not constrain it.
@@ -249,6 +254,23 @@ npx darkmode-plus-a11y init          # copies UI into ./a11y + fonts into ./publ
 npx darkmode-plus-a11y init --diff   # later: compare your copy against the reference
 # Options: --dir <path> --pkg <import-name> --fonts <path> --force
 ```
+
+### Never offer a theme the stylesheet does not define
+
+The scaffolded menu derives its colour-vision buttons from the loaded CSS
+(`resolveColorVisionModes`, default `"auto"`). Do not replace that with a
+hardcoded list, and do not "helpfully" add the seven modes back if the
+consumer's SCSS only emits three.
+
+A button for a theme whose `[data-theme]` block does not exist is not a
+missing option. The user presses it, nothing visible happens, and for
+someone with a colour vision deficiency that is a broken promise rather
+than a gap. Offering less than the package can do is correct here;
+offering more than the site does is not.
+
+The escape hatches are `COLOR_VISION_MODES = "all"` (force the full list)
+and an explicit array. Both are the consumer's call, in their own config
+file — never something to set on their behalf.
 
 **Re-running `init` is safe.** A file that already exists at the target
 path is **skipped** (logged `skip (exists …)`), never overwritten —

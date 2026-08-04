@@ -1,6 +1,6 @@
 {
 	"name": "darkmode-plus-a11y",
-	"version": "0.7.0",
+	"version": "0.8.0",
 	"description": "Dark mode plus 14 more accessible themes (high contrast, color-vision deficiency, anti-glare), generated from your light theme at Sass compile time. Framework-agnostic — the output is plain CSS custom properties. WCAG contrast enforced mechanically, accessible fonts, optional React runtime and accessibility menu.",
 	"keywords": [
 		"accessibility",

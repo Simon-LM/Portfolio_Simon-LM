@@ -13,6 +13,92 @@ Sections: `Added` / `Changed` / `Fixed` / `Removed` / `Docs`.
 
 ---
 
+## 2026-08-04 (no react-select, panel usable at 1000% zoom — 0.8.0)
+
+Started from a consumer report: react-select and Emotion were 31 KB
+gzipped out of an 87 KB entry bundle, shipped to every visitor including
+those who never opened the menu. They proposed lazy-loading it. The
+answer taken was to remove it, for reasons that turned out to matter more
+than the bytes.
+
+### Changed
+
+- **The colour-vision and font pickers are button groups**, revealed by a
+  parent toggle. This applies a decision already recorded in the panel on
+  2026-07-10 for the high-contrast variants — "no selector, more robust
+  for NVDA and large zoom levels" — to the two places that still had one.
+  A dropdown hides the choices behind an interaction, needed a keyboard
+  workaround (`handleSelectKeyDown`: Enter/Space to reopen, Tab converted
+  to arrows) to restore behaviour a button has for free, and rendered its
+  list through `menuPortalTarget=document.body` with
+  `menuPosition: fixed` and blocked scroll — the pattern CLAUDE.md
+  forbids for the trigger, and for the same reason: it covers content at
+  high zoom.
+- **Colour-vision buttons are derived from the loaded CSS**, not from a
+  hardcoded list. Three lists could drift before (detection, labels,
+  options), and none of them knew what the SCSS actually emitted.
+- **The panel's insets are clamps, not fixed rem.** `--panel-gap`,
+  `--panel-pad` and both paddings are `clamp(px, N·vw − offset, rem)`.
+  The px floor is deliberate: a rem floor grows back into a wide band at
+  exactly the zoom levels where space is scarcest.
+- **`box-sizing: border-box` on the panel.** Its height comes from
+  `100vh`, so it has to mean the outer height; under content-box the
+  panel was 1.75rem taller than every formula believed, and gaps that
+  read 1rem measured 2px.
+- **`top` gained a floor**, `height/2 + gap`. `top` designates the centre,
+  so the panel spans `top ± height/2` and fits only while
+  `top >= height/2`. Capped at 45%, that inequality fails on any viewport
+  taller than 320px — the top edge simply left the screen, whatever
+  `max-height` said.
+- **The menu fills the panel through flex.** Its own
+  `max-height: calc(100vh - 10rem)` went negative below a ~160px
+  viewport, which clamps to 0: the content vanished entirely at high
+  zoom. `min-height: 0` is required, or `overflow-y` never engages.
+
+### Added
+
+- `react/detectThemes.ts` — `detectAvailableThemes()` walks
+  `document.styleSheets` and `resolveColorVisionModes()` filters the
+  canonical list against it. Two traps, both covered by tests:
+  `[data-theme^="…"]` prefix rules must not be read as themes (they would
+  invent a button), and an unreadable cross-origin sheet must not hide
+  the themes the readable ones declare. Detection failure falls back to
+  showing everything — hiding a mode the site has is the worse error.
+- `COLOR_VISION_MODES` in the consumer-owned config: `"auto"` (default),
+  `"all"`, or an explicit list. An option rather than editing the copied
+  JSX, which would have to be re-merged at every `init --diff`.
+- `__check`, a checkmark slot rendered twice per button and mirrored. One
+  slot alone fixes the width but shifts the label off centre, since
+  `text-align` centres the whole run. Fixed height and `vertical-align`
+  keep the fallback font's taller metrics from raising the line box,
+  which grew the button on selection.
+- Font buttons carry their group headings again ("Pour dyslexie", "Haute
+  lisibilité", "Lecture facilitée"), each a `role="group"`. The font
+  names mean nothing on their own, so the heading is what makes the
+  choice possible — the `optgroup`s did this before.
+
+### Removed
+
+- `react-select` from the portfolio's dependencies: 22 packages,
+  including Emotion, which shipped a CSS parser to the browser to produce
+  rules the site's SCSS already expressed. Homepage JS: 272 KB → 244 KB
+  gzipped.
+- ~470 lines of orphaned react-select CSS from the menu stylesheet and
+  the template's, plus `custom-select.scss` (a hand-rolled component with
+  no use anywhere).
+- `packages/*/templates` left the app's tsconfig. Templates are scaffold
+  source, copied into consumer projects; the package's own build already
+  excluded them, and the app was type-checking them only because it
+  happened to install react-select.
+
+### Docs
+
+- README: an "Extreme zoom" section stating the rule (no fixed rem on any
+  inset) and the knee formula, plus the 0.7.x → 0.8.0 upgrade note.
+- AGENTS: `react-select` struck from the Path A dependencies, and a rule
+  forbidding a hardcoded colour-vision list — offering a theme the
+  stylesheet does not define is a broken promise, not a missing option.
+
 ## 2026-07-31 (typography restored before the first paint)
 
 Portfolio-side only; the package is untouched. 0.7.0 gave

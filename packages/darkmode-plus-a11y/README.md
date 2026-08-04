@@ -325,6 +325,51 @@ plain CSS variables, so you map them once as **semantic utilities**
 v3/v4 snippets and the guard that makes raw palette utilities
 impossible.
 
+## Extreme zoom: what the panel does
+
+At 1000 % page zoom a 1920-wide screen reports a viewport of roughly
+**192 × 108 CSS pixels**. That is the size the panel has to remain usable
+at, and it is where most CSS quietly falls apart.
+
+The rule the scaffolded panel follows: **no fixed `rem` on any inset.**
+At that viewport, `1rem` is 16px — a gap on each side would eat 30 % of
+the screen while everything else collapsed. Every inset is a clamp whose
+middle term is driven by `vw` and whose floor is in `px`:
+
+```scss
+--panel-gap: clamp(1px, calc(1.5vw - 5px), 1rem);
+```
+
+Read it as: `1rem` is the comfortable desktop value, `1px` is the floor,
+and the slope decides where it starts tightening. The knee — the width at
+which the value leaves its ceiling — is `100 × (ceiling + offset) / slope`.
+A plain `N * vw` passes through the origin, so its knee usually sits far
+below any window you would test by hand; the negative offset is what makes
+the curve steep enough to matter.
+
+The `px` floor is deliberate and is one of the rare places `px` is the
+right unit: a `rem` floor grows back into a wide band at exactly the zoom
+levels where the space is scarcest.
+
+Three more things the panel does, each of which took a real bug to find:
+
+- **`box-sizing: border-box`.** The height is derived from `100vh`, so it
+  has to mean the outer height. Under content-box the padding and border
+  are added on top, and the panel ends up taller than every formula
+  believes — gaps that read `1rem` and measure 2px.
+- **A floor on `top`, not a bigger ceiling.** `top` designates the centre
+  (the panel is translated by −50 %), so it spans `top ± height/2` and
+  fits only while `top >= height/2`. A centre capped above 50vh therefore
+  limits the usable height to twice its own value, whatever `max-height`
+  says. That is arithmetic, not a value to tune.
+- **The menu carries no height of its own.** The panel is a flex column
+  and hands it what is left. `min-height: 0` is required: a flex item
+  defaults to `min-height: auto` and refuses to shrink below its content,
+  so `overflow-y` never engages.
+
+Result at 1000 %: the panel takes 98 % of the height and 99 % of the
+width, with gaps that measure what they say.
+
 ## Performance: what the fonts cost
 
 The bundled accessibility fonts are **loaded on demand**. OpenDyslexic,
@@ -403,6 +448,38 @@ these are the five things I would most like to be told I got wrong:
   hurdle.
 
 ## Upgrading
+
+**0.7.x → 0.8.0 — the menu drops react-select, and the panel is rebuilt
+for extreme zoom. `init --diff` is the whole upgrade**, and this one is
+worth reading before you take it: the two dropdowns change shape.
+
+- **`react-select` is gone.** It was never declared as a dependency —
+  only mentioned in `AGENTS.md` — yet the template imported it, so `init`
+  produced code that would not compile until you had installed it. It is
+  now needed by nothing. On the consumer that reported it, react-select
+  and Emotion were **31 KB gzipped out of an 87 KB entry bundle**, loaded
+  by every visitor including those who never opened the menu. If you
+  installed it only for this template, you can remove it.
+- **The colour-vision and font pickers are button groups**, revealed by a
+  parent toggle — the pattern the high-contrast variants already used.
+  A dropdown hid the choices behind an interaction, needed a keyboard
+  workaround to reopen reliably, and rendered its list through a portal in
+  `position: fixed`, which covers the page at high zoom. Buttons need none
+  of that.
+- **The colour-vision buttons come from your stylesheet.** The menu reads
+  the loaded CSS and offers only the `[data-theme]` blocks you actually
+  emit. A button for a theme you never wrote is not a missing option — the
+  user presses it and nothing happens, which for someone with a colour
+  vision deficiency is a broken promise. Override with
+  `COLOR_VISION_MODES` in `accessibilityPreferences.ts`: `"auto"`
+  (default), `"all"`, or an explicit list.
+- **The panel survives a 1000 % page zoom.** Its insets are clamps driven
+  by `vw` with a `px` floor instead of fixed `rem`, it is `border-box`, and
+  the menu fills it through flex rather than carrying viewport units of its
+  own. Details in [Extreme zoom](#extreme-zoom-what-the-panel-does).
+
+If you have styled the dropdowns yourself, that CSS now targets nothing —
+`.react-select-container` and everything under it can go.
 
 **0.6.x → 0.7.0 — three fixes in the copied UI, so `init --diff` is the
 whole upgrade.** The engine is unchanged; everything below lives in

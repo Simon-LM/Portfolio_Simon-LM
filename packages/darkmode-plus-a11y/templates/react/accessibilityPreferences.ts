@@ -9,6 +9,7 @@
 // them if you installed the package under a different name.
 
 import { usePreference } from "darkmode-plus-a11y/react";
+import type { ColorVisionModesOption } from "darkmode-plus-a11y/react";
 import {
 	applyFontSizeFactor,
 	applyAccessibilityFont,
@@ -21,6 +22,22 @@ export const A11Y_FONT_SIZE_KEY = "a11y-font-size";
 export const A11Y_FONT_KEY = "a11y-font";
 export const A11Y_DYSLEXIA_KEY = "a11y-dyslexia";
 export const A11Y_DYSLEXIA_CLASS = "dyslexia-optimized";
+
+// Last colour-vision mode used, so the parent button can bring it back —
+// same pattern as `hc-variant` for the high-contrast row.
+export const A11Y_COLOR_VISION_KEY = "cv-mode";
+
+// Which colour-vision modes the menu offers.
+//   "auto"  — read the loaded CSS: the site offers what it implements
+//   "all"   — every mode the package knows, whatever the CSS says
+//   [...]   — exactly these, in this order
+//
+// "auto" needs nothing maintained: remove a theme from your SCSS and its
+// button goes with it. A button for a theme whose [data-theme] block does
+// not exist is not a missing option — the user presses it and nothing
+// happens, which for someone with a colour vision deficiency is a broken
+// promise rather than a gap.
+export const COLOR_VISION_MODES: ColorVisionModesOption = "auto";
 
 // Text size as a percentage (100% = normal). Applies the CSS variable
 // --font-size-factor; your rem/em sizes follow it (host contract).
@@ -49,6 +66,22 @@ export function useAccessibilityFont() {
 			applyAccessibilityFont(value, ACCESSIBILITY_FONT_CLASSES),
 	});
 }
+
+// Fonts offered by the menu, grouped by what they are FOR. The names mean
+// nothing to most people — "OpenDyslexic" or "Andika" only tell you
+// something if you already know them, so the heading above each group is
+// what actually lets someone choose. "none" is not listed: it is the
+// parent button's off state.
+export type FontGroupId = "dyslexic" | "legibility" | "easyReading";
+
+export const ACCESSIBILITY_FONT_GROUPS: readonly {
+	id: FontGroupId;
+	fonts: readonly string[];
+}[] = [
+	{ id: "dyslexic", fonts: ["opendyslexic"] },
+	{ id: "legibility", fonts: ["atkinson"] },
+	{ id: "easyReading", fonts: ["andika"] },
+];
 
 // Pass this as themeInitScript's second argument so the typography
 // preferences are restored BEFORE the first paint, like the theme already

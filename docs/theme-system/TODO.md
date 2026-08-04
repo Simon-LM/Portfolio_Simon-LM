@@ -38,15 +38,17 @@ Update as you go (check off / remove once done).
       and the hard case where `link` is _itself_ violet. Each needs its own
       calibration and validation pass.
 
-      **When — `0.8.0`, in two steps.** (Was 0.7.0; that number went to
-      the template fixes of 2026-07-28, which shipped first because they
-      were user-facing bugs. The trigger below is what matters, not the
-      number.) The risk is not building the mechanism, it is making it the
-      _default_: that is what moves colors for people who did not ask. So
-      the two are separated.
+      **When — `0.9.0`, in two steps.** (Was 0.7.0, then 0.8.0; both
+      numbers went to user-facing work that shipped first — the template
+      fixes of 2026-07-28, then dropping react-select and rebuilding the
+      panel for extreme zoom on 2026-08-04. The trigger below is what
+      matters, not the number; if it keeps sliding, that is the trigger
+      telling us the third site has not arrived yet.) The risk is not
+      building the mechanism, it is making it the _default_: that is what
+      moves colors for people who did not ask. So the two are separated.
 
       1. **The mechanism, off by default** (`$status-link-auto-separate:
-         false`) — ships in **`0.8.0`**. Costs nothing, changes no output,
+         false`) — ships in **`0.9.0`**. Costs nothing, changes no output,
          and makes the idea testable on real palettes instead of the 25
          hand-picked ones the sweep used. **Trigger: the third site**, the
          next time a genuinely different palette is available to watch it

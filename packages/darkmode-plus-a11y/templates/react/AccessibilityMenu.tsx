@@ -10,24 +10,23 @@
 // ⚠️ Imports use the published package name; `init --pkg <name>` rewrites
 // them if you installed the package under a different name.
 
-import {
-	useState,
-	useEffect,
-	useRef,
-	useSyncExternalStore,
-	type RefObject,
-	type KeyboardEvent as ReactKeyboardEvent,
-} from "react";
-import Select, { GroupBase, StylesConfig } from "react-select";
-import type { SelectInstance } from "react-select";
+import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import { FaUniversalAccess } from "react-icons/fa";
-import { useTheme, usePrefersDarkMode, type ThemeOption } from "darkmode-plus-a11y/react";
+import {
+	useTheme,
+	usePrefersDarkMode,
+	resolveColorVisionModes,
+	type ThemeOption,
+} from "darkmode-plus-a11y/react";
 import { applyReduceMotion } from "darkmode-plus-a11y/react/appliers";
 import {
 	useFontSize,
 	useAccessibilityFont,
+	ACCESSIBILITY_FONT_GROUPS,
+	A11Y_COLOR_VISION_KEY,
 	A11Y_DYSLEXIA_KEY,
 	A11Y_DYSLEXIA_CLASS,
+	COLOR_VISION_MODES,
 } from "./accessibilityPreferences";
 
 // false on the server, true after hydration — without violating
@@ -63,7 +62,6 @@ const HC_VARIANT_MODIFIERS: Record<HcVariant, string> = {
 	"high-contrast-paper": "paper",
 };
 
-type OptionType = { value: string; label: string };
 type FontType = "none" | "opendyslexic" | "atkinson" | "andika";
 
 export default function AccessibilityMenu({
@@ -93,8 +91,26 @@ export default function AccessibilityMenu({
 	const lastBaseTheme = useRef<"light" | "dark">(
 		prefersDarkMode ? "dark" : "light",
 	);
-	const colorVisionSelectRef = useRef<SelectInstance<OptionType> | null>(null);
-	const fontTypeSelectRef = useRef<SelectInstance<OptionType> | null>(null);
+	// Colour-vision modes this site actually implements, read once from the
+	// loaded CSS. Computed lazily: the menu renders a skeleton until
+	// `mounted`, so there is no server/client mismatch to worry about.
+	const [colorVisionModes] = useState<readonly string[]>(() =>
+		typeof document === "undefined"
+			? []
+			: resolveColorVisionModes(COLOR_VISION_MODES),
+	);
+	// Last colour-vision mode used, so the parent button brings it back —
+	// same pattern as `hcVariant` below.
+	const [lastColorVision, setLastColorVision] = useState<string | null>(() => {
+		if (typeof window === "undefined") return null;
+		return localStorage.getItem(A11Y_COLOR_VISION_KEY);
+	});
+	// Last accessibility font used, seeded from the restored preference so
+	// the toggle brings back the visitor's font after a reload, not a
+	// default.
+	const lastFont = useRef<FontType>(
+		fontType !== "none" ? (fontType as FontType) : "opendyslexic",
+	);
 	// Last high-contrast variant used (the toggle reactivates it).
 	const [hcVariant, setHcVariant] = useState<HcVariant>(() => {
 		if (typeof window === "undefined") return "high-contrast";
@@ -170,27 +186,51 @@ export default function AccessibilityMenu({
 		) {
 			return "normal";
 		}
-		const colorVisionTypes = [
-			"protanomaly",
-			"protanopia",
-			"deuteranomaly",
-			"deuteranopia",
-			"tritanomaly",
-			"tritanopia",
-			"achromatopsia",
-		];
-		for (const type of colorVisionTypes) {
+		// The list is the one detected from the CSS, so it cannot drift from
+		// what the buttons offer.
+		for (const type of colorVisionModes) {
 			if (currentTheme.includes(type)) return type;
 		}
 		return "normal";
 	};
 
-	const handleColorVisionChange = (mode: string) => {
-		if (mode === "normal") {
+	// Pick one colour-vision mode. Remembered so the parent button can bring
+	// it back, exactly like `hc-variant`.
+	const selectColorVisionMode = (mode: string) => {
+		setLastColorVision(mode);
+		localStorage.setItem(A11Y_COLOR_VISION_KEY, mode);
+		setTheme(mode as ThemeOption);
+	};
+
+	// Parent button: turn the last used mode back on, or leave for the base
+	// theme. "Normal" is this off state, not a button in the row — one
+	// button fewer, and no row that hides itself when you use it.
+	const toggleColorVision = () => {
+		if (getColorVisionMode(theme) !== "normal") {
 			setTheme(lastBaseTheme.current);
 			return;
 		}
-		setTheme(mode as ThemeOption);
+		const mode =
+			lastColorVision && colorVisionModes.includes(lastColorVision)
+				? lastColorVision
+				: colorVisionModes[0];
+		if (mode) selectColorVisionMode(mode);
+	};
+
+	// Pick one accessibility font. Choosing a font leaves the dyslexia mode,
+	// which drives the whole typography on its own.
+	const selectAccessibilityFont = (type: FontType) => {
+		lastFont.current = type;
+		if (isDyslexicMode) setIsDyslexicMode(false);
+		setFontType(type);
+	};
+
+	const toggleAccessibilityFont = () => {
+		if (fontType !== "none") {
+			setFontType("none");
+			return;
+		}
+		selectAccessibilityFont(lastFont.current);
 	};
 
 	const toggleReduceMotion = () => {
@@ -293,40 +333,9 @@ export default function AccessibilityMenu({
 	const isAntiGlareActive =
 		theme === "anti-glare-light" || theme === "anti-glare-dark";
 
-	const resetAllAccessibilitySettings = () => {
-		setTheme(prefersDarkMode ? "dark" : "light");
-		setFontSize(100);
-		setFontType("none");
-		setHcVariant("high-contrast");
-		localStorage.removeItem("hc-variant");
-		localStorage.removeItem(A11Y_DYSLEXIA_KEY);
-		if (isDyslexicMode) {
-			document.documentElement.classList.remove(A11Y_DYSLEXIA_CLASS);
-			setIsDyslexicMode(false);
-		}
-	};
-
-	const getSelectStyles = (): StylesConfig<
-		OptionType,
-		false,
-		GroupBase<OptionType>
-	> => ({
-		control: (base) => ({
-			...base,
-			backgroundColor: "var(--color-panel-bg)",
-			borderColor: "var(--color-button-border)",
-			"&:hover": { borderColor: "var(--accent)" },
-		}),
-		menu: (base) => ({ ...base, backgroundColor: "var(--color-panel-bg)" }),
-		option: (base, state) => ({
-			...base,
-			backgroundColor: state.isFocused
-				? "var(--color-button-hover-bg)"
-				: "transparent",
-			color: "var(--color-main-text)",
-			"&:hover": { backgroundColor: "var(--color-button-hover-bg)" },
-		}),
-	});
+	const currentColorVision = getColorVisionMode(theme);
+	const isColorVisionActive = currentColorVision !== "normal";
+	const isAccessibilityFontActive = fontType !== "none";
 
 	const getFontTypeLabel = (type: string): string => {
 		if (type === "opendyslexic") return labels.dyslexic.openDyslexic;
@@ -349,26 +358,21 @@ export default function AccessibilityMenu({
 		return map[mode] ?? mode;
 	};
 
-	// Reliable keyboard opening of the select (Enter/Space while closed →
-	// open; Tab in the open menu → arrows). Called in a keydown closure
-	// (the ref is read at the event, never at render).
-	const handleSelectKeyDown = (
-		e: ReactKeyboardEvent<HTMLElement>,
-		ref: RefObject<SelectInstance<OptionType> | null>,
-	) => {
-		const menuOpen = document.querySelector('[role="listbox"]') !== null;
-		if (!menuOpen && (e.key === "Enter" || e.key === " ")) {
-			e.preventDefault();
-			ref.current?.openMenu("first");
-		}
-		if (menuOpen && e.key === "Tab") {
-			e.preventDefault();
-			const key = e.shiftKey ? "ArrowUp" : "ArrowDown";
-			e.currentTarget.dispatchEvent(
-				new KeyboardEvent("keydown", { key, bubbles: true }),
-			);
+	const resetAllAccessibilitySettings = () => {
+		setTheme(prefersDarkMode ? "dark" : "light");
+		setFontSize(100);
+		setFontType("none");
+		setHcVariant("high-contrast");
+		localStorage.removeItem("hc-variant");
+		setLastColorVision(null);
+		localStorage.removeItem(A11Y_COLOR_VISION_KEY);
+		localStorage.removeItem(A11Y_DYSLEXIA_KEY);
+		if (isDyslexicMode) {
+			document.documentElement.classList.remove(A11Y_DYSLEXIA_CLASS);
+			setIsDyslexicMode(false);
 		}
 	};
+
 
 	return (
 		<div
@@ -511,47 +515,57 @@ export default function AccessibilityMenu({
 					</div>
 				</div>
 
-				{/* Color blindness */}
+				{/* Colour vision — direct buttons revealed when the mode is
+				    active, same pattern as the high-contrast variants above:
+				    no selector, which is more robust for screen readers and
+				    large zoom levels. The list comes from the loaded CSS, so
+				    a theme this site does not define never gets a button. */}
 				<div className="accessibility-menu__visual-help-group">
-					<label
-						htmlFor="color-vision-select"
-						className="accessibility-menu__group-label">
-						{labels.colorVision.group}
-					</label>
-					<Select
-						ref={colorVisionSelectRef}
-						inputId="color-vision-select"
-						className="react-select-container"
-						classNamePrefix="react-select"
-						value={{
-							value: getColorVisionMode(theme),
-							label: getColorVisionLabel(getColorVisionMode(theme)),
-						}}
-						onChange={(option) => {
-							if (option) handleColorVisionChange((option as OptionType).value);
-						}}
-						options={[
-							{ value: "normal", label: labels.colorVision.normal },
-							{ value: "protanomaly", label: labels.colorVision.protanomaly },
-							{ value: "protanopia", label: labels.colorVision.protanopia },
-							{ value: "deuteranomaly", label: labels.colorVision.deuteranomaly },
-							{ value: "deuteranopia", label: labels.colorVision.deuteranopia },
-							{ value: "tritanomaly", label: labels.colorVision.tritanomaly },
-							{ value: "tritanopia", label: labels.colorVision.tritanopia },
-							{ value: "achromatopsia", label: labels.colorVision.achromatopsia },
-						]}
-						aria-label={labels.colorVision.selectLabel}
-						styles={getSelectStyles()}
-						isSearchable={false}
-						menuPortalTarget={
-							typeof document !== "undefined" ? document.body : null
-						}
-						menuPosition="fixed"
-						menuShouldBlockScroll={true}
-						openMenuOnFocus={false}
-						closeMenuOnSelect={true}
-						onKeyDown={(e) => handleSelectKeyDown(e, colorVisionSelectRef)}
-					/>
+					{colorVisionModes.length > 0 && (
+						<>
+							<div className="accessibility-menu__buttons-row">
+								<button
+									className={`accessibility-menu__button accessibility-menu__button-full-width ${
+										isColorVisionActive ? "active" : ""
+									}`}
+									aria-pressed={isColorVisionActive}
+									onClick={toggleColorVision}>
+									{labels.colorVision.group}
+								</button>
+							</div>
+
+							{isColorVisionActive && (
+								<div
+									className="accessibility-menu__buttons-row accessibility-menu__buttons-row--cv-modes"
+									role="group"
+									aria-label={labels.colorVision.selectLabel}>
+									{colorVisionModes.map((mode) => (
+										<button
+											key={mode}
+											className={`accessibility-menu__button accessibility-menu__cv-mode-button ${
+												currentColorVision === mode ? "active" : ""
+											}`}
+											aria-pressed={currentColorVision === mode}
+											onClick={() => selectColorVisionMode(mode)}>
+											{/* Checkmark = visual marker; the semantics are
+											    carried by aria-pressed. Rendered in every
+											    button and mirrored on the right so the label
+											    stays centred, selected or not. */}
+											<span
+												className="accessibility-menu__check"
+												aria-hidden="true">
+												{currentColorVision === mode ? "✓" : ""}
+											</span>
+											{getColorVisionLabel(mode)}
+											<span
+												className="accessibility-menu__check"
+												aria-hidden="true"></span>
+										</button>
+									))}
+								</div>
+							)}
+						</>
+					)}
 				</div>
 			</div>
 
@@ -620,59 +634,61 @@ export default function AccessibilityMenu({
 					</div>
 				</div>
 
-				{/* Accessibility font */}
-				<div className="accessibility-menu__select-control">
-					<label
-						htmlFor="font-type-select"
-						className="accessibility-menu__group-label">
-						{labels.dyslexic.label}
-					</label>
-					<Select
-						ref={fontTypeSelectRef}
-						inputId="font-type-select"
-						className="react-select-container"
-						classNamePrefix="react-select"
-						value={{ value: fontType, label: getFontTypeLabel(fontType) }}
-						onChange={(option) => {
-							if (option) {
-								const value = (option as OptionType).value as FontType;
-								if (isDyslexicMode && value !== "none") {
-									setIsDyslexicMode(false);
-								}
-								setFontType(value);
-							}
-						}}
-						options={[
-							{ value: "none", label: labels.dyslexic.none },
-							{
-								label: labels.dyslexic.group.dyslexic,
-								options: [
-									{ value: "opendyslexic", label: labels.dyslexic.openDyslexic },
-								],
-							},
-							{
-								label: labels.dyslexic.group.legibility,
-								options: [
-									{ value: "atkinson", label: labels.dyslexic.atkinson },
-								],
-							},
-							{
-								label: labels.dyslexic.group.easyReading,
-								options: [{ value: "andika", label: labels.dyslexic.andika }],
-							},
-						]}
-						aria-label={labels.dyslexic.label}
-						styles={getSelectStyles()}
-						isSearchable={false}
-						menuPortalTarget={
-							typeof document !== "undefined" ? document.body : null
-						}
-						menuPosition="fixed"
-						menuShouldBlockScroll={true}
-						openMenuOnFocus={false}
-						closeMenuOnSelect={true}
-						onKeyDown={(e) => handleSelectKeyDown(e, fontTypeSelectRef)}
-					/>
+				{/* Accessibility font — direct buttons revealed when a font is
+				    active, same pattern as the colour-vision row above.
+				    "Standard" is not a button: it is the parent's off state. */}
+				<div className="accessibility-menu__visual-help-group">
+					<div className="accessibility-menu__buttons-row">
+						<button
+							className={`accessibility-menu__button accessibility-menu__button-full-width ${
+								isAccessibilityFontActive ? "active" : ""
+							}`}
+							aria-pressed={isAccessibilityFontActive}
+							onClick={toggleAccessibilityFont}>
+							{labels.dyslexic.label}
+						</button>
+					</div>
+
+					{isAccessibilityFontActive && (
+						<div className="accessibility-menu__font-choices">
+							{ACCESSIBILITY_FONT_GROUPS.map((group) => (
+								<div
+									key={group.id}
+									className="accessibility-menu__font-group"
+									role="group"
+									aria-label={labels.dyslexic.group[group.id]}>
+									{/* The heading is what makes the choice possible: the
+									    font names mean nothing on their own. */}
+									<p className="accessibility-menu__font-group-label">
+										{labels.dyslexic.group[group.id]}
+									</p>
+									<div className="accessibility-menu__buttons-row accessibility-menu__buttons-row--font-choices">
+										{group.fonts.map((type) => (
+											<button
+												key={type}
+												className={`accessibility-menu__button accessibility-menu__font-choice-button ${
+													fontType === type ? "active" : ""
+												}`}
+												aria-pressed={fontType === type}
+												onClick={() =>
+													selectAccessibilityFont(type as FontType)
+												}>
+												<span
+													className="accessibility-menu__check"
+													aria-hidden="true">
+													{fontType === type ? "✓" : ""}
+												</span>
+												{getFontTypeLabel(type)}
+												<span
+													className="accessibility-menu__check"
+													aria-hidden="true"></span>
+											</button>
+										))}
+									</div>
+								</div>
+							))}
+						</div>
+					)}
 				</div>
 			</div>
 

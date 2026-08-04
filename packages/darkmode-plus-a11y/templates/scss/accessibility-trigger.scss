@@ -68,22 +68,74 @@
 }
 
 .accessibility-panel {
+	// Everything below is written so the panel survives a 1000% page zoom,
+	// where the viewport measures roughly 190x110 CSS pixels. At that size
+	// a single fixed `rem` is catastrophic: 1rem is 16px, so a 1rem gap on
+	// each side eats 30% of the screen. Every inset here is therefore a
+	// clamp whose middle term is driven by `vw` and whose floor is in `px`
+	// — one of the rare places a px is the right unit, because the floor
+	// has to stay a hairline rather than grow back into a band.
+	//
+	// Read the clamps as: ceiling = the comfortable desktop value, and the
+	// slope decides where it starts tightening. The knee (the width where
+	// the value leaves its ceiling) is 100 x (ceiling + offset) / slope.
+	// A plain `N * vw` passes through the origin, so its knee is usually
+	// far below any window you would test by hand; the negative offset is
+	// what makes the curve steep enough to matter.
+
+	// Space kept outside the panel, on BOTH axes. vw on both so the insets
+	// stay square whatever the window's aspect ratio.
+	// Knee at 1400px = 100 x (16 + 5) / 1.5 — desktop keeps its full 1rem.
+	--panel-gap: clamp(1px, calc(1.5vw - 5px), 1rem);
+	--panel-h: min(30rem, calc(100vh - 2 * var(--panel-gap)));
+
+	// Padding, radius and border are variables because the menu inside
+	// reads them: its own radius is this one minus the border minus the
+	// padding, and that subtraction has to stay true while all three
+	// collapse. Knee at 1400px = 100 x (12 + 2) / 1.
+	--panel-pad: clamp(1px, calc(1vw - 2px), 0.75rem);
+	--panel-radius: 0.5rem;
+	--panel-border: 0.125rem;
+
+	// `display` is set in `&.open` — declaring flex here would be dead, the
+	// `display: none` further down this same rule overrides it.
+	flex-direction: column;
+	// `height` is derived from `100vh`, so it has to MEAN the outer height.
+	// Under content-box the padding and border are added on top and the
+	// panel ends up taller than every formula here believes: the gaps read
+	// 1rem and measure 2px, and the floor on `top` below computes against
+	// a height the panel does not have.
+	box-sizing: border-box;
+
 	position: fixed;
-	top: clamp(10%, 22rem, 45%);
+
+	// `top` designates the CENTRE, because of the translate below, so the
+	// panel spans top +/- height/2 and fits only while `top >= height/2`.
+	// The clamp is the wanted position; the second term is a floor that
+	// stops the top edge leaving the screen once the panel grows tall.
+	// Without it a centre capped above 50vh limits the usable height to
+	// twice its own value, whatever `max-height` says — arithmetic, not a
+	// value to tune.
+	top: max(clamp(10%, 22rem, 45%), calc(var(--panel-h) / 2 + var(--panel-gap)));
+
 	left: clamp(50%, calc(100% - 13rem), calc(100% - 4rem));
 	transform: translate(-50%, -50%) translateY(0);
 
 	width: 22.5rem;
-	// max-width: calc(100vw - 4rem);
-	max-width: 75vw;
-	height: 30rem;
-	max-height: calc(100vh - 10rem);
+	// Same gap on the horizontal axis: a fixed rem here would still take
+	// 17% of the width at 1000% zoom.
+	max-width: calc(100vw - 2 * var(--panel-gap));
+	// The ONLY height. Any other rule able to shrink the panel would make
+	// the floor on `top` compute against a value it does not actually have.
+	height: var(--panel-h);
 
 	background: var(--color-panel-bg, var(--color-main-bg));
-	border: 0.125rem solid var(--color-panel-border, var(--color-main-text));
-	border-radius: 0.5rem;
+	border: var(--panel-border) solid
+		var(--color-panel-border, var(--color-main-text));
+	border-radius: var(--panel-radius);
 	box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.2);
-	padding: 0.75rem;
+	//   1400px -> 12px    900px -> 7px    400px -> 2px    192px -> 1px
+	padding: var(--panel-pad);
 	z-index: 1000;
 
 	// `display: none`, NOT `visibility: hidden`. A hidden panel still
@@ -103,12 +155,19 @@
 
 	// In high contrast mode
 	.theme-high-contrast & {
-		border-width: 0.1875rem;
+		// Through the variable, not `border-width`: the menu reads it to
+		// work out its own radius, and a thicker border would otherwise
+		// leave it too round in the high-contrast themes only.
+		--panel-border: 0.1875rem;
 	}
 
 	// Open state
 	&.open {
-		display: block;
+		// The panel holds a single child, the menu. As a flex column it can
+		// hand it exactly the height left after the border and the padding,
+		// so the menu needs no height of its own and no viewport unit: it
+		// follows, whatever the zoom or the padding does.
+		display: flex;
 		opacity: 1;
 		transform: translate(-50%, -50%);
 	}
