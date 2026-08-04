@@ -6,7 +6,7 @@ import React from "react";
 import Link from "next/link";
 import {
 	FaLinkedin,
-	FaXTwitter,
+	FaReddit,
 	FaYoutube,
 	FaGithub,
 	FaRss,
@@ -212,13 +212,13 @@ export default function BottomFooter() {
 							<span>LinkedIn</span>
 						</Link>
 						<Link
-							href="https://x.com/SimonLM_Dev"
+							href="https://www.reddit.com/user/SimonLM_LostInTab/"
 							target="_blank"
 							rel="noopener noreferrer"
 							className="bottomFooter__social-link"
 							onKeyDown={handleKeyDown}>
-							<FaXTwitter aria-hidden="true" />
-							<span>X (Twitter)</span>
+							<FaReddit aria-hidden="true" />
+							<span>Reddit</span>
 						</Link>
 						<Link
 							href="https://www.youtube.com/@LostInTab"

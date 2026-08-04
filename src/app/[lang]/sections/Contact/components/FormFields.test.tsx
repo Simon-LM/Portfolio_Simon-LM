@@ -59,7 +59,7 @@ const mockDictionary = {
 			checkbox: "I agree to data processing",
 		},
 	},
-	social: { linkedin: "", twitter: "" },
+	social: { linkedin: "" },
 };
 
 // Create a mock register function that returns proper input props
