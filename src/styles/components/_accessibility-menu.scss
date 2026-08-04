@@ -3,14 +3,36 @@
 .accessibility-menu {
 	display: flex;
 	flex-direction: column;
-
-	max-height: 25rem;
-	height: 30rem;
-	max-height: calc(100vh - 10rem);
+	// No height of its own: the panel is a flex column and hands it exactly
+	// what is left. `min-height: 0` is what makes that work — a flex item
+	// defaults to `min-height: auto` and refuses to shrink below its
+	// content, so `overflow-y` would never engage and the box would spill.
+	flex: 1;
+	min-height: 0;
 
 	gap: 1.25rem;
 	overflow-y: auto;
-	padding-inline: 0.5rem;
+
+	// Stacks on top of the panel's own padding, so it is kept to half of it
+	// and tightens on the same slope. Knee at 100 x (8 + 1) / 0.5.
+	//   1400px -> 6px    900px -> 3.5px    400px -> 1px
+	padding: clamp(1px, calc(0.5vw - 1px), 0.5rem);
+
+	// The panel is not `overflow: hidden` — it cannot be, its arrow is
+	// drawn outside it — so nothing clips this box to the rounded shape.
+	// While the padding is wide it hides the difference; once the padding
+	// collapses at high zoom, the square corners of this box show through
+	// the panel's rounded border.
+	// The correct inner radius is the outer one minus the padding, and
+	// `max()` floors it at 0 for the case where the padding is wider than
+	// the curve. Both values are read from the panel, so the two keep
+	// matching as they collapse.
+	border-radius: max(
+		0px,
+		calc(var(--panel-radius) - var(--panel-border) - var(--panel-pad))
+	);
+
+	// background-color: greenyellow;
 
 	// Custom scrollbar style
 	&::-webkit-scrollbar {
@@ -57,7 +79,7 @@
 		padding: 0.5rem 1rem;
 		// (background/color via var(--color-button-bg/-text) removed
 		// 2026-07-07: never emitted -> inert declarations, rendering unchanged)
-		border: 1px solid var(--color-button-border);
+		border: 0.0625rem solid var(--color-button-border); // was 1px
 		border-radius: 0.25rem;
 		font-size: 0.9rem;
 		font-weight: 500;
@@ -162,7 +184,6 @@
 
 		&.active {
 			background: var(--accent);
-			// color: var(--color-button-active-text);
 			color: black;
 			border-color: transparent;
 		}
@@ -252,9 +273,7 @@
 	}
 
 	&__visual-help-group {
-		// margin-bottom: 1.25rem;
 		padding-bottom: 0.5rem;
-		// border-bottom: 0.0625rem dotted var(--color-divider, var(--gray-300));
 
 		&:last-child {
 			margin-bottom: 0;
@@ -277,40 +296,6 @@
 		.dyslexia-optimized & {
 			font-style: normal;
 		}
-	}
-
-	&__select-control {
-		margin: 0.5rem 0;
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	&__select {
-		padding: 0.5rem;
-		border-radius: 0.25rem;
-		border: 0.0625rem solid var(--color-button-border, var(--color-main-text)); // 1px
-		// var(--color-input-bg) was never emitted: fallback simplified
-		// 2026-07-07, rendering unchanged.
-		background-color: var(--off-white);
-		color: var(--color-main-text);
-		font-size: 0.875rem; // 14px
-		width: 100%;
-		appearance: none; // Remove the default style
-		background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-		background-repeat: no-repeat;
-		background-position: right 0.7rem top 50%;
-		background-size: 0.65rem auto;
-		padding-right: 1.75rem;
-
-		&:focus-visible {
-			outline: 0.125rem solid var(--color-focus-outline);
-			outline-offset: 0.125rem;
-		}
-	}
-
-	.color-vision-select {
-		margin-top: 0.5rem;
 	}
 
 	// Font size control
@@ -341,7 +326,7 @@
 		align-items: center;
 		justify-content: center;
 		border-radius: 50%;
-		border: 1px solid var(--color-button-border, #ccc);
+		border: 0.0625rem solid var(--color-button-border, var(--color-main-text)); // was 1px / #ccc
 		background-color: transparent;
 		color: var(--accent, #0077cc);
 		cursor: pointer;
@@ -372,26 +357,29 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
-		// margin-bottom: 0.5rem;
 		width: 100%;
 		box-sizing: border-box;
 	}
 
+	// This is the control that enlarges the text, so it has to grow with it.
+	// In px the thumb kept its 18px while everything around it grew: at
+	// 200% it ends up half the relative size, harder to grab for the very
+	// person who just enlarged because they cannot see well.
 	&__slider {
 		flex: 1;
-		height: 8px;
+		height: 0.5rem; // was 8px
 		max-width: calc(100% - 3rem);
 		-webkit-appearance: none;
 		appearance: none;
 		background: var(--color-border);
 		outline: none;
-		border-radius: 4px;
+		border-radius: 0.25rem; // was 4px
 
 		&::-webkit-slider-thumb {
 			-webkit-appearance: none;
 			appearance: none;
-			width: 18px;
-			height: 18px;
+			width: 1.125rem; // was 18px
+			height: 1.125rem;
 			border-radius: 50%;
 			background: var(--color-accent);
 			cursor: pointer;
@@ -403,8 +391,8 @@
 		}
 
 		&::-moz-range-thumb {
-			width: 18px;
-			height: 18px;
+			width: 1.125rem; // was 18px
+			height: 1.125rem;
 			border: none;
 			border-radius: 50%;
 			background: var(--color-accent);
@@ -434,35 +422,6 @@
 		margin: 0.5rem 0;
 	}
 
-	&__font-size-control {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		margin-top: 0.5rem;
-	}
-
-	&__font-size-button {
-		width: 2rem;
-		height: 2rem;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 1.25rem;
-		font-weight: bold;
-		border-radius: 50%;
-		border: 0.0625rem solid var(--color-button-border);
-		background: transparent;
-
-		&:hover {
-			background-color: var(--color-button-hover-bg);
-		}
-
-		&:focus-visible {
-			outline: 0.125rem solid var(--color-focus-outline);
-			outline-offset: 0.125rem;
-		}
-	}
-
 	&__font-size-value {
 		width: 3rem;
 		text-align: center;
@@ -481,7 +440,7 @@
 		margin-top: 0.25rem;
 		margin-bottom: 0.5rem;
 		padding-top: 1rem;
-		border-top: 1px dashed var(--gray-300);
+		border-top: 0.0625rem dashed var(--gray-300); // was 1px
 		text-align: center;
 	}
 
@@ -489,7 +448,7 @@
 		padding: 0.5rem 1.25rem;
 		background: transparent;
 		color: var(--color-main-text);
-		border: 1px solid var(--color-button-border);
+		border: 0.0625rem solid var(--color-button-border); // was 1px
 		border-radius: 0.25rem;
 		font-size: 0.875rem;
 		font-weight: 500;
@@ -522,10 +481,8 @@
 		// line at base size — it may still wrap when the text is enlarged,
 		// which is the intended behaviour, not a defect.
 		gap: 0.375rem;
-		// color: var(--accent);
 		padding: 0.5rem 0.25rem;
 		border-radius: 0.25rem;
-		// transition: all 0.2s ease;
 
 		&:hover {
 			opacity: 1;
@@ -698,593 +655,26 @@
 	}
 }
 
-// // React-Select styles - grouped at the bottom of the file
-// .react-select-container {
-// 	width: 100%;
-// 	margin-bottom: 0.5rem;
-
-// 	// Control (main select button)
-// 	.react-select__control {
-// 		background-color: var(--color-panel-bg) !important;
-// 		border: 0.0625rem solid var(--color-button-border, var(--color-main-text)) !important;
-// 		border-radius: 0.25rem;
-// 		min-height: 38px;
-// 		box-shadow: none !important;
-
-// 		&:hover {
-// 			border-color: var(--link-hover) !important;
-// 			background: var(--link-hover) !important;
-// 		}
-
-// 		&--is-focused {
-// 			border-color: var(--link) !important;
-// 			background: var(--link) !important;
-// 			color: var(--off-white) !important;
-
-// 			outline: 2px solid var(--link) !important;
-// 			outline-offset: 0.125rem !important;
-// 			box-shadow: none !important;
-// 		}
-// 	}
-
-// 	.react-select__control:hover .react-select__single-value {
-// 		color: white !important;
-// 	}
-
-// 	.react-select__control:hover .react-select__dropdown-indicator svg {
-// 		fill: white !important;
-// 	}
-
-// 	.react-select__control--is-focused .react-select__single-value {
-// 		color: white !important;
-// 	}
-
-// 	.react-select__control--is-focused .react-select__dropdown-indicator svg {
-// 		fill: white !important;
-// 	}
-
-// 	// Text inside the control
-// 	.react-select__single-value {
-// 		color: var(--color-main-text) !important;
-// 	}
-
-// 	// Dropdown menu
-// 	.react-select__menu {
-// 		background-color: var(--color-panel-bg) !important;
-// 		border: 0.0625rem solid var(--color-button-border) !important;
-// 		z-index: 9999 !important;
-// 	}
-
-// 	// Options in the menu
-// 	.react-select__option {
-// 		color: var(--color-main-text) !important;
-
-// 		&--is-focused {
-// 			background-color: var(--color-button-hover-bg) !important;
-// 			// outline: 0.125rem solid var(--color-focus-outline) !important;
-// 			outline: 0.125rem solid white !important;
-// 			outline-offset: -0.25rem !important;
-// 		}
-
-// 		// &--is-selected {
-// 		// 	background-color: var(--accent) !important;
-// 		// 	// color: var(--color-button-active-text) !important;
-// 		// }
-// 	}
-
-// 	// Separator removal
-// 	.react-select__indicator-separator {
-// 		display: none !important;
-// 	}
-
-// 	// Dropdown arrow
-// 	.react-select__dropdown-indicator {
-// 		color: var(--color-main-text) !important;
-
-// 		&:hover {
-// 			color: var(--accent) !important;
-// 		}
-// 	}
-
-// 	// Option groups
-// 	.react-select__group-heading {
-// 		color: var(--color-main-text) !important;
-// 		font-weight: bold;
-// 		font-size: 0.85em;
-// 		padding: 0.5rem;
-// 		margin-bottom: 0;
-// 		text-transform: uppercase;
-// 		background-color: var(--color-button-hover-bg);
-// 		opacity: 0.8;
-// 	}
-
-// 	// Input (search)
-// 	.react-select__input {
-// 		color: var(--color-main-text) !important;
-// 	}
-// }
-
-// // High-contrast theme styles
-// [data-theme="high-contrast"] {
-// 	.react-select-container {
-// 		.react-select__control {
-// 			background-color: #000000 !important;
-// 			border-color: #ffff00 !important;
-// 			border-width: 2px !important;
-
-// 			&:hover {
-// 				// border-color: #ffff00 !important;
-// 				background: var(--color-button-hover-bg) !important;
-// 			}
-
-// 			&--is-focused {
-// 				border-color: #ffffff !important;
-// 				box-shadow: 0 0 0 1px #ffff00 !important;
-// 				background: white !important;
-
-// 				outline: 0.125rem solid #ffffff !important;
-// 				outline-offset: 0.25rem !important;
-// 			}
-// 		}
-
-// 		.react-select__dropdown-indicator {
-// 			color: #ffff00 !important;
-
-// 			svg {
-// 				fill: #ffff00 !important;
-// 			}
-// 		}
-
-// 		.react-select__control:hover .react-select__single-value {
-// 			color: black !important;
-// 		}
-
-// 		.react-select__control:hover .react-select__dropdown-indicator svg {
-// 			fill: black !important;
-// 		}
-
-// 		.react-select__control--is-focused .react-select__single-value {
-// 			color: black !important;
-// 		}
-
-// 		.react-select__control--is-focused .react-select__dropdown-indicator svg {
-// 			fill: black !important;
-// 		}
-
-// 		.react-select__option {
-// 			// color: #ffff00 !important;
-
-// 			&--is-selected {
-// 				background-color: #ffff00 !important;
-// 				color: #000000 !important;
-// 				font-weight: bold;
-// 			}
-
-// 			&:hover {
-// 				background-color: white !important;
-// 				color: #000000 !important;
-// 			}
-
-// 			&--is-focused {
-// 				background-color: white !important;
-// 				color: #000000 !important;
-
-// 				outline: 0.125rem solid #000000 !important;
-// 				outline-offset: -0.25rem !important;
-// 			}
-// 		}
-
-// 		.react-select__group-heading {
-// 			color: #ffff00 !important;
-// 			color: white !important;
-// 			background-color: #222222 !important;
-// 		}
-
-// 		// .react-select__input-container {
-// 		// 	color: #ffff00 !important;
-// 		// 	color: blue !important;
-// 		// }
-
-// 		// .react-select__indicator {
-// 		// 	color: #ffff00 !important;
-// 		// 	color: green !important;
-// 		// }
-
-// 		// .react-select__placeholder {
-// 		// 	color: #ffff00 !important;
-// 		// 	color: red !important;
-// 		// }
-// 	}
-// }
-
-// // // // // // // // // // // // // // // // // //
-
-// Selector for native selects only, avoid targeting React-Select components
-select.accessibility-menu__select:not(.react-select__control) {
-	appearance: none;
-	background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-	background-repeat: no-repeat;
-	background-position: right 0.7rem top 50%;
-	background-size: 0.65rem auto;
-	padding-right: 1.75rem;
-}
-
-// // Style for selects in high-contrast mode
-// [data-theme="high-contrast"] .accessibility-menu {
-// 	// Slider adaptation in high-contrast
-// 	&__slider {
-// 		background: #ffff00;
-
-// 		&::-webkit-slider-thumb {
-// 			background: #ffff00;
-// 			border: 2px solid #000000;
-// 		}
-
-// 		&::-moz-range-thumb {
-// 			background: #ffff00;
-// 			border: 2px solid #000000;
-// 		}
-// 	}
-// }
-
-// // // // // // // // // // //
-
-// // Disable "double scroll" when a dropdown menu is open
-// body.react-select__menu-open {
-// 	.accessibility-menu {
-// 		overflow: hidden !important;
-// 	}
-// }
-
-// // Ensure the menu is visible above all elements
-// .react-select__menu-portal {
-// 	z-index: 10000 !important;
-// 	position: fixed !important;
-// }
-
-// // Better visibility of options on hover/focus
-// .react-select__option {
-// 	&:hover,
-// 	&--is-focused {
-// 		background-color: var(--color-button-hover-bg) !important;
-// 		color: var(--off-white) !important;
-// 	}
-
-// 	&--is-selected {
-// 		background-color: var(--accent) !important;
-// 		color: black !important;
-
-// 		[data-theme="high-contrast"] & {
-// 			background-color: #ffff00 !important;
-// 			color: #000000 !important;
-// 			&:hover {
-// 				background-color: white !important;
-// 				color: black !important;
-// 			}
-// 		}
-// 	}
-// }
-
-// // // // // // // // // // // // // //
-
-// Replace the entire React-Select section with this better-structured code
-// ==================== REACT-SELECT STYLES ====================
-
-// Base styles for React-Select
-.react-select-container {
-	width: 100%;
-	margin-bottom: 0.5rem;
-
-	// Control (main select button)
-	.react-select__control {
-		background-color: var(--color-panel-bg) !important;
-		border: 0.0625rem solid var(--color-button-border) !important;
-		border-radius: 0.25rem;
-		min-height: 38px;
-		box-shadow: none !important;
-
-		&:hover {
-			border-color: var(--link-hover) !important;
-			background: var(--link-hover) !important;
-		}
-
-		&--is-focused {
-			border-color: var(--link) !important;
-			background: var(--link) !important;
-			color: var(--off-white) !important;
-			outline: 2px solid var(--link) !important;
-			outline-offset: 0.125rem !important;
-			box-shadow: none !important;
-		}
-	}
-
-	// Styles for the control's hover state
-	.react-select__control:hover {
-		.react-select__single-value,
-		.react-select__dropdown-indicator svg {
-			color: var(--off-white) !important;
-			fill: var(--off-white) !important;
-		}
-	}
-
-	// Styles for the control's focus state
-	.react-select__control--is-focused {
-		.react-select__single-value,
-		.react-select__dropdown-indicator svg {
-			color: var(--off-white) !important;
-			fill: var(--off-white) !important;
-		}
-	}
-
-	// Text inside the control
-	.react-select__single-value {
-		color: var(--color-main-text) !important;
-	}
-
-	// Dropdown menu
-	.react-select__menu {
-		background-color: var(--color-panel-bg) !important;
-		border: 0.0625rem solid var(--color-button-border) !important;
-		z-index: 1000 !important;
-	}
-
-	// Options in the menu
-	.react-select__option {
-		color: var(--color-main-text) !important;
-
-		&--is-focused {
-			background-color: var(--color-button-hover-bg) !important;
-			outline: 0.125rem solid white !important;
-			outline-offset: -0.25rem !important;
-			color: var(--off-white) !important;
-		}
-
-		// &--is-selected {
-		// 	background-color: var(--accent);
-		// 	color: black;
-		// }
-
-		&:hover {
-			background-color: var(--color-button-hover-bg) !important;
-			color: var(--off-white) !important;
-		}
-	}
-
-	// Separator removal
-	.react-select__indicator-separator {
-		display: none !important;
-	}
-
-	// Dropdown arrow
-	.react-select__dropdown-indicator {
-		color: var(--color-main-text) !important;
-
-		&:hover {
-			color: var(--accent) !important;
-		}
-	}
-
-	// Option groups
-	.react-select__group-heading {
-		color: var(--color-main-text) !important;
-		font-weight: bold;
-		font-size: 0.85em;
-		padding: 0.5rem;
-		margin-bottom: 0;
-		text-transform: uppercase;
-		background-color: var(--color-button-hover-bg);
-		opacity: 0.8;
-	}
-
-	// Input (search)
-	.react-select__input {
-		color: var(--color-main-text) !important;
-	}
-}
-
 // ===================== HIGH CONTRAST MODE =====================
 
-// Styles for selects in high contrast — ALL variants
 // (HC workstream, 2026-07-10): ^= selector and theme colors instead
 // of hardcoded yellow. Equivalence verified in yellow: --near-black =
 // #ffff00 (text), --off-white = #000000 (background), --link-hover =
 // #ffffff (action) → strictly identical yellow rendering, correct variants.
 [data-theme^="high-contrast"] {
-	// General styles for the accessibility menu
 	.accessibility-menu {
 		&__slider {
 			background: var(--near-black);
 
 			&::-webkit-slider-thumb {
 				background: var(--near-black);
-				border: 2px solid var(--off-white);
+				border: 0.125rem solid var(--off-white); // was 2px
 			}
 
 			&::-moz-range-thumb {
 				background: var(--near-black);
-				border: 2px solid var(--off-white);
+				border: 0.125rem solid var(--off-white); // was 2px
 			}
 		}
-	}
-
-	// Specific styles for React-Select
-	.react-select-container {
-		.react-select__control {
-			background-color: var(--off-white) !important;
-			border-color: var(--near-black) !important;
-			border-width: 2px !important;
-
-			&:hover {
-				background: var(--color-button-hover-bg) !important;
-			}
-
-			&--is-focused {
-				border-color: var(--link-hover) !important;
-				box-shadow: 0 0 0 1px var(--near-black) !important;
-				background: var(--link-hover) !important;
-				outline: 0.125rem solid var(--link-hover) !important;
-				outline-offset: 0.25rem !important;
-			}
-		}
-
-		// Styles for hover and focus states
-		.react-select__control {
-			// Hover state
-			&:hover {
-				.react-select__single-value,
-				.react-select__dropdown-indicator svg {
-					color: var(--off-white) !important;
-					fill: var(--off-white) !important;
-				}
-			}
-
-			// Focus state
-			&--is-focused {
-				.react-select__single-value,
-				.react-select__dropdown-indicator svg {
-					color: var(--off-white) !important;
-					fill: var(--off-white) !important;
-				}
-			}
-		}
-
-		// Dropdown indicator
-		.react-select__dropdown-indicator {
-			color: var(--near-black) !important;
-
-			svg {
-				fill: var(--near-black) !important;
-			}
-		}
-
-		// Options
-		.react-select__option {
-			// Normal states
-			color: var(--near-black) !important;
-
-			// Selected option
-			&--is-selected {
-				background-color: var(--near-black) !important;
-				color: var(--off-white) !important;
-				font-weight: bold;
-
-				// Hover state on selected option
-				&:hover,
-				&:focus,
-				&--is-focused {
-					background-color: var(--link-hover) !important;
-					color: var(--off-white) !important;
-				}
-			}
-
-			// Hover and focus states
-			&:hover,
-			&--is-focused {
-				background-color: var(--link-hover) !important;
-				color: var(--off-white) !important;
-				outline: 0.125rem solid var(--off-white) !important;
-				outline-offset: -0.25rem !important;
-			}
-		}
-
-		// Group headings (white on dark gray: readable regardless of
-		// variant — deliberately not themed)
-		.react-select__group-heading {
-			color: white !important;
-			background-color: #222222 !important;
-		}
-	}
-
-	// // Styles for menus portaled into the DOM
-	// body > div[id^="react-select-"] {
-	// 	.react-select__option {
-	// 		color: #ffff00 !important;
-
-	// 		&--is-selected {
-	// 			background-color: #ffff00 !important;
-	// 			color: #000000 !important;
-	// 			font-weight: bold;
-
-	// 			&:hover,
-	// 			&:focus,
-	// 			&--is-focused {
-	// 				background-color: white !important;
-	// 				color: black !important;
-	// 			}
-	// 		}
-
-	// 		&:hover,
-	// 		&--is-focused {
-	// 			background-color: white !important;
-	// 			color: #000000 !important;
-	// 		}
-	// 	}
-	// }
-}
-
-// Menu portal
-.react-select__menu-portal {
-	z-index: 1100 !important;
-	position: fixed !important;
-}
-
-// // // // // // // // // //
-
-// // Disable double scroll when a menu is open
-// body.react-select__menu-open {
-// 	.accessibility-menu {
-// 		overflow: hidden !important;
-// 	}
-// }
-
-// Disable double scroll when a menu is open
-// body.react-select__menu-open {
-// 	// Cancel the default behavior that blocks page scroll
-// 	overflow: auto !important; // Re-enable page scrolling
-
-// 	// Only prevent the accessibility menu from scrolling to avoid double scroll
-// 	.accessibility-panel .accessibility-menu {
-// 		overflow: hidden !important;
-// 	}
-// }
-
-// // // // // // //
-
-// Base styles for React-Select options (all themes)
-html body .react-select__option--is-selected {
-	background-color: var(--accent) !important;
-	color: var(--constant-near-black) !important;
-}
-
-html body .react-select__option--is-selected:hover,
-html body .react-select__option--is-selected.react-select__option--is-focused {
-	color: var(--constant-near-black) !important;
-	// color: black !important;
-
-	// outline: 2px solid var(--off-white) !important;
-	// outline-offset: -0.25rem !important;
-}
-
-html body .react-select__option--is-focused {
-	color: var(--off-white) !important;
-	outline: 2px solid var(--off-white) !important;
-	outline-offset: -0.25rem !important;
-}
-
-// // // // // // // // // //
-
-/* Ultra-specific selector for selected options in high-contrast */
-// [data-theme="high-contrast"] div[class*="react-select__menu-portal"],
-[data-theme^="high-contrast"] div[class*="react-select__menu"] {
-	.react-select__option--is-selected {
-		background-color: var(--near-black) !important;
-		color: var(--off-white) !important;
-		// font-weight: 600 !important;
-	}
-
-	.react-select__option--is-selected:hover,
-	.react-select__option--is-selected.react-select__option--is-focused {
-		background-color: var(--link-hover) !important;
-		color: var(--off-white) !important;
 	}
 }
