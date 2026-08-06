@@ -4,6 +4,14 @@
 
 This file is auto-loaded by Claude Code at the start of every session in this repository. Read `AGENTS.md` for full project context (stack, structure, conventions) — this file only holds the rules that are easy to forget mid-session.
 
+## Stay inside this repository
+
+**Never read, list, or explore anything outside this project directory.** No `find`, `ls`, `grep`, `cat`, or file reads against another repository — not even one on the same disk, not even one that belongs to Simon.
+
+**Naming a project is not permission to open it.** Simon regularly cites his other work (ArgentBank, VoxRefiner, and others) as a reference for what already works. That is context for the conversation, never an invitation to go and read it. Consent given for one directory never extends to the machine, and "I can technically read it" has nothing to do with "I am allowed to read it".
+
+When a piece of reasoning needs material from another project, say precisely which file or which rule would help, and wait for Simon to paste it. Do not check whether you have access "just to see" — that check is already the breach. This covers `~`, `/etc`, sibling `GIT/` folders, and configuration directories.
+
 ## Language
 
 - **Reply to Simon in French, in chat, always** — including summaries, wrap-ups, and status updates at the end of a turn.
