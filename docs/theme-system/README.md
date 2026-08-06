@@ -41,6 +41,7 @@ never merged: rollup + src, predating several redesigns of the system).
 | [REVIEW-e7-readiness.md](./REVIEW-e7-readiness.md) | Pre-E7 review: confirmed bugs, publication backlog, Tailwind compatibility analysis, doc-scheme decision (package README + AGENTS.md) | living — processed item by item, feeds the future E7 plan |
 | [PLAN-complete-palette.md](./PLAN-complete-palette.md) | Execution plan: 0.2.0 — complete the Tailwind palette (9 → 26 families) so any brand color has a close anchor; prompted by the first external consumer | ✅ executed and merged 2026-07-17 (`c308313`) — published to npm 2026-07-18 (0.2.0) |
 | [PLAN-off-palette-anchor.md](./PLAN-off-palette-anchor.md) | Execution plan: silent safety net for off-spec (non-Tailwind) colors — anchor to the nearest palette entry for derived themes instead of the current crude fallbacks | ✅ executed and merged 2026-07-18 (`c559c23`) — published to npm 2026-07-18 (0.2.0) |
+| [PLAN-css-conventions.md](./PLAN-css-conventions.md) | Execution plan: opt-in SCSS/CSS conventions layer (functions, mixins, placeholders) + Tailwind v4 utilities + portfolio migration — starts the extreme-zoom entry parked in TODO.md | 🚧 opened 2026-08-04, step 0 (plan) awaiting acceptance |
 
 Principle: **one chantier = one plan = one branch = one AI-driven
 execution**, reviewed before merge. The guide gives the order; each plan

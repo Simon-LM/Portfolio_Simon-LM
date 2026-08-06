@@ -8,6 +8,40 @@ package-extraction **roadmap** (chantiers E3→E7) lives in
 lists **loose ends** and **pending decisions**, so nothing gets forgotten.
 Update as you go (check off / remove once done).
 
+## ⚠️ Hold — npm supply-chain incident, 2026-08-04
+
+- [ ] **Do not upgrade ESLint, and do not re-resolve the dependency
+      tree, until the advisories for the 2026-08-04 npm incident have
+      settled.** Compromised publishes hit `keyv`, `flat-cache`,
+      `file-entry-cache`, `cacheable-request`, `cacheable` and
+      `cache-manager` — same maintainer, three of them republished
+      within 38 minutes that morning (`keyv@6.0.0` 09:35 UTC,
+      `flat-cache@6.1.24` 10:10, `file-entry-cache@11.1.6` 10:13, all
+      UTC).
+
+      **This project was checked and is NOT affected.** It carries
+      `keyv@4.5.4`, `flat-cache@4.0.1` and `file-entry-cache@8.0.0` —
+      earlier major lines, none of them republished that day, and npm
+      does not allow overwriting an already published version. The
+      other three packages are absent, as are the `@keyv` and
+      `@cacheable` scopes. They reach the tree only through ESLint's
+      cache chain (`eslint` → `file-entry-cache` → `flat-cache` →
+      `keyv`), as a dev dependency, never in the shipped bundle.
+
+      **The only way in is an ESLint upgrade.** ESLint 9.39.4 requires
+      `file-entry-cache@^8`, so even a full re-resolution stays on the
+      8.x line; a major ESLint bump would not. Same reasoning defers
+      the pnpm 10 → 11 migration, which re-resolves everything: the
+      worst day to re-resolve is during an active supply-chain
+      incident.
+
+      Lift this hold once the advisories are published and the clean
+      versions are known. Then re-check with the recipe used on
+      2026-08-04: list the packages present in `pnpm-lock.yaml`,
+      compare against the registry's publish dates
+      (`npm view <pkg> time --json`), and confirm the pinned versions
+      predate the incident.
+
 ## Pending decisions (awaiting a call)
 
 - [ ] **Status resolver's legibility floor** — constant
@@ -115,7 +149,12 @@ Update as you go (check off / remove once done).
 
 ## Long-term roadmap (noted 2026-07-14, explicitly not soon)
 
-- [ ] **Extreme-zoom SCSS/CSS recommendations module** — Simon's stated
+- [ ] **Extreme-zoom SCSS/CSS recommendations module** — 🚧 **STARTED
+      2026-08-04**, now planned in
+      [PLAN-css-conventions.md](./PLAN-css-conventions.md) (opt-in
+      conventions layer: functions, mixins, placeholders, Tailwind v4
+      utilities). The notes below are the original framing and stay
+      here as the north star the plan answers to. — Simon's stated
       direction for the package: beyond colors/themes, ship coding
       recommendations (and possibly tooling) so layouts stay
       **functional and responsive at ≥ 10× magnification (1000 %+)** —
